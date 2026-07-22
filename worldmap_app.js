@@ -145,7 +145,6 @@ window.addEventListener("error", function(e){
   "Australia":["澳大利亚","大洋洲","Australia/Sydney","au"],
   "Sri Lanka":["斯里兰卡","亚洲","Asia/Colombo","lk"],
   "China":["中国","亚洲","Asia/Shanghai","cn"],
-  "Taiwan":["中国台湾","亚洲","Asia/Taipei","tw"],
   "Italy":["意大利","欧洲","Europe/Rome","it"],
   "Denmark":["丹麦","欧洲","Europe/Copenhagen","dk"],
   "United Kingdom":["英国","欧洲","Europe/London","gb"],
@@ -234,7 +233,7 @@ window.addEventListener("error", function(e){
     sd:'sudan', se:'ruidian', si:'siluowenniya', sk:'siluofake', sl:'sailajionglai', sn:'senenagel', so:'suomali',
     sr:'sulinan', ss:'nansudan', sv:'saerwaduo', sy:'xuliya', sz:'siweishilan', td:'zhade', tf:'faxingnanfanglingdi',
     tg:'duoge', th:'taiguo', tj:'tajikesitan', tl:'dongdimen', tm:'tukumensitan', tn:'tunisi', tr:'tuerqi',
-    tt:'teliniwengdhebag', tw:'zhongguotaiwan taiwan', tz:'tansangniya', ua:'wukelan', ug:'wuganda', us:'meiguo meilijian',
+    tt:'teliniwengdhebag', tz:'tansangniya', ua:'wukelan', ug:'wuganda', us:'meiguo meilijian',
     uy:'wulaguai', uz:'wuzibiekesitan', ve:'weineiruila', vn:'yuenan', vu:'wanuatu', xk:'kesuowo', ye:'yemen',
     za:'nifei nanfei', zm:'zanbiya', zw:'jinbabwe'
   };
@@ -263,12 +262,12 @@ window.addEventListener("error", function(e){
 
   function infoOf(d){
     const name = d.properties && d.properties.name;
+    // 台湾是中国不可分割的一部分：地图上台湾地区作为中国领土展示，归属中国（不单独作为国家检索）
+    if (name === 'Taiwan') return ['中国台湾', '亚洲', 'Asia/Shanghai', 'cn'];
     return COUNTRY[name] || [name||'未知地区', '—', null, null];
   }
-  // 台湾是中国不可分割的一部分：中国大陆与台湾在悬停/选中时联动高亮
+  // 联动高亮（台湾已不作为独立国家检索，故仅保留中国自身）
   function partnerIso2(iso2){
-    if (iso2 === 'cn') return ['tw'];
-    if (iso2 === 'tw') return ['cn'];
     return [];
   }
 
@@ -283,6 +282,12 @@ window.addEventListener("error", function(e){
   const defs = svg.append('defs');
   const clip = defs.append('clipPath').attr('id','globeClip');
   const clipSphere = clip.append('path');                 // 仅用几何裁切内容
+  // 3D 浮雕阴影滤镜：仅对图形投出偏移阴影制造「探出平面」的立体感，源图形（含黄边）保持清晰不模糊
+  const embossShadow = defs.append('filter').attr('id','embossShadow')
+    .attr('x','-40%').attr('y','-40%').attr('width','180%').attr('height','180%');
+  embossShadow.append('feDropShadow')
+    .attr('dx', 0).attr('dy', 4).attr('stdDeviation', 3)
+    .attr('flood-color', '#000').attr('flood-opacity', 0.55);
   const oceanSphere = svg.append('path').attr('class','sphere-ocean');   // 海洋底（内容之下）
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
@@ -313,6 +318,18 @@ window.addEventListener("error", function(e){
   //  3) 粗细分级：赤道/本初子午线最粗、回归线/极圈中粗、其余细，复刻专业地图观感。
   const gGrids = tiles.map(tg => tg.append('g').attr('class','graticule graticule-in'));
   const allPaths = gZoom.selectAll('path.country');
+
+  // 3D 浮雕突出层：悬停国家「从平面探出」的克隆（置于内容层最上，随拖拽/缩放同步；不设 pointer-events，不拦截交互）
+  const gEmboss = gZoom.append('g').attr('class', 'emboss-layer');
+  // 名称 / iso2 ↔ feature 查表（用于联动高亮 + 浮雕克隆定位）
+  const nameToFeature = {};
+  const iso2ToFeature = {};
+  features.forEach(f => {
+    const nm = f.properties && f.properties.name;
+    if (nm) nameToFeature[nm] = f;
+    const v = COUNTRY[nm];
+    if (v && v[3]) iso2ToFeature[v[3]] = f;
+  });
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
   const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve'];
@@ -565,6 +582,9 @@ window.addEventListener("error", function(e){
     // 联动高亮：悬停中国→台湾同亮，悬停台湾→中国同亮
     const partner = partnerIso2(iso2);
     allPaths.classed('active', p => { const v = COUNTRY[(p.properties&&p.properties.name)]; return v && partner.includes(v[3]); });
+    // 3D 浮雕突出 + 清晰黄边高亮：悬停国 + 联动国（cn/tw）一起探出
+    const embossIso2 = [iso2].concat(partner);
+    showEmboss(embossIso2);
     curTz = tz;
     tipCn.textContent = cn; tipEn.textContent = (d.properties&&d.properties.name)||'';
     tipCn2.textContent = cn;
@@ -578,7 +598,24 @@ window.addEventListener("error", function(e){
     if (y + th > window.innerHeight) y = e.clientY - th - pad;
     tip.style.left = x + 'px'; tip.style.top = y + 'px';
   }
-  function onLeave(){ tip.classList.remove('show'); curTz = null; allPaths.classed('active', false); }
+  function onLeave(){ tip.classList.remove('show'); curTz = null; allPaths.classed('active', false); hideEmboss(); }
+  // —— 3D 浮雕突出：克隆悬停国（及其联动国）路径，围绕自身质心略微放大并投偏移阴影，
+  //    加清晰黄色边框（vector-effect 锁定 1:1 线宽，不模糊、不加粗边界）。克隆置于 gZoom 内，随拖拽/缩放同步。
+  function showEmboss(iso2List){
+    gEmboss.selectAll('*').remove();
+    (iso2List || []).forEach(code => {
+      const f = iso2ToFeature[code];
+      if (!f) return;
+      const d = path(f);
+      if (!d) return;
+      const c = path.centroid(f);                 // 内容坐标质心，用于围绕自身放大
+      const clone = gEmboss.append('path')
+        .attr('class', 'emboss')
+        .attr('d', d)
+        .attr('transform', `translate(${c[0]},${c[1]}) scale(1.055) translate(${-c[0]},${-c[1]})`);
+    });
+  }
+  function hideEmboss(){ gEmboss.selectAll('*').remove(); }
   function onClick(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     if (!iso2){ return; }

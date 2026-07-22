@@ -115,6 +115,17 @@
   .country.active{
     fill:rgba(13,148,136,.95); stroke:#fff; stroke-width:1;
   }
+  /* 3D 浮雕突出层：悬停国家「从平面探出」+ 清晰黄色边框高亮 */
+  .emboss-layer{ pointer-events:none; }
+  /* 克隆国：围绕质心略微放大（JS transform scale 1.055）并投偏移阴影制造立体浮雕；
+     黄色边框 vector-effect 锁定 1:1 屏幕像素线宽 → 清晰锐利、不模糊、不加粗边界。 */
+  .emboss-layer path.emboss{
+    fill:rgba(56,189,248,.5);
+    stroke:#ffd400; stroke-width:1.4;
+    vector-effect:non-scaling-stroke;
+    paint-order:stroke fill;
+    filter:url(#embossShadow);
+  }
   /* 地球：海洋底（固定，置于内容之下）+ 轮廓边界（固定，描边光晕，置于内容之上） */
   .sphere-ocean{ fill:rgba(10,20,42,.55); }
   .sphere-frame{
@@ -338,6 +349,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221146"></script>
+  <script src="worldmap_app.js?v=202607221151"></script>
 </body>
 </html>
