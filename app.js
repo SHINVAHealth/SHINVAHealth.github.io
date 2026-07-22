@@ -182,8 +182,6 @@ window.addEventListener("unhandledrejection", function(e){
       _features = mainFeatures;
       const ib = $('inset'); if (ib) ib.style.display = 'none';
       const features = mainFeatures;
-      // 预计算并缓存每个一级区域的投影路径 d 与质心 c（renderEmboss 复用，避免悬停时反复重算几十 KB 路径字符串 —— 美/墨几何极精细时是卡顿主因）
-      features.forEach(f => { f.__d = path(f); try { f.__c = path.centroid(f); } catch(e){ f.__c = [0,0]; } });
       setStatus('loading');
       const svg = d3.select('#map').append('svg').attr('width', W).attr('height', H);
       _svg = svg;
@@ -215,6 +213,9 @@ window.addEventListener("unhandledrejection", function(e){
       PROJ = d3.geoMercator().fitExtent([[14,14],[W-14,H-14]], {type:'FeatureCollection', features: mainFeatures});
       const path = d3.geoPath(PROJ);
       _path = path;
+      // 预计算并缓存每个一级区域的投影路径 d 与质心 c（renderEmboss 复用，避免悬停时反复重算几十 KB 路径字符串 —— 美/墨几何极精细时是卡顿主因）
+      // 必须放在 path 定义之后（const 暂时性死区，提前引用会抛 ReferenceError 使整个渲染失败）
+      features.forEach(f => { try { f.__d = path(f); f.__c = path.centroid(f); } catch(e){ f.__d = ''; f.__c = [0,0]; } });
       // 兜底裁剪区：国家（省并集），供未匹配到所属省的市区回退使用
       features.forEach((ft) => {
         defs.select('#admClip').append('path').attr('d', path(ft));
