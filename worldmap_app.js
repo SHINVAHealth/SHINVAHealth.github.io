@@ -371,30 +371,20 @@ window.addEventListener("error", function(e){
     const boxL = GM.l, boxR = w - GM.r, boxT = GM.t, boxB = h - GM.b;
     const t = _curTransform;
     const k = t.k;
-    // 横尺：屏幕 x → 内容坐标 → 反投影求经度。地球内容宽度 TILE，经度范围随 tx 平移。
-    // 用 projection 反解：对每列屏幕 x，取内容坐标 cx = (x - t.x)/k，再反投影 [cx, 赤道y] 求经度。
+    // 横尺：直接由投影驱动生成经度标签（保证 0° 标签精确落在本初子午线 mer-eq 上）。
+    // 遍历经度刻度值，用 projection([lon,0]) 算内容坐标，套当前 transform 得屏幕 x，
+    // 仅保留落在地球横尺可见范围内的标签。这样 0° 标签 x == mer-eq 赤道点 x，严格对齐。
     const eqY = projection([0, 0])[1];
-    // 选刻度步长：k 越大刻度越密
     const lonTick = k <= 1.2 ? 30 : (k <= 2.5 ? 15 : (k <= 4 ? 10 : 5));
     const lonSet = [];
-    // 扫描屏幕横尺范围，按内容坐标步长生成刻度
-    for (let x = boxL; x <= boxR; x += 4){
-      const cx = (x - t.x) / k;
-      // 反投影求经度：NaturalEarth1 经度与 x 近似线性（在赤道），用 projection.invert
-      const inv = projection.invert([cx, eqY]);
-      if (!inv) continue;
-      let lon = inv[0];
-      // 归一化到 [-180,180]
-      lon = ((lon + 180) % 360 + 360) % 360 - 180;
-      const rounded = Math.round(lon / lonTick) * lonTick;
-      if (rounded < -180) continue;
-      if (rounded > 180) continue;
-      // 去重（屏幕相邻同刻度）
-      if (!lonSet.length || Math.abs(lonSet[lonSet.length-1].lon - rounded) >= lonTick * 0.9){
-        lonSet.push({ lon: rounded, x });
-      }
+    for (let lon = -180; lon <= 180; lon += lonTick){
+      const p = projection([lon, 0]);           // 赤道处该经度的内容坐标
+      if (!p) continue;
+      const x = p[0] * k + t.x;                  // 套 zoom transform 得屏幕 x
+      if (x < boxL - 2 || x > boxR + 2) continue; // 超出地球横尺不画
+      lonSet.push({ lon, x });
     }
-    const lonSel = gRuler.selectAll('text.ruler-lon').data(lonSet, d => d.lon + '@' + Math.round(d.x));
+    const lonSel = gRuler.selectAll('text.ruler-lon').data(lonSet, d => d.lon);
     lonSel.exit().remove();
     lonSel.enter().append('text').attr('class','ruler-lon')
       .merge(lonSel)
