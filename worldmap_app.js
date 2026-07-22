@@ -256,6 +256,9 @@ window.addEventListener("error", function(e){
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
   const frameSphere = svg.append('path').attr('class','sphere-frame'); // 边界描边（内容之上，固定）
+  // 经纬度「仪表尺」：固定层（地球轮廓外、界面内侧边缘），不随拖拽缩放平移，不被 globeClip 裁切遮挡；
+  // 但刻度数值随 zoom.transform 实时重算（拖拽时横尺经度滚动、缩放时密度变化）→ 满足“地图外 + 随拖动实时变化经纬度”
+  const gRuler = svg.append('g').attr('class','ruler');
 
   // 内容层：3 份平铺世界，用于水平无缝循环滚动（拖到边缘自动衔接）
   const TILES = 3;
@@ -270,9 +273,8 @@ window.addEventListener("error", function(e){
       .on('mouseleave', onLeave)
       .on('click', onClick);
   });
-  // 经纬度参考线 + 小字标注：挂在 gZoom 内、tiles 之上，随拖拽/缩放一起平移缩放
+  // 地球内参考线（网格）：挂在 gZoom 内、tiles 之上，随拖拽/缩放一起平移缩放
   const gGrid = gZoom.append('g').attr('class','graticule');
-  const gLabels = gZoom.append('g').attr('class','grid-labels');
   const allPaths = gZoom.selectAll('path.country');
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
@@ -302,18 +304,13 @@ window.addEventListener("error", function(e){
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
     if (NG_PTS.length) drawNigeriaPoints();
     drawGraticule();
+    drawRulerBase();
+    updateRuler();
   }
 
-  // —— 经纬度参考线 + 刻度标注（固定层，不随拖拽/缩放平移）——
-  // 经线：每 30° 一条（0/±30/.../±180）；纬线：赤道 + 南北回归线(±23.5°) + 南北极圈(±66.5°)。
-  // 以标准世界地图惯例标注北极(N)、南极(S)，赤道(Eq)、回归线(Tropic)、极圈(Circle)。
-  // 上边缘小字标经度，左边缘小字标纬度，对齐 globeClip 裁切窗口内的参考线端点。
+  // —— 地球内参考线（随缩放拖拽，gZoom 内）——
+  // 经线：每 30° 一条；纬线：赤道 + 南北回归线(±23.5°) + 南北极圈(±66.5°)。赤道加亮。
   function drawGraticule(){
-    const w = width(), h = height();
-    // 地球轮廓在内容坐标里的包围盒（fitExtent 留白 GM），标注贴着框上/左的留白区（gZoom 内随拖拽缩放）
-    const boxL = GM.l, boxR = w - GM.r, boxT = GM.t, boxB = h - GM.b;
-
-    // 经线（meridians）：沿经线插值取点连线；NaturalEarth1 经线为曲线，按纬度采样
     const meridians = d3.range(-180, 181, 30);   // -180,-150,...,180
     gGrid.selectAll('path.mer').remove();
     gGrid.selectAll('path.mer').data(meridians).enter().append('path')
@@ -323,7 +320,6 @@ window.addEventListener("error", function(e){
         return 'M' + pts.map(p => p ? (p[0].toFixed(1) + ',' + p[1].toFixed(1)) : null).filter(Boolean).join('L');
       });
 
-    // 纬线（parallels）：纬线为水平直线，直接取左右端点
     const parallels = [
       { lat: 0,   label: '赤道 EQ' },
       { lat: 23.5,  label: '北回归线' },
@@ -339,38 +335,101 @@ window.addEventListener("error", function(e){
         if (!a || !b) return '';
         return 'M' + a[0].toFixed(1) + ',' + a[1].toFixed(1) + 'L' + b[0].toFixed(1) + ',' + b[1].toFixed(1);
       });
+  }
 
-    // 极地标注（贴地球上下边缘内侧）
-    gLabels.selectAll('text.pole').remove();
-    [ { lat: 88, txt: '北 极 N' }, { lat: -88, txt: '南 极 S' } ].forEach(p => {
-      const c = projection([0, p.lat]);
-      if (c) gLabels.append('text').attr('class','pole').attr('x', (boxL + boxR) / 2).attr('y', c[1]).text(p.txt);
-    });
+  // —— 经纬度仪表尺（固定层 gRuler，地球轮廓外，不被裁切遮挡）——
+  // 横尺贴地球框上缘外、竖尺贴地球框左缘外；刻度数值随 zoom.transform 实时重算（见 updateRuler）。
+  // 记录当前 transform，供 ruler 随拖拽滚动。
+  let _curTransform = d3.zoomIdentity;
+  function drawRulerBase(){
+    // 仅画尺子轨道（横/竖基线 + 极地 N/S 角标），刻度数字在 updateRuler 里按需生成
+    const w = width(), h = height();
+    const boxL = GM.l, boxR = w - GM.r, boxT = GM.t, boxB = h - GM.b;
+    gRuler.selectAll('*').remove();
+    // 横尺基线（上方）
+    gRuler.append('line').attr('class','ruler-axis ruler-x')
+      .attr('x1', boxL).attr('y1', boxT - 10).attr('x2', boxR).attr('y2', boxT - 10);
+    // 竖尺基线（左侧）
+    gRuler.append('line').attr('class','ruler-axis ruler-y')
+      .attr('x1', boxL - 10).attr('y1', boxT).attr('x2', boxL - 10).attr('y2', boxB);
+    // 极地角标（贴地球上下外缘）
+    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 14).attr('y', boxT + 4).text('N');
+    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 14).attr('y', boxB - 2).text('S');
+  }
+  // 随拖拽/缩放实时更新刻度数值（在地球外的尺子上滚动显示）
+  function updateRuler(){
+    const w = width(), h = height();
+    const boxL = GM.l, boxR = w - GM.r, boxT = GM.t, boxB = h - GM.b;
+    const t = _curTransform;
+    const k = t.k;
+    // 横尺：屏幕 x → 内容坐标 → 反投影求经度。地球内容宽度 TILE，经度范围随 tx 平移。
+    // 用 projection 反解：对每列屏幕 x，取内容坐标 cx = (x - t.x)/k，再反投影 [cx, 赤道y] 求经度。
+    const eqY = projection([0, 0])[1];
+    // 选刻度步长：k 越大刻度越密
+    const lonTick = k <= 1.2 ? 30 : (k <= 2.5 ? 15 : (k <= 4 ? 10 : 5));
+    const lonSet = [];
+    // 扫描屏幕横尺范围，按内容坐标步长生成刻度
+    for (let x = boxL; x <= boxR; x += 4){
+      const cx = (x - t.x) / k;
+      // 反投影求经度：NaturalEarth1 经度与 x 近似线性（在赤道），用 projection.invert
+      const inv = projection.invert([cx, eqY]);
+      if (!inv) continue;
+      let lon = inv[0];
+      // 归一化到 [-180,180]
+      lon = ((lon + 180) % 360 + 360) % 360 - 180;
+      const rounded = Math.round(lon / lonTick) * lonTick;
+      if (rounded < -180) continue;
+      if (rounded > 180) continue;
+      // 去重（屏幕相邻同刻度）
+      if (!lonSet.length || Math.abs(lonSet[lonSet.length-1].lon - rounded) >= lonTick * 0.9){
+        lonSet.push({ lon: rounded, x });
+      }
+    }
+    const lonSel = gRuler.selectAll('text.ruler-lon').data(lonSet, d => d.lon + '@' + Math.round(d.x));
+    lonSel.exit().remove();
+    lonSel.enter().append('text').attr('class','ruler-lon')
+      .merge(lonSel)
+      .attr('x', d => d.x).attr('y', boxT - 14)
+      .attr('text-anchor','middle')
+      .text(d => fmtLon(d.lon));
 
-    // 上方经度刻度小字（贴地球框上边缘 boxT，居中于每条经线落点）
-    const lonLabels = meridians.map(lon => {
-      const c0 = projection([lon, 0]);
-      return c0 ? { lon, x: c0[0] } : null;
-    }).filter(Boolean);
-    gLabels.selectAll('text.lon-lab').remove();
-    gLabels.selectAll('text.lon-lab').data(lonLabels).enter().append('text')
-      .attr('class', 'lon-lab')
-      .attr('x', d => d.x)
-      .attr('y', boxT - 4)
-      .attr('text-anchor', 'middle')
-      .text(d => d.lon === 0 ? '0°' : (d.lon > 0 ? '+' + d.lon + '°' : d.lon + '°'));
-
-    // 左侧纬度刻度小字（贴地球框左边缘 boxL，对齐纬线左端点；赤道/回归线/极圈用中文短标）
-    const latItems = parallels.map(d => ({ lat: d.lat, label: d.label, y: projection([0, d.lat])[1] }));
-    const latExtra = d3.range(-60, 61, 30).filter(v => v !== 0).map(lat => ({ lat: lat, label: (lat > 0 ? '+' : '') + lat + '°', y: projection([0, lat])[1] }));
-    const latLabels = latItems.concat(latExtra).sort((a, b) => a.y - b.y);
-    gLabels.selectAll('text.lat-lab').remove();
-    gLabels.selectAll('text.lat-lab').data(latLabels).enter().append('text')
-      .attr('class', 'lat-lab')
-      .attr('x', boxL - 6)
-      .attr('y', d => d.y + 3)
-      .attr('text-anchor', 'end')
-      .text(d => d.label);
+    // 竖尺：屏幕 y → 内容坐标 → 反投影求纬度
+    const lon0x = projection([0, 0])[0];
+    const latTick = k <= 1.2 ? 30 : (k <= 2.5 ? 15 : (k <= 4 ? 10 : 5));
+    const latSet = [];
+    for (let y = boxT; y <= boxB; y += 4){
+      const cy = (y - t.y) / k;
+      const inv = projection.invert([lon0x, cy]);
+      if (!inv) continue;
+      let lat = inv[1];
+      if (lat < -90 || lat > 90) continue;
+      const rounded = Math.round(lat / latTick) * latTick;
+      if (rounded < -85 || rounded > 85) continue;
+      if (!latSet.length || Math.abs(latSet[latSet.length-1].lat - rounded) >= latTick * 0.9){
+        latSet.push({ lat: rounded, y });
+      }
+    }
+    const latSel = gRuler.selectAll('text.ruler-lat').data(latSet, d => d.lat + '@' + Math.round(d.y));
+    latSel.exit().remove();
+    latSel.enter().append('text').attr('class','ruler-lat')
+      .merge(latSel)
+      .attr('x', boxL - 14).attr('y', d => d.y + 3)
+      .attr('text-anchor','end')
+      .text(d => fmtLat(d.lat));
+  }
+  function fmtLon(lon){
+    if (lon === 0) return '0°';
+    if (lon === 180) return '180°';
+    if (lon === -180) return '-180°';
+    return (lon > 0 ? '+' : '') + lon + '°';
+  }
+  function fmtLat(lat){
+    if (lat === 0) return '赤道';
+    if (lat === 23.5) return '北回归';
+    if (lat === -23.5) return '南回归';
+    if (lat === 66.5) return '北极圈';
+    if (lat === -66.5) return '南极圈';
+    return (lat > 0 ? '+' : '') + lat + '°';
   }
   window.addEventListener('resize', resize);
   resize();
@@ -401,6 +460,9 @@ window.addEventListener("error", function(e){
       // 直接使用 d3 的 transform（k>1 为原始连续值，k<=1 已被 constrain 取模到 [-TILE,0)）。
       // 渲染层不再二次取模，彻底消除"持续放大时悬停点严重偏移"的问题。
       gZoom.attr('transform', event.transform);
+      // 经纬度仪表尺随拖拽/缩放实时变化（尺子在地球外、不被裁切，数值按 transform 重算滚动）
+      _curTransform = event.transform;
+      updateRuler();
       // 拖拽/缩放手势内同步 LOL 手位置：d3 手势中 mousemove 不一定冒泡到 window，故用 sourceEvent 兜底
       if (event.sourceEvent && typeof event.sourceEvent.clientX === 'number' && _globeEl) {
         const r = _globeEl.getBoundingClientRect();
