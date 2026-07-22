@@ -209,15 +209,34 @@ window.addEventListener("error", function(e){
     tw:886, tz:255, ua:380, ug:256, us:1, uy:598, uz:998, ve:58, vn:84, vu:678,
     xk:383, ye:967, za:27, zm:260, zw:263
   };
-  // 常用国拼音表（iso2 -> 全拼/常用别名，小写无空格），用于拼音检索（如 meiguo→美国 / moxige→墨西哥）。
-  // 仅覆盖有拼音检索价值的国；其余国可继续用英文名检索。跟踪 7 国 + 美国 + 中国等必含。
+  // 全量国家拼音表（iso2 -> 全拼/常用别名，小写无空格），覆盖 COUNTRY 全部 175 国，用于拼音检索（如 meiguo→美国 / moxige→墨西哥）。
   const PINYIN = {
-    cn:'zhongguo', us:'meiguo meilijian', bd:'mengjialaguo mengjia',
-    ng:'niriliya', ci:'ketediva xiangyabin xiangya', tz:'tansangniya',
-    gt:'weidimala', mx:'moxige', ve:'weineiruila',
-    jp:'riben', kr:'hanguo', kp:'chaoxian', ru:'eluosi', gb:'yingguo',
-    fr:'faguo', de:'deguo', in:'yindu', br:'baxi', ca:'jianada',
-    au:'aodaliya', za:'nifei', eg:'aiji', za_:'nanfei'
+    ae:'alabolianheqiuzhangguo', af:'afuhan', al:'aerbaniya', am:'yameiniya', ao:'anguola', aq:'nanjizhou',
+    ar:'agenting', at:'aodili', au:'aodaliya', az:'asaiqiyu', ba:'bosiniyaheiheigeweina', bd:'mengjialaguo mengjia',
+    be:'bilishi', bf:'bujinafasu', bg:'baogaliya', bi:'bulongdi', bj:'beining', bn:'wenlai', bo:'boliviya',
+    br:'baxi', bs:'bahama', bt:'budan', bw:'botuwanfa', by:'bailieeluosi', bz:'bolilizi', ca:'jianada',
+    cd:'gangguojin', cf:'zhongfeigongheguo', cg:'gangguobu', ch:'ruishi', ci:'ketediva xiangyabin xiangya',
+    cl:'zhili', cm:'kamailong', cn:'zhongguo', co:'gelunbiya', cr:'gesidalajia', cu:'guba', cy:'saipulusi',
+    cz:'jieke', de:'deguo', dj:'jibuti', dk:'danmai', do:'duominijia', dz:'aerjiliya', ec:'eguaduoer',
+    ee:'aishaniya', eg:'aiji', eh:'xisaohala', er:'eliiteliyali', es:'xibanya', et:'aisesaibiya', fi:'fenlan',
+    fj:'feiji', fk:'fukelanqundao', fr:'faguo', ga:'jiapeng', gb:'yingguo', ge:'gelujiya', gh:'jianna',
+    gl:'gelanland', gm:'gangbiya', gn:'jineiya', gq:'chidaolijineiya', gr:'xila', gt:'weidimala', gw:'jineiyabishao',
+    gy:'guiyana', hn:'hongdulasi', hr:'keluodiyya', ht:'haidi', hu:'xiongyali', id:'yindunixiya', ie:'aierlan',
+    il:'yiselie', in:'yindu', iq:'yilake', ir:'yilang', is:'bingdao', it:'yidali', jm:'yamaijia', jo:'yuedan',
+    jp:'riben', ke:'kenniya', kg:'jierjisishitan', kh:'jianpuzhai', kp:'chaoxian', kr:'hanguo', kw:'keweite',
+    kz:'hasakesitan', la:'laowo', lb:'lubannen', lk:'sililanka', lr:'libiliya', ls:'laisuotuo', lt:'litiawan',
+    lu:'luisenbao', lv:'latuiya', ly:'libiya', ma:'moluoge', md:'moerduowa', me:'heimshan', mg:'madajiasijia',
+    mk:'beimagedun', ml:'mali', mm:'mianandian', mn:'menggu', mr:'maolitaniya', mw:'malawi', mx:'moxige',
+    my:'malaixiya', mz:'mozambike', na:'namibiya', nc:'xinkalediniya', ne:'nirier', ng:'niriliya', ni:'nijialagua',
+    nl:'helan', no:'nuowei', np:'niboer', nz:'xinxilan', om:'aman', pa:'bamana', pe:'bilu', pg:'babuyaxinjineiya',
+    ph:'feilvbin', pk:'bajisitan', pl:'bolan', pr:'boluodeluo', ps:'basitan', pt:'putaoya', py:'balagui',
+    qa:'kataer', ro:'luomaniya', rs:'saierweiya', ru:'eluosi', rw:'luwangda', sa:'shutealabo', sb:'suoluomenqundao',
+    sd:'sudan', se:'ruidian', si:'siluowenniya', sk:'siluofake', sl:'sailajionglai', sn:'senenagel', so:'suomali',
+    sr:'sulinan', ss:'nansudan', sv:'saerwaduo', sy:'xuliya', sz:'siweishilan', td:'zhade', tf:'faxingnanfanglingdi',
+    tg:'duoge', th:'taiguo', tj:'tajikesitan', tl:'dongdimen', tm:'tukumensitan', tn:'tunisi', tr:'tuerqi',
+    tt:'teliniwengdhebag', tw:'zhongguotaiwan taiwan', tz:'tansangniya', ua:'wukelan', ug:'wuganda', us:'meiguo meilijian',
+    uy:'wulaguai', uz:'wuzibiekesitan', ve:'weineiruila', vn:'yuenan', vu:'wanuatu', xk:'kesuowo', ye:'yemen',
+    za:'nifei nanfei', zm:'zanbiya', zw:'jinbabwe'
   };
   function pinyinOf(code){ return PINYIN[code] || ''; }
 
