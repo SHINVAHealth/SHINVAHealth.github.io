@@ -315,22 +315,20 @@ window.addEventListener("error", function(e){
     updateRuler();
   }
 
-  // —— 经纬网（复刻专业世界地图，d3.geoGraticule 生成真实地理弧线）——
-  // 经线每 30°（含 0/±180），纬线每 30°（含赤道），关键纬线细化：±23.5°（回归线）、±66.5°（极圈）。
-  // 粗细分级（1:1 复刻主流品牌地图观感）：
-  //   赤道 / 本初子午线 最粗主轴；回归线 / 极圈 中粗；其余经线纬线 细。
-  const graticule = d3.geoGraticule()
-    .step([30, 30])
-    .extentMinor([[-180,-90],[180,90]])
-    .precision(0.5);
+  // —— 经纬网（1:1 复刻国际品牌世界地图 NatGeo / Google / 教科书挂图的经纬网刻画）——
+  // 全部【实线】（用户要求），但按地理重要性建立清晰层级（非全等粗细）：
+  //   · 赤道 / 本初子午线  → 最粗主轴实线（亮，0.9px@基准、随缩放）
+  //   · 南北回归线 ±23.5° / 南北极圈 ±66.5° → 中粗实线
+  //   · 其余 30° 间隔经线 / 纬线 → 细实线但低透明度（建立层级、不抢主干）
+  // 用 d3.geoGraticule 生成真实地理弧线（高纬纬线自然弯曲），每 30° 一格。
   function drawGraticule(){
     const gp = d3.geoPath(projection);
     // 关键纬线集合（用于粗细分级）
     const keyLats = { 0:'par-eq', 23.5:'par-mid', '-23.5':'par-mid', 66.5:'par-mid', '-66.5':'par-mid' };
     const keyLons = { 0:'mer-eq' };   // 本初子午线加粗
-    // 纬线（含关键纬线细化）
+    // 纬线（标准 30° 间隔，并细化关键纬线）
     const lats = d3.range(-60, 61, 30).concat([23.5, -23.5, 66.5, -66.5, 0]);
-    // 经线
+    // 经线（标准 30° 间隔，含 0/±180）
     const lons = d3.range(-180, 181, 30);
 
     // 每个 tile 都铺一份网格（3 份平铺），拖拽时随 gZoom 平移、水平无缝循环，线永不消失
@@ -339,11 +337,11 @@ window.addEventListener("error", function(e){
       g.selectAll('path.mer').remove();
       lats.forEach(lat => {
         const geo = { type:'LineString', coordinates: d3.range(-180, 181, 2).map(lon => [lon, lat]) };
-        g.append('path').attr('class', 'par ' + (keyLats[String(lat)] || '')).attr('d', gp(geo));
+        g.append('path').attr('class', 'par ' + (keyLats[String(lat)] || 'par-thin')).attr('d', gp(geo));
       });
       lons.forEach(lon => {
         const geo = { type:'LineString', coordinates: d3.range(-85, 86, 2).map(lat => [lon, lat]) };
-        g.append('path').attr('class', 'mer ' + (keyLons[String(lon)] || '')).attr('d', gp(geo));
+        g.append('path').attr('class', 'mer ' + (keyLons[String(lon)] || 'mer-thin')).attr('d', gp(geo));
       });
     });
   }
@@ -404,21 +402,23 @@ window.addEventListener("error", function(e){
       .attr('text-anchor','middle')
       .text(d => fmtLon(d.lon));
 
-    // 竖尺：屏幕 y → 内容坐标 → 反投影求纬度
-    const lon0x = projection([0, 0])[0];
+    // 竖尺（左侧纬度标注）：必须对齐【地球左边框处真实的纬线弧线】——
+    // 旧版固定用本初子午线(lon=0)反投影求纬度 y，但 NaturalEarth1 下纬线在各经度 y 不同，
+    // 地球左边框对应经度≠0，导致标注 y 与左边框实际纬线错位、看起来不平行。
+    // 修复：先求左边框当前对应经度 lonLeft（用框中点的内容坐标反投影），
+    // 再直接取 projection([lonLeft, lat]) 的内容 y，套当前 transform 得屏幕 y → 标注精确落在左边框纬线上。
+    const leftContentX = (boxL - t.x) / k;                 // 左边框对应的内容坐标 x
+    const invLeft = projection.invert([leftContentX, eqY]);
+    const lonLeft = invLeft ? invLeft[0] : 0;
     const latTick = k <= 1.2 ? 30 : (k <= 2.5 ? 15 : (k <= 4 ? 10 : 5));
     const latSet = [];
-    for (let y = boxT; y <= boxB; y += 4){
-      const cy = (y - t.y) / k;
-      const inv = projection.invert([lon0x, cy]);
-      if (!inv) continue;
-      let lat = inv[1];
-      if (lat < -90 || lat > 90) continue;
-      const rounded = Math.round(lat / latTick) * latTick;
-      if (rounded < -85 || rounded > 85) continue;
-      if (!latSet.length || Math.abs(latSet[latSet.length-1].lat - rounded) >= latTick * 0.9){
-        latSet.push({ lat: rounded, y });
-      }
+    for (let lat = -60; lat <= 60; lat += latTick){
+      // 直接算左边框处该纬线的屏幕 y（内容坐标 -> 屏幕坐标），精确对齐弧线
+      const p = projection([lonLeft, lat]);
+      if (!p) continue;
+      const sy = p[1] * k + t.y;
+      if (sy < boxT - 4 || sy > boxB + 4) continue;        // 超出地球框不画
+      latSet.push({ lat, y: sy });
     }
     const latSel = gRuler.selectAll('text.ruler-lat').data(latSet, d => d.lat + '@' + Math.round(d.y));
     latSel.exit().remove();
