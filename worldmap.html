@@ -44,6 +44,9 @@
 })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>世界地图 | 新华健康外贸客户管理系统</title>
 <style>
   :root{
@@ -292,8 +295,25 @@
   .wm-track-search{ margin:8px 0 2px; }
   .wm-track-list .wm-track-empty{ padding:10px 12px; color:var(--muted); font-size:12px; }
   @media (max-width:900px){
+    /* 地图占满全宽 */
     .globe{ left:0; }
-    .sidepanel{ display:none; }
+    /* 检索面板改为顶部全宽工具条：保证移动端可搜索 / 访问跟踪列表（不再整块隐藏） */
+    .sidepanel{
+      top:64px; left:8px; right:8px; width:auto;
+      flex-direction:row; flex-wrap:wrap; align-items:center;
+      gap:8px; padding:10px; max-height:52vh; overflow:auto;
+    }
+    .sidepanel .sp-search{ flex:1 1 100%; }
+    .sidepanel .wm-track-btn{ flex:1 1 100%; }
+    .sidepanel .wm-track-list{ flex:1 1 100%; }
+    /* 检索结果在面板内展开（不再绝对浮层遮挡） */
+    .wm-results{ position:static; margin-top:6px; max-height:200px; }
+    /* 缩放按钮缩小并靠右下 */
+    .mapctrl{ right:12px; bottom:12px; gap:6px; }
+    .mapctrl button{ width:38px; height:38px; font-size:18px; }
+    /* 顶部提示让出空间 */
+    .banner{ top:8px; font-size:12px; padding:8px 12px; }
+    .legend{ left:12px; bottom:12px; font-size:11px; padding:6px 10px; }
   }
 </style>
 <script src="https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js"></script>
