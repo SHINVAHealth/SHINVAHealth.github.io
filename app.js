@@ -150,6 +150,8 @@ window.addEventListener("unhandledrejection", function(e){
     let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, _regionFilter=null, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
+  let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
+  let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
     const CAP = facts ? {lat:facts.lat, lng:facts.lng, name:facts.capital} : null;
     const AIR = META.AIRPORTS[iso2] || null;
 
@@ -167,6 +169,7 @@ window.addEventListener("unhandledrejection", function(e){
     const US_INSULAR = new Set(["Puerto Rico","American Samoa","United States Virgin Islands","Guam","Commonwealth of the Northern Mariana Islands"]);
     function adm1Name(f){ return (f && f.properties && (f.properties.shapeName || f.properties.name)) || ''; }
     function renderProvinces(src){
+      _hoverRegion = null; _embossRegions = new Map();   // 重绘前清空浮雕选中，避免引用过期 feature
       const map = $('map');
       const W = map.clientWidth || 800, H = map.clientHeight || 480;
       const objName = Object.keys(_topo.objects)[0];
@@ -219,17 +222,17 @@ window.addEventListener("unhandledrejection", function(e){
       // 1) 省填充（底层，承载 hover 提示）
       const pf = g.selectAll('path.prov-fill').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-fill')
-        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); showEmbossRegion(d); })
-        .on('mouseleave', (e,d) => { hideTip(e,d); hideEmbossRegion(); })
-        .on('click', (e,d) => setRegionFilter('adm1', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget));
+        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); hoverRegion(d, 'adm1'); })
+        .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); })
+        .on('click', (e,d) => setRegionFilter('adm1', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget, d));
       _provFill = pf.nodes();
       // 2) 二级行政区域（中间层，按所属一级区域单独裁剪，避免跨区域交叉）
       _gAdm2 = g.append('g');
       // 3) 省轮廓（最上层，描边清晰，市区线不压过省界）
       const pl = g.selectAll('path.prov-line').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-line')
-        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); showEmbossRegion(d); })
-        .on('mouseleave', (e,d) => { hideTip(e,d); hideEmbossRegion(); });
+        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); hoverRegion(d, 'adm1'); })
+        .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); });
       _provLine = pl.nodes();
       // 二次构建国家轮廓：由一级行政区域(ADM1)并集溶解内部边界，得到国家外边界；
       // 行政区轮廓即为该并集的子集，天然“在”国家轮廓之内（保证不越界）
@@ -299,23 +302,24 @@ window.addEventListener("unhandledrejection", function(e){
 
       $('zin').onclick = () => svg.transition().duration(200).call(zoom.scaleBy, 1.4);
       $('zout').onclick = () => svg.transition().duration(200).call(zoom.scaleBy, 1/1.4);
-      $('zreset').onclick = () => { svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity); clearCustomerHighlight(); };
+      $('zreset').onclick = () => { svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity); clearCustomerHighlight(); _embossRegions.clear(); _hoverRegion = null; renderEmboss(); };
       $('custtoggle').onclick = function(){
         _custVisible = !_custVisible;
         this.classList.toggle('active', _custVisible);
         this.textContent = _custVisible ? '隐藏客户位点' : '显示客户位点';
         if (_gCust) _gCust.style('display', _custVisible ? null : 'none');
-        if (!_custVisible) clearCustomerHighlight();
+        if (!_custVisible){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
       };
       // [开启/关闭多点追踪]：默认关闭（单点）。开启 → 可同时保留多个客户黄点；关闭 → 点新行即清空上家。
       $('multitrack').onclick = function(){
         _multiTrack = !_multiTrack;
         this.classList.toggle('active', _multiTrack);
         this.textContent = _multiTrack ? '关闭多点追踪' : '开启多点追踪';
-        // 由开启 → 关闭：自动重置地图（复位缩放/平移），并清掉开启期遗留的多点黄点，回到单点干净状态
+        // 由开启 → 关闭：自动重置地图（复位缩放/平移），并清掉开启期遗留的多点黄点 + 多点浮雕，回到单点干净状态
         if (!_multiTrack){
           if (svg && zoom) svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
           clearCustomerHighlight();
+          _embossRegions.clear(); _hoverRegion = null; renderEmboss();
         }
       };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
@@ -325,16 +329,13 @@ window.addEventListener("unhandledrejection", function(e){
       if (window.__custList) drawCustomerPointsOnMap(window.__custList);  // 省份重绘后重挂客户点
     }
 
-    // —— 3D 浮雕辅助（悬停一级/二级行政区域时整块区域「从平面探出」）——
+    // —— 3D 浮雕辅助：悬停/选中 一级(ADM1)/二级(ADM2) 行政区域时整块区域「从平面探出」 ——
+    // 支持多区域同时浮雕：_hoverRegion(瞬时悬停) + _embossRegions(选中持久，可多区域、可多点追踪累积)
     function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
     function wallColor(t){ const r = lerp(8,14,t), g = lerp(47,116,t), b = lerp(73,178,t); return `rgb(${r},${g},${b})`; }
-    function showEmbossRegion(feature){
-      if (!_gEmboss || !_path) return;
-      _gEmboss.selectAll('*').remove();
-      const f = feature; if (!f) return;
+    // 绘制单个区域的浮雕三层（地面柔影 + 侧壁厚度 + 黄边高光顶面）
+    function embossOne(f, c, k){
       const d = _path(f); if (!d) return;
-      const c = _path.centroid(f);
-      const k = (_curK && _curK > 0) ? _curK : 1;
       const H = 9 / k;            // 浮雕高度恒定 ~9px 屏幕（随缩放反比）
       const LAYERS = 10;
       const sBase = 1.03, sTop = 1.04;
@@ -348,25 +349,94 @@ window.addEventListener("unhandledrejection", function(e){
       }
       _gEmboss.append('path').attr('class','emboss-top').attr('d', d)
         .attr('transform', `translate(${c[0]},${c[1]-H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
-      // 客户绿点随该行政区「浮雕」一起 3D 探出：落在被悬停多边形内的点，其 content 坐标按
-      // 与 emboss-top 完全相同的变换抬升(H、绕质心放大 sTop)，由 updateMarkers 套用当前 zoom 落屏，
-      // 从而精准贴合浮雕顶面、随区域浮雕一起探出。
+    }
+    // 统一渲染：所有需浮雕的区域（悬停 + 选中）一次性绘制；客户点落在任一浮雕多边形内即随该区域一起抬升
+    function renderEmboss(){
+      if (!_gEmboss || !_path) return;
+      _gEmboss.selectAll('*').remove();
+      const k = (_curK && _curK > 0) ? _curK : 1;
+      const regions = [];
+      if (_hoverRegion){
+        const dup = [..._embossRegions.values()].some(r => r.type === _hoverRegion.type && r.name === _hoverRegion.name);
+        if (!dup) regions.push(_hoverRegion);
+      }
+      _embossRegions.forEach(r => regions.push(r));
+      const lifts = [];
+      regions.forEach(rg => {
+        const c = _path.centroid(rg.feature);
+        embossOne(rg.feature, c, k);
+        lifts.push({ feature: rg.feature, c, H: 9 / k, sTop: 1.04 });
+      });
+      // 客户点：落在任一浮雕多边形内的点，其 content 坐标按与 emboss-top 完全相同的变换抬升，
+      // 由 updateMarkers 套用当前 zoom 落屏 → 精准贴合浮雕顶面、随区域一起 3D 探出
       _custEls.forEach(m => {
-        const r = m.rec;
-        const inside = r && r.lng != null && r.lat != null && d3.geoContains(f, [+r.lng, +r.lat]);
-        if (inside){
-          m.lifted = true;
-          m.liftedBase = [ c[0] + sTop*(m.base[0]-c[0]), (c[1]-H) + sTop*(m.base[1]-c[1]) ];
-        } else {
-          m.lifted = false; m.liftedBase = null;
+        const rec = m.rec;
+        m.lifted = false; m.liftedBase = null;
+        if (rec && rec.lng != null && rec.lat != null){
+          for (const L of lifts){
+            if (d3.geoContains(L.feature, [+rec.lng, +rec.lat])){
+              m.lifted = true;
+              m.liftedBase = [ L.c[0] + L.sTop*(m.base[0]-L.c[0]), (L.c[1]-L.H) + L.sTop*(m.base[1]-L.c[1]) ];
+              break;
+            }
+          }
         }
       });
-    }
-    function hideEmbossRegion(){
-      if (_gEmboss) _gEmboss.selectAll('*').remove();
-      // 客点落回平面
-      _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
       if (_curT) updateMarkers(_curT);
+    }
+    // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
+    function hoverRegion(d, type){
+      _hoverRegion = { feature: d, type, name: (d.properties && (d.properties.shapeName || d.properties.name)) || '' };
+      renderEmboss();
+    }
+    function unhoverRegion(){ _hoverRegion = null; renderEmboss(); }
+    function findAdm1Feature(name){
+      if (!_features || !name) return null;
+      return _features.find(f => (f.properties.shapeName || f.properties.name) === name) || null;
+    }
+    function findAdm2Feature(name){
+      if (!name) return null;
+      let found = null;
+      if (_gAdm2) _gAdm2.selectAll('path.adm2').each(function(){ if (!found){ const d = this.__data__; const n = d ? (d.properties.shapeName || d.properties.name) : ''; if (n === name) found = d; } });
+      return found;
+    }
+    // 选中区域浮雕：source = 'region'(手动点击区域) / 'customer'(点击客户行联动)
+    // 多点追踪开启 → 同 key 再点切换(增/删)，可累积多区域；关闭 → 移除同 source 其它项，仅保留当前(单点替换)
+    function _embossAddOrToggle(type, name, feature, source){
+      if (!feature) return;
+      const key = source + '|' + type + '|' + name;
+      if (_multiTrack){
+        if (_embossRegions.has(key)) _embossRegions.delete(key);
+        else _embossRegions.set(key, { feature, type, name, source });
+      } else {
+        const sameSelected = _embossRegions.has(key) && _embossRegions.get(key).source === source;
+        for (const [k2, v] of [..._embossRegions]){ if (v.source === source && k2 !== key) _embossRegions.delete(k2); }
+        if (sameSelected) _embossRegions.delete(key);
+        else _embossRegions.set(key, { feature, type, name, source });
+      }
+      renderEmboss();
+    }
+    function _embossRemoveBySource(source){
+      let removed = false;
+      for (const [k, v] of [..._embossRegions]){ if (v.source === source){ _embossRegions.delete(k); removed = true; } }
+      if (removed) renderEmboss();
+    }
+    // 由当前黄色客户集合(_hlIds)重建 'customer' 来源的浮雕区域（单点至多一个、多点多个），保持与黄点同步
+    function _syncCustomerEmboss(){
+      for (const [k, v] of [..._embossRegions]){ if (v.source === 'customer') _embossRegions.delete(k); }
+      const list = window.__custList || [];
+      const seen = new Set();
+      _hlIds.forEach(id => {
+        const rec = list.find(x => x.__id === id);
+        if (!rec) return;
+        const name = rec.__adm1 || rec.__adm2;
+        if (!name || seen.has(name)) return;
+        seen.add(name);
+        const type = rec.__adm1 ? 'adm1' : 'adm2';
+        const feat = type === 'adm1' ? findAdm1Feature(name) : findAdm2Feature(name);
+        if (feat) _embossRegions.set('customer|' + type + '|' + name, { feature: feat, type, name, source: 'customer' });
+      });
+      renderEmboss();
     }
     // 偏远海外领地小窗：每个领地用各自投影画在独立小格里并标注名称（参照中国南海诸岛小窗）
     function renderInsularInset(features){
@@ -504,10 +574,10 @@ window.addEventListener("unhandledrejection", function(e){
             const prov = ll ? provinceAt(ll) : null;
             const city = d.properties.shapeName || d.properties.name || '未命名市区';
             showTip(e, city + (prov ? ' / ' + prov : ''));
-            showEmbossRegion(d);
+            hoverRegion(d, 'adm2');
           })
-          .on('mouseleave', (e,d) => { hideTip(e,d); hideEmbossRegion(); })
-          .on('click', (e,d) => setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget));
+          .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); })
+          .on('click', (e,d) => setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget, d));
       });
       const n = fc.features.length;
       setStatus(n);
@@ -713,12 +783,15 @@ window.addEventListener("unhandledrejection", function(e){
       if (q) flt = flt.filter(r => [r.company, r.phone, r.name, r.address].some(v => (v||'').toLowerCase().includes(q)));
       renderCustomers(flt);
     }
-    function setRegionFilter(type, name, label, el){
+    function setRegionFilter(type, name, label, el, feature){
       if (_regionFilter && _regionFilter.type === type && _regionFilter.name === name){ _regionFilter = null; }   // 同区域再点 → 取消筛选
       else { _regionFilter = { type, name, label: label || name }; }
-      clearCustomerHighlight();
+      // 单点模式：区域点击清掉客户黄点 + 客户联动浮雕，保持“选中即清空其它”的秩序；多点追踪则保留累积
+      if (!_multiTrack){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
       reapplyRegionSel(el);
       applyRegionFilter();
+      // 该区域 3D 浮雕显示（与筛选一并发起；单点替换、多点追踪累积）
+      if (feature) _embossAddOrToggle(type, name, feature, 'region');
     }
     function reapplyRegionSel(forceEl){
       _provFill.forEach(n => n.classList.remove('prov-sel'));
@@ -788,6 +861,8 @@ window.addEventListener("unhandledrejection", function(e){
       }
       if (node) sel.classed('cust-hl', !nowHl);   // 仅在 绿↔黄 之间切换；半径/位置始终不变
       if (!nowHl) _hlIds.add(id); else _hlIds.delete(id);
+      // 该客户所属区域（优先 ADM1，无则 ADM2）同步 3D 浮雕显示：黄点所在区域随浮雕一起探出（单点替换/多点追踪累积，与黄点保持同步）
+      _syncCustomerEmboss();
       const row = document.querySelector('.cust-table tbody tr[data-id="'+id+'"]');
       if (row) row.classList.toggle('sel', !nowHl);
     }
