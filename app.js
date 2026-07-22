@@ -249,7 +249,8 @@ window.addEventListener("unhandledrejection", function(e){
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
-      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); updateMarkers(ev.transform); _curK = ev.transform.k; });
+      _curT = d3.zoomIdentity;
+      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); updateMarkers(ev.transform); _curK = ev.transform.k; _curT = ev.transform; });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
       applyPendingHl();   // 省份地图就绪，若客户也已加载则自动点亮世界地图跳转带来的 hl 行
@@ -347,8 +348,26 @@ window.addEventListener("unhandledrejection", function(e){
       }
       _gEmboss.append('path').attr('class','emboss-top').attr('d', d)
         .attr('transform', `translate(${c[0]},${c[1]-H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
+      // 客户绿点随该行政区「浮雕」一起 3D 探出：落在被悬停多边形内的点，其 content 坐标按
+      // 与 emboss-top 完全相同的变换抬升(H、绕质心放大 sTop)，由 updateMarkers 套用当前 zoom 落屏，
+      // 从而精准贴合浮雕顶面、随区域浮雕一起探出。
+      _custEls.forEach(m => {
+        const r = m.rec;
+        const inside = r && r.lng != null && r.lat != null && d3.geoContains(f, [+r.lng, +r.lat]);
+        if (inside){
+          m.lifted = true;
+          m.liftedBase = [ c[0] + sTop*(m.base[0]-c[0]), (c[1]-H) + sTop*(m.base[1]-c[1]) ];
+        } else {
+          m.lifted = false; m.liftedBase = null;
+        }
+      });
     }
-    function hideEmbossRegion(){ if (_gEmboss) _gEmboss.selectAll('*').remove(); }
+    function hideEmbossRegion(){
+      if (_gEmboss) _gEmboss.selectAll('*').remove();
+      // 客点落回平面
+      _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
+      if (_curT) updateMarkers(_curT);
+    }
     // 偏远海外领地小窗：每个领地用各自投影画在独立小格里并标注名称（参照中国南海诸岛小窗）
     function renderInsularInset(features){
       const box = $('inset');
@@ -435,7 +454,10 @@ window.addEventListener("unhandledrejection", function(e){
     // 缩放时：标志图标保持固定大小，仅按缩放变换重新定位（不缩放自身）
     function updateMarkers(t){
       _markEls.forEach(m => m.el.attr('transform', `translate(${t.x + t.k*m.base[0]}, ${t.y + t.k*m.base[1]})`));
-      _custEls.forEach(m => m.el.attr('transform', `translate(${t.x + t.k*m.base[0]}, ${t.y + t.k*m.base[1]})`));
+      _custEls.forEach(m => {
+        const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;
+        m.el.attr('transform', `translate(${t.x + t.k*b[0]}, ${t.y + t.k*b[1]})`);
+      });
     }
     function provinceAt(lonlat){
       if (!FC1) return null;
@@ -639,7 +661,7 @@ window.addEventListener("unhandledrejection", function(e){
         g.append('circle').attr('class','cust-pt').attr('r', _CUST_R).attr('cx',0).attr('cy',0)
           .attr('fill','#22c55e')
           .style('cursor','pointer');
-        _custEls.push({ el: g, base: p, rec: r });
+        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
       });
       assignRegions();
       // 重绘后恢复已有黄色高亮（仅改 fill，尺寸/位置不变，不影响其他点）

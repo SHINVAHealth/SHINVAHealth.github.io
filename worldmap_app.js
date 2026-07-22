@@ -780,8 +780,23 @@ window.addEventListener("error", function(e){
     const r = lerp(8, 14, t), g = lerp(47, 116, t), b = lerp(73, 178, t);
     return `rgb(${r},${g},${b})`;
   }
+  // 客户绿点随悬停国家「浮雕」一起 3D 探出：仅抬升落在被悬停 tile 内、且位于该国家多边形内的点，
+  // 使其精准贴合浮雕顶面（content 坐标抬升 H、绕质心放大 1.04，与 emboss-top 同一变换，tile 偏移被 tile 组抵消）。
+  function dropCustomerPoints(){ if (gCust) gCust.selectAll('circle.cust-pt').attr('transform', null); }
+  function liftCustomerPoints(f, c, H, tileX){
+    if (!gCust) return;
+    const tx = Math.round(tileX || 0);
+    const tileG = gCust.selectAll('g.cust-tile').filter(function(){
+      const m = /translate\(([-\d.]+)/.exec(this.getAttribute('transform') || '');
+      return m && Math.round(parseFloat(m[1])) === tx;
+    });
+    tileG.selectAll('circle.cust-pt')
+      .filter(d => d && d.lng != null && d.lat != null && d3.geoContains(f, [+d.lng, +d.lat]))
+      .attr('transform', `translate(${c[0]},${c[1]-H}) scale(1.04) translate(${-c[0]},${-c[1]})`);
+  }
   function showEmboss(iso2List, tileX){
     gEmboss.selectAll('*').remove();
+    dropCustomerPoints();                 // 先落回平面，避免前一国残留抬升
     const tx = tileX || 0;
     const k = (_curTransform && _curTransform.k) ? _curTransform.k : 1;
     const H = 9 / k;          // 浮雕高度（屏幕空间恒定 ~9px，随缩放反比，保持观感一致）
@@ -810,9 +825,10 @@ window.addEventListener("error", function(e){
       gEmboss.append('path').attr('class','emboss-top')
         .attr('d', d)
         .attr('transform', `translate(${c[0] + tx},${c[1] - H}) scale(1.04) translate(${-c[0]},${-c[1]})`);
+      liftCustomerPoints(f, c, H, tx);    // 该国内客户绿点随浮雕一起探出
     });
   }
-  function hideEmboss(){ gEmboss.selectAll('*').remove(); }
+  function hideEmboss(){ gEmboss.selectAll('*').remove(); dropCustomerPoints(); }
   function onClick(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     if (!iso2){ return; }
