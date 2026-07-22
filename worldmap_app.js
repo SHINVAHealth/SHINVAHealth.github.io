@@ -255,6 +255,8 @@ window.addEventListener("error", function(e){
   const oceanSphere = svg.append('path').attr('class','sphere-ocean');   // 海洋底（内容之下）
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
+  const gGrid = svg.append('g').attr('class','graticule').attr('clip-path','url(#globeClip)'); // 参考线：固定层 + 裁切在地球内
+  const gLabels = svg.append('g').attr('class','grid-labels');        // 经纬度小字标注（固定层，地球框外）
   const frameSphere = svg.append('path').attr('class','sphere-frame'); // 边界描边（内容之上，固定）
 
   // 内容层：3 份平铺世界，用于水平无缝循环滚动（拖到边缘自动衔接）
@@ -295,6 +297,77 @@ window.addEventListener("error", function(e){
     allPaths.attr('d', path);
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
     if (NG_PTS.length) drawNigeriaPoints();
+    drawGraticule();
+  }
+
+  // —— 经纬度参考线 + 刻度标注（固定层，不随拖拽/缩放平移）——
+  // 经线：每 30° 一条（0/±30/.../±180）；纬线：赤道 + 南北回归线(±23.5°) + 南北极圈(±66.5°)。
+  // 以标准世界地图惯例标注北极(N)、南极(S)，赤道(Eq)、回归线(Tropic)、极圈(Circle)。
+  // 上边缘小字标经度，左边缘小字标纬度，对齐 globeClip 裁切窗口内的参考线端点。
+  function drawGraticule(){
+    const w = width(), h = height();
+    // 取地球轮廓在屏幕上的包围盒（fitExtent 已含 8px 留白），标注贴着这个框上方/左侧
+    const m = { t: 8, r: 8, b: 8, l: 8 };
+    const boxL = m.l, boxR = w - m.r, boxT = m.t, boxB = h - m.b;
+
+    // 经线（meridians）：沿经线插值取点连线；NaturalEarth1 经线为曲线，按纬度采样
+    const meridians = d3.range(-180, 181, 30);   // -180,-150,...,180
+    gGrid.selectAll('path.mer').remove();
+    gGrid.selectAll('path.mer').data(meridians).enter().append('path')
+      .attr('class', 'mer')
+      .attr('d', lon => {
+        const pts = d3.range(-90, 91, 3).map(lat => projection([lon, lat]));
+        return 'M' + pts.map(p => p ? (p[0].toFixed(1) + ',' + p[1].toFixed(1)) : null).filter(Boolean).join('L');
+      });
+
+    // 纬线（parallels）：纬线为水平直线，直接取左右端点
+    const parallels = [
+      { lat: 0,   label: '赤道 EQ' },
+      { lat: 23.5,  label: '北回归线' },
+      { lat: -23.5, label: '南回归线' },
+      { lat: 66.5,  label: '北极圈' },
+      { lat: -66.5, label: '南极圈' }
+    ];
+    gGrid.selectAll('path.par').remove();
+    gGrid.selectAll('path.par').data(parallels).enter().append('path')
+      .attr('class', d => 'par' + (d.lat === 0 ? ' par-eq' : ''))
+      .attr('d', d => {
+        const a = projection([0, d.lat]), b = projection([180, d.lat]);
+        if (!a || !b) return '';
+        return 'M' + a[0].toFixed(1) + ',' + a[1].toFixed(1) + 'L' + b[0].toFixed(1) + ',' + b[1].toFixed(1);
+      });
+
+    // 极地标注（贴地球上下边缘内侧）
+    gLabels.selectAll('text.pole').remove();
+    [ { lat: 88, txt: '北 极 N' }, { lat: -88, txt: '南 极 S' } ].forEach(p => {
+      const c = projection([0, p.lat]);
+      if (c) gLabels.append('text').attr('class','pole').attr('x', (boxL + boxR) / 2).attr('y', c[1]).text(p.txt);
+    });
+
+    // 上方经度刻度小字（贴地球框上边缘 boxT，居中于每条经线落点）
+    const lonLabels = meridians.map(lon => {
+      const c0 = projection([lon, 0]);
+      return c0 ? { lon, x: c0[0] } : null;
+    }).filter(Boolean);
+    gLabels.selectAll('text.lon-lab').remove();
+    gLabels.selectAll('text.lon-lab').data(lonLabels).enter().append('text')
+      .attr('class', 'lon-lab')
+      .attr('x', d => d.x)
+      .attr('y', boxT - 4)
+      .attr('text-anchor', 'middle')
+      .text(d => d.lon === 0 ? '0°' : (d.lon > 0 ? '+' + d.lon + '°' : d.lon + '°'));
+
+    // 左侧纬度刻度小字（贴地球框左边缘 boxL，对齐纬线左端点；赤道/回归线/极圈用中文短标）
+    const latItems = parallels.map(d => ({ lat: d.lat, label: d.label, y: projection([0, d.lat])[1] }));
+    const latExtra = d3.range(-60, 61, 30).filter(v => v !== 0).map(lat => ({ lat: lat, label: (lat > 0 ? '+' : '') + lat + '°', y: projection([0, lat])[1] }));
+    const latLabels = latItems.concat(latExtra).sort((a, b) => a.y - b.y);
+    gLabels.selectAll('text.lat-lab').remove();
+    gLabels.selectAll('text.lat-lab').data(latLabels).enter().append('text')
+      .attr('class', 'lat-lab')
+      .attr('x', boxL - 6)
+      .attr('y', d => d.y + 3)
+      .attr('text-anchor', 'end')
+      .text(d => d.label);
   }
   window.addEventListener('resize', resize);
   resize();
