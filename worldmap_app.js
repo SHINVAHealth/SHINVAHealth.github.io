@@ -680,14 +680,27 @@ window.addEventListener("error", function(e){
   (function(){
     const input = document.getElementById('wmSearch');
     const results = document.getElementById('wmResults');
+    const clearBtn = document.getElementById('wmClear');
     if (!input || !results) return;
+    // 有内容时显示右侧"×"清除按钮，无内容时隐藏
+    function syncClear(){
+      if (clearBtn) clearBtn.hidden = !input.value;
+    }
+    // 清空搜索：清除文本 + 收起结果 + 隐藏"×"
+    function clearSearch(){
+      input.value = '';
+      results.hidden = true; results.innerHTML = '';
+      syncClear();
+      input.focus();
+    }
     function run(){
-      const raw = input.value.trim();
-      const q = raw.toLowerCase();
+      const raw = input.value;
+      const q = raw.toLowerCase().trim();
+      syncClear();
       if (!q){ results.hidden = true; results.innerHTML = ''; return; }
       // 区号反查：输入为纯数字或 +数字（如 +86 / 86）时，按国际区号匹配国家
       const digits = q.replace(/[^\d]/g, '');
-      const isDial = /^[\d+\s]+$/.test(raw) && digits.length >= 1 && digits.length <= 4;
+      const isDial = /^[\d+\s]+$/.test(raw.trim()) && digits.length >= 1 && digits.length <= 4;
       let cMs;
       if (isDial){
         cMs = Object.entries(COUNTRY)
@@ -734,6 +747,10 @@ window.addEventListener("error", function(e){
       results.hidden = false;
     }
     input.addEventListener('input', run);
+    // Esc 清空（文本光标在搜索栏时）
+    input.addEventListener('keydown', (e) => { if (e.key === 'Escape') clearSearch(); });
+    // 右侧"×"按钮点击清空
+    if (clearBtn) clearBtn.addEventListener('click', clearSearch);
     results.addEventListener('click', (e) => {
       const it = e.target.closest('.item'); if (!it) return;
       const href = it.getAttribute('data-href'); if (href) location.href = href;
@@ -741,6 +758,7 @@ window.addEventListener("error", function(e){
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.sp-search')) { results.hidden = true; results.innerHTML = ''; }
     });
+    syncClear();
   })();
 
   // —— 看门狗：若地球 SVG 被外部脚本意外移除（如预览平台重写 DOM），自动重建 ——

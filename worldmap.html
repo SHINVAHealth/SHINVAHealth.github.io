@@ -218,11 +218,21 @@
   }
   .sp-search{ position:relative; }
   .wm-input{
-    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16);
+    width:100%; padding:10px 34px 10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16);
     background:rgba(255,255,255,.05); color:var(--ink); font-size:13px;
   }
   .wm-input:focus{ outline:none; border-color:var(--brand); }
   .wm-input::placeholder{ color:var(--muted); }
+  /* 搜索框右侧清除按钮：文本光标在框内时显示，点击/按 Esc 清空 */
+  .wm-clear{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:22px; height:22px; line-height:20px; text-align:center;
+    border:none; border-radius:50%; padding:0;
+    background:rgba(255,255,255,.10); color:var(--ink); font-size:16px; cursor:pointer;
+    transition:.15s; display:none;
+  }
+  .wm-clear:not([hidden]){ display:block; }
+  .wm-clear:hover{ background:rgba(56,189,248,.30); color:#fff; }
   .wm-results{
     position:absolute; top:100%; left:0; right:0; z-index:30;
     margin-top:8px; max-height:300px; overflow:auto; border-radius:10px;
@@ -304,6 +314,7 @@
     <aside class="sidepanel" id="sidepanel">
       <div class="sp-search">
         <input id="wmSearch" class="wm-input" placeholder="查找国家 / 客户信息" autocomplete="off">
+        <button id="wmClear" class="wm-clear" type="button" title="清除" aria-label="清除" hidden>×</button>
         <div id="wmResults" class="wm-results" hidden></div>
       </div>
       <button id="wmTrackBtn" class="wm-track-btn">外贸跟踪国家名单 <span class="arrow">▾</span></button>
@@ -327,6 +338,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221125"></script>
+  <script src="worldmap_app.js?v=202607221132"></script>
 </body>
 </html>
