@@ -287,7 +287,8 @@ window.addEventListener("error", function(e){
 
   let TILE = 0;  // 一份世界的宽度（base 坐标），用于水平循环取模
   // 地球（fitExtent）四周留白，用于给经纬度标注让出空间；drawGraticule 同步使用
-  const GM = { t: 44, r: 22, b: 22, l: 22 };
+  // 左侧留白加大到 40，给纬度刻度尺（N/S 标注）让出充足空间，避免被侧边面板/UI 遮挡
+  const GM = { t: 44, r: 22, b: 22, l: 40 };
   // 尼日利亚客户绿色分布点（来自 customers.json，按经纬度落点）
   let NG_PTS = [];
   function resize(){
@@ -309,7 +310,7 @@ window.addEventListener("error", function(e){
   }
 
   // —— 地球内参考线（随缩放拖拽，gZoom 内）——
-  // 经线：每 30° 一条；纬线：赤道 + 南北回归线(±23.5°) + 南北极圈(±66.5°)。赤道加亮。
+  // 粗细分级：经线(mer)细；纬线分三档——赤道(par-eq)最粗、回归线/极圈(par-mid)中粗、其余细。
   function drawGraticule(){
     const meridians = d3.range(-180, 181, 30);   // -180,-150,...,180
     gGrid.selectAll('path.mer').remove();
@@ -320,16 +321,17 @@ window.addEventListener("error", function(e){
         return 'M' + pts.map(p => p ? (p[0].toFixed(1) + ',' + p[1].toFixed(1)) : null).filter(Boolean).join('L');
       });
 
+    // 纬线分档：赤道最粗、南北回归线+南北极圈中粗、其余细（本图仅画关键纬线，均中粗以上）
     const parallels = [
-      { lat: 0,   label: '赤道 EQ' },
-      { lat: 23.5,  label: '北回归线' },
-      { lat: -23.5, label: '南回归线' },
-      { lat: 66.5,  label: '北极圈' },
-      { lat: -66.5, label: '南极圈' }
+      { lat: 0,     cls: 'par-eq'  },   // 赤道：最粗主轴
+      { lat: 23.5,  cls: 'par-mid' },   // 北回归线：中粗
+      { lat: -23.5, cls: 'par-mid' },   // 南回归线：中粗
+      { lat: 66.5,  cls: 'par-mid' },   // 北极圈：中粗
+      { lat: -66.5, cls: 'par-mid' }    // 南极圈：中粗
     ];
     gGrid.selectAll('path.par').remove();
     gGrid.selectAll('path.par').data(parallels).enter().append('path')
-      .attr('class', d => 'par' + (d.lat === 0 ? ' par-eq' : ''))
+      .attr('class', d => 'par ' + d.cls)
       .attr('d', d => {
         const a = projection([0, d.lat]), b = projection([180, d.lat]);
         if (!a || !b) return '';
@@ -349,12 +351,12 @@ window.addEventListener("error", function(e){
     // 横尺基线（上方）
     gRuler.append('line').attr('class','ruler-axis ruler-x')
       .attr('x1', boxL).attr('y1', boxT - 10).attr('x2', boxR).attr('y2', boxT - 10);
-    // 竖尺基线（左侧）
+    // 竖尺基线（左侧，留出标注空间）
     gRuler.append('line').attr('class','ruler-axis ruler-y')
-      .attr('x1', boxL - 10).attr('y1', boxT).attr('x2', boxL - 10).attr('y2', boxB);
+      .attr('x1', boxL - 12).attr('y1', boxT).attr('x2', boxL - 12).attr('y2', boxB);
     // 极地角标（贴地球上下外缘）
-    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 14).attr('y', boxT + 4).text('N');
-    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 14).attr('y', boxB - 2).text('S');
+    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 16).attr('y', boxT + 4).text('N');
+    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 16).attr('y', boxB - 2).text('S');
   }
   // 随拖拽/缩放实时更新刻度数值（在地球外的尺子上滚动显示）
   function updateRuler(){
@@ -413,23 +415,25 @@ window.addEventListener("error", function(e){
     latSel.exit().remove();
     latSel.enter().append('text').attr('class','ruler-lat')
       .merge(latSel)
-      .attr('x', boxL - 14).attr('y', d => d.y + 3)
+      .attr('x', boxL - 16).attr('y', d => d.y + 3)
       .attr('text-anchor','end')
       .text(d => fmtLat(d.lat));
   }
   function fmtLon(lon){
     if (lon === 0) return '0°';
-    if (lon === 180) return '180°';
-    if (lon === -180) return '-180°';
-    return (lon > 0 ? '+' : '') + lon + '°';
+    if (lon === 180) return '180°E';
+    if (lon === -180) return '180°W';
+    // 东经 E / 西经 W
+    return Math.abs(lon) + '°' + (lon > 0 ? 'E' : 'W');
   }
   function fmtLat(lat){
     if (lat === 0) return '赤道';
-    if (lat === 23.5) return '北回归';
-    if (lat === -23.5) return '南回归';
+    if (lat === 23.5) return '北回归线';
+    if (lat === -23.5) return '南回归线';
     if (lat === 66.5) return '北极圈';
     if (lat === -66.5) return '南极圈';
-    return (lat > 0 ? '+' : '') + lat + '°';
+    // 北纬 N / 南纬 S
+    return Math.abs(lat) + '°' + (lat > 0 ? 'N' : 'S');
   }
   window.addEventListener('resize', resize);
   resize();
