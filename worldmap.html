@@ -119,18 +119,18 @@
     fill:none; stroke:rgba(150,200,255,.32); stroke-width:1.4;
     filter:drop-shadow(0 0 7px rgba(14,165,233,.28));
   }
-  /* 经纬网（1:1 复刻国际品牌世界地图 NatGeo/Google/教科书挂图：全实线、清晰三级层级） */
+  /* 经纬网（复刻 National Geographic / Times Atlas 实物图式：白单色，关键圈实线、其余虚线） */
   .graticule{ pointer-events:none; }
-  /* 基础层：其余 30° 间隔经线/纬线 —— 细实线、低透明度（建立层级，不抢主干） */
-  .graticule .par-thin{ fill:none; stroke:rgba(148,197,255,.20); stroke-width:.55; }
-  .graticule .mer-thin{ fill:none; stroke:rgba(148,197,255,.18); stroke-width:.55; }
-  .graticule .par{ fill:none; stroke:rgba(148,197,255,.20); stroke-width:.55; }
-  .graticule .mer{ fill:none; stroke:rgba(148,197,255,.18); stroke-width:.55; }
-  /* 中粗层：南北回归线 ±23.5° / 南北极圈 ±66.5° —— 中粗实线 */
-  .graticule .par-mid{ stroke:rgba(125,211,252,.50); stroke-width:1.0; }
-  /* 最粗主轴层：赤道 / 本初子午线 —— 最粗实线 + 最亮 */
-  .graticule .par-eq{ stroke:rgba(186,230,253,.70); stroke-width:1.6; }
-  .graticule .mer-eq{ stroke:rgba(186,230,253,.62); stroke-width:1.25; }
+  /* 基础层：其余 30° 间隔经线/纬线 —— 细白【虚线】（标准地图图式：普通网格用虚线，不与海岸线/国界实线混淆） */
+  .graticule .par-thin{ fill:none; stroke:rgba(255,255,255,.28); stroke-width:.6; stroke-dasharray:3 3; }
+  .graticule .mer-thin{ fill:none; stroke:rgba(255,255,255,.25); stroke-width:.6; stroke-dasharray:3 3; }
+  .graticule .par{ fill:none; stroke:rgba(255,255,255,.28); stroke-width:.6; stroke-dasharray:3 3; }
+  .graticule .mer{ fill:none; stroke:rgba(255,255,255,.25); stroke-width:.6; stroke-dasharray:3 3; }
+  /* 关键参考圈：南北回归线 ±23.5° / 南北极圈 ±66.5° —— 中粗【实线】白 */
+  .graticule .par-mid{ stroke:rgba(255,255,255,.6); stroke-width:1.0; stroke-dasharray:none; }
+  /* 最粗主轴：赤道 / 本初子午线 —— 最粗【实线】亮白 */
+  .graticule .par-eq{ stroke:rgba(255,255,255,.9); stroke-width:1.6; stroke-dasharray:none; }
+  .graticule .mer-eq{ stroke:rgba(255,255,255,.8); stroke-width:1.25; stroke-dasharray:none; }
   /* 经纬度仪表尺（固定层，地球轮廓外、界面内侧，不被裁切遮挡；数值随拖拽实时变化） */
   .ruler{ pointer-events:none; }
   .ruler .ruler-axis{ stroke:rgba(125,211,252,.45); stroke-width:1; }
@@ -296,6 +296,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607220935"></script>
+  <script src="worldmap_app.js?v=202607220940"></script>
 </body>
 </html>
