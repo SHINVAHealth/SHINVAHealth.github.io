@@ -182,6 +182,8 @@ window.addEventListener("unhandledrejection", function(e){
       _features = mainFeatures;
       const ib = $('inset'); if (ib) ib.style.display = 'none';
       const features = mainFeatures;
+      // 预计算并缓存每个一级区域的投影路径 d 与质心 c（renderEmboss 复用，避免悬停时反复重算几十 KB 路径字符串 —— 美/墨几何极精细时是卡顿主因）
+      features.forEach(f => { f.__d = path(f); try { f.__c = path.centroid(f); } catch(e){ f.__c = [0,0]; } });
       setStatus('loading');
       const svg = d3.select('#map').append('svg').attr('width', W).attr('height', H);
       _svg = svg;
@@ -218,6 +220,7 @@ window.addEventListener("unhandledrejection", function(e){
         defs.select('#admClip').append('path').attr('d', path(ft));
       });
       const g = svg.append('g');   // 统一图层：省填充 + 二级行政区域 + 省轮廓 同属一层
+      g.style('will-change', 'transform');   // 提示浏览器对该层做合成层优化，缩放/拖拽更顺滑
       _gProv = g;
       // 1) 省填充（底层，承载 hover 提示）
       const pf = g.selectAll('path.prov-fill').data(features).enter().append('path')
@@ -361,12 +364,14 @@ window.addEventListener("unhandledrejection", function(e){
         if (_curT) updateMarkers(_curT);
         return;
       }
-      // 预计算每区域的路径与质心（feature 保留用于客户点 d3.geoContains 判定）
+      // 预计算每区域的路径与质心（优先复用 _features/_gAdm2 上已缓存的 __d/__c，避免悬停时反复重算几十~上百 KB 路径字符串）
       const items = [];
       regions.forEach(rg => {
-        const d = _path(rg.feature); if (!d) return;
-        const c = _path.centroid(rg.feature);
-        items.push({ feature: rg.feature, d, c });
+        const f = rg.feature;
+        let d = f.__d; if (!d){ d = _path(f); f.__d = d; }
+        let c = f.__c; if (!c){ try { c = _path.centroid(f); } catch(e){ c = [0,0]; } f.__c = c; }
+        if (!d) return;
+        items.push({ feature: f, d, c });
       });
       // 相位1：所有区域的地面柔影（统一落在平面，互不叠压）
       items.forEach(it => {
@@ -405,8 +410,11 @@ window.addEventListener("unhandledrejection", function(e){
       if (_curT) updateMarkers(_curT);
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
+    // 优化：若新悬停区域与当前完全一致（同一州/市区、同级别），直接跳过重建 —— 避免鼠标在同区域内移动时每帧重复重建浮雕（美/墨精细几何下是卡顿主因）
     function hoverRegion(d, type){
-      _hoverRegion = { feature: d, type, name: (d.properties && (d.properties.shapeName || d.properties.name)) || '' };
+      const name = (d.properties && (d.properties.shapeName || d.properties.name)) || '';
+      if (_hoverRegion && _hoverRegion.type === type && _hoverRegion.name === name) return;
+      _hoverRegion = { feature: d, type, name };
       renderEmboss();
     }
     function unhoverRegion(){ _hoverRegion = null; renderEmboss(); }
@@ -579,6 +587,8 @@ window.addEventListener("unhandledrejection", function(e){
       //    二级行政区域严格裁剪到所属一级区域真实边界内 → 绝不会超出一级轮廓（先画二级，后画一级轮廓压边）
       const byProv = {};
       items.forEach(it => { if (it.pi >= 0){ (byProv[it.pi] = byProv[it.pi] || []).push(it); } });
+      // 缓存每个二级区域的投影路径与质心（供 renderEmboss 复用，避免悬停时反复重算大体积路径字符串）
+      items.forEach(it => { it.feat.__d = it.d; try { it.feat.__c = _path.centroid(it.feat); } catch(e){ it.feat.__c = [0,0]; } });
       const defs = _svg.select('defs');
       defs.selectAll('[id^="clip-"]').remove();   // 清旧的对省裁剪区，避免重复 ID
       _features.forEach((ft, pi) => {
@@ -620,7 +630,7 @@ window.addEventListener("unhandledrejection", function(e){
         // ADM2：默认隐藏，加载完成预载数据（点击按钮即时显示）；无数据则回退按钮
         ensureAdm2().then(() => {
           if (_topo2){
-            assignRegions();   // ADM2 就绪后补全客户的 __adm2 归属，供二级行政区点击筛选
+            assignRegions(true);   // ADM2 就绪后强制补全客户的 __adm2 归属（之前可能仅算了 ADM1），供二级行政区点击筛选
             setStatus(_topo2.features.length);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
             if (showAdm2) renderAdm2();
             else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; }
@@ -783,20 +793,44 @@ window.addEventListener("unhandledrejection", function(e){
       if (dups.length) console.warn('[客户定位自检] 以下客户经纬度完全重合，圆点会叠在一起看不见，请重新精确地理编码：\n' + dups.map(([k, v]) => '  ' + k + ' => ' + v.join(' , ')).join('\n'));
     }
     // —— 区域筛选：把每个客户关联到所属一级(ADM1)/二级(ADM2)行政区域（按经纬度 geoContains）——
-    function assignRegions(){
-      const list = window.__custList || [];
-      if (!list.length) return;
+    // 性能优化（针对墨西哥 2457 个二级行政区等大体量国家）：
+    //  1) 一次性计算：用 _regionsAssigned 标志，只在首次/强制时全量跑，避免每次搜索按键、每次点客户都重算；
+    //  2) ADM2 索引：把二级要素按所属一级区域分组(_adm2ByProv)，geoContains 只需在该客户所在 ADM1 的子要素里做，
+    //     把「客户 × 全量 ADM2」的 O(N×M) 降到「客户 × ADM1(≈32) + 客户 × 该州 ADM2(≈数十)」，量级提速。
+    let _regionsAssigned = false, _adm2ByProv = null;
+    function buildAdm2Index(){
+      if (_adm2ByProv) return;
       const fc2 = (_topo2 && _topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : (_topo2 || null);
+      _adm2ByProv = {};
+      if (fc2 && fc2.features){
+        fc2.features.forEach(f => {
+          const grp = f.properties.shapeGroup || f.properties.parent || null;
+          if (grp) (_adm2ByProv[grp] = _adm2ByProv[grp] || []).push(f);
+        });
+      }
+    }
+    function assignRegions(force){
+      if (_regionsAssigned && !force) return;
+      const list = window.__custList || [];
+      if (!list.length){ _regionsAssigned = true; return; }
+      buildAdm2Index();
       list.forEach(r => {
         if (r.lat != null && r.lng != null){
           const ll = [+r.lng, +r.lat];
           if (_features){ for (const f of _features){ try { if (d3.geoContains(f, ll)){ r.__adm1 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
-          if (fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
+          // 优先只在所属一级区域内的二级子要素中做 geoContains（墨西哥 2457 市区 → 从全量扫描降到该州数量级）
+          if (_adm2ByProv && r.__adm1 && _adm2ByProv[r.__adm1]){
+            for (const f of _adm2ByProv[r.__adm1]){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} }
+          } else if (_topo2){
+            const fc2 = (_topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : _topo2;
+            for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} }
+          }
         }
       });
+      _regionsAssigned = true;
     }
     function applyRegionFilter(){
-      assignRegions();
+      if (!_regionsAssigned) assignRegions();   // 区域归属已一次性算好即跳过，避免搜索时反复重算（墨西哥 2457 市区场景）
       const list = window.__custList || [];
       let flt = list;
       const regions = _selectedRegions();   // 已选中的全部行政区域（单点 1 个 / 多点追踪多个）
@@ -875,7 +909,7 @@ window.addEventListener("unhandledrejection", function(e){
       if (!nowHl){
         // 即将点亮成黄点：单点模式（默认）先清掉其它所有高亮，保证地图上始终只有当前这一个黄点
         if (!_multiTrack) clearCustomerHighlight();
-        assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
+        if (!_regionsAssigned) assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
         const rec = (window.__custList || []).find(x => x.__id === id);
         // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝“只选中不放大”）
         if (rec && rec.__adm1) zoomToAdm1(rec.__adm1);
