@@ -149,6 +149,7 @@ window.addEventListener("unhandledrejection", function(e){
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
     let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, _regionFilter=null, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
+  let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
     const CAP = facts ? {lat:facts.lat, lng:facts.lng, name:facts.capital} : null;
     const AIR = META.AIRPORTS[iso2] || null;
 
@@ -196,6 +197,15 @@ window.addEventListener("unhandledrejection", function(e){
       const fm = f.append('feMerge');
       fm.append('feMergeNode').attr('in','d');
       fm.append('feMergeNode').attr('in','sc');
+      // 3D 浮雕：地面投影滤镜（仅柔和阴影、不含国形副本 → 无重影）+ 顶面高光渐变
+      const embossShadow = defs.append('filter').attr('id','embossShadow').attr('x','-60%').attr('y','-60%').attr('width','220%').attr('height','220%');
+      embossShadow.append('feGaussianBlur').attr('in','SourceAlpha').attr('stdDeviation',4).attr('result','b');
+      embossShadow.append('feOffset').attr('in','b').attr('dx',0).attr('dy',6).attr('result','o');
+      embossShadow.append('feComponentTransfer').attr('in','o').append('feFuncA').attr('type','linear').attr('slope',0.5);
+      embossShadow.append('feMerge').append('feMergeNode').attr('in','o');
+      const embossTopGrad = defs.append('linearGradient').attr('id','embossTopGrad').attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
+      embossTopGrad.append('stop').attr('offset','0%').attr('stop-color','#7dd3fc');
+      embossTopGrad.append('stop').attr('offset','100%').attr('stop-color','#38bdf8');
       defs.append('clipPath').attr('id','admClip');   // 兜底：省并集裁剪
       PROJ = d3.geoMercator().fitExtent([[14,14],[W-14,H-14]], {type:'FeatureCollection', features: mainFeatures});
       const path = d3.geoPath(PROJ);
@@ -209,8 +219,8 @@ window.addEventListener("unhandledrejection", function(e){
       // 1) 省填充（底层，承载 hover 提示）
       const pf = g.selectAll('path.prov-fill').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-fill')
-        .on('mousemove', (e,d) => showTip(e, d.properties.shapeName || d.properties.name || ''))
-        .on('mouseleave', hideTip)
+        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); showEmbossRegion(d); })
+        .on('mouseleave', (e,d) => { hideTip(e,d); hideEmbossRegion(); })
         .on('click', (e,d) => setRegionFilter('adm1', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget));
       _provFill = pf.nodes();
       // 2) 二级行政区域（中间层，按所属一级区域单独裁剪，避免跨区域交叉）
@@ -218,8 +228,8 @@ window.addEventListener("unhandledrejection", function(e){
       // 3) 省轮廓（最上层，描边清晰，市区线不压过省界）
       const pl = g.selectAll('path.prov-line').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-line')
-        .on('mousemove', (e,d) => showTip(e, d.properties.shapeName || d.properties.name || ''))
-        .on('mouseleave', hideTip);
+        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); showEmbossRegion(d); })
+        .on('mouseleave', (e,d) => { hideTip(e,d); hideEmbossRegion(); });
       _provLine = pl.nodes();
       // 二次构建国家轮廓：由一级行政区域(ADM1)并集溶解内部边界，得到国家外边界；
       // 行政区轮廓即为该并集的子集，天然“在”国家轮廓之内（保证不越界）
@@ -231,12 +241,15 @@ window.addEventListener("unhandledrejection", function(e){
       if (_countryOutlineD){
         g.append('path').attr('d', _countryOutlineD).attr('class','country-outline');
       }
+      // 3D 浮雕突出层：悬停一级/二级行政区域时整块「从平面探出」，置于 g 内最上（随缩放同步），在 _gMark/_gCust 之下（客户点仍可见）
+      const gEmboss = g.append('g').attr('class','emboss-layer');
+      _gEmboss = gEmboss;
       _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
       _gCust = svg.append('g').attr('class','cust-layer');  // 客户绿色像素点独立图层（避免被 drawMarkers 清空）
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
-      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); updateMarkers(ev.transform); });
+      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); updateMarkers(ev.transform); _curK = ev.transform.k; });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
       applyPendingHl();   // 省份地图就绪，若客户也已加载则自动点亮世界地图跳转带来的 hl 行
@@ -310,6 +323,32 @@ window.addEventListener("unhandledrejection", function(e){
       if (insular.length) renderInsularInset(insular);
       if (window.__custList) drawCustomerPointsOnMap(window.__custList);  // 省份重绘后重挂客户点
     }
+
+    // —— 3D 浮雕辅助（悬停一级/二级行政区域时整块区域「从平面探出」）——
+    function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
+    function wallColor(t){ const r = lerp(8,14,t), g = lerp(47,116,t), b = lerp(73,178,t); return `rgb(${r},${g},${b})`; }
+    function showEmbossRegion(feature){
+      if (!_gEmboss || !_path) return;
+      _gEmboss.selectAll('*').remove();
+      const f = feature; if (!f) return;
+      const d = _path(f); if (!d) return;
+      const c = _path.centroid(f);
+      const k = (_curK && _curK > 0) ? _curK : 1;
+      const H = 9 / k;            // 浮雕高度恒定 ~9px 屏幕（随缩放反比）
+      const LAYERS = 10;
+      const sBase = 1.03, sTop = 1.04;
+      _gEmboss.append('path').attr('class','emboss-shadow').attr('d', d)
+        .attr('transform', `translate(${c[0]},${c[1]}) scale(${sBase}) translate(${-c[0]},${-c[1]})`);
+      for (let i = 0; i <= LAYERS; i++){
+        const t = i / LAYERS, y = -H * t;
+        _gEmboss.append('path').attr('class','emboss-side').attr('d', d)
+          .attr('transform', `translate(${c[0]},${c[1]+y}) scale(${sBase}) translate(${-c[0]},${-c[1]})`)
+          .style('fill', wallColor(t)).style('stroke','none');
+      }
+      _gEmboss.append('path').attr('class','emboss-top').attr('d', d)
+        .attr('transform', `translate(${c[0]},${c[1]-H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
+    }
+    function hideEmbossRegion(){ if (_gEmboss) _gEmboss.selectAll('*').remove(); }
     // 偏远海外领地小窗：每个领地用各自投影画在独立小格里并标注名称（参照中国南海诸岛小窗）
     function renderInsularInset(features){
       const box = $('inset');
@@ -443,8 +482,9 @@ window.addEventListener("unhandledrejection", function(e){
             const prov = ll ? provinceAt(ll) : null;
             const city = d.properties.shapeName || d.properties.name || '未命名市区';
             showTip(e, city + (prov ? ' / ' + prov : ''));
+            showEmbossRegion(d);
           })
-          .on('mouseleave', hideTip)
+          .on('mouseleave', (e,d) => { hideTip(e,d); hideEmbossRegion(); })
           .on('click', (e,d) => setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget));
       });
       const n = fc.features.length;

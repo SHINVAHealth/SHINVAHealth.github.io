@@ -426,7 +426,7 @@ window.addEventListener("error", function(e){
   const svg = d3.select('#globe').append('svg')
     .attr('preserveAspectRatio','xMidYMid meet');
 
-  // 固定层：地球轮廓（海洋底 + 边界描边光晕），不随拖拽/缩放移动
+  // 固定层：地球轮廓（边界描边光晕），不随拖拽/缩放移动；海洋底改为内容层平铺（见 oceanTiles）
   const defs = svg.append('defs');
   const clip = defs.append('clipPath').attr('id','globeClip');
   const clipSphere = clip.append('path');                 // 仅用几何裁切内容
@@ -444,7 +444,6 @@ window.addEventListener("error", function(e){
     .attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
   embossTopGrad.append('stop').attr('offset','0%').attr('stop-color','#7dd3fc');
   embossTopGrad.append('stop').attr('offset','100%').attr('stop-color','#38bdf8');
-  const oceanSphere = svg.append('path').attr('class','sphere-ocean');   // 海洋底（内容之下）
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
   const frameSphere = svg.append('path').attr('class','sphere-frame'); // 边界描边（内容之上，固定）
@@ -458,6 +457,9 @@ window.addEventListener("error", function(e){
   for (let i = 0; i < TILES; i++){
     tiles.push(gZoom.append('g').attr('class','tile'));
   }
+  // 海洋底随内容层平铺（与陆地同步平移 + 水平无缝循环），
+  // 修复「拖拽时固定海洋底不跟随 → 海洋区移出固定海洋底范围 → 露出底色 = 画面丢失」
+  const oceanTiles = tiles.map(tg => tg.insert('path', ':first-child').attr('class', 'ocean-tile'));
   tiles.forEach(tg => {
     tg.selectAll('path.country').data(features).enter()
       .append('path').attr('class','country')
@@ -477,6 +479,8 @@ window.addEventListener("error", function(e){
 
   // 3D 浮雕突出层：悬停国家「从平面探出」的克隆（置于内容层最上，随拖拽/缩放同步；不设 pointer-events，不拦截交互）
   const gEmboss = gZoom.append('g').attr('class', 'emboss-layer');
+  // 客户绿色像素点顶层图层：置于 gEmboss 之上，确保 3D 浮雕显示时客户原点位置始终可见（不被浮雕覆盖）
+  const gCust = gZoom.append('g').attr('class', 'cust-layer');
   // 名称 / iso2 ↔ feature 查表（用于联动高亮 + 浮雕克隆定位）
   const nameToFeature = {};
   const iso2ToFeature = {};
@@ -507,7 +511,7 @@ window.addEventListener("error", function(e){
     // 地球轻微缩小：上/左/下/右各留白，给经纬度标注让出空间（上方让更多，避开侧边面板/顶栏）
     projection.fitExtent([[GM.l, GM.t],[w - GM.r, h - GM.b]], {type:'Sphere'});
     const dSphere = path({type:'Sphere'});
-    oceanSphere.attr('d', dSphere);
+    oceanTiles.forEach(s => s.attr('d', dSphere));
     frameSphere.attr('d', dSphere);
     clipSphere.attr('d', dSphere);
     TILE = (w - GM.l - GM.r);              // 平铺周期 = 世界内容宽（含两侧留白）
@@ -837,9 +841,12 @@ window.addEventListener("error", function(e){
   const WORLD_DOT_R = 1.5;   // 世界地图统一最小圆点尺寸（全图一致，仅缩点尺寸，绝不移动经纬度）
   function drawNigeriaPoints(){
     // 亮绿单色像素点，边缘清晰无发光无高亮；所有点统一为 WORLD_DOT_R，尺寸一致。
-    tiles.forEach(tg => {
-      tg.selectAll('circle.cust-pt').remove();
-      tg.selectAll('circle.cust-pt').data(NG_PTS).enter().append('circle')
+    // 画在 gCust 顶层图层（gEmboss 之上），使 3D 浮雕显示时客户原点位置始终可见。
+    gCust.selectAll('*').remove();
+    for (let i = 0; i < TILES; i++){
+      const ox = i * TILE;
+      const tileG = gCust.append('g').attr('class', 'cust-tile').attr('transform', `translate(${ox},0)`);
+      tileG.selectAll('circle.cust-pt').data(NG_PTS).enter().append('circle')
         .attr('class', 'cust-pt')
         .attr('cx', d => { const p = projection([d.lng, d.lat]); return p ? p[0] : -9999; })
         .attr('cy', d => { const p = projection([d.lng, d.lat]); return p ? p[1] : -9999; })
@@ -849,7 +856,7 @@ window.addEventListener("error", function(e){
         .on('mousemove', (e, d) => showCustTip(e, d))
         .on('mouseleave', hideCustTip)
         .on('click', () => { window.location.href = 'country.html?c=ng'; });
-    });
+    }
   }
   function showCustTip(e, d){
     tipCn.textContent = d.company;

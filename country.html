@@ -175,6 +175,14 @@
     pointer-events:all; cursor:crosshair; transition:stroke .15s, stroke-width .15s, stroke-dasharray .15s, opacity .15s;
   }
   .adm2:hover{ stroke:#fbb923; stroke-width:1.1; stroke-dasharray:none; opacity:1; }
+  /* 3D 浮雕突出层（与世界地图同款）：悬停一级/二级行政区域时整块区域「从平面探出」的实体浮雕 */
+  .emboss-layer{ pointer-events:none; }
+  .emboss-layer path.emboss-shadow{ fill:#000; opacity:.4; filter:url(#embossShadow); }
+  .emboss-layer path.emboss-side{ stroke:none; }
+  .emboss-layer path.emboss-top{
+    fill:url(#embossTopGrad); stroke:#ffd400; stroke-width:1.4;
+    vector-effect:non-scaling-stroke; paint-order:stroke fill;
+  }
   .marker-cap-star{ pointer-events:none; }
   .marker-plane-g{ pointer-events:all; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
   .marker-air-label{ fill:#eafff5; font-size:11px; text-anchor:middle; paint-order:stroke; stroke:#06281c; stroke-width:3px; pointer-events:none; display:none; font-weight:600; }
@@ -300,6 +308,6 @@
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
   <script src="country_meta.js"></script>
-  <script src="app.js?v=202607221100"></script>
+  <script src="app.js?v=202607221254"></script>
 </body>
 </html>

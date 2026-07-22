@@ -109,8 +109,9 @@
     stroke:rgba(255,237,160,.92); stroke-width:.7;
   }
   .country:hover{
-    fill:rgba(56,189,248,.95);
-    stroke:#fff; stroke-width:1;
+    /* 取消悬停蓝色高亮：底层区域不再变蓝，由 3D 浮雕层（.emboss-layer）提供悬停反馈 */
+    fill:rgba(56,189,248,.26);
+    stroke:rgba(8,15,30,.85); stroke-width:.5;
   }
   .country.active{
     /* 仅作底层描边强调；填充交给定制浮雕克隆（.emboss），避免与抬起国形重叠造成重影 */
@@ -136,7 +137,7 @@
     paint-order:stroke fill;
   }
   /* 地球：海洋底（固定，置于内容之下）+ 轮廓边界（固定，描边光晕，置于内容之上） */
-  .sphere-ocean{ fill:rgba(10,20,42,.55); }
+  .ocean-tile{ fill:rgba(10,20,42,.55); }
   .sphere-frame{
     fill:none; stroke:rgba(150,200,255,.32); stroke-width:1.4;
     filter:drop-shadow(0 0 7px rgba(14,165,233,.28));
@@ -358,6 +359,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221238"></script>
+  <script src="worldmap_app.js?v=202607221254"></script>
 </body>
 </html>
