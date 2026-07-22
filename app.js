@@ -302,7 +302,12 @@ window.addEventListener("unhandledrejection", function(e){
 
       $('zin').onclick = () => svg.transition().duration(200).call(zoom.scaleBy, 1.4);
       $('zout').onclick = () => svg.transition().duration(200).call(zoom.scaleBy, 1/1.4);
-      $('zreset').onclick = () => { svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity); clearCustomerHighlight(); _embossRegions.clear(); _hoverRegion = null; renderEmboss(); };
+      $('zreset').onclick = () => {
+        svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
+        clearCustomerHighlight();                                       // 重置所有客户黄点 + 行选中
+        _embossRegions.clear(); _hoverRegion = null; renderEmboss();    // 清空选中的行政区域 3D 浮雕
+        _regionFilter = null; reapplyRegionSel(); applyRegionFilter();  // 清空区域筛选 → 右侧客户检索行同步重置为全部
+      };
       $('custtoggle').onclick = function(){
         _custVisible = !_custVisible;
         this.classList.toggle('active', _custVisible);
