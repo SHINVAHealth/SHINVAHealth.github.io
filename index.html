@@ -81,6 +81,12 @@
   .cust-sub{ grid-column:1 / -1; margin:2px 0 8px; padding:6px 0 4px 16px; border-left:3px solid var(--c-cust); background:rgba(37,99,235,.04); border-radius:0 10px 10px 0; }
   .cust-sub .sub-card{ background:#f8fafc; border-left-color:#93c5fd; }
   .cust-sub .sub-card .go{ color:#2563eb; }
+  /* 置顶高亮子链接（如「孟加拉客户信息表·张竣杰」）：金色左边线 + 暖金渐变底 + 始终在上 + 置顶徽标 */
+  .cust-sub .sub-card.pin{ background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%); border-color:#fcd34d; border-left:3px solid #f59e0b; box-shadow:0 4px 14px rgba(245,158,11,.22); font-weight:600; }
+  .cust-sub .sub-card.pin:hover{ box-shadow:0 8px 22px rgba(245,158,11,.34); }
+  .cust-sub .sub-card.pin .t{ color:#92400e; }
+  .cust-sub .sub-card.pin .go{ color:#b45309; }
+  .cust-sub .sub-card.pin .pin-badge{ position:absolute; top:10px; right:12px; font-size:11px; font-weight:700; color:#92400e; background:#fde68a; border:1px solid #fcd34d; padding:1px 9px; border-radius:999px; letter-spacing:.5px; }
   /* 全站主题化光标：地图/贸易风格十字准星，进入页面即生效 */
   html, body{ cursor:default; }
   a, button, .card, .tool-btn, [role=button], .cat-head, .cust-region-h, .modal-bar button, .topbar button{ cursor:pointer; }
@@ -190,11 +196,11 @@
   // 原「孟加拉客户文件」版块的 9 份文件已全部迁移至此，作为 [孟加拉] 的「客户信息」子链接。
   const CUST_FILES = {
     bd: [
+      { file:'existing_customers.html', title:'孟加拉客户信息表·张竣杰', pin:true },
       { file:'bangladesh_bone_all.html', title:'孟加拉骨组织手术设备经销商·全量汇总' },
       { file:'bangladesh_esu.html', title:'孟加拉 ESU 电刀及外科设备经销商' },
       { file:'bangladesh_verified.html', title:'孟加拉已核实经销商名单' },
       { file:'expo_list.html', title:'孟加拉医疗器械展会展商总表' },
-      { file:'existing_customers.html', title:'现有客户信息表' },
       { file:'buyer_profile.html', title:'电刀厂家外贸客户·买方详细档案' },
       { file:'buyer_profile_compliant.html', title:'电刀厂家外贸客户·买方详细档案（合规版）' },
       { file:'deep_compliant.html', title:'电刀厂家外贸客户·多源交叉验证版' },
@@ -367,9 +373,11 @@
           // 展开子链接面板（子链接：逐份客户文件）
           const sub = document.createElement('div'); sub.className='cust-sub'; sub.style.display='none';
           const subGrid = document.createElement('div'); subGrid.className='grid cust-grid';
-          files.forEach(f => {
-            const fc = document.createElement('a'); fc.className='card cust sub-card'; fc.href='./base/'+f.file;
-            fc.innerHTML = '<span class="t"></span><span class="go">打开 ↗</span>';
+          // 置顶项(pin)排序在最前，确保始终显示于子链接顶部
+          const ordered = files.slice().sort((a,b) => (b.pin?1:0) - (a.pin?1:0));
+          ordered.forEach(f => {
+            const fc = document.createElement('a'); fc.className='card cust sub-card'+(f.pin?' pin':''); fc.href='./base/'+f.file;
+            fc.innerHTML = '<span class="t"></span>'+(f.pin?'<span class="badge pin-badge">置顶</span>':'')+'<span class="go">打开 ↗</span>';
             fc.querySelector('.t').textContent = f.title;
             fc.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openSection('./base/'+f.file); });
             subGrid.appendChild(fc);
