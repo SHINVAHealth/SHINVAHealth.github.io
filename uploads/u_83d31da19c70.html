@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>customers</title>
+<style>
+  :root{ --bg:#eef2f6; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --brand:#0d9488; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  header.hero{ background:linear-gradient(135deg,#0ea5e9 0%,#0d9488 100%); color:#fff; padding:36px 24px; text-align:center; }
+  header.hero h1{ margin:0; font-size:24px; letter-spacing:1px; }
+  header.hero p{ margin:10px 0 0; opacity:.92; font-size:13px; }
+  .wrap{ max-width:1100px; margin:28px auto 40px; padding:0 20px; }
+  .meta{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:22px; font-size:13px; color:var(--muted); }
+  .meta b{ color:var(--text); }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; }
+  .card{ background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--brand); border-radius:12px; padding:14px 16px; }
+  .card .ct{ font-size:15px; font-weight:700; margin-bottom:8px; color:#0f172a; }
+  .card .r{ display:flex; gap:8px; padding:3px 0; font-size:13px; border-bottom:1px dashed #f1f5f9; }
+  .card .r:last-child{ border-bottom:none; }
+  .card .k{ flex:none; width:84px; color:var(--muted); font-weight:600; }
+  .card .v{ flex:1; word-break:break-all; }
+  footer{ text-align:center; color:var(--muted); font-size:12px; padding:24px; }
+  @media (max-width:560px){ .grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>customers</h1>
+  <p>共 3 条客户记录 · 由 alice@x.com 上传自动生成</p>
+</header>
+<div class="wrap">
+  <div class="meta">来源文件：<b>customers.xlsx</b> ｜ 生成时间：2026-07-15 01:48:57 ｜ 识别字段：公司 / 客户、联系人、邮箱、电话、国家 / 地区、主营产品</div>
+  <div class="grid"><div class="card"><div class="ct">Acme Medical Ltd</div><div class="r"><span class="k">公司 / 客户</span><span class="v">Acme Medical Ltd</span></div><div class="r"><span class="k">联系人</span><span class="v">John Doe</span></div><div class="r"><span class="k">邮箱</span><span class="v">john@acme.com</span></div><div class="r"><span class="k">电话</span><span class="v">+8801711000001</span></div><div class="r"><span class="k">国家 / 地区</span><span class="v">孟加拉</span></div><div class="r"><span class="k">主营产品</span><span class="v">高频电刀</span></div></div><div class="card"><div class="ct">BD Health Co</div><div class="r"><span class="k">公司 / 客户</span><span class="v">BD Health Co</span></div><div class="r"><span class="k">联系人</span><span class="v">Fatema</span></div><div class="r"><span class="k">邮箱</span><span class="v">fatema@bdhealth.com</span></div><div class="r"><span class="k">电话</span><span class="v">+8801711000002</span></div><div class="r"><span class="k">国家 / 地区</span><span class="v">孟加拉</span></div><div class="r"><span class="k">主营产品</span><span class="v">骨科动力</span></div></div><div class="card"><div class="ct">Global Surg</div><div class="r"><span class="k">公司 / 客户</span><span class="v">Global Surg</span></div><div class="r"><span class="k">联系人</span><span class="v">Lee</span></div><div class="r"><span class="k">邮箱</span><span class="v">lee@globalsurg.com</span></div><div class="r"><span class="k">电话</span><span class="v">+86021123</span></div><div class="r"><span class="k">国家 / 地区</span><span class="v">中国</span></div><div class="r"><span class="k">主营产品</span><span class="v">氩气刀</span></div></div></div>
+</div>
+<footer>新华健康外贸客户开发系统 · 由上传文件自动识别生成<br><a href="../index.html" target="_blank" style="color:var(--brand);font-weight:600;">返回系统首页 ↗</a></footer>
+</body>
+</html>

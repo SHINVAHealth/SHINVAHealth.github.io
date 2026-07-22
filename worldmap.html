@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<script>
+/* 防护：拦截页面加载完成后外部脚本对文档的破坏性整体写入（CloudStudio 预览注入的统计/骨架脚本常以此冲掉已渲染的地图）
+   - document.write/open/close/writeln：加载后调用会清空整个文档
+   - document.body.innerHTML / replaceChildren：外部脚本用以“刷新/重写”页面 body
+   - document.documentElement.innerHTML：整体替换
+   本项目自身不使用这些写入方式，拦截零副作用。 */
+(function(){
+  function warn(t){ try{ console.warn('[map-guard] 拦截外部'+t+'，保护地图'); }catch(e){} }
+  var DP = Document.prototype;
+  DP.open = function(){ return this; };
+  DP.close = function(){ return this; };
+  DP.write = function(){ warn('document.write'); return this; };
+  DP.writeln = function(){ warn('document.writeln'); return this; };
+  function install(){
+    try {
+      if (document.body && !document.body.__mg){
+        var nh = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        Object.defineProperty(document.body, 'innerHTML', {
+          configurable:true,
+          get: nh ? nh.get : function(){ return ''; },
+          set: function(){ warn('body.innerHTML 写入'); }
+        });
+        document.body.replaceChildren = function(){ warn('body.replaceChildren'); };
+        document.body.__mg = true;
+      }
+      if (document.documentElement && !document.documentElement.__mg){
+        var dh = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        Object.defineProperty(document.documentElement, 'innerHTML', {
+          configurable:true,
+          get: dh ? dh.get : function(){ return ''; },
+          set: function(){ warn('documentElement.innerHTML 写入'); }
+        });
+        document.documentElement.__mg = true;
+      }
+    } catch(e){}
+  }
+  if (document.readyState !== 'loading') install();
+  else document.addEventListener('DOMContentLoaded', install);
+  var _t=0, _iv=setInterval(function(){ if(document.body){ install(); clearInterval(_iv); } else if((_t+=120)>4000){ clearInterval(_iv); } },120);
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>世界地图 · 客户分布 | 新华健康外贸客户管理系统</title>
+<style>
+  :root{
+    --bg1:#0b1220; --bg2:#0f1c33; --brand:#0ea5e9; --brand2:#0d9488;
+    --ink:#e2e8f0; --muted:#94a3b8; --line:rgba(255,255,255,.1); --accent:#38bdf8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%; cursor:url('assets/cursors/LoLNormal.png') 3 2, auto; }
+  body{
+    font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 70% -10%, rgba(14,165,233,.18), transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, rgba(13,148,136,.16), transparent 55%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  header.top{
+    display:flex; align-items:center; gap:14px;
+    height:60px; box-sizing:border-box; padding:0 20px;
+    position:sticky; top:0; z-index:20;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:rgba(11,18,32,.55); backdrop-filter:blur(8px);
+  }
+  header.top .logo{ height:34px; width:auto; }
+  header.top h1{ font-size:18px; margin:0; letter-spacing:1px; font-weight:700; }
+  header.top .sub{ color:var(--muted); font-size:12px; margin-left:6px; }
+  header.top .spacer{ flex:1; }
+  header.top a.back{
+    color:var(--ink); text-decoration:none; font-size:13px; font-family:inherit;
+    border:1px solid var(--line); padding:8px 14px; border-radius:10px;
+    background:rgba(255,255,255,.06); transition:.2s; white-space:nowrap;
+  }
+  header.top a.back:hover{ background:rgba(56,189,248,.18); border-color:var(--accent); }
+
+  .layout{ flex:1; position:relative; }
+  /* 整体轻微透明度 + 层次感 */
+  .globe{
+    position:absolute; inset:0; left:300px;
+    opacity:.94;
+  }
+  .globe svg{ width:100%; height:100%; display:block; cursor:none !important; touch-action:none; }
+  .globe svg *{ cursor:none !important; }
+  /* 地图浮层缩放按钮：隐藏系统指针，只显示跟随的 LOL 小手（避免小手与箭头重叠） */
+  .mapctrl button{ cursor:none !important; }
+  /* 自定义 LOL 小手：跟随鼠标的真实图片元素，彻底规避浏览器拒载 CSS url() 光标（系统手回退） */
+  .globe-cursor{ position:fixed; left:0; top:0; width:26px; height:24px; pointer-events:none; z-index:99999; display:none; will-change:transform; user-select:none; -webkit-user-drag:none; }
+  /* 进入地球区域时全局屏蔽所有系统/CSS光标，只保留 DOM 跟随的 LOL 小手（消除拖拽时 body 光标穿透叠加的"双重手"） */
+  body.over-globe, body.over-globe *{ cursor:none !important; }
+  a, button, .back{ cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
+  .country{
+    fill:rgba(56,189,248,.26);
+    stroke:rgba(8,15,30,.85); stroke-width:.5;
+    transition:fill .15s ease, stroke .15s ease;
+    cursor:url('assets/cursors/LoLHover.png') 1 2, pointer;
+  }
+  /* 已开通板块国家：持续金色高亮，便于在世界地图上快速定位（7 国：孟加拉 + 6 新国） */
+  .country.hl{
+    fill:rgba(251,191,36,.9);
+    stroke:rgba(255,237,160,.92); stroke-width:.7;
+  }
+  .country:hover{
+    fill:rgba(56,189,248,.95);
+    stroke:#fff; stroke-width:1;
+  }
+  .country.active{
+    fill:rgba(13,148,136,.95); stroke:#fff; stroke-width:1;
+  }
+  /* 地球：海洋底（固定，置于内容之下）+ 轮廓边界（固定，描边光晕，置于内容之上） */
+  .sphere-ocean{ fill:rgba(10,20,42,.55); }
+  .sphere-frame{
+    fill:none; stroke:rgba(150,200,255,.32); stroke-width:1.4;
+    filter:drop-shadow(0 0 7px rgba(14,165,233,.28));
+  }
+
+  /* 顶部占位提示（国家板块建设中） */
+  .banner{
+    position:absolute; left:50%; top:14px; transform:translateX(-50%);
+    background:rgba(13,148,136,.92); color:#fff; padding:10px 18px; border-radius:12px;
+    font-size:14px; box-shadow:0 10px 30px rgba(0,0,0,.35); z-index:5;
+    display:none; pointer-events:none;
+  }
+  .banner b{ font-weight:700; }
+
+  /* 信息框 tooltip */
+  .tip{
+    position:fixed; z-index:20; pointer-events:none;
+    min-width:180px; max-width:260px;
+    background:rgba(15,23,42,.86); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.16); border-radius:12px;
+    padding:12px 14px; color:var(--ink);
+    box-shadow:0 16px 40px rgba(0,0,0,.45);
+    opacity:0; transform:translateY(6px); transition:opacity .12s ease, transform .12s ease;
+    font-size:13px; line-height:1.7;
+  }
+  .tip.show{ opacity:1; transform:translateY(0); }
+  .tip .cn{ font-size:15px; font-weight:700; }
+  .tip .en{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+  .tip .row{ display:flex; justify-content:space-between; gap:12px; }
+  .tip .row .k{ color:var(--muted); }
+  .tip .row .v{ color:#fff; font-variant-numeric:tabular-nums; }
+  .legend{
+    position:absolute; left:22px; bottom:16px; z-index:4;
+    display:flex; align-items:center; gap:9px;
+    color:var(--ink); font-size:12.5px;
+    background:rgba(15,23,42,.55); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.12); border-radius:10px;
+    padding:8px 13px; pointer-events:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.3);
+  }
+  .legend .swatch{
+    width:14px; height:14px; border-radius:4px;
+    background:rgba(251,191,36,.92);
+    box-shadow:0 0 0 1px rgba(255,237,160,.55) inset;
+  }
+  .legend b{ color:#fde68a; font-weight:700; }
+  .mapctrl{
+    position:absolute; right:18px; bottom:18px; z-index:6;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .mapctrl button{
+    width:42px; height:42px; border-radius:12px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(15,23,42,.7); backdrop-filter:blur(10px);
+    color:var(--ink); font-size:20px; line-height:1; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer;
+    transition:.18s; box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  .mapctrl button:hover{ background:rgba(14,165,233,.22); border-color:var(--brand); transform:translateY(-1px); }
+  .mapctrl button:active{ transform:translateY(0); }
+
+  /* 左上角品牌块：logo + 标题 + 实时中国时间（位于 SHINVA Health 下方） */
+  header.top .brand{ display:flex; align-items:center; gap:14px; }
+  header.top .brand-col{ display:flex; flex-direction:column; line-height:1.25; }
+  header.top .chinaclock{
+    font-size:12px; color:var(--muted); margin-top:3px;
+    font-variant-numeric:tabular-nums; letter-spacing:.3px;
+  }
+  header.top .chinaclock b{ color:#fbbf24; font-weight:700; }
+
+  /* 左侧检索面板（玻璃质感），位于地球让出的左侧空白区 */
+  .sidepanel{
+    position:absolute; left:18px; top:84px; width:268px; z-index:7;
+    background:rgba(15,23,42,.66); backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px;
+    box-shadow:0 12px 34px rgba(0,0,0,.38);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .sp-search{ position:relative; }
+  .wm-input{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.05); color:var(--ink); font-size:13px;
+  }
+  .wm-input:focus{ outline:none; border-color:var(--brand); }
+  .wm-input::placeholder{ color:var(--muted); }
+  .wm-results{
+    margin-top:8px; max-height:300px; overflow:auto; border-radius:10px;
+    background:rgba(8,15,30,.94); border:1px solid rgba(255,255,255,.12); padding:6px;
+  }
+  .wm-results .grp{ font-size:11px; color:var(--muted); padding:5px 8px 2px; letter-spacing:.5px; }
+  .wm-results .item{
+    display:flex; justify-content:space-between; gap:10px; align-items:center;
+    padding:7px 9px; border-radius:8px; font-size:13px; color:var(--ink); cursor:pointer; transition:.12s;
+  }
+  .wm-results .item:hover{ background:rgba(14,165,233,.20); }
+  .wm-results .item .tag{ font-size:11px; color:#7dd3fc; flex:none; }
+  .wm-results .empty{ font-size:12px; color:var(--muted); padding:8px; }
+  .wm-track-btn{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.05); color:var(--ink); font-size:13px; cursor:pointer; transition:.2s;
+  }
+  .wm-track-btn:hover{ border-color:var(--brand); background:rgba(14,165,233,.16); }
+  .wm-track-btn .arrow{ transition:transform .2s; }
+  .wm-track-btn.open .arrow{ transform:rotate(180deg); }
+  .wm-track-list{ display:none; flex-direction:column; gap:2px; }
+  .wm-track-list:not([hidden]){ display:flex; }
+  .wm-track-list a{
+    display:flex; align-items:center; padding:8px 12px; border-radius:8px; text-decoration:none;
+    color:var(--ink); font-size:13px; transition:.15s; cursor:pointer;
+  }
+  .wm-track-list a:hover{ background:rgba(14,165,233,.20); }
+  .wm-track-list a .dot{
+    display:inline-block; width:7px; height:7px; border-radius:50%; background:#fbbf24;
+    margin-right:9px; box-shadow:0 0 0 1px rgba(255,237,160,.5) inset;
+  }
+  @media (max-width:900px){
+    .globe{ left:0; }
+    .sidepanel{ display:none; }
+  }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="shinva_logo.png" alt="SHINVA Health" class="logo">
+      <div class="brand-col">
+        <h1>世界地图<span class="sub">· 客户分布</span></h1>
+        <div class="chinaclock" id="chinaclock">中国时间 --:--:--</div>
+      </div>
+    </div>
+    <span class="spacer"></span>
+    <a class="back" href="index.html">← 返回系统</a>
+  </header>
+  <div class="layout">
+    <div class="banner" id="banner"></div>
+    <aside class="sidepanel" id="sidepanel">
+      <div class="sp-search">
+        <input id="wmSearch" class="wm-input" placeholder="查找国家 / 客户信息" autocomplete="off">
+        <div id="wmResults" class="wm-results" hidden></div>
+      </div>
+      <button id="wmTrackBtn" class="wm-track-btn">外贸跟踪国家名单 <span class="arrow">▾</span></button>
+      <div id="wmTrackList" class="wm-track-list" hidden></div>
+    </aside>
+    <div class="globe" id="globe"></div>
+    <div class="mapctrl">
+      <button id="zin" title="放大">＋</button>
+      <button id="zout" title="缩小">－</button>
+      <button id="zreset" title="重置视图">⟲</button>
+    </div>
+  </div>
+  <div class="tip" id="tip">
+    <div class="cn" id="tipCn"></div>
+    <div class="en" id="tipEn"></div>
+    <div class="row"><span class="k">中文名称</span><span class="v" id="tipCn2"></span></div>
+    <div class="row"><span class="k">英文名称</span><span class="v" id="tipEn2"></span></div>
+    <div class="row"><span class="k">所属大洲</span><span class="v" id="tipCont"></span></div>
+    <div class="row"><span class="k">当地时间</span><span class="v" id="tipTime"></span></div>
+  </div>
+
+  <script src="d3.v7.min.js"></script>
+  <script src="topojson-client.min.js"></script>
+  <script src="worldmap_app.js?v=202607201325"></script>
+</body>
+</html>

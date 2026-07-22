@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<script>
+/* 防护：拦截页面加载完成后外部脚本对文档的破坏性整体写入（CloudStudio 预览注入的统计/骨架脚本常以此冲掉已渲染的地图）
+   - document.write/open/close/writeln：加载后调用会清空整个文档
+   - document.body.innerHTML / replaceChildren：外部脚本用以“刷新/重写”页面 body
+   - document.documentElement.innerHTML：整体替换
+   本项目自身不使用这些写入方式，拦截零副作用。 */
+(function(){
+  function warn(t){ try{ console.warn('[map-guard] 拦截外部'+t+'，保护地图'); }catch(e){} }
+  var DP = Document.prototype;
+  DP.open = function(){ return this; };
+  DP.close = function(){ return this; };
+  DP.write = function(){ warn('document.write'); return this; };
+  DP.writeln = function(){ warn('document.writeln'); return this; };
+  function install(){
+    try {
+      if (document.body && !document.body.__mg){
+        var nh = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        Object.defineProperty(document.body, 'innerHTML', {
+          configurable:true,
+          get: nh ? nh.get : function(){ return ''; },
+          set: function(){ warn('body.innerHTML 写入'); }
+        });
+        document.body.replaceChildren = function(){ warn('body.replaceChildren'); };
+        document.body.__mg = true;
+      }
+      if (document.documentElement && !document.documentElement.__mg){
+        var dh = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        Object.defineProperty(document.documentElement, 'innerHTML', {
+          configurable:true,
+          get: dh ? dh.get : function(){ return ''; },
+          set: function(){ warn('documentElement.innerHTML 写入'); }
+        });
+        document.documentElement.__mg = true;
+      }
+    } catch(e){}
+  }
+  if (document.readyState !== 'loading') install();
+  else document.addEventListener('DOMContentLoaded', install);
+  var _t=0, _iv=setInterval(function(){ if(document.body){ install(); clearInterval(_iv); } else if((_t+=120)>4000){ clearInterval(_iv); } },120);
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>国家详情 · 新华健康外贸客户管理系统</title>
+<style>
+  :root{
+    --bg:#0b1220; --bg2:#0f172a; --card:rgba(255,255,255,.05); --line:rgba(255,255,255,.1);
+    --teal:#0ea5a4; --blue:#0ea5e9; --txt:#e7eef7; --muted:#9fb0c3; --accent:#38bdf8;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; cursor:url('assets/cursors/LoLNormal.png') 3 2, auto; }
+  a, button, [role=button], .adm2toggle, .toolbtn{ cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
+  input, textarea, select{ cursor:text; }
+  .mapwrap svg{cursor:none!important}
+  .mapwrap svg *{cursor:none!important}
+  /* 地图浮层按钮：隐藏系统指针，只显示跟随的 LOL 小手（避免小手与箭头重叠） */
+  .mapwrap button{cursor:none!important}
+  .country-cursor{ position:fixed; left:0; top:0; width:26px; height:24px; pointer-events:none; z-index:99999; display:none; will-change:transform; user-select:none; -webkit-user-drag:none; }
+  /* 进入国家地图区域时全局屏蔽所有系统/CSS光标，只保留 DOM 跟随的 LOL 小手（消除拖拽时 body 光标穿透叠加的"双重手"） */
+  body.over-map, body.over-map *{ cursor:none !important; }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(120% 120% at 50% -10%, #13233f 0%, var(--bg) 55%, #070d18 100%);
+    color:var(--txt); -webkit-font-smoothing:antialiased;
+  }
+  .topbar{
+    display:flex; align-items:center; gap:16px; height:60px; box-sizing:border-box; padding:0 20px;
+    background:rgba(10,18,32,.72); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line); position:sticky; top:0; z-index:10;
+  }
+  .back-btn{
+    border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--txt);
+    padding:8px 14px; border-radius:10px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; font-size:13px; transition:.2s; white-space:nowrap;
+  }
+  .back-btn:hover{ background:rgba(56,189,248,.18); border-color:var(--accent); }
+  .title-wrap{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .title-wrap h1{ font-size:20px; margin:0; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .title-wrap .meta{ color:var(--muted); font-size:12px; white-space:nowrap; }
+  .clock{
+    color:#fff; font-size:20px; font-weight:700; white-space:nowrap;
+    font-variant-numeric:tabular-nums; letter-spacing:.5px;
+  }
+  .layout{ display:flex; gap:16px; padding:16px; align-items:stretch; }
+  .infobar{ width:300px; flex:none; display:flex; flex-direction:column; gap:14px; }
+  .custbar{ width:372px; flex:none; }
+  .mapwrap{
+    flex:1; position:relative; min-height:480px; border-radius:18px; overflow:hidden;
+    background:radial-gradient(120% 120% at 50% 28%, #0e1a2e 0%, #0a1322 60%, #070d18 100%);
+    border:1px solid var(--line);
+  }
+  #map{ position:absolute; inset:0; }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
+    backdrop-filter:blur(10px);
+  }
+  .card h3{ margin:0 0 12px; font-size:14px; color:var(--accent); letter-spacing:.5px; font-weight:700; }
+  .facts{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .facts li{ display:flex; justify-content:space-between; gap:10px; font-size:13px; }
+  .facts li span{ color:var(--txt); font-weight:600; text-align:right; }
+  .facts li b{ color:var(--muted); font-weight:500; }
+  .fx{ font-size:13px; line-height:1.9; }
+  .fx .row{ display:flex; justify-content:space-between; gap:10px; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,.07); }
+  .fx .row:last-of-type{ border-bottom:none; }
+  .fx b{ color:var(--accent); font-size:15px; font-variant-numeric:tabular-nums; }
+  .fx .top b{ color:#fbbf24; }
+  .fx-update{ display:block; margin-top:6px; color:var(--muted); font-size:11px; }
+  .holidays{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; max-height:300px; overflow:auto; }
+  .holidays li{ font-size:12.5px; display:flex; gap:8px; align-items:baseline; }
+  .hd-date{ color:var(--teal); font-weight:700; font-variant-numeric:tabular-nums; flex:none; }
+  .hd-float{ color:#fbbf24; font-size:10px; border:1px solid #fbbf24; border-radius:6px; padding:0 4px; margin-left:2px; }
+  .loading, .err{ color:var(--muted); font-size:12px; }
+  .map-ctrl{ position:absolute; right:14px; bottom:14px; display:flex; flex-direction:column; gap:8px; z-index:5; }
+  .map-ctrl button{
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(10,18,32,.8); color:var(--txt); font-size:18px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:.2s;
+  }
+  .map-ctrl button:hover{ background:rgba(56,189,248,.2); border-color:var(--accent); }
+  .map-ctrl button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  .map-toggle{ position:absolute; left:14px; top:14px; z-index:5; display:flex; gap:8px; }
+  .map-toggle button{
+    padding:7px 12px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(10,18,32,.8); color:var(--txt); font-size:12px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:.2s;
+  }
+  .map-toggle button:hover{ border-color:var(--accent); }
+  .map-toggle button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  /* 整页头部右侧「返回系统」按钮：与「返回世界地图」同款样式，靠右对齐 */
+  .sys-btn{
+    margin-left:auto;
+    border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--txt);
+    padding:8px 14px; border-radius:10px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; font-size:13px; font-family:inherit; transition:.2s; white-space:nowrap;
+  }
+  .sys-btn:hover{ background:rgba(56,189,248,.18); border-color:var(--accent); }
+  .map-status{ position:absolute; left:14px; bottom:14px; z-index:5; font-size:11px; color:var(--muted);
+    background:rgba(10,18,32,.7); padding:5px 10px; border-radius:8px; max-width:60%; }
+  /* 右下角：信息总计 / 位置统计（用于对比计算空白地址个数） */
+  .cust-stat{ position:absolute; right:64px; bottom:14px; z-index:6; font-size:12px; font-weight:700; letter-spacing:.3px;
+    color:#bbf7d0; background:rgba(10,18,32,.78); border:1px solid rgba(34,197,94,.5); padding:6px 12px; border-radius:9px;
+    box-shadow:0 4px 14px rgba(0,0,0,.35); pointer-events:none; white-space:nowrap; }
+  .cust-stat b{ color:#86efac; }
+  .map-tip{
+    position:fixed; z-index:30; display:none; pointer-events:none; padding:5px 10px; border-radius:8px;
+    background:rgba(8,15,30,.92); border:1px solid var(--accent); color:#fff; font-size:12px; font-weight:600;
+    box-shadow:0 6px 20px rgba(0,0,0,.4);
+  }
+  .prov-fill{ fill:rgba(56,189,248,.12); stroke:none; transition:fill .15s; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
+  .prov-fill:hover{ fill:rgba(56,189,248,.32); }
+  /* 一级行政区域(ADM1)实线：上层高亮骨架，加暗色光晕使其清晰压在二级区域虚线之上 */
+  .prov-line{ fill:none; stroke:#eaf2fb; stroke-width:1.5; stroke-opacity:.96; pointer-events:none;
+    filter:drop-shadow(0 0 0.9px #05080f) drop-shadow(0 0 0.9px #05080f); }
+  /* 二次构建的国家轮廓（由一级行政区域并集生成），最上层加粗强调，确保行政区轮廓在其内 */
+  .country-outline{ fill:none; stroke:#eaf6ff; stroke-width:2.4; stroke-opacity:1; pointer-events:none;
+    filter:drop-shadow(0 0 1.2px #05080f) drop-shadow(0 0 1.2px #05080f); }
+  /* 偏远海外领地小窗（参照中国南海诸岛做法）：玻璃质感面板，独立投影绘制各领地 */
+  .map-inset{ position:absolute; right:14px; top:14px; width:232px; background:rgba(10,18,32,.82);
+    border:1px solid var(--line); border-radius:12px; padding:8px 8px 6px; z-index:6; backdrop-filter:blur(8px);
+    box-shadow:0 8px 24px rgba(0,0,0,.35); }
+  .map-inset-title{ font-size:11px; color:var(--accent); font-weight:700; letter-spacing:.5px; margin-bottom:4px; text-align:center; }
+  .map-inset-svg{ display:block; }
+  .inset-shape{ fill:rgba(56,189,248,.20); stroke:#eaf2fb; stroke-width:1; pointer-events:all; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:fill .15s; }
+  .inset-shape:hover{ fill:rgba(56,189,248,.48); }
+  .inset-label{ fill:#cfe3f5; font-size:8px; text-anchor:middle; font-weight:600; pointer-events:none; }
+  /* 二级行政区域(ADM2)虚线：下层弱化纹理，dasharray + 更淡更细避免与省界重叠混乱 */
+  .adm2{
+    fill:none; stroke:#67e8f9; stroke-width:.5; stroke-dasharray:3 2.6; opacity:.72;
+    pointer-events:all; cursor:crosshair; transition:stroke .15s, stroke-width .15s, stroke-dasharray .15s, opacity .15s;
+  }
+  .adm2:hover{ stroke:#fbb923; stroke-width:1.1; stroke-dasharray:none; opacity:1; }
+  .marker-cap-star{ pointer-events:none; }
+  .marker-plane-g{ pointer-events:all; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
+  .marker-air-label{ fill:#eafff5; font-size:11px; text-anchor:middle; paint-order:stroke; stroke:#06281c; stroke-width:3px; pointer-events:none; display:none; font-weight:600; }
+  .marker-air-label .cn{ fill:#7dd3fc; }
+  .marker-label{ fill:#fff; font-size:10px; text-anchor:middle; paint-order:stroke; stroke:#06121f; stroke-width:2.5px; pointer-events:none; font-weight:600; }
+  .search{
+    width:100%; padding:9px 12px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(255,255,255,.05); color:var(--txt); font-size:13px; margin-bottom:10px;
+  }
+  .search:focus{ outline:none; border-color:var(--accent); }
+  .cust-count{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .cust-table tbody tr{ cursor:pointer; }
+  .cust-table tbody tr:hover{ background:rgba(56,189,248,.10); }
+  .cust-table tbody tr.sel{ background:rgba(56,189,248,.22); outline:1px solid var(--accent); }
+  .cust-pt-g.cust-hl circle{ fill:#fde047 !important; }  /* 纯黄单色，同尺寸同位置，无高亮无边框 */
+  /* 选中行政区（一级/二级）高亮：仅描边/底色提示，不发光 */
+  .prov-fill.prov-sel{ fill:rgba(245,158,11,.26) !important; }
+  .prov-line.prov-sel{ stroke:#f59e0b !important; stroke-width:2.4 !important; }
+  .adm2.adm2-sel{ stroke:#f59e0b !important; stroke-width:1.5 !important; stroke-dasharray:none !important; opacity:1 !important; }
+  .cust-hint{ font-size:11.5px; color:var(--teal); background:rgba(13,148,136,.12); border:1px solid rgba(13,148,136,.3); border-radius:8px; padding:7px 10px; margin-bottom:10px; line-height:1.5; }
+  .cust-table-wrap{ max-height:420px; overflow:auto; border-radius:10px; border:1px solid var(--line); }
+  .cust-table{ width:100%; border-collapse:collapse; font-size:12px; }
+  .cust-table th, .cust-table td{ padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.06); vertical-align:top; }
+  .cust-table th{ position:sticky; top:0; background:#13233f; color:var(--accent); font-weight:700; z-index:1; }
+  .cust-table td.src{ color:var(--teal); font-size:11px; }
+  .cust-empty{ font-size:12px; color:var(--muted); line-height:1.6; padding:8px 2px; }
+  @media (max-width:980px){
+    .layout{ flex-direction:column; }
+    .infobar,.custbar{ width:auto; }
+    .mapwrap{ min-height:400px; }
+  }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="back-btn" id="backBtn">← 返回世界地图</button>
+    <div class="title-wrap">
+      <h1 id="countryName">加载中…</h1>
+      <span id="countryClock" class="clock">--:--:--</span>
+      <span class="meta" id="countryMeta"></span>
+    </div>
+    <button class="sys-btn" id="backSys">← 返回系统</button>
+  </header>
+
+  <main class="layout">
+    <aside class="infobar">
+      <section class="card">
+        <h3 id="overviewTitle">国家概况</h3>
+        <ul class="facts">
+          <li><b>人口</b><span id="pop">—</span></li>
+          <li><b>首都</b><span id="capital">—</span></li>
+          <li><b>货币</b><span id="currency">—</span></li>
+          <li><b>所属地区</b><span id="region">—</span></li>
+        </ul>
+      </section>
+      <section class="card">
+        <h3>货币汇率</h3>
+        <div id="fxBody" class="fx"><span class="loading">加载中…</span></div>
+      </section>
+      <section class="card">
+        <h3>公休日（<span id="holidayYear">—</span>今年）</h3>
+        <ul id="holidayList" class="holidays"><li class="loading">加载中…</li></ul>
+      </section>
+    </aside>
+
+    <section class="mapwrap">
+      <div id="map"></div>
+      <div id="inset" class="map-inset" style="display:none;"></div>
+      <div class="map-toggle">
+        <button id="adm2toggle">显示二级行政区域</button>
+        <button id="custtoggle" class="active">隐藏客户位点</button>
+        <button id="multitrack">开启多点追踪</button>
+      </div>
+      <div class="map-ctrl">
+        <button id="zin" title="放大">＋</button>
+        <button id="zout" title="缩小">－</button>
+        <button id="zreset" title="重置">⟲</button>
+      </div>
+      <div id="mapStatus" class="map-status">地图加载中…</div>
+      <div id="custStat" class="cust-stat">信息总计 <b>0</b> 个 · 位置统计 <b>0</b> 个</div>
+    </section>
+
+    <aside class="custbar">
+      <section class="card">
+        <h3>客户检索（<span id="custCountry">—</span>）</h3>
+        <input id="custSearch" class="search" placeholder="搜索 公司 / 电话 / 姓名 / 地址…">
+        <div id="custCount" class="cust-count"></div>
+        <div class="cust-hint">🟢 地图上绿色圆点 = 按客户实际地址落点的分布（无地址者仅列于下方表格）</div>
+        <div class="cust-table-wrap">
+          <table class="cust-table">
+            <thead><tr><th>公司</th><th>电话</th><th>联系人</th><th>地址</th></tr></thead>
+            <tbody id="custBody"></tbody>
+          </table>
+        </div>
+        <div id="custEmpty" class="cust-empty">尚未导入客户数据 — 将客户清单（公司/电话/姓名/地址/国家）以 JSON 或 Excel 发我，转成 customers.json 重新部署后即可在此检索。</div>
+      </section>
+    </aside>
+  </main>
+
+  <div id="mapTip" class="map-tip"></div>
+
+  <script src="d3.v7.min.js"></script>
+  <script src="topojson-client.min.js"></script>
+  <script src="country_meta.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

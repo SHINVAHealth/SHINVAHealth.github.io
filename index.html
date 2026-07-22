@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新华健康外贸客户管理系统</title>
+<style>
+  :root{
+    --bg:#eef2f6; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --brand:#0d9488;
+    --c-bd:#059669; --c-cust:#2563eb; --c-fac:#d97706; --c-pop:#7c3aed; --danger:#dc2626;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  header.hero{ position:relative; background:#0f172a url('bg.jpg') center top / cover no-repeat; color:#fff; padding:40px 24px 56px; text-align:center; overflow:hidden; }
+  /* 品牌色调统一 + 上下暗化：顶部护 LOGO/标题清晰，底部与白色内容区自然过渡 */
+  header.hero::before{ content:''; position:absolute; inset:0; z-index:0; background:
+    linear-gradient(180deg, rgba(15,23,42,.58) 0%, rgba(15,23,42,.12) 32%, rgba(15,23,42,.22) 68%, rgba(15,23,42,.62) 100%),
+    linear-gradient(135deg, rgba(13,148,136,.34) 0%, rgba(14,165,233,.30) 100%); }
+  /* 顶部柔光 + 暗角聚焦，提升质感 */
+  header.hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:
+    radial-gradient(78% 58% at 50% -8%, rgba(255,255,255,.16) 0%, transparent 60%),
+    radial-gradient(150% 130% at 50% 45%, transparent 52%, rgba(0,0,0,.34) 100%); }
+  header.hero .brand-logo{ position:absolute; top:16px; left:16px; z-index:2; max-height:42px; max-width:210px; width:auto; height:auto; border-radius:8px; box-shadow:inset 0 1px 1px rgba(255,255,255,.6), inset 0 -2px 3px rgba(0,0,0,.35), 0 3px 8px rgba(0,0,0,.4), 0 8px 22px rgba(0,0,0,.28); }
+  header.hero h1, header.hero p{ position:relative; z-index:1; }
+  header.hero h1{ margin:0; font-size:28px; letter-spacing:2px; font-weight:700; }
+  header.hero p{ margin:10px 0 0; opacity:.92; font-size:14px; }
+  .wrap{ max-width:1080px; margin:-30px auto 48px; padding:0 20px; }
+  nav.topbar{ position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94); backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:10px 14px; display:flex; align-items:center; gap:10px; box-shadow:0 4px 16px rgba(15,23,42,.06); margin-bottom:26px; flex-wrap:wrap; }
+  /* 左侧实用工具栏 + 板块列表布局 */
+  .layout{ display:flex; gap:18px; align-items:flex-start; }
+  .toolbar{ position:sticky; top:76px; flex:0 0 150px; display:flex; flex-direction:column; gap:10px; }
+  .cats{ flex:1 1 auto; min-width:0; }
+  .tool-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-decoration:none; color:#fff; background:linear-gradient(135deg,#0ea5e9,#0d9488); padding:14px 10px; border-radius:14px; font-size:13px; font-weight:600; line-height:1.2; text-align:center; box-shadow:0 6px 18px rgba(14,165,233,.25); transition:transform .2s ease, box-shadow .2s ease; }
+  .tool-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 26px rgba(14,165,233,.4); }
+  .tool-btn .ic{ font-size:22px; line-height:1; }
+  /* 国家板块建设中提示条 */
+  .country-hint{ background:linear-gradient(135deg, rgba(14,165,233,.95), rgba(13,148,136,.95)); color:#fff; padding:12px 18px; border-radius:12px; font-size:14px; margin-bottom:18px; box-shadow:0 8px 24px rgba(13,148,136,.3); display:none; }
+  .country-hint.show{ display:block; }
+  .country-hint b{ font-weight:700; }
+  @media (max-width:760px){ .layout{ flex-direction:column; } .toolbar{ position:static; flex:1 1 auto; flex-direction:row; flex-wrap:wrap; } .tool-btn{ flex:1 1 140px; } }
+  nav.topbar .who{ font-size:13px; font-weight:600; }
+  nav.topbar .role{ font-size:11px; padding:2px 9px; border-radius:999px; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; }
+  nav.topbar .spacer{ flex:1; }
+  nav.topbar button{ border:none; border-radius:9px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-logout{ background:#e2e8f0; color:#0f172a; }
+  .cat{ margin-bottom:32px; }
+  .cat-head{ display:flex; align-items:center; gap:10px; margin:0 0 14px; }
+  .cat-head .dot{ width:12px; height:12px; border-radius:50%; flex:none; }
+  .cat-head h2{ margin:0; font-size:19px; }
+  .cat-head .cnt{ font-size:12px; color:var(--muted); background:#fff; border:1px solid var(--line); padding:2px 10px; border-radius:999px; margin-left:auto; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .card{ position:relative; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:5px; text-decoration:none; color:var(--text); border-left:4px solid var(--accent,#ccc); cursor:pointer; transition:.18s; }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.08); border-color:var(--accent); }
+  .card .t{ font-size:15px; font-weight:600; line-height:1.4; }
+  .card .sub{ font-size:12px; color:var(--muted); }
+  .card .go{ margin-top:2px; font-size:13px; color:var(--accent); font-weight:600; }
+  .bd{ --accent:var(--c-bd); } .cust{ --accent:var(--c-cust); } .fac{ --accent:var(--c-fac); } .pop{ --accent:var(--c-pop); } .mine{ --accent:var(--brand); }
+  /* 外贸客户分级导航 */
+  .cust-tree{ margin-top:4px; }
+  .cust-g1{ font-size:15px; font-weight:700; color:#1e3a8a; margin:8px 0 4px; padding-left:2px; }
+  .cust-region{ margin:4px 0 14px; }
+  .cust-region-h{ font-size:13px; font-weight:600; color:var(--muted); margin:2px 0 8px; padding-left:9px; border-left:3px solid var(--c-cust); }
+  .cust-grid .card .go{ color:var(--c-cust); }
+  /* 重点国家高亮（孟加拉 / 尼日利亚）：黄色左边线 + 淡黄渐变底 + 金色徽标 */
+  .card.hot{ --accent:#f59e0b; background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%); border-color:#fcd34d; border-left-color:#f59e0b; box-shadow:0 4px 14px rgba(245,158,11,.20); }
+  .card.hot:hover{ box-shadow:0 8px 22px rgba(245,158,11,.30); }
+  .card.hot .go{ color:#b45309; }
+  .card.hot .badge{ position:absolute; top:10px; right:12px; font-size:11px; font-weight:700; color:#92400e; background:#fde68a; border:1px solid #fcd34d; padding:1px 9px; border-radius:999px; letter-spacing:.5px; }
+  /* 国家节点下的「客户信息」子链接面板：跨整行、缩进、淡蓝左边线，形成层级感 */
+  .cust-sub{ grid-column:1 / -1; margin:2px 0 8px; padding:6px 0 4px 16px; border-left:3px solid var(--c-cust); background:rgba(37,99,235,.04); border-radius:0 10px 10px 0; }
+  .cust-sub .sub-card{ background:#f8fafc; border-left-color:#93c5fd; }
+  .cust-sub .sub-card .go{ color:#2563eb; }
+  /* 全站主题化光标：地图/贸易风格十字准星，进入页面即生效 */
+  html, body{ cursor:default; }
+  a, button, .card, .tool-btn, [role=button], .cat-head, .cust-region-h, .modal-bar button, .topbar button{ cursor:pointer; }
+  input, textarea, select{ cursor:text; }
+  footer{ text-align:center; color:var(--muted); font-size:12px; padding:24px; }
+  /* 登录 */
+  .login-mask{ position:fixed; inset:0; z-index:9999; display:flex; background:#0f172a; padding:20px; overflow:auto; }
+  .login-mask .bg{ position:absolute; inset:0; background:#0f172a url('bg.jpg') center center / cover no-repeat; opacity:.5; transform:scale(1.12); z-index:0; }
+  .login-mask .bg-overlay{ position:absolute; inset:0; background:rgba(15,23,42,.38); z-index:1; }
+  .login-card{ position:relative; z-index:2; margin:auto; background:rgba(255,255,255,.96); border-radius:16px; padding:30px 28px; width:360px; max-width:100%; box-shadow:0 24px 60px rgba(15,23,42,.35); }
+  .login-card .logo{ display:block; margin:0 auto 18px; max-height:50px; max-width:240px; width:auto; height:auto; }
+  .login-card label{ display:block; font-size:12px; color:#475569; font-weight:600; margin:12px 0 5px; }
+  .login-card input{ width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:9px; font-size:14px; box-sizing:border-box; }
+  .login-card input:focus{ outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(13,148,136,.15); }
+  .login-card button.submit{ width:100%; margin-top:18px; padding:11px; border:none; border-radius:9px; background:var(--brand); color:#fff; font-size:15px; font-weight:600; cursor:pointer; }
+  .login-card button.submit:hover{ background:#0f766e; }
+  .login-err{ color:var(--danger); font-size:12.5px; margin-top:10px; min-height:16px; }
+  /* 底部可拖拽横幅（抽屉）：上拖展开 / 下拖收起 */
+  /* 登录遮罩内底部免责声明（简洁静态） */
+  .login-mask .corner-note{ position:fixed; left:0; right:0; bottom:14px; padding:0 14px; text-align:center; font-size:12px; line-height:1.4; color:#fff; white-space:nowrap; text-shadow:0 1px 4px rgba(0,0,0,.65); z-index:10000; pointer-events:none; }
+  @media (max-width:600px){ .login-mask .corner-note{ white-space:normal; max-width:94%; margin:0 auto; font-size:10.5px; line-height:1.5; bottom:12px; } }
+  /* 弹窗 */
+  .modal-mask{ position:fixed; inset:0; z-index:200; display:none; background:rgba(15,23,42,.82); padding:24px; align-items:center; justify-content:center; }
+  .modal-box{ background:#fff; border-radius:14px; width:min(1100px,96vw); height:min(90vh,960px); display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.4); }
+  .modal-bar{ display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line); background:#f8fafc; }
+  .modal-bar .mt{ font-size:14px; font-weight:600; margin-right:auto; }
+  .modal-bar button{ border:none; background:#e2e8f0; color:#0f172a; padding:7px 14px; border-radius:8px; font-size:13px; cursor:pointer; font-weight:600; }
+  .modal-bar button.primary{ background:var(--brand); color:#fff; }
+  .modal-frame{ flex:1; border:none; width:100%; }
+  .empty{ color:var(--muted); font-size:13px; padding:20px; text-align:center; }
+  @media (max-width:560px){ header.hero{ padding:58px 18px 50px; } header.hero .brand-logo{ position:absolute; top:12px; left:12px; max-height:32px; max-width:130px; } header.hero h1{ font-size:20px; padding-left:0; text-align:center; } .grid{ grid-template-columns:1fr; } .modal-box{ width:100vw; height:100vh; border-radius:0; } .modal-mask{ padding:0; } }
+</style>
+</head>
+<body>
+<div id="login" class="login-mask">
+  <div class="bg"></div>
+  <div class="bg-overlay"></div>
+  <form id="loginForm" class="login-card" autocomplete="off">
+    <img src="shinva_logo.png" alt="SHINVA Health" class="logo">
+    <label for="lu">账号</label>
+    <input id="lu" type="text" placeholder="请输入账号" autocomplete="username">
+    <label for="lp">密码</label>
+    <input id="lp" type="password" placeholder="至少 6 位" autocomplete="current-password">
+    <button type="submit" id="submitBtn" class="submit">登 录</button>
+    <div id="loginErr" class="login-err"></div>
+  </form>
+  <div class="corner-note">本系统仅为辅助工具，不属于公司官方平台，页面背景、Logo仅临时使用，公司拥有全部修改、调整权限，如有优化意见可随时沟通联系13011609352</div>
+</div>
+
+<div id="app" style="display:none">
+  <header class="hero">
+    <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+    <h1>新华健康外贸客户管理系统</h1>
+  </header>
+  <div class="wrap">
+    <nav class="topbar">
+      <span class="who" id="who"></span>
+      <span class="role" id="roleTag"></span>
+      <span class="spacer"></span>
+      <button class="btn-logout" id="btnLogout">退出登录</button>
+    </nav>
+    <div id="countryHint" class="country-hint"></div>
+    <div class="layout">
+      <aside class="toolbar">
+        <a class="tool-btn" href="worldmap.html" title="打开世界地图，按国家浏览客户分布"><span class="ic">🌍</span><span>世界地图</span></a>
+      </aside>
+      <div id="cats" class="cats"></div>
+    </div>
+  </div>
+  <footer>新华健康外贸客户管理系统 · 静态版（无需后端）</footer>
+</div>
+
+<div class="modal-mask" id="modal">
+  <div class="modal-box">
+    <div class="modal-bar">
+      <span class="mt" id="modalTitle">资料预览</span>
+      <button type="button" id="modalOpen">新窗口打开</button>
+      <button type="button" id="modalClose">关闭</button>
+    </div>
+    <iframe class="modal-frame" id="modalFrame" title="资料预览"></iframe>
+  </div>
+</div>
+
+<script>
+  // 外贸客户分级导航（索引页「外贸客户」版块内的分级结构）
+  const CUST_TREE = {
+    name: '外贸客户文件',                               // 一级
+    regions: [
+      { name:'亚洲', countries:[
+        { iso2:'bd', name:'孟加拉' },
+        { iso2:'my', name:'马来西亚' },
+        { iso2:'id', name:'印度尼西亚' },
+        { iso2:'pk', name:'巴基斯坦' },
+      ]},
+      { name:'非洲', countries:[
+        { iso2:'ng', name:'尼日利亚' },
+        { iso2:'tz', name:'坦桑尼亚' },
+        { iso2:'ci', name:'科特迪瓦' },
+      ]},
+      { name:'美洲', countries:[
+        { iso2:'mx', name:'墨西哥' },
+        { iso2:'gt', name:'危地马拉' },
+      ]},
+    ]
+  };
+  // 各国客户文件「子链接」：点击外贸客户树中对应国家后展开。
+  // 原「孟加拉客户文件」版块的 9 份文件已全部迁移至此，作为 [孟加拉] 的「客户信息」子链接。
+  const CUST_FILES = {
+    bd: [
+      { file:'bangladesh_bone_all.html', title:'孟加拉骨组织手术设备经销商·全量汇总' },
+      { file:'bangladesh_esu.html', title:'孟加拉 ESU 电刀及外科设备经销商' },
+      { file:'bangladesh_verified.html', title:'孟加拉已核实经销商名单' },
+      { file:'expo_list.html', title:'孟加拉医疗器械展会展商总表' },
+      { file:'existing_customers.html', title:'现有客户信息表' },
+      { file:'buyer_profile.html', title:'电刀厂家外贸客户·买方详细档案' },
+      { file:'buyer_profile_compliant.html', title:'电刀厂家外贸客户·买方详细档案（合规版）' },
+      { file:'deep_compliant.html', title:'电刀厂家外贸客户·多源交叉验证版' },
+      { file:'report_multi.html', title:'电刀主机厂家外贸客户·多源交叉验证版' },
+    ],
+    ng: [
+      { file:'nigeria_customers.html', title:'尼日利亚客户信息表·江洁（医疗/兽医 27 家）' },
+    ],
+  };
+  const CATS = [
+    { id:'cust', name:'外贸客户', color:'#2563eb', tree:CUST_TREE },
+    { id:'fac', name:'国产厂家文件', color:'#d97706' },
+    { id:'pop', name:'科普文件', color:'#7c3aed' },
+  ];
+  // 基础资料清单（与后端 BASE_META 一致）
+  const BASE_META = [
+    // （孟加拉客户文件已全部迁移至「外贸客户」→ [孟加拉] 子链接，见 CUST_FILES.bd）
+    { file:'hosts_list.html', title:'国产高频电刀主机厂家清单', cat:'fac' },
+    { file:'esu_registry.html', title:'国产高频电刀注册名单', cat:'fac' },
+    { file:'history_bone.html', title:'骨组织手术设备完整发展史', cat:'pop' },
+    { file:'history_hf_surgery.html', title:'高频手术设备完整发展史', cat:'pop' },
+    { file:'history_devices.html', title:'高频手术设备与骨组织手术设备·历代发展史', cat:'pop' },
+    { file:'market_analysis.html', title:'高频电刀与骨组织手术设备·外贸市场分析', cat:'pop' },
+  ];
+  // 预置账户（静态版写死，无后端）：role 决定版块可见范围
+  const ACCOUNTS = {
+    'zhang':      { password:'179654',         role:'admin', label:'系统管理员' },
+    'jiangjie':   { password:'tiaosanhuajiao',  role:'vip',   label:'VIP账户' },
+    'lianweikang':{ password:'william',         role:'vip',   label:'VIP账户' },
+    'wangkun':    { password:'159357',          role:'vip',   label:'VIP账户' },
+    'admin':      { password:'xhjk1234',        role:'test',  label:'测试账号' },
+  };
+  // 版块可见性：每个版块允许访问的角色
+  // 系统管理员(admin) 与 VIP账户(vip) 可见全部；测试账号(test) 与普通账号(user) 仅公共版块
+  const SECTION_ACCESS = {
+    cust:    ['admin','vip'],
+    fac:     ['admin','vip','test','user'],
+    pop:     ['admin','vip','test','user'],
+    uploads: ['admin','vip','test','user'],
+  };
+  // 已生成上传板块（静态版内置；新增上传需后端版本）
+  const UPLOADS = [
+    { id:'u_83d31da19c70', title:'customers（customers.xlsx，3 条客户）', owner:'alice@x.com', file:'uploads/u_83d31da19c70.html' },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  let ME = null;
+  let curUrl = null;
+
+  function roleLabel(role, username){
+    if (ACCOUNTS[username]) return ACCOUNTS[username].label;
+    if (role === 'admin') return '系统管理员';
+    if (role === 'vip') return 'VIP账户';
+    if (role === 'test') return '测试账号';
+    return '普通账号';
+  }
+
+  const form = $('loginForm'), errEl = $('loginErr'), submitBtn = $('submitBtn');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = $('lu').value.trim();
+    const p = $('lp').value;
+    errEl.textContent=''; errEl.style.color='';
+    if (!username) { errEl.textContent='请输入账号'; return; }
+    if (p.length < 6) { errEl.textContent='密码长度至少 6 位'; return; }
+    // 预置账户校验
+    if (ACCOUNTS[username]) {
+      if (ACCOUNTS[username].password !== p) { errEl.textContent='账号或密码不正确'; return; }
+      ME = { username, role: ACCOUNTS[username].role, label: ACCOUNTS[username].label };
+    } else {
+      // 其他账号按"普通账号"处理（仅看公共版块；静态版无注册后端）
+      ME = { username, role:'user', label:'普通账号' };
+    }
+    localStorage.setItem('xh_static_user', JSON.stringify(ME));
+    // 同步放行站内 base/uploads 子页的独立 gate（同源 localStorage 共享）
+    try { localStorage.setItem('gate_ok', '1'); localStorage.setItem('gate_user', ME.username); } catch(e){}
+    enterApp();
+  });
+
+  function showCountryHint(){
+    const hint = $('countryHint'); if(!hint) return;
+    const h = location.hash.replace('#','');
+    let iso2 = '', mode = '';
+    if (h.startsWith('country=')) { iso2 = h.slice(8); mode = 'build'; }
+    else if (h.startsWith('sec=')) { iso2 = h.slice(4); mode = 'sec'; }
+    if (!iso2) { hint.className = 'country-hint'; hint.innerHTML = ''; return; }
+    const CN = { bd:'孟加拉', cn:'中国', in:'印度', jp:'日本', kr:'韩国', vn:'越南', th:'泰国', my:'马来西亚', sg:'新加坡', id:'印度尼西亚', ph:'菲律宾', pk:'巴基斯坦', lk:'斯里兰卡', mm:'缅甸', kh:'柬埔寨', la:'老挝', np:'尼泊尔', mn:'蒙古', kz:'哈萨克斯坦', uz:'乌兹别克斯坦', ir:'伊朗', iq:'伊拉克', sa:'沙特阿拉伯', ae:'阿联酋', tr:'土耳其', eg:'埃及', za:'南非', ng:'尼日利亚', br:'巴西', ar:'阿根廷', cl:'智利', pe:'秘鲁', mx:'墨西哥', us:'美国', ca:'加拿大', fr:'法国', de:'德国', it:'意大利', es:'西班牙', pt:'葡萄牙', nl:'荷兰', be:'比利时', ch:'瑞士', at:'奥地利', se:'瑞典', no:'挪威', dk:'丹麦', fi:'芬兰', ie:'爱尔兰', gb:'英国', pl:'波兰', ru:'俄罗斯', ua:'乌克兰', au:'澳大利亚', nz:'新西兰' };
+    const label = CN[iso2] || iso2.toUpperCase();
+    if (mode === 'sec') hint.innerHTML = '已定位板块：<b>'+label+'</b> 客户文件';
+    else hint.innerHTML = '正在建设：<b>'+label+'</b> 国家专属板块（即将上线）';
+    hint.className = 'country-hint show';
+  }
+
+  function enterApp(){
+    $('login').style.display='none';
+    $('app').style.display='block';
+    $('who').textContent = ME.username;
+    $('roleTag').textContent = ME.label || roleLabel(ME.role, ME.username);
+    renderSections();
+    showCountryHint();
+  }
+
+  function renderSections(){
+    const cats = $('cats');
+    cats.innerHTML = '';
+    const role = ME.role;
+    // 基础资料版块：按 SECTION_ACCESS 过滤
+    CATS.forEach(c => {
+      if (!(SECTION_ACCESS[c.id] || []).includes(role)) return;
+      if (c.tree){ cats.appendChild(catTreeBlock(c, c.tree)); return; }   // 外贸客户：分级导航
+      const items = BASE_META.filter(s => s.cat === c.id);
+      if (!items.length) return;
+      cats.appendChild(catBlock(c, items, (s)=>('./base/'+s.file), 'base'));
+    });
+    // 全员上传版块：公共版块，所有角色可见；VIP/管理员看全部上传，其余只看本人
+    if ((SECTION_ACCESS['uploads'] || []).includes(role)) {
+      const mine = (role === 'admin' || role === 'vip')
+        ? UPLOADS
+        : UPLOADS.filter(s => s.owner === ME.username);
+      if (mine.length) cats.appendChild(catBlock({id:'mine', name:'全员上传板块', color:'#0d9488'}, mine, (s)=>('./'+s.file), 'user', true));
+      else if (role !== 'admin' && role !== 'vip') cats.appendChild(emptyBlock('你还没有上传文件（静态版不支持上传，请使用本地后端版本）。'));
+    }
+  }
+  function catBlock(c, items, getUrl, kind, showOwner){
+    const sec = document.createElement('section'); sec.className='cat';
+    const head = document.createElement('div'); head.className='cat-head';
+    head.innerHTML = '<span class="dot" style="background:'+c.color+'"></span><h2>'+c.name+'</h2><span class="cnt">'+items.length+' 份</span>';
+    sec.appendChild(head);
+    const grid = document.createElement('div'); grid.className='grid';
+    items.forEach(s => {
+      const card = document.createElement('div'); card.className='card '+(kind==='base'?c.id:'mine');
+      const sub = showOwner ? ('上传者：'+s.owner) : '';
+      card.innerHTML = '<span class="t"></span>'+(sub?'<span class="sub">'+sub+'</span>':'')+'<span class="go">打开 ↗</span>';
+      card.querySelector('.t').textContent = s.title;
+      card.addEventListener('click', () => openSection(getUrl(s)));
+      grid.appendChild(card);
+    });
+    sec.appendChild(grid);
+    return sec;
+  }
+  function emptyBlock(msg){
+    const d = document.createElement('div'); d.className='empty'; d.textContent = msg; return d;
+  }
+  // 外贸客户分级导航：一级[外贸客户文件] → 二级大洲 → 三级国家；
+  // 有客户文件子链接的国家（如孟加拉）点击展开「客户信息」子链接面板；无文件国家点击直接打开该国主页
+  function catTreeBlock(c, tree){
+    const sec = document.createElement('section'); sec.className='cat';
+    const head = document.createElement('div'); head.className='cat-head';
+    head.innerHTML = '<span class="dot" style="background:'+c.color+'"></span><h2>'+c.name+'</h2>';
+    sec.appendChild(head);
+    const treeBox = document.createElement('div'); treeBox.className='cust-tree';
+    const g1 = document.createElement('div'); g1.className='cust-g1'; g1.textContent = tree.name;
+    treeBox.appendChild(g1);
+    tree.regions.forEach(reg => {
+      const rg = document.createElement('div'); rg.className='cust-region';
+      const rh = document.createElement('div'); rh.className='cust-region-h'; rh.textContent = reg.name;
+      rg.appendChild(rh);
+      const grid = document.createElement('div'); grid.className='grid cust-grid';
+      reg.countries.forEach(co => {
+        const files = (CUST_FILES && CUST_FILES[co.iso2]) || co.files || null;
+        // 重点国家（孟加拉 / 尼日利亚）标黄高亮
+        const HOT = { bd:true, ng:true };
+        const hot = !!HOT[co.iso2];
+        const card = document.createElement('div'); card.className='card cust'+(hot?' hot':'');
+        card.innerHTML = '<span class="t"></span>'+(hot?'<span class="badge">★ 重点</span>':'')+'<span class="go">'+(files && files.length ? '客户信息 ▾' : '客户信息 ↗')+'</span>';
+        card.querySelector('.t').textContent = co.name;
+        grid.appendChild(card);
+
+        if (files && files.length){
+          // 展开子链接面板（子链接：逐份客户文件）
+          const sub = document.createElement('div'); sub.className='cust-sub'; sub.style.display='none';
+          const subGrid = document.createElement('div'); subGrid.className='grid cust-grid';
+          files.forEach(f => {
+            const fc = document.createElement('a'); fc.className='card cust sub-card'; fc.href='./base/'+f.file;
+            fc.innerHTML = '<span class="t"></span><span class="go">打开 ↗</span>';
+            fc.querySelector('.t').textContent = f.title;
+            fc.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openSection('./base/'+f.file); });
+            subGrid.appendChild(fc);
+          });
+          sub.appendChild(subGrid);
+          grid.appendChild(sub);
+          card.addEventListener('click', () => {
+            sub.style.display = (sub.style.display === 'none') ? 'block' : 'none';
+            const go = card.querySelector('.go'); if (go) go.textContent = (sub.style.display === 'none') ? '客户信息 ▾' : '客户信息 ▴';
+          });
+        } else {
+          // 无客户文件：点击直接打开该国客户信息主页
+          card.addEventListener('click', () => openSection('./country.html?c='+co.iso2));
+        }
+      });
+      rg.appendChild(grid);
+      treeBox.appendChild(rg);
+    });
+    sec.appendChild(treeBox);
+    return sec;
+  }
+
+  async function openSection(url){
+    try{
+      // 移动端兼容：直接用真实相对地址载入 iframe，避免 blob: URL 在移动端 iframe / 新标签页中不被支持导致白屏
+      curUrl = url;
+      $('modalTitle').textContent = '资料预览';
+      $('modalFrame').src = url;
+      $('modal').style.display = 'flex';
+    }catch(_){ alert('打开失败：无法读取文件'); }
+  }
+  $('modalClose').onclick = () => { $('modal').style.display='none'; $('modalFrame').src='about:blank'; };
+  $('modalOpen').onclick = () => { if (curUrl) window.open(curUrl,'_blank'); };
+
+  function logout(){ ME=null; localStorage.removeItem('xh_static_user'); try{ localStorage.removeItem('gate_ok'); localStorage.removeItem('gate_user'); localStorage.removeItem('xh_auth'); }catch(e){} location.reload(); }
+  $('btnLogout').onclick = logout;
+
+  // 启动：统一令牌 xh_auth（未登录时 <head> 中 bootstrap 已重定向至 login.html）
+  (async () => {
+    try{
+      const a = JSON.parse(localStorage.getItem('xh_auth')||'null');
+      if (a && a.u && (Date.now()-a.ts) < 8*60*60*1000){
+        ME = { username:a.u, role: a.role || 'user', label: a.label || roleLabel(a.role, a.u) };
+        enterApp();
+        return;
+      }
+    }catch(_){}
+    // 无有效令牌：bootstrap 已跳转登录页；此处为兜底，理论上不会到达
+  })();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高频电刀与骨组织手术设备 · 国际市场历年真实情况对比分析</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --esu: #c0392b;
+    --bone: #2c6fbb;
+    --ink: #1f2933;
+    --sub: #5b6b7b;
+    --line: #e2e8f0;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --soft: #eef2f7;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    padding: 0 0 60px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, #1f3a5f 0%, #2c6fbb 100%);
+    color: #fff;
+    padding: 48px 24px 40px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .hero h1 { font-size: 28px; letter-spacing: .5px; margin-bottom: 10px; }
+  .hero .sub { font-size: 14px; opacity: .9; max-width: 760px; margin: 0 auto; }
+  .hero .tags { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero .tag { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); padding: 5px 14px; border-radius: 20px; font-size: 12.5px; }
+
+  /* TOC */
+  .toc {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px 24px; margin-bottom: 28px;
+  }
+  .toc h3 { font-size: 14px; color: var(--sub); margin-bottom: 12px; letter-spacing: 1px; }
+  .toc a { display: block; color: var(--bone); text-decoration: none; font-size: 14px; padding: 4px 0; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Section */
+  .sec { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 28px 30px; margin-bottom: 24px; }
+  .sec h2 { font-size: 20px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .sec h2 .bar { width: 6px; height: 22px; border-radius: 3px; background: var(--bone); display: inline-block; }
+  .sec h3 { font-size: 16px; margin: 22px 0 8px; color: var(--esu); }
+  .sec .lead { color: var(--sub); font-size: 14px; margin-bottom: 18px; }
+  p.note { font-size: 13px; color: var(--sub); background: var(--soft); border-left: 3px solid var(--bone); padding: 10px 14px; border-radius: 6px; margin: 14px 0; }
+
+  /* Data table */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { background: var(--soft); color: var(--ink); font-weight: 600; }
+  tr:hover td { background: #fafcff; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .up { color: #1a7f37; font-weight: 600; }
+  .down { color: var(--esu); font-weight: 600; }
+  .esu-c { color: var(--esu); font-weight: 600; }
+  .bone-c { color: var(--bone); font-weight: 600; }
+  .src { color: var(--sub); font-size: 12px; }
+
+  /* CSS bar chart */
+  .barchart { margin: 16px 0; }
+  .barrow { display: flex; align-items: center; gap: 12px; margin: 7px 0; }
+  .barrow .yr { width: 52px; font-size: 13px; color: var(--sub); flex-shrink: 0; text-align: right; }
+  .barrow .track { flex: 1; background: var(--soft); border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
+  .barrow .fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #fff; font-size: 12px; font-weight: 600; }
+  .fill.esu { background: linear-gradient(90deg, #e35d4a, var(--esu)); }
+  .fill.bone { background: linear-gradient(90deg, #5b9bd5, var(--bone)); }
+  .fill.china { background: linear-gradient(90deg, #f0a830, #d98324); }
+  .barrow .val { width: 88px; font-size: 12.5px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+  /* players */
+  .players { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .pcard { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: #fcfdff; }
+  .pcard .nm { font-weight: 700; font-size: 14px; }
+  .pcard .meta { font-size: 12px; color: var(--sub); margin-top: 2px; }
+
+  /* insight */
+  .insight { background: linear-gradient(135deg, #fff6f4, #eef4fb); border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; margin-top: 16px; }
+  .insight h4 { font-size: 15px; margin-bottom: 10px; }
+  .insight ul { padding-left: 18px; font-size: 13.5px; }
+  .insight li { margin: 5px 0; }
+
+  .foot { text-align: center; color: var(--sub); font-size: 12px; padding: 20px; }
+  .foot a { color: var(--bone); }
+  @media (max-width: 720px){ .players { grid-template-columns: 1fr; } .barrow .val { width: 70px; } }</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>高频电刀与骨组织手术设备 · 国际市场历年真实情况对比分析</h1>
+  <p class="sub">只收录已公开、可核查的真实历史数据；剔除一切预测 / 前瞻 / CAGR 推演。按 过去 10 年、5 年、3 年 三个窗口做年份对比。</p>
+  <div class="tags">
+    <span class="tag">高频电刀 (ESU)</span>
+    <span class="tag">骨组织手术设备</span>
+    <span class="tag">中国医疗器械出口</span>
+    <span class="tag">数据截至 2025 年（真实值）</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="toc">
+    <h3>目录</h3>
+    <a href="#m">〇、数据口径与方法说明（必读）</a>
+    <a href="#esu">一、高频电刀全球市场：2015–2024 真实规模年表</a>
+    <a href="#bone">二、骨组织手术设备全球市场：真实基准与区域</a>
+    <a href="#china">三、中国医疗器械出口：2015–2025 真实年表（疫情峰谷 + 近 3 年回升）</a>
+    <a href="#cmp">四、年份对比分析：10 年 / 5 年 / 3 年 三窗口</a>
+    <a href="#company">五、国产骨科企业海外收入真实年对比（年报口径）</a>
+    <a href="#insight">六、基于真实数据的核心洞察（不做预测）</a>
+    <a href="#ref">七、参考来源</a>
+  </div>
+
+  <!-- 0 -->
+  <div class="sec" id="m">
+    <h2><span class="bar"></span>〇、数据口径与方法说明（必读）</h2>
+    <p class="lead">本页所有数字均来自公开报告、行业协会统计或上市公司年报，凡标注来源即可核查。凡"202X 年之后""预计""CAGR 至 203X"之类前瞻数字一律未收录。</p>
+    <ul style="font-size:13.5px; padding-left:18px; color:var(--sub);">
+      <li><b>高频电刀</b>：采用多家研究机构已公布的<b>历史实际值</b>。不同机构基准年口径略有差异（如 2023 年 Polaris 估 66.5 亿、skemsys 综述估 63.2 亿美元），本页以逐年可比序列为主，差异在脚注标明。</li>
+      <li><b>骨组织手术设备</b>：全球连续年度公开序列稀缺，仅能取到 2023 基准值与部分细分（气动工具）2020–2025 真实序列，其余标注"未公开 / 口径不一"。</li>
+      <li><b>中国出口</b>：主用<b>中国医药保健品进出口商会（CCCMHPIE）官方口径</b>与<b>东北证券整理海关数据</b>，二者 HS 编码口径不同，2024 年数值（600 亿 vs 487.5 亿）并存，趋势一致（疫后回升）。</li>
+      <li>厂商份额无统一公开口径，本页只列<b>可核实的主要厂商</b>，不编造精确市占率。</li>
+    </ul>
+  </div>
+
+  <!-- 1 ESU -->
+  <div class="sec" id="esu">
+    <h2><span class="bar" style="background:var(--esu)"></span>一、高频电刀全球市场：2015–2024 真实规模年表</h2>
+    <p class="lead">全球高频电刀（含电刀主机 + 配件）市场规模，逐年真实值（单位：十亿美元 USD bn）。</p>
+
+    <table>
+      <thead><tr><th>年份</th><th class="num">全球规模 (亿美元)</th><th class="num">同比</th><th>来源 / 备注</th></tr></thead>
+      <tbody>
+        <tr><td>2015</td><td class="num esu-c">41.0 / 44.8*</td><td class="num">—</td><td class="src">skemsys 综述（2015–2019 由 41→53）；TMR 基准 44.8</td></tr>
+        <tr><td>2017</td><td class="num esu-c">50.0</td><td class="num">—</td><td class="src">TMR 公布的 2017 实测估值</td></tr>
+        <tr><td>2019</td><td class="num esu-c">53.0</td><td class="num">—</td><td class="src">skemsys 综述（2015–2019 终点）</td></tr>
+        <tr><td>2020</td><td class="num esu-c">56.0</td><td class="num down">−2.8%</td><td class="src">疫情择期手术下滑 9.3%，skemsys 综述</td></tr>
+        <tr><td>2021</td><td class="num esu-c">59.5</td><td class="num up">+6.2%</td><td class="src">手术量反弹 +14.7%，skemsys 综述</td></tr>
+        <tr><td>2022</td><td class="num esu-c">61.2</td><td class="num up">+2.9%</td><td class="src">skemsys 综述</td></tr>
+        <tr><td>2023</td><td class="num esu-c">63.2</td><td class="num up">+3.3%</td><td class="src">skemsys 综述；Polaris 同口径估 66.5（差异见注）</td></tr>
+        <tr><td>2024</td><td class="num esu-c">68.5</td><td class="num up">+8.4%</td><td class="src">skemsys 综述；Polaris 估 70.6；手术室利用率 68%→77%</td></tr>
+      </tbody>
+    </table>
+    <p class="note">* 2015 年两值并存：skemsys 综述取 41.0、TMR 取 44.8（口径不同）。2023/2024 年 Polaris 估值略高（66.5 / 70.6），差异源于统计范围（是否含吸烟管理、能量平台），逐年趋势一致。</p>
+
+    <h3>逐年规模可视化（USD bn，skemsys 可比序列）</h3>
+    <div class="barchart">
+      <div class="barrow"><span class="yr">2020</span><div class="track"><div class="fill esu" style="width:81.7%">56.0</div></div><span class="val">−2.8% YoY</span></div>
+      <div class="barrow"><span class="yr">2021</span><div class="track"><div class="fill esu" style="width:86.9%">59.5</div></div><span class="val">+6.2%</span></div>
+      <div class="barrow"><span class="yr">2022</span><div class="track"><div class="fill esu" style="width:89.3%">61.2</div></div><span class="val">+2.9%</span></div>
+      <div class="barrow"><span class="yr">2023</span><div class="track"><div class="fill esu" style="width:92.3%">63.2</div></div><span class="val">+3.3%</span></div>
+      <div class="barrow"><span class="yr">2024</span><div class="track"><div class="fill esu" style="width:100%">68.5</div></div><span class="val">+8.4%</span></div>
+    </div>
+
+    <h3>2024 年真实区域结构（已核实）</h3>
+    <table>
+      <thead><tr><th>区域</th><th class="num">占比</th><th class="num">金额 (亿美元)</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>北美</td><td class="num bone-c">41%</td><td class="num">28.0</td><td>美国占区域需求 82%，医疗基建成熟</td></tr>
+        <tr><td>欧洲</td><td class="num bone-c">29%</td><td class="num">19.9</td><td>手术量增加 + 政府医疗支出年增 6.3%</td></tr>
+        <tr><td>亚太 / 其他</td><td class="num">30%</td><td class="num">20.6</td><td>"未公开"精确拆分；亚太为增速较快区域</td></tr>
+      </tbody>
+    </table>
+
+    <h3>主要厂商（可核实，非市占率排名）</h3>
+    <div class="players">
+      <div class="pcard"><div class="nm">Medtronic 美敦力</div><div class="meta">美国 · 能量平台 + 血管闭合</div></div>
+      <div class="pcard"><div class="nm">Johnson &amp; Johnson / Ethicon 强生</div><div class="meta">美国 · 超声 + 高频</div></div>
+      <div class="pcard"><div class="nm">B. Braun 贝朗</div><div class="meta">德国 · 电刀 + 配件</div></div>
+      <div class="pcard"><div class="nm">ERBE 爱尔博</div><div class="meta">德国 · 氩气刀 APC 标杆</div></div>
+      <div class="pcard"><div class="nm">Olympus 奥林巴斯</div><div class="meta">日本 · 外科能量</div></div>
+      <div class="pcard"><div class="nm">CONMED / KLS Martin</div><div class="meta">美国 / 德国 · 电刀与骨科动力</div></div>
+    </div>
+    <p class="note">全球电刀市场高度碎片化，公开资料普遍引用"CR5 约 50%"，但各机构具体拆分不一致，本页不列精确百分比以免失真。</p>
+  </div>
+
+  <!-- 2 BONE -->
+  <div class="sec" id="bone">
+    <h2><span class="bar" style="background:var(--bone)"></span>二、骨组织手术设备全球市场：真实基准与区域</h2>
+    <p class="lead">骨科动力工具（钻 / 锯 / 铰刀等）全球连续年度公开序列稀缺，以下为已核实基准值与可查细分。</p>
+
+    <table>
+      <thead><tr><th>指标</th><th class="num">真实值</th><th>年份 / 来源</th></tr></thead>
+      <tbody>
+        <tr><td>全球骨科动力工具市场</td><td class="num bone-c">17.1 亿美元</td><td>2023 · Grand View Research</td></tr>
+        <tr><td>同上（另一口径）</td><td class="num bone-c">13.3 → 14.3 亿美元</td><td>2023→2024 · The Business Research Company</td></tr>
+        <tr><td>大骨动力工具细分</td><td class="num bone-c">4.96 亿美元</td><td>2023 · Grand View Research</td></tr>
+      </tbody>
+    </table>
+    <p class="note">两机构 2023 基准差异较大（17.1 vs 13.3 亿），源于统计范围（是否含导航 / 机器人附件）。本页取 GVR 17.1 亿为主基准，TBR 作参照。</p>
+
+    <h3>气动骨科动力工具真实年序列（2020–2025，USD mn）</h3>
+    <p class="lead">该细分公开逐年数据最完整，可作骨设备年度走势的代表样本。</p>
+    <div class="barchart">
+      <div class="barrow"><span class="yr">2020</span><div class="track"><div class="fill bone" style="width:81.1%">312.5</div></div><span class="val">基准</span></div>
+      <div class="barrow"><span class="yr">2021</span><div class="track"><div class="fill bone" style="width:84.2%">324.5</div></div><span class="val">+3.9%</span></div>
+      <div class="barrow"><span class="yr">2022</span><div class="track"><div class="fill bone" style="width:90.2%">347.7</div></div><span class="val">+7.1%</span></div>
+      <div class="barrow"><span class="yr">2023</span><div class="track"><div class="fill bone" style="width:94.6%">364.7</div></div><span class="val">+4.9%</span></div>
+      <div class="barrow"><span class="yr">2024</span><div class="track"><div class="fill bone" style="width:98.6%">380.2</div></div><span class="val">+4.3%</span></div>
+      <div class="barrow"><span class="yr">2025</span><div class="track"><div class="fill bone" style="width:100%">385.5</div></div><span class="val">+1.4%</span></div>
+    </div>
+    <p class="src">来源：pmarketresearch 公开年表（气动骨科动力工具，2025）。</p>
+
+    <h3>2025 年气动细分真实区域分布（USD mn）</h3>
+    <table>
+      <thead><tr><th>区域</th><th class="num">金额</th><th class="num">占比</th></tr></thead>
+      <tbody>
+        <tr><td>北美</td><td class="num">134.2</td><td class="num bone-c">34.8%</td></tr>
+        <tr><td>欧洲</td><td class="num">107.5</td><td class="num bone-c">27.9%</td></tr>
+        <tr><td>亚太</td><td class="num">93.5</td><td class="num">24.3%</td></tr>
+        <tr><td>拉美</td><td class="num">30.5</td><td class="num">7.9%</td></tr>
+        <tr><td>中东非洲</td><td class="num">19.9</td><td class="num">5.2%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>主要厂商（可核实）</h3>
+    <div class="players">
+      <div class="pcard"><div class="nm">Stryker 史赛克</div><div class="meta">美国 · 骨科动力龙头</div></div>
+      <div class="pcard"><div class="nm">CONMED</div><div class="meta">美国 · 动力 + 能量</div></div>
+      <div class="pcard"><div class="nm">Zimmer Biomet</div><div class="meta">美国 · 关节 + 动力</div></div>
+      <div class="pcard"><div class="nm">DePuy Synthes (J&amp;J)</div><div class="meta">美国 · 创伤 + 动力</div></div>
+      <div class="pcard"><div class="nm">B. Braun / Arthrex / De Soutter</div><div class="meta">德 / 美 / 英 · 专业动力</div></div>
+      <div class="pcard"><div class="nm">上海博进 Bojin 等国产</div><div class="meta">中国 · 中低端出海主力</div></div>
+    </div>
+  </div>
+
+  <!-- 3 CHINA -->
+  <div class="sec" id="china">
+    <h2><span class="bar" style="background:#d98324"></span>三、中国医疗器械出口：2015–2025 真实年表</h2>
+    <p class="lead">行业出口总额（亿美元）。2020 疫情红利冲至峰值，2023 深度回调后 2024–2025 连续回升——这是理解"过去 10 年 / 5 年 / 3 年"窗口的关键背景。</p>
+
+    <table>
+      <thead><tr><th>年份</th><th class="num">出口总额 (亿美元)</th><th>说明 / 来源</th></tr></thead>
+      <tbody>
+        <tr><td>2015</td><td class="num">280</td><td>东北证券整理（海关 HS 口径）</td></tr>
+        <tr><td>2016</td><td class="num">280</td><td>同上</td></tr>
+        <tr><td>2017</td><td class="num">300</td><td>同上</td></tr>
+        <tr><td>2018</td><td class="num">350</td><td>同上</td></tr>
+        <tr><td>2019</td><td class="num">400</td><td>同上</td></tr>
+        <tr><td>2020</td><td class="num">1,200</td><td>疫情相关设备需求爆发（峰值）</td></tr>
+        <tr><td>2021</td><td class="num">800</td><td>疫情回落</td></tr>
+        <tr><td>2022</td><td class="num">700</td><td>继续回归常态</td></tr>
+        <tr><td>2023</td><td class="num">550 / 454*</td><td>东北证券 550；CCCMHPIE 口径约 454（487.5÷1.073）</td></tr>
+        <tr><td>2024</td><td class="num">600 / 487.5*</td><td>东北证券 600；<b>CCCMHPIE 官方 487.5（+7.3%）</b></td></tr>
+        <tr><td>2025</td><td class="num">504.7*</td><td><b>CCCMHPIE 官方 504.69（+3.54%）</b>；医疗器械创新网另报 523.69</td></tr>
+      </tbody>
+    </table>
+    <p class="note">* 2023–2025 列采用 CCCMHPIE 商会官方口径（与电刀 / 骨设备同属"医院诊断与治疗类"出口 2025 年达 240.57 亿美元、+8.12% 相呼应）。东北证券序列口径更宽，2024 估 600 亿，趋势一致（疫后回升）。</p>
+
+    <h3>行业出口总额可视化（东北证券序列，2020 峰值后回调）</h3>
+    <div class="barchart">
+      <div class="barrow"><span class="yr">2019</span><div class="track"><div class="fill china" style="width:33.3%">400</div></div><span class="val">常态</span></div>
+      <div class="barrow"><span class="yr">2020</span><div class="track"><div class="fill china" style="width:100%">1,200</div></div><span class="val">疫情峰</span></div>
+      <div class="barrow"><span class="yr">2021</span><div class="track"><div class="fill china" style="width:66.7%">800</div></div><span class="val">回落</span></div>
+      <div class="barrow"><span class="yr">2022</span><div class="track"><div class="fill china" style="width:58.3%">700</div></div><span class="val">回归</span></div>
+      <div class="barrow"><span class="yr">2023</span><div class="track"><div class="fill china" style="width:45.8%">550</div></div><span class="val">低点</span></div>
+      <div class="barrow"><span class="yr">2024</span><div class="track"><div class="fill china" style="width:50%">600</div></div><span class="val">回升</span></div>
+    </div>
+
+    <h3>2025 年出口品类结构（CCCMHPIE / CAMDI）</h3>
+    <table>
+      <thead><tr><th>品类</th><th class="num">2025 出口额</th><th class="num">占比 / 增速</th></tr></thead>
+      <tbody>
+        <tr><td>医院诊断与治疗类</td><td class="num">240.57 亿美元</td><td class="num up">+8.12%</td></tr>
+        <tr><td>一次性耗材类</td><td class="num">109.11 亿美元</td><td class="num up">+3.77%</td></tr>
+        <tr><td>其中：医用耗材 (H1)</td><td class="num">868.2 亿元</td><td class="num">占 48.4%（三年稳定）</td></tr>
+        <tr><td>IVD 仪器 (H1)</td><td class="num">138.9 亿元</td><td class="num up">+33.4%（增速最快）</td></tr>
+      </tbody>
+    </table>
+    <p class="src">注：高频电刀与骨组织手术设备归入"医院诊断与治疗类"，该类 2025 年出口 240.57 亿美元、同比 +8.12%，是拉动出口的核心品类。</p>
+  </div>
+
+  <!-- 4 COMPARISON -->
+  <div class="sec" id="cmp">
+    <h2><span class="bar"></span>四、年份对比分析：10 年 / 5 年 / 3 年 三窗口</h2>
+
+    <h3>窗口 A：过去 10 年（2015 → 2024/25）</h3>
+    <table>
+      <thead><tr><th>维度</th><th>2015</th><th>2024/25</th><th>真实变化</th></tr></thead>
+      <tbody>
+        <tr><td>高频电刀全球</td><td class="num">41–45 亿</td><td class="num">68.5 亿 (2024)</td><td class="num up">约 +55%~+67%</td></tr>
+        <tr><td>中国器械出口</td><td class="num">280 亿</td><td class="num">487.5–504.7 亿</td><td class="num up">剔除疫情峰后仍 +74%~+80%</td></tr>
+        <tr><td>骨设备（基准年晚）</td><td class="num">未公开连续序列</td><td class="num">17.1 亿 (2023)</td><td class="num">仅取 2023 基准，不可线性比</td></tr>
+      </tbody>
+    </table>
+    <p class="note">10 年窗口要点：电刀稳健扩张（微创普及驱动）；中国出口剔除 2020 疫情峰后呈结构性增长；骨设备因公开连续数据缺失，10 年对比不具可比性，仅能给基准年。</p>
+
+    <h3>窗口 B：过去 5 年（2020 → 2024）</h3>
+    <table>
+      <thead><tr><th>维度</th><th>2020</th><th>2024</th><th>真实变化</th></tr></thead>
+      <tbody>
+        <tr><td>高频电刀全球</td><td class="num">56.0 亿</td><td class="num">68.5 亿</td><td class="num up">+22.3%（疫情短暂回落后恢复）</td></tr>
+        <tr><td>气动骨工具</td><td class="num">312.5 mn</td><td class="num">380.2 mn</td><td class="num up">+21.7%</td></tr>
+        <tr><td>中国器械出口</td><td class="num">1,200 亿（峰）</td><td class="num">487.5–600 亿</td><td class="num down">疫情红利消退后回归常态</td></tr>
+      </tbody>
+    </table>
+
+    <h3>窗口 C：过去 3 年（2023 → 2025）</h3>
+    <table>
+      <thead><tr><th>维度</th><th>2023</th><th>2024</th><th>2025</th><th>趋势</th></tr></thead>
+      <tbody>
+        <tr><td>高频电刀全球</td><td class="num">63.2 亿</td><td class="num">68.5 亿</td><td class="num">未公开</td><td class="num up">连续回升</td></tr>
+        <tr><td>气动骨工具</td><td class="num">364.7 mn</td><td class="num">380.2 mn</td><td class="num">385.5 mn</td><td class="num up">+1.4%~+4.3%/年</td></tr>
+        <tr><td>中国器械出口 (CCCMHPIE)</td><td class="num">454 亿</td><td class="num">487.5 亿</td><td class="num">504.7 亿</td><td class="num up">+7.3% → +3.54% 连续两年正增</td></tr>
+        <tr><td>诊治类出口 (含电刀/骨设备)</td><td class="num">未单列</td><td class="num">—</td><td class="num">240.57 亿</td><td class="num up">+8.12%</td></tr>
+      </tbody>
+    </table>
+    <p class="note">3 年窗口是最"干净"的对比：中国出口已连续两年正增长、彻底摆脱 2023 低点；电刀与骨工具均呈温和正增，无剧烈波动。</p>
+  </div>
+
+  <!-- 5 COMPANY -->
+  <div class="sec" id="company">
+    <h2><span class="bar" style="background:var(--bone)"></span>五、国产骨科企业海外收入真实年对比（年报口径）</h2>
+    <p class="lead">以下为上市公司年报披露的真实海外收入（百万元），可作"中国骨设备出海"的硬证据，非预测。</p>
+    <table>
+      <thead><tr><th>企业</th><th class="num">2022 海外</th><th class="num">2023 海外</th><th class="num">同比</th><th>出海动作（真实）</th></tr></thead>
+      <tbody>
+        <tr><td>爱康医疗</td><td class="num bone-c">166</td><td class="num bone-c">227</td><td class="num up">+37.1%</td><td>JRI 品牌进英/德/澳，自有品牌进 30+ 国</td></tr>
+        <tr><td>大博医疗</td><td class="num bone-c">79</td><td class="num bone-c">216</td><td class="num up">+174%</td><td>产品远销 60+ 国家</td></tr>
+        <tr><td>春立医疗</td><td class="num bone-c">109</td><td class="num bone-c">198</td><td class="num up">+81.7%</td><td>关节标准化出海，拉美/亚洲/欧洲</td></tr>
+      </tbody>
+    </table>
+    <p class="src">来源：各公司 2022、2023 年度报告。三家 2023 海外收入均较 2022 大幅增长，与"中国器械出口 2024 才转正"的宏观节奏不同——骨科龙头凭借自有品牌 + 本地子公司提前突围。</p>
+  </div>
+
+  <!-- 6 INSIGHT -->
+  <div class="sec" id="insight">
+    <h2><span class="bar"></span>六、基于真实数据的核心洞察（不做预测）</h2>
+    <div class="insight">
+      <h4>已发生的事实（可核查）</h4>
+      <ul>
+        <li><b>电刀 5 年真实增长 +22%</b>：2020 疫情短暂回落后 2021 即反弹，2024 同比 +8.4% 为近年高点，手术室利用率 68%→77% 是硬支撑。</li>
+        <li><b>中国出口已跨过周期底部</b>：2023 低点（约 454 亿）→ 2024（487.5 亿，+7.3%）→ 2025（504.7 亿，+3.54%），连续两年正增，脱离疫情脉冲。</li>
+        <li><b>骨设备年度数据稀缺是行业现实</b>：全球仅取到 2023 基准与气动细分 2020–2025 序列；气动细分 6 年累计 +23.4%，增速逐年放缓（2022 +7.1% → 2025 +1.4%）。</li>
+        <li><b>国产骨科龙头海外收入跳涨</b>：大博 +174%、春立 +81.7%、爱康 +37.1%（2022→2023），证明中端骨科产品已具备真实出海竞争力。</li>
+        <li><b>区域格局稳定</b>：电刀北美 41% / 欧洲 29%；气动骨工具北美 34.8% / 欧洲 27.9% / 亚太 24.3%——成熟市场仍主导，亚太为增量。</li>
+      </ul>
+    </div>
+    <div class="insight" style="margin-top:16px;">
+      <h4>⚠️ 数据局限（如实告知）</h4>
+      <ul>
+        <li>不同研究机构基准年估值差异明显（电刀 2023：63.2 vs 66.5 亿；骨工具 2023：13.3 vs 17.1 亿），源于统计范围不同，本页已分别标注。</li>
+        <li>厂商精确市占率无统一公开口径，本页不列百分比以免失真。</li>
+        <li>2025 年中国出口存两会口径差异（CCCMHPIE 504.69 vs 医疗器械创新网 523.69 亿美元），趋势一致。</li>
+        <li>本页不含任何 2026 及以后预测——预测对获客无用，以真实历史为准。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 7 REF -->
+  <div class="sec" id="ref">
+    <h2><span class="bar"></span>七、参考来源</h2>
+    <ul style="font-size:13px; color:var(--sub); padding-left:18px; line-height:2;">
+      <li>skemsys 市场综述：Electrosurgery Devices Market to Exceed $12.4 Billion by 2033（含 2020–2024 历史实际值）</li>
+      <li>Transparency Market Research (TMR)：Electrosurgical Devices Market, 2015/2017 基准与 2024 预测（globenewswire / valuespectrum）</li>
+      <li>Polaris Market Research：Electrosurgical Devices Market（2023=66.5、2024=70.6 亿美元）</li>
+      <li>BIS Research：Global Electrosurgical Devices Market 2016–2023（2016=26.4 亿基准）</li>
+      <li>Grand View Research：Orthopedic Power Tools Market（2023=17.1 亿美元，历史区间 2018–2023）</li>
+      <li>The Business Research Company：Orthopedic Power Tools Global Market Report 2024（2023=13.3、2024=14.3 亿）</li>
+      <li>pmarketresearch：Pneumatic Orthopedic Power Tools Market（2020–2025 逐年真实序列）</li>
+      <li>中国医药保健品进出口商会（CCCMHPIE）：2024 / 2025 医疗器械外贸统计（出口 487.5 / 504.69 亿美元）</li>
+      <li>东北证券：《医疗器械出海》行业深度（2015–2024 出口总额年表，海关 HS 口径）</li>
+      <li>CAMDI / 广东省高性能医疗器械创新中心：2025 H1 出口统计（RMB 1793.33 亿元，+8.55%）</li>
+      <li>爱康医疗 / 大博医疗 / 春立医疗 2022、2023 年度报告（海外收入）</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    本页仅收录已公开可核查的真实历史数据，不含任何预测。数据来源见第七章 · 制图：WorkBuddy · 2026 年 7 月
+  </div>
+
+</div>
+</body>
+</html>

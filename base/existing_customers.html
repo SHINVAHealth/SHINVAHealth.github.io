@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>现有客户信息表 - 按规模/专业度/相关度排序</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1a5276, #2874a6); color: white; padding: 40px 30px; text-align: center; }
+  .header h1 { font-size: 26px; margin-bottom: 10px; }
+  .header p { font-size: 14px; opacity: 0.9; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+  .summary-box { background: white; border-radius: 12px; padding: 25px 30px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .summary-box h2 { color: #1a5276; margin-bottom: 15px; font-size: 20px; }
+  .summary-stats { display: flex; flex-wrap: wrap; gap: 15px; }
+  .stat-card { flex: 1; min-width: 140px; background: #ebf5fb; border-radius: 8px; padding: 15px; text-align: center; }
+  .stat-card .num { font-size: 28px; font-weight: bold; color: #2874a6; }
+  .stat-card .label { font-size: 12px; color: #666; margin-top: 5px; }
+  .tier { margin-bottom: 35px; }
+  .tier-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 3px solid; }
+  .tier-1 .tier-header { border-color: #c0392b; }
+  .tier-2 .tier-header { border-color: #e67e22; }
+  .tier-3 .tier-header { border-color: #2980b9; }
+  .tier-4 .tier-header { border-color: #27ae60; }
+  .tier-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; color: white; }
+  .tier-1 .tier-badge { background: #c0392b; }
+  .tier-2 .tier-badge { background: #e67e22; }
+  .tier-3 .tier-badge { background: #2980b9; }
+  .tier-4 .tier-badge { background: #27ae60; }
+  .tier-header h2 { font-size: 18px; color: #2c3e50; }
+  .tier-desc { font-size: 13px; color: #7f8c8d; margin-left: auto; }
+  .company-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(550px, 1fr)); gap: 15px; }
+  .company-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #ddd; transition: transform 0.2s; }
+  .company-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .tier-1 .company-card { border-left-color: #c0392b; }
+  .tier-2 .company-card { border-left-color: #e67e22; }
+  .tier-3 .company-card { border-left-color: #2980b9; }
+  .tier-4 .company-card { border-left-color: #27ae60; }
+  .company-card .name { font-size: 16px; font-weight: bold; color: #2c3e50; margin-bottom: 6px; }
+  .company-card .name a { color: #2874a6; text-decoration: none; }
+  .company-card .name a:hover { text-decoration: underline; }
+  .company-card .products { font-size: 13px; color: #c0392b; margin-bottom: 8px; font-weight: 500; }
+  .tier-2 .company-card .products { color: #e67e22; }
+  .tier-3 .company-card .products { color: #2980b9; }
+  .tier-4 .company-card .products { color: #27ae60; }
+  .company-card .info { font-size: 12px; color: #555; }
+  .company-card .info div { margin-bottom: 3px; }
+  .company-card .info .label { display: inline-block; width: 50px; color: #95a5a6; }
+  .company-card .info .phone-row { display: flex; align-items: flex-start; }
+  .phone-list { display: flex; flex-direction: column; gap: 1px; }
+  .phone-item { display: block; white-space: nowrap; }
+  .company-card .tags { margin-top: 8px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; margin-bottom: 3px; }
+  .tag-surgical { background: #fadbd8; color: #c0392b; }
+  .tag-ortho { background: #d4efdf; color: #27ae60; }
+  .tag-electro { background: #d6eaf8; color: #2980b9; }
+  .tag-ot { background: #fdebd0; color: #e67e22; }
+  .tag-verified { background: #d5f5e3; color: #27ae60; font-weight: bold; }
+  .tag-key { background: #f5eef8; color: #8e44ad; font-weight: bold; }
+  .note { background: #fef9e7; border: 1px solid #f9e79f; border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; font-size: 13px; color: #7d6608; }
+  .note strong { color: #b7950b; }
+  .footer { text-align: center; padding: 30px; color: #95a5a6; font-size: 12px; }
+  @media (max-width: 600px) {
+    .company-list { grid-template-columns: 1fr; }
+    .summary-stats { flex-direction: column; }
+  }</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>现有客户信息表</h1>
+  <p>数据来源：桌面《现有客户信息表.xlsx》（用户提供）| 共77家公司 | 按产品相关度四梯队</p>
+</div>
+
+<div class="container">
+
+  <div class="summary-box">
+    <h2>客户概览</h2>
+    <div class="summary-stats">
+      <div class="stat-card"><div class="num">77</div><div class="label">客户总数</div></div>
+      <div class="stat-card"><div class="num">9</div><div class="label">第一梯队（电刀+高端品牌）</div></div>
+      <div class="stat-card"><div class="num">32</div><div class="label">第二梯队（电刀+其他品牌）</div></div>
+      <div class="stat-card"><div class="num">13</div><div class="label">第三梯队（骨科/外科器械）</div></div>
+      <div class="stat-card"><div class="num">23</div><div class="label">第四梯队（综合·可开发）</div></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>说明：</strong>
+    <br>• 本表由桌面《现有客户信息表.xlsx》原样生成，字段含序号 / 联系情况 / 公司名称 / 联系方式 / 公司官网 / 经营产品·品牌 / 国家 / 地址 / 备注。
+    <br>• 电话中的「有WA」= 有 WhatsApp 可联系；「暂未联系」= 暂未接通；「WA留言」= 仅可 WhatsApp 留言。
+    <br>• 官网/地址/备注为「/」「无」或空白的，统一标注「未公开」，未作任何虚构补全。
+    <br>• 梯队仅依据「经营产品·品牌」字段分类：含国际高端电刀品牌（Erbe/Aesculap/Bovie/Valleylab/Lamidey/Hebu）为第一梯队；含韩/国产/印/贴牌电刀为第二梯队；主营骨科/外科器械无电刀为第三梯队；综合设备商为第四梯队。
+  </div>
+
+  <div class="tier tier-1">
+    <div class="tier-header">
+      <span class="tier-badge">第一梯队</span>
+      <h2>高频电刀·国际高端品牌代理商（9家）</h2>
+      <span class="tier-desc">德国Erbe/Aesculap · 美国Bovie/Valleylab · 法国Lamidey · 德国Hebu</span>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">4. <a href="https://www.alhibaint.com/product/high-frequency-surgical-unit-diathermy/" target="_blank">Al Hiba International</a></div>
+        <div class="products">高频电刀  美国Bovie(博威)、国产Heal Force(上海力康生物科技)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.alhibaint.com/product/high-frequency-surgical-unit-diathermy/" target="_blank">https://www.alhibaint.com/product/high-frequency-surgical-unit-diathermy/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1711 293691</span></span></div><div><span class="label">地址:</span> House 13, Road 26, Sector 7, Uttara, Dhaka 1230, Bangladesh.</div><div><span class="label">备注:</span> 多品牌询价探底</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">8. <a href="https://bmabazar.com/?s=electrosurgical&amp;post_type=product&amp;product_cat=0" target="_blank">BMA Bazar</a></div>
+        <div class="products">高频电刀  韩国Zerone Medical(Zeus 宙斯)、国产Heal Force (上海力康生物科技)、韩国Meditom(Daiwha Medical大和医疗)、美国Valleylab(威力，美国美敦力旗下)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://bmabazar.com/?s=electrosurgical&amp;post_type=product&amp;product_cat=0" target="_blank">https://bmabazar.com/?s=electrosurgical&amp;post_type=product&amp;product_cat=0</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1718 438253</span></span></div><div><span class="label">地址:</span> 9/2, Garden Street, Ring Road, Shyamoli, Dhaka-1207.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">10. <a href="https://cemcbd.com/electro-surgical-unit/" target="_blank">City Electro-Medics Co. (CEMC)</a></div>
+        <div class="products">高频电刀  法国Lamidey Noury Medical(拉米迪努里医疗，欧洲专业电外科厂商)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://cemcbd.com/electro-surgical-unit/" target="_blank">https://cemcbd.com/electro-surgical-unit/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1790 736161</span></span></div><div><span class="label">地址:</span> House-1186, Avenue-11, Mirpur DOHS, Dhaka 1216, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">13. <a href="https://anifco.com/products/" target="_blank">Anifco Healthcare</a></div>
+        <div class="products">高频电刀  德国Erbe Elektromedizin GmbH(爱尔博)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://anifco.com/products/" target="_blank">https://anifco.com/products/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1720 519028</span><span class="phone-item">+880 1720 518963</span><span class="phone-item">+880 1720 519028</span></span></div><div><span class="label">地址:</span> Plot # 5, Road # 12, Sector # 10, Uttara Model Town, Dhaka-1230, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">14. <a href="https://sunny.com.bd/Details/product_gallery/22" target="_blank">Sunny Trading Agency Pvt. Ltd.</a></div>
+        <div class="products">高频电刀、骨钻  德国Aesculap AG(蛇牌) Elan/élan</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://sunny.com.bd/Details/product_gallery/22" target="_blank">https://sunny.com.bd/Details/product_gallery/22</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1707 217561</span></span></div><div><span class="label">地址:</span> 7th Floor, Suvastu Ittehad Square, House# 11, Road# 05, Dhanmondi, Dhaka-1205, Bangladesh</div><div><span class="label">备注:</span> asad@sunny.com.bd</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">24. <a href="https://rapidmedicalbd.com/product-category/laparoscopic-equipment/" target="_blank">Rapid Medical</a></div>
+        <div class="products">高频电刀  美国Valleylab(威力，美国美敦力旗下)、印度Shalya Medical</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://rapidmedicalbd.com/product-category/laparoscopic-equipment/" target="_blank">https://rapidmedicalbd.com/product-category/laparoscopic-equipment/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1710 954647</span></span></div><div><span class="label">地址:</span> Suit# D1, 1st Floor, Lauren Vista Shopping Complex, 169 Elephant Road ( Near Hatirpool Bazar), Dhaka - 1205</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">25. <a href="https://tajamed.com/diathermy-erbe/" target="_blank">Tajamed</a></div>
+        <div class="products">高频电刀  德国Erbe Elektromedizin GmbH(爱尔博)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://tajamed.com/diathermy-erbe/" target="_blank">https://tajamed.com/diathermy-erbe/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1308 544330</span></span></div><div><span class="label">地址:</span> AK-Complex, Level-4 (3rd Floor) 19 Biruttam KM Safiullah Sarak, Green Road 01308-544330</div><div><span class="label">备注:</span> 标价40w塔卡/台 ≈2.2w人民币/台</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">36. <a href="https://biosys.com.bd/product-category/surgical/electrosurgical-unit/" target="_blank">Biosys Technologies</a></div>
+        <div class="products">高频电刀  德国Hebu Medical(赫布医疗)HBS-300 x-touch</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://biosys.com.bd/product-category/surgical/electrosurgical-unit/" target="_blank">https://biosys.com.bd/product-category/surgical/electrosurgical-unit/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1401 187612</span></span></div><div><span class="label">地址:</span> Suit# 2C Meherba Plaza (2nd Floor),
+33 Topkhana RoadDhaka-1000, Bangladesh</div><div><span class="label">联系:</span> 网站窗口沟通</div><div><span class="label">备注:</span> 在线沟通90w塔卡/台≈5w人民币/台，无其他货源</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">62. <a href="https://laserservicebd.com/product-category/electro-surgical-unit-diathermy/" target="_blank">Laser Service BD</a></div>
+        <div class="products">高频电刀 意大利LED SpA(Surtron系列)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://laserservicebd.com/product-category/electro-surgical-unit-diathermy/" target="_blank">https://laserservicebd.com/product-category/electro-surgical-unit-diathermy/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1581 161031</span></span></div><div><span class="label">地址:</span> Shop No. 24, Momtaz Shopping Complex 40, Bosila Main Road, Lautola, Mohammadpur, Dhaka-1207</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tier tier-2">
+    <div class="tier-header">
+      <span class="tier-badge">第二梯队</span>
+      <h2>高频电刀·韩/国产/印/贴牌品牌（32家）</h2>
+      <span class="tier-desc">韩国Zerone/Meditom · 国产Heal Force · 印度ALAN · 组装贴牌</span>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">1. <a href="https://medicobangladesh.com/product/sub-details/electrosurgical-unit" target="_blank">Medico Bangladesh</a></div>
+        <div class="products">高频电刀  法国Kalstein(卡尔斯坦)、国产索吉瑞科技(北京)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://medicobangladesh.com/product/sub-details/electrosurgical-unit" target="_blank">https://medicobangladesh.com/product/sub-details/electrosurgical-unit</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1737 042829</span></span></div><div><span class="label">地址:</span> Elite House (6th floor),54, Motijheel C/A, Dhaka 1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">3. <a href="https://anzmedical.com/product/esu" target="_blank">ANZ Medical</a></div>
+        <div class="products">高频电刀  印度ALAN</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://anzmedical.com/product/esu" target="_blank">https://anzmedical.com/product/esu</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1324 171575</span></span></div><div><span class="label">地址:</span> Block C, Mirpur 6, Dhaka, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">5. <a href="https://healthaid.com.bd/product-category/medical-equipment/diathermy/" target="_blank">Health Aid BD</a></div>
+        <div class="products">高频电刀  孟加拉National Electrocare、韩国Zerone Medical(Zeus 宙斯)、韩国Meditom(Daiwha Medical大和医疗)、印度Electrosource、OEM无品牌设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://healthaid.com.bd/product-category/medical-equipment/diathermy/" target="_blank">https://healthaid.com.bd/product-category/medical-equipment/diathermy/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1816 202314</span></span></div><div><span class="label">地址:</span> House-30, Road-03, Sector-05,
+Uttara Model Town,Dhaka-1230.</div><div><span class="label">备注:</span> 多品牌询价探底</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">6. <a href="https://isahealthcare.com.bd/diathermy-unit/" target="_blank">Isa Healthcare</a></div>
+        <div class="products">高频电刀  韩国Zerone Medical(Zeus 宙斯)、韩国Meditom(Daiwha Medical大和医疗)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://isahealthcare.com.bd/diathermy-unit/" target="_blank">https://isahealthcare.com.bd/diathermy-unit/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1896 051301</span><span class="phone-item">+880 1896 051302</span></span></div><div><span class="label">地址:</span> 33, Topkhana Road, Meherba Plaza, Suite: 3B-3C, Dhaka -1000, Bangladesh</div><div><span class="label">备注:</span> 多品牌询价探底</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">7. <a href="https://medistarbd.com/product/electrosurgical-unit/" target="_blank">Medistar Technology</a></div>
+        <div class="products">高频电刀  韩国Zerone Medical(Zeus 宙斯)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://medistarbd.com/product/electrosurgical-unit/" target="_blank">https://medistarbd.com/product/electrosurgical-unit/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1793 399822</span></span></div><div><span class="label">地址:</span> 79/1, Kakrail VIP Road, Dhaka-1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">19. <a href="https://www.medistorebd.com/product-category/surgical-diathermy-2/" target="_blank">Medistore</a></div>
+        <div class="products">高频电刀  意大利Esse3 Medical、韩国 Zerone Medical</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.medistorebd.com/product-category/surgical-diathermy-2/" target="_blank">https://www.medistorebd.com/product-category/surgical-diathermy-2/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1405 100400</span></span></div><div><span class="label">地址:</span> Suite- F-11, Level- 11, Tropicana Tower
+45 Purana Paltan Dhaka-1000, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">27. <a href="https://www.medsol.com.bd/ot-equipment/" target="_blank">Medsol</a></div>
+        <div class="products">高频电刀  国产Easten Magical(北京东方神健)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.medsol.com.bd/ot-equipment/" target="_blank">https://www.medsol.com.bd/ot-equipment/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1327 189100</span><span class="phone-item">+880 1711 431016</span></span></div><div><span class="label">地址:</span> Lauren Vista, Suite # A-4
+169, Elephant Road
+Dhaka # 1205, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">29. <a href="https://timelyproduct.com/?product_cat=0&amp;s=Diathermy&amp;post_type=product&amp;et_search=true" target="_blank">Timely Product Ltd</a></div>
+        <div class="products">高频电刀  韩国Meditom(Daiwha Medical大和医疗)、韩国 Zerone(Zeus 宙斯)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://timelyproduct.com/?product_cat=0&amp;s=Diathermy&amp;post_type=product&amp;et_search=true" target="_blank">https://timelyproduct.com/?product_cat=0&amp;s=Diathermy&amp;post_type=product&amp;et_search=true</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1712 444336</span></span></div><div><span class="label">地址:</span> House-04, Road 7, Block D,
+Banasree</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">31. <a href="https://newvisionmedisystem.com/nvm-products/orthopedic-ot/" target="_blank">New Vision Medisystem</a></div>
+        <div class="products">页面只文字说明有400W电刀，无实物型号与图片，可能为新公司在寻找产品中</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://newvisionmedisystem.com/nvm-products/orthopedic-ot/" target="_blank">https://newvisionmedisystem.com/nvm-products/orthopedic-ot/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1819 281713</span><span class="phone-item">+880 1914 983302</span></span></div><div><span class="label">地址:</span> 17/2 (3rd floor), New Eskaton Road, Moghbazar, Dhaka - 1000</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">33. <a href="https://mipl.com.bd/product-category/medical-supply/equipment/electrosurgical-unit/" target="_blank">Marjan International (MIPL)</a></div>
+        <div class="products">高频电刀  国产北京金恒威外贸款、骨科植入物与无源手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://mipl.com.bd/product-category/medical-supply/equipment/electrosurgical-unit/" target="_blank">https://mipl.com.bd/product-category/medical-supply/equipment/electrosurgical-unit/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1819 292419</span></span></div><div><span class="label">地址:</span> Future Nilima, House # 38/8,
+Flat # 2/F, Road # 04,
+Shyamoli, Dhaka-1207, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">34. <a href="https://gmebd.com/products?category_id=32&amp;subcatname=Surgical%20Diathermy" target="_blank">Global Medical Engineering (BD) Ltd</a></div>
+        <div class="products">高频电刀  韩国Zerone Medical(Zeus 宙斯)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://gmebd.com/products?category_id=32&amp;subcatname=Surgical%20Diathermy" target="_blank">https://gmebd.com/products?category_id=32&amp;subcatname=Surgical%20Diathermy</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1711 020555</span><span class="phone-item">+880 1404 003501</span><span class="phone-item">+880 1404 003500</span></span></div><div><span class="label">地址:</span> 17/2, Topkhana Road (2nd Floor),
+Dhaka-1000,
+Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">35. <a href="https://cpapbd.com/product-category/ot-equipment/" target="_blank">Ethan Medical Ins.</a></div>
+        <div class="products">高频电刀  孟加拉Surgi Touch Plus(韩国套件组装贴牌)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://cpapbd.com/product-category/ot-equipment/" target="_blank">https://cpapbd.com/product-category/ot-equipment/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1917 733210</span></span></div><div><span class="label">地址:</span> 144-144/1 Green Road (Level-3),
+Farmgate, Dhaka, Bangladesh.</div><div><span class="label">备注:</span> 标价6.5w塔卡/台 ≈3611人民币/台</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">37. <a href="https://www.4dsolution.com.bd/view-products/27" target="_blank">4D Solution Ltd</a></div>
+        <div class="products">高频电刀  印度SHALYA SURGICALS</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.4dsolution.com.bd/view-products/27" target="_blank">https://www.4dsolution.com.bd/view-products/27</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1686 887389</span></span></div><div><span class="label">地址:</span> House-156/B (1st Floor), Road-22, New DOHS, Mohakhali, Dhaka-1206</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">43. <a href="https://medisolve.com.bd/product/sub-category/diathermy" target="_blank">Medisolve Corporation</a></div>
+        <div class="products">高频电刀 孟加拉Mediton(组装贴牌)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://medisolve.com.bd/product/sub-category/diathermy" target="_blank">https://medisolve.com.bd/product/sub-category/diathermy</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1617 887754</span></span></div><div><span class="label">备注:</span> 网页无响应</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">47. <a href="https://www.shan-bd.com/surgical-ot-equipment/" target="_blank">Shan Trading / Shan Medical Technology</a></div>
+        <div class="products">高频电刀 孟加拉 Medivion(组装贴牌)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.shan-bd.com/surgical-ot-equipment/" target="_blank">https://www.shan-bd.com/surgical-ot-equipment/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1729 580685</span></span></div><div><span class="label">地址:</span> House # 262/1(1st Floor), Road # 10A(new),19(old), West Dhanmondi, Dhaka-1209, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">50. <a href="https://www.pht.com.bd/product-category/ot-equipment/electronic-surgery/" target="_blank">Pulse Healthcare Technology</a></div>
+        <div class="products">高频电刀 意大利 ESSE 3 Medical</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.pht.com.bd/product-category/ot-equipment/electronic-surgery/" target="_blank">https://www.pht.com.bd/product-category/ot-equipment/electronic-surgery/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1708 008061</span></span></div><div><span class="label">地址:</span> Anwar Landmark Sensation,
+17-18 Shyamoli, Mirpur Road, Dhaka, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">51. <a href="https://rmedsolution.com/sub-category/diathermy-machine" target="_blank">RMED Solutions</a></div>
+        <div class="products">高频电刀 孟加拉 Medivion(组装贴牌)、印度 Ambygo® Smart系列</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://rmedsolution.com/sub-category/diathermy-machine" target="_blank">https://rmedsolution.com/sub-category/diathermy-machine</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1634 246369</span></span></div><div><span class="label">地址:</span> Titas Road Leguna Stand, 135/41 South Bonosree, Dhaka-1219</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">52. <a href="https://uniquemeditrade.com/product-category/ot/" target="_blank">Unique Medi Trade</a></div>
+        <div class="products">高频电刀 美国Hosmed Inc. Thorn 300</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://uniquemeditrade.com/product-category/ot/" target="_blank">https://uniquemeditrade.com/product-category/ot/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1717 811312</span></span></div><div><span class="label">地址:</span> Unique Medi Trade
+West Kafrul, Begum Rokeya Sharani,
+Dhaka 1207, Bangladesh</div><div><span class="label">备注:</span> 网页无响应</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">53. <a href="https://maksgroup.org/product/electrosurgical-unit/" target="_blank">Maks Trading Ltd</a></div>
+        <div class="products">高频电刀 国产Triup International Corp广州卓升医疗器械有限公司 H-900</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://maksgroup.org/product/electrosurgical-unit/" target="_blank">https://maksgroup.org/product/electrosurgical-unit/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1932 390232</span><span class="phone-item">+880 1718 763032</span></span></div><div><span class="label">地址:</span> Sara Kahinur Tower (7thFloor), 720/1/1, Teen Rastar More, Mohammadpur, Dhaka – 1207, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">54. <a href="https://unismartbd.com/product-category/ot-equipments/diathermy-machine" target="_blank">Unique Medi Trade</a></div>
+        <div class="products">高频电刀  韩国 Zerone Medical(Zeus 宙斯)、印度Enertech Healthcare、土耳其Elektro-mag</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://unismartbd.com/product-category/ot-equipments/diathermy-machine" target="_blank">https://unismartbd.com/product-category/ot-equipments/diathermy-machine</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1680 605460</span></span></div><div><span class="label">地址:</span> 1197 (4th Floor), Avenue-10, DOHS Mirpur, Dhaka-1216</div><div><span class="label">备注:</span> 多品牌询价探底</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">56. <a href="https://surgitouchplus.com/product/electric-diathermy-machine/" target="_blank">Surgi Touch Plus</a></div>
+        <div class="products">高频电刀 国产Heal Force 力康生物科技(上海)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://surgitouchplus.com/product/electric-diathermy-machine/" target="_blank">https://surgitouchplus.com/product/electric-diathermy-machine/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1975 555711</span></span></div><div><span class="label">地址:</span> 14/2 Topkhana Road, Dhaka-1000, Bangladesh</div><div><span class="label">备注:</span> 网页无响应</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">57. <a href="https://www.empex.com.bd/subcategory/surgical-diathermy" target="_blank">Empex Medical System</a></div>
+        <div class="products">高频电刀  韩国 Zerone Medical(Zeus 宙斯)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.empex.com.bd/subcategory/surgical-diathermy" target="_blank">https://www.empex.com.bd/subcategory/surgical-diathermy</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1713 594777</span></span></div><div><span class="label">地址:</span> 32, Topkhana Road, Near Paltan Metro Station, Dhaka, Bangladesh -1000.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">58. <a href="https://technohealth.com.bd/shortwave-diathermy/" target="_blank">Techno Health</a></div>
+        <div class="products">高频电刀 国产Healicom(南京海连康医疗) HE-50F、国产Heal Force(上海力康生物科技)、意大利Esse3 Medical、孟加拉Surgi Touch Plus(韩国套件组装贴牌)、韩国Meditom(Daiwha Medical大和医疗)、巴基斯坦 Electro Range(型号 Electrosurge-250B)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://technohealth.com.bd/shortwave-diathermy/" target="_blank">https://technohealth.com.bd/shortwave-diathermy/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1842 756014</span><span class="phone-item">+880 1823 537370</span></span></div><div><span class="label">地址:</span> 5th Floor, House-42, Lake Drive Road, Sector 07, Uttara, Dhaka-1230, Bangladesh</div><div><span class="label">备注:</span> 店铺有LEEP刀以及部分型号价格</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">59. <a href="https://www.medibazarbd.com/search?category_slug[]=hospital&amp;subcategory_slug[]=operation-theater&amp;category_group_slug[]=surgical-diathermy" target="_blank">Medibazar BD</a></div>
+        <div class="products">高频电刀  韩国 Zerone Medical(Zeus 宙斯)、国产SurgiCUT(贴牌)、国产索吉瑞科技(北京)、国产Heal Force 力康生物科技(上海)、孟加拉Surgi Touch Plus(韩国套件组装贴牌)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.medibazarbd.com/search?category_slug[]=hospital&amp;subcategory_slug[]=operation-theater&amp;category_group_slug[]=surgical-diathermy" target="_blank">https://www.medibazarbd.com/search?category_slug[]=hospital&amp;subcategory_slug[]=operation-theater&amp;category_group_slug[]=surgical-diathermy</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1901 025700 +880 1901 025779</span></span></div><div><span class="label">地址:</span> Plot-01, Road-06, Block-A, Section-10, Mirpur, Dhaka-1216.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">60. <a href="https://nationalelectrocare.com/surgical/" target="_blank">National Electrocare Pvt. Ltd.</a></div>
+        <div class="products">高频电刀孟加拉National Electrocare</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://nationalelectrocare.com/surgical/" target="_blank">https://nationalelectrocare.com/surgical/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1713 289463</span><span class="phone-item">+880 1713 289460</span><span class="phone-item">+880 1713 289465</span></span></div><div><span class="label">地址:</span> BMA Bhaban (1st Floor),15/2, Topkhana Road, Dhaka-1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">61. <a href="https://pulsetechbd.com/product/sub-category/diathermy" target="_blank">Pulse Technologies</a></div>
+        <div class="products">高频电刀  韩国 Zerone Medical(Zeus 宙斯)、国产Topcare(南京普朗医疗原产 深圳贴牌)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://pulsetechbd.com/product/sub-category/diathermy" target="_blank">https://pulsetechbd.com/product/sub-category/diathermy</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1715 616277</span></span></div><div><span class="label">地址:</span> 31/E Topkhana Road, SK Tower 5th Floor, Dhaka-1000, Bangladesh</div><div><span class="label">备注:</span> Topcare原厂公司 https://www.perlong-china.com/H-F-Electrosurgical-Unit-pl505870.html</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">65. <a href="https://mediquipment.com.bd/equipment/?cst" target="_blank">Mediquipment House</a></div>
+        <div class="products">高频电刀 国产K-Med贴牌设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://mediquipment.com.bd/equipment/?cst" target="_blank">https://mediquipment.com.bd/equipment/?cst</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1673 909900</span></span></div><div><span class="label">地址:</span> Suite #6, 15th Floor, Planner's Tower 13/A, Sonargaon Road, Bangla Motor Dhaka-1000</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">67. <a href="https://htisurgicalsbd.com/product-category/surgical-instruments/" target="_blank">HTI Surgical</a></div>
+        <div class="products">高频电刀 美国Hosmed Inc. Thor系列</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://htisurgicalsbd.com/product-category/surgical-instruments/" target="_blank">https://htisurgicalsbd.com/product-category/surgical-instruments/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1797 454293</span><span class="phone-item">+880 1797 454281</span></span></div><div><span class="label">地址:</span> 2nd Floor, 15/2 Mirpur Road, Shyamoli, Dhaka-1207</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">73. <a href="https://meditech.com.bd/product-category/ot-equipment/diathermy-machine/" target="_blank">Meditech (BMA Bhaban)</a></div>
+        <div class="products">高频电刀  韩国 Zerone Medical(Zeus 宙斯)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://meditech.com.bd/product-category/ot-equipment/diathermy-machine/" target="_blank">https://meditech.com.bd/product-category/ot-equipment/diathermy-machine/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1914 466277</span></span></div><div><span class="label">地址:</span> 15/2 Topkhana Road, BMA Bhaban, Dhaka -1000, Bangladesh</div><div><span class="label">备注:</span> 代理理邦、迈瑞、安保设备</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">74. <a href="https://focusimagingbd.com/category/products/ot-equipments/" target="_blank">Focus Healthcare</a></div>
+        <div class="products">高频电刀  韩国 Zerone Medical(Zeus 宙斯)、国产Marco(南京普朗医疗原产 深圳贴牌)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://focusimagingbd.com/category/products/ot-equipments/" target="_blank">https://focusimagingbd.com/category/products/ot-equipments/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1739 765968</span><span class="phone-item">+880 1917 746166</span></span></div><div><span class="label">地址:</span> 218, Shaheed Syed Nazrul Islam Sarani (Topkhana Road), Tropicana Tower (Lift-8, B/1), Dhaka-1000</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">76. <a href="https://www.bio-techbd.com/products/operation-theater" target="_blank">Biotech Services</a></div>
+        <div class="products">高频电刀 国产Ro-Chain(上海洛锦医疗)、国产贴牌</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.bio-techbd.com/products/operation-theater" target="_blank">https://www.bio-techbd.com/products/operation-theater</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1913 662687</span></span></div><div><span class="label">地址:</span> Rupayan Taj 1, H-6 (6th Floor)
+1/1 Box Culvert Road, Naya Paltan (Near Paltan Police Station)
+Dhaka-1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">77. <a href="https://sabilainternational.com/products.html" target="_blank">Sabila International</a></div>
+        <div class="products">高频电刀政府投标</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://sabilainternational.com/products.html" target="_blank">https://sabilainternational.com/products.html</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1979 263363</span></span></div><div><span class="label">地址:</span> House 12, Road 5, Sector 7
+Uttara, Dhaka-1230
+Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tier tier-3">
+    <div class="tier-header">
+      <span class="tier-badge">第三梯队</span>
+      <h2>骨科/外科器械（无电刀）（13家）</h2>
+      <span class="tier-desc">骨科动力/无源外科器械</span>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">2. <a href="https://aleefsurgical.com/product-category/surgical-instruments/" target="_blank">Aleef Surgical</a></div>
+        <div class="products">家用骨科康复，手术医疗器械无骨科器械设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://aleefsurgical.com/product-category/surgical-instruments/" target="_blank">https://aleefsurgical.com/product-category/surgical-instruments/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1713 992472</span><span class="phone-item">+880 1713 588554</span></span></div><div><span class="label">地址:</span> Purobi Super Market (1st Floor), Shop No-105-107, Main Road, Mirpur 11 (Metro Rail Station), Dhaka-1216</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">21. <a href="https://orthomedicalbd.com/orthopedic/" target="_blank">OrthoMedical Bangladesh</a></div>
+        <div class="products">主营印度、美国和土耳其的各类骨科植入物、器械以及电动钻头</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://orthomedicalbd.com/orthopedic/" target="_blank">https://orthomedicalbd.com/orthopedic/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1707 484948</span><span class="phone-item">+880 1706 407664</span></span></div><div><span class="label">地址:</span> 6/1-B, Ring Road, Shyamoli, Dhaka-1207, Bangladesh.</div><div><span class="label">备注:</span> 多品牌询价探底</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">22. <a href="https://tasniasurgical.com/products" target="_blank">Tasnia Surgical</a></div>
+        <div class="products">主营骨科植入物与无源手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://tasniasurgical.com/products" target="_blank">https://tasniasurgical.com/products</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1787 896039</span></span></div><div><span class="label">地址:</span> 47 K.D Ghosh Road, Bismillah Medicine Market (Heraz Market),3rd Floor, Khulna-9100</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">23. <a href="https://continentalsurgicalbd.com/product/electric-bone-drill-machine-r-d/" target="_blank">Continental Surgical House</a></div>
+        <div class="products">主营骨科手术器械与骨钻印度R.D Surgicals品牌</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://continentalsurgicalbd.com/product/electric-bone-drill-machine-r-d/" target="_blank">https://continentalsurgicalbd.com/product/electric-bone-drill-machine-r-d/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1709 291440</span><span class="phone-item">+880 1999 998434</span></span></div><div><span class="label">地址:</span> Continental Surgical House-2
+15/2,Topkhana Road, BMA Bhaban,
+Shop No.- 305,(2nd Floor), Dhaka-1000.</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">26. <a href="https://bismillahtradingbd.com/sub_products.php?%20id=8" target="_blank">Bismillah Trading</a></div>
+        <div class="products">无源外科手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://bismillahtradingbd.com/sub_products.php?%20id=8" target="_blank">https://bismillahtradingbd.com/sub_products.php?%20id=8</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1810 152420</span><span class="phone-item">+880 1673 324852</span></span></div><div><span class="label">地址:</span> Road-36, House-22C(Flat-J1) ,Gulshan 1, Dhaka 1212</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">28. <a href="https://ashaenterprise-bd.com/products" target="_blank">Asha Enterprise</a></div>
+        <div class="products">主营外科无源手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://ashaenterprise-bd.com/products" target="_blank">https://ashaenterprise-bd.com/products</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1705 411466</span><span class="phone-item">+880 1721 163138</span></span></div><div><span class="label">地址:</span> 22/1, Topkhana Road,
+BCCW Bhaban,
+Dhaka-1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">30. <a href="https://gmt-bd.com/bone-drills-&amp;-twist-drills.php" target="_blank">Global Meditech Ltd</a></div>
+        <div class="products">骨科动力系统  印度GPC Medical BTD 系列、骨科植入物以及无源手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://gmt-bd.com/bone-drills-&amp;-twist-drills.php" target="_blank">https://gmt-bd.com/bone-drills-&amp;-twist-drills.php</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1790 330330</span></span></div><div><span class="label">地址:</span> SEL Trident Tower, 57, Purana Paltan Line, VIP Rd, Dhaka 1000</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">38. <a href="https://jhrml-bd.com/product-category/surgery" target="_blank">JMI Group</a></div>
+        <div class="products">主营无源一次性耗材</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://jhrml-bd.com/product-category/surgery" target="_blank">https://jhrml-bd.com/product-category/surgery</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">/</span></span></div><div><span class="label">地址:</span> Unique Heights, Level-11, 117, Kazi Nazrul Islam Avenue,
+Ramna, Dhaka-1217, Bangladesh</div><div><span class="label">备注:</span> 大型集团公司cs@jhrml-bd.com</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">41. <a href="https://www.babel.com.bd/subcats/62" target="_blank">Babel Corporation Ltd.</a></div>
+        <div class="products">关节镜刨削系统 德国VIMS Eberle(威姆斯医疗)、胸骨锯 英国De-soutter Medical(德索特医疗)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.babel.com.bd/subcats/62" target="_blank">https://www.babel.com.bd/subcats/62</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1794 470001</span></span></div><div><span class="label">地址:</span> Babel Corporation
+12/1, Sangsad Avenue,
+ Monipuripara (1st floor)
+ Dhaka-1215, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">44. <a href="https://spacemedbd.com/products/7" target="_blank">Space Med Enterprise Ltd.</a></div>
+        <div class="products">销售无源外科手术器械 德国AS Medizintechnik GmbH</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://spacemedbd.com/products/7" target="_blank">https://spacemedbd.com/products/7</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1755 744213</span></span></div><div><span class="label">地址:</span> BSEC Bhaban (Level-9), 102, Kazi Nazrul Islam Avenue Kawran Bazar, Dhaka-1215, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">45. <a href="https://surgiicare.com/our-products/" target="_blank">Surgiicare Bangladesh</a></div>
+        <div class="products">官网有骨科版块，无相关产品</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://surgiicare.com/our-products/" target="_blank">https://surgiicare.com/our-products/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1955 467969</span></span></div><div><span class="label">地址:</span> 7B, House: 4, Road: 17, Block: C, Banashree, Rampura, Dhaka-1219, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">55. <a href="https://pf.com.bd/equipments/category/surgical-equipment" target="_blank">Pharma &amp; Firm</a></div>
+        <div class="products">销售无源外科手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://pf.com.bd/equipments/category/surgical-equipment" target="_blank">https://pf.com.bd/equipments/category/surgical-equipment</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1970 010827</span></span></div><div><span class="label">地址:</span> 11/5, City Heart Building, 67-Naya Paltan, Dhaka-1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-ortho">骨科</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">64. <a href="https://fortunemedicalsystems.com/products-list/" target="_blank">Fortune Medical Systems Limited</a></div>
+        <div class="products">一般外科器械，无电外科设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://fortunemedicalsystems.com/products-list/" target="_blank">https://fortunemedicalsystems.com/products-list/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 9647 477667</span></span></div><div><span class="label">地址:</span> Zakir Complex Ka 218 Kuril Chowrasta Progati Sarani Kuril Dhaka 1229</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ortho">骨科</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tier tier-4">
+    <div class="tier-header">
+      <span class="tier-badge">第四梯队</span>
+      <h2>综合设备商（可开发补全）（23家）</h2>
+      <span class="tier-desc">有OT设备/集团渠道，无电外科产品线</span>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">9. <a href="https://www.bhuiyasurgicals.com/zh" target="_blank">Bhuiya Surgicals</a></div>
+        <div class="products">无高频电刀，可以开发补全设备品类的需求</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.bhuiyasurgicals.com/zh" target="_blank">https://www.bhuiyasurgicals.com/zh</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1871 005757</span><span class="phone-item">+880 1871 005767</span><span class="phone-item">+880 1819 258660</span><span class="phone-item">+880 1871 005788</span></span></div><div><span class="label">地址:</span> Room # 302, 309-310 (2nd Floor)15/2, Topkhana Road, BMA Bhaban, Dhaka-1000, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">11. <a href="https://bmeisa.com/" target="_blank">BMEISA(Bangladesh Medical Equipment Importers &amp; Suppliers Association)</a></div>
+        <div class="products">孟加拉国医疗设备进口商与供应商协会</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://bmeisa.com/" target="_blank">https://bmeisa.com/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1716 155947</span><span class="phone-item">+880 1977 829129</span></span></div><div><span class="label">地址:</span> House：194, 1st Floor, Road 01, DOHS, Mohakhali, Dhaka-1206。</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">12. <a href="https://tvlbd.com" target="_blank">Tradevision Limited</a></div>
+        <div class="products">超声外科设备: 德国Söring GmbH(泽立)，可以开发补全设备品类的需求</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://tvlbd.com" target="_blank">https://tvlbd.com</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1701 230000</span><span class="phone-item">+880 1755 645555</span></span></div><div><span class="label">地址:</span> House # 407, Lane # 29, New DOHS, Mohakhali, Dhaka-1206, Bangladesh</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">15. <a href="https://gmescobd.com/shop/" target="_blank">GMESCO (General Medical Engineering Service Co.)</a></div>
+        <div class="products">代理迈瑞、康泰其他类设备，有OT设备，无高频电刀</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://gmescobd.com/shop/" target="_blank">https://gmescobd.com/shop/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1713 039775</span></span></div><div><span class="label">地址:</span> 34, Purana Paltan, Nurjahan Sharif Plaza (8th Floor), Dhaka-10000</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ot">OT设备</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">16. <a href="https://sptradinghouse.com/sp_product/page/2/" target="_blank">SP Trading House</a></div>
+        <div class="products">钻锯设备  美国Medtronic(美敦力)，无高频电刀设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://sptradinghouse.com/sp_product/page/2/" target="_blank">https://sptradinghouse.com/sp_product/page/2/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1711 538053</span></span></div><div><span class="label">地址:</span> 24-25, Dilkusha C/A, Dhaka 1000, Bangladesh</div><div><span class="label">备注:</span> pulok.sp@gmail.com</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">17. <a href="https://unisonbizltd.com.bd/" target="_blank">Unison Biz Limited</a></div>
+        <div class="products">有OT设备，无高频电刀，一起合作到Square Hospital Ltd.</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://unisonbizltd.com.bd/" target="_blank">https://unisonbizltd.com.bd/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">拜访过公司</span></span></div><div><span class="label">地址:</span> House: 25, Road: 09, Block: H, Mirpur -2, Dhaka-1216 Bangladesh</div><div><span class="label">联系:</span> 一直有联系</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ot">OT设备</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">18. <a href="https://rhi-bd.com/page5.html" target="_blank">Reliance Healthcare International</a></div>
+        <div class="products">有内窥镜与消毒类设备，无高频电刀</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://rhi-bd.com/page5.html" target="_blank">https://rhi-bd.com/page5.html</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">拜访过公司</span></span></div><div><span class="label">地址:</span> 139/140 Green Road, 16 Green Super Market, Dhaka</div><div><span class="label">备注:</span> info@rhi-bd.com
+reliancehcint@gmail.com</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">20. <a href="https://www.mashruba.com/products/all-mashruba-products/" target="_blank">Mashruba Medical Technologies</a></div>
+        <div class="products">主营放射影像设备，无高频电刀，可以开发补全设备品类的需求</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.mashruba.com/products/all-mashruba-products/" target="_blank">https://www.mashruba.com/products/all-mashruba-products/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1730 798598</span></span></div><div><span class="label">地址:</span> House: 3/1 (Apt: 4C &amp; 6D), Block – F, Lalmatia, Dhaka – 1207</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">32. <a href="https://www.sysmarkbd.com/wp-content/uploads/2024/10/Sysmark-Master-Catalogue-Updated.pdf" target="_blank">Sysmark Limited</a></div>
+        <div class="products">电刀笔   美国Medtronic(美敦力)，无高频电刀设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.sysmarkbd.com/wp-content/uploads/2024/10/Sysmark-Master-Catalogue-Updated.pdf" target="_blank">https://www.sysmarkbd.com/wp-content/uploads/2024/10/Sysmark-Master-Catalogue-Updated.pdf</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1709 954380</span><span class="phone-item">+880 1709 954385</span></span></div><div><span class="label">地址:</span> House: 25, Lake Circus, Kalabagan (2nd floor)
+Dhaka, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">39. <a href="https://promixcogroup.com/medical-devices/" target="_blank">Promixco Group</a></div>
+        <div class="products">主营OT设备、影像设备，无电外科设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://promixcogroup.com/medical-devices/" target="_blank">https://promixcogroup.com/medical-devices/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1733 200882</span></span></div><div><span class="label">地址:</span> 187, 188/B Tejgaon Link Road, Shanta Forum, Gulshan, Dhaka 1215</div><div><span class="label">备注:</span> 集团公司</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ot">OT设备</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">40. <a href="http://thedentalshopbd.com/product-categories/surgical-burs" target="_blank">Medlife Healthcare Ltd</a></div>
+        <div class="products">主营牙外科设备，往复骨锯  日本NSK Nakanishi(中西株式会社)</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="http://thedentalshopbd.com/product-categories/surgical-burs" target="_blank">http://thedentalshopbd.com/product-categories/surgical-burs</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1971 839330</span></span></div><div><span class="label">地址:</span> Evergreen Mizan Square, Kazipara Metro Station, Dhaka, Bangladesh, Mirpur, Bangladesh</div><div><span class="label">备注:</span> 10.25w塔卡/件≈5694人民币/件</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">42. <a href="https://www.amrhealthcare-bd.com/#products" target="_blank">AMR Healthcare</a></div>
+        <div class="products">主营皮肤伤口护理与一次性手术耗材，无电外科设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.amrhealthcare-bd.com/#products" target="_blank">https://www.amrhealthcare-bd.com/#products</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1804 737418</span></span></div><div><span class="label">地址:</span> 62 No. House, Bailey Road, Dhaka, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">46. <a href="https://tradesworthgroup.com/medical-division/" target="_blank">Technoworth Associates Ltd. / Tradesworth Group</a></div>
+        <div class="products">无高频电刀，可以开发补全设备品类的需求</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://tradesworthgroup.com/medical-division/" target="_blank">https://tradesworthgroup.com/medical-division/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1847 461681</span></span></div><div><span class="label">地址:</span> 78, Motijheel Commercial Area (1st &amp; 2ndFloor)
+Dhaka-1000, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">48. <a href="https://novomedbd.com/solution_and_service" target="_blank">Novomed</a></div>
+        <div class="products">无高频电刀，可以开发补全设备品类的需求</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://novomedbd.com/solution_and_service" target="_blank">https://novomedbd.com/solution_and_service</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1711 429689</span><span class="phone-item">+880 1713 062628</span></span></div><div><span class="label">地址:</span> 1003, SEL Rose &amp; Dale. 116, Kazi Nazrul Islam Avenue, Dhaka-1205, Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">49. <a href="https://www.getwellltd.com/products/surgical-items" target="_blank">Getwell (PRAN-RFL Group)</a></div>
+        <div class="products">销售普通外科一次性耗材，可以开发补全设备品类的需求</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.getwellltd.com/products/surgical-items" target="_blank">https://www.getwellltd.com/products/surgical-items</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1844 605773</span></span></div><div><span class="label">地址:</span> PRAN Centre, Ga-105/1,
+Middle Badda, Dhaka-1212</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">63. Abtahi Engineering Technology</div>
+        <div class="info"><div><span class="label">官网:</span> 未公开</div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">/</span></span></div><div><span class="label">备注:</span> 官网未链接</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">66. <a href="https://ispondon.com/products" target="_blank">Ispondon</a></div>
+        <div class="products">一次性医用耗材、敷料</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://ispondon.com/products" target="_blank">https://ispondon.com/products</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1711 744997</span></span></div><div><span class="label">地址:</span> H-16, R-03, Block-H,
+Mirpur-02, Dhaka-1216,
+Bangladesh</div><div><span class="label">备注:</span> 两家中国公司产品代理</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">68. <a href="https://monirsurgical.com/products/" target="_blank">Monir Neuro Spine Surgical Mart</a></div>
+        <div class="products">电钻与一般外科手术器械</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://monirsurgical.com/products/" target="_blank">https://monirsurgical.com/products/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1797 090432</span><span class="phone-item">+880 1742 196584</span></span></div><div><span class="label">地址:</span> House no: 2/1, Hazi Dilgoni Market, 2nd Floor, Katasur Road, Mohammadpur, Dhaka-1207.</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">69. <a href="https://monemenltd.com/#" target="_blank">Moon-E-Meen Ltd.</a></div>
+        <div class="products">有OT设备，无电外科设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://monemenltd.com/#" target="_blank">https://monemenltd.com/#</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1552 303995</span></span></div><div><span class="label">地址:</span> 17/2, Top Khana Road (3rd Floor) (East Side of the BMA Bhaban), Dhaka-1000</div><div><span class="label">备注:</span> 公司官网设备种类较多</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ot">OT设备</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">70. <a href="https://ssint.com.bd/distributor/" target="_blank">S.S. International</a></div>
+        <div class="products">有OT设备，无电外科设备，多家医疗器械经销商联系方式</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://ssint.com.bd/distributor/" target="_blank">https://ssint.com.bd/distributor/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1852 278190</span><span class="phone-item">+880 1852 278191</span></span></div><div><span class="label">地址:</span> Darus Salam Arcade (8th Floor), 14 Purana Paltan, Dhaka-1000, Bangladesh</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ot">OT设备</span></div>
+      </div>
+      <div class="company-card">
+        <div class="name">71. <a href="https://www.marketbangladesh.com/category/medical-equipment" target="_blank">Market Bangladesh</a></div>
+        <div class="products">孟加拉B2B信息一览，多家医疗器械经销商信息</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.marketbangladesh.com/category/medical-equipment" target="_blank">https://www.marketbangladesh.com/category/medical-equipment</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1819 520009</span></span></div><div><span class="label">地址:</span> House 03, Road 1/A, Block – J, Baridhara, Dhaka, Bangladesh</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">72. <a href="https://medicalshop.com.bd/" target="_blank">Medical Shop BD</a></div>
+        <div class="products">宠物氧气耗材与家用护理设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://medicalshop.com.bd/" target="_blank">https://medicalshop.com.bd/</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1714 027926</span></span></div><div><span class="label">地址:</span> House 2, 100 Feet Road- Madani Avenue Natun Bazar, Vatara, Dhaka 1212</div></div>
+      </div>
+      <div class="company-card">
+        <div class="name">75. <a href="https://www.medicalequipmentbd.com/product.php?cat_id=16" target="_blank">Medical Equipment Bangladesh (Winux Enterprise)</a></div>
+        <div class="products">有OT设备，无电外科设备</div>
+        <div class="info"><div><span class="label">官网:</span> <a href="https://www.medicalequipmentbd.com/product.php?cat_id=16" target="_blank">https://www.medicalequipmentbd.com/product.php?cat_id=16</a></div><div class="phone-row"><span class="label">电话:</span> <span class="phone-list"><span class="phone-item">+880 1678 076363</span></span></div><div><span class="label">地址:</span> House # (1st Floor),
+Road # 36,
+Gulshan-2, Dhaka-1212,
+Bangladesh.</div></div>
+        <div class="tags"><span class="tag tag-electro">高频电刀</span><span class="tag tag-ot">OT设备</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  数据来源：用户《现有客户信息表.xlsx》（桌面）&nbsp;|&nbsp; 自动生成 &nbsp;|&nbsp; 共77家公司
+</div>
+
+</body>
+</html>

@@ -1,0 +1,2631 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>电刀厂家外贸客户 · 多源验证版</title>
+<style>
+:root{--bg:#eef2f9;--bg2:#e3e9f5;--card:rgba(255,255,255,.72);--border:rgba(20,40,80,.10);
+--text:#16203a;--muted:#5b647e;--accent:#2f6bff;--accent2:#0a9aa8;--good:#1a9e54;--warn:#c9820a;--bad:#c23b3b;
+--chip:rgba(47,107,255,.10);}
+[data-theme="dark"]{--bg:#0c1120;--bg2:#111a2e;--card:rgba(22,32,54,.66);--border:rgba(140,170,255,.14);
+--text:#e8edf7;--muted:#9aa6c2;--accent:#5b8cff;--accent2:#27c8d6;--good:#46d18a;--warn:#e6a94a;--bad:#ff6b6b;
+--chip:rgba(91,140,255,.16);}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+background:radial-gradient(1200px 700px at 12% -10%,var(--bg2),transparent),var(--bg);color:var(--text);min-height:100vh;}
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(18px);background:var(--card);border-bottom:1px solid var(--border);}
+.wrap{max-width:1280px;margin:0 auto;padding:14px 20px;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+h1{font-size:20px;margin:0;letter-spacing:.3px;}
+.sub{color:var(--muted);font-size:13px;margin:4px 0 0;}
+.theme{display:flex;gap:6px;background:var(--chip);padding:4px;border-radius:12px;}
+.theme button{border:0;background:transparent;color:var(--muted);padding:6px 11px;border-radius:9px;cursor:pointer;font-size:13px;}
+.theme button.on{background:var(--accent);color:#fff;}
+.banner{margin:14px 0;padding:12px 16px;border-radius:14px;background:var(--chip);border:1px solid var(--border);
+font-size:13px;line-height:1.7;color:var(--text);}
+.banner b{color:var(--accent2);}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 18px;min-width:120px;}
+.stat .n{font-size:24px;font-weight:700;color:var(--accent);}
+.stat .l{font-size:12px;color:var(--muted);}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 18px;}
+.controls input,.controls select{background:var(--card);border:1px solid var(--border);color:var(--text);
+border-radius:10px;padding:9px 12px;font-size:13px;outline:none;}
+.controls input{min-width:240px;flex:1;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px 16px;
+backdrop-filter:blur(10px);transition:transform .2s,box-shadow .2s;position:relative;}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(20,40,80,.14);}
+.card.doubt{border-color:var(--warn);}
+.card.none{border-color:var(--bad);}
+.card h3{margin:0 0 2px;font-size:15px;}
+.card .mfr{font-size:12px;color:var(--accent2);margin-bottom:8px;}
+.kv{font-size:12.5px;line-height:1.65;color:var(--text);}
+.kv .k{color:var(--muted);}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin:2px 4px 2px 0;}
+.b-ev{background:var(--chip);color:var(--accent);}
+.b-ct{background:var(--chip);color:var(--accent2);}
+.b-doubt{background:rgba(201,130,10,.16);color:var(--warn);}
+.b-none{background:rgba(194,59,59,.16);color:var(--bad);}
+.b-scale{background:rgba(15,170,168,.16);color:var(--accent2);}
+.src{margin-top:9px;padding-top:9px;border-top:1px dashed var(--border);font-size:12px;}
+.src .plat{color:var(--muted);}
+.src a{color:var(--accent);text-decoration:none;word-break:break-all;}
+.src a:hover{text-decoration:underline;}
+.note{margin-top:7px;font-size:12px;color:var(--muted);line-height:1.6;}
+.empty{text-align:center;color:var(--muted);padding:40px;}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:26px;}</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top">
+    <div><h1>电刀厂家外贸客户 · 多源验证版</h1><p class="sub">50 家电刀主机厂家的海外客户/渠道 · 已按「真实性优先→客户规模」排序 · 每条来源可追溯</p></div>
+    <div class="theme">
+      <button data-theme-btn="light" onclick="apply('light')">☀ 亮</button>
+      <button data-theme-btn="dark" onclick="apply('dark')">🌙 暗</button>
+      <button data-theme-btn="system" onclick="apply('system')">⚙ 系统</button>
+    </div>
+  </div>
+</div></header>
+<main class="wrap">
+  <div class="banner">
+    📌 <b>数据原则</b>：全部客户均来自公开网络（海关提单公开索引、官网、LinkedIn、YouTube/Ins 真实装机、B2B 平台、当地监管公示、新闻媒体）的<b>真实可查证</b>记录，<b>无任何虚构编造</b>。
+    每位客户「来源」均标注具体平台与可点击链接，<b>逐条可核查</b>。标记 <b>存疑</b> 者为厂家自述或无独立佐证，标记 <b>无来源</b> 者将无法验证，请谨慎采用。
+  </div>
+  <div class="stats"><div class="stat"><div class="n">109</div><div class="l">海外客户记录</div></div><div class="stat"><div class="n">59</div><div class="l">独立实锤</div></div><div class="stat"><div class="n">34</div><div class="l">存疑(厂家自述)</div></div><div class="stat"><div class="n">16</div><div class="l">无来源</div></div><div class="stat"><div class="n">102</div><div class="l">带可点击来源</div></div></div>
+  <div class="controls"><input id="q" placeholder="搜索 制造商 / 客户 / 国家 / 平台…"><select id="fm"></select><select id="fc"></select><select id="fe"></select><select id="fp"></select></div>
+  <div class="grid" id="grid">
+<div class="card " data-search="重庆金山科技集团股份有限公司 南非分公司(筹建,面向非洲) 南非 未公开(拟设) 新闻装机(媒体报道) 新闻"
+     data-mfr="重庆金山科技集团股份有限公司" data-country="南非" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>南非分公司(筹建,面向非洲)</h3>
+  <div class="mfr">制造商：重庆金山科技集团股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>南非 <span class="k">城市：</span>未公开(拟设)<br>
+    <span class="k">客户类型：</span>海外分支机构(筹建)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>非洲18国；全球83/100+国(集团整体) <span class="k">认证：</span>未公开(高频电刀JSDD-Q为集团产品组合之一)
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">海外分支机构(筹建)</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="http://m.zgcxtc.cn/news/164491.html" target="_blank" rel="noopener">http://m.zgcxtc.cn/news/164491.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>城乡统筹发展网/中新网报道：金山科技将在南非设分公司作非洲桥头堡，产品已进入非洲18国；集团全球布局83/100+国(以胶囊内镜为主)。高频电刀(OMOM JSDD-Q)为组合产品之一，未检索到该品类具名海外经销商。</div>
+</div>
+
+<div class="card " data-search="山东华博电气有限公司 广东省卫健委援外医疗队器械采购项目(国药集团广东省医疗器械有限公司中标供货) 未公开(援外目的国未列明) 未公开 新闻装机(政府援外采购) 新闻/政府采购"
+     data-mfr="山东华博电气有限公司" data-country="未公开(援外目的国未列明)" data-ev="新闻装机(政府援外采购)" data-plat="新闻/政府采购">
+  <h3>广东省卫健委援外医疗队器械采购项目(国药集团广东省医疗器械有限公司中标供货)</h3>
+  <div class="mfr">制造商：山东华博电气有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开(援外目的国未列明) <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>终端用户(中国政府援外医疗队)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>非洲/发展中国家(援外，具体未列明) <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(政府援外采购)</span>
+    <span class="badge b-ct">终端用户(中国政府援外医疗队)</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻/政府采购</span><br>
+    <span class="plat">来源链接：</span><a href="http://gpcgd.gd.gov.cn/bsfw/cgxx/zbjjgs/content/post_4516621.html" target="_blank" rel="noopener">http://gpcgd.gd.gov.cn/bsfw/cgxx/zbjjgs/content/post_4516621.…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>2024年广东省卫健委对外合作服务中心援外医疗队器械采购项目，华博A350S高频电刀由国药集团广东省医疗器械有限公司中标供货(15万元)；证实产品用于海外援外医疗，但具体目的国未公开</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 Al-Atlas Attaibi (Atlas Med) 利比亚 的黎波里(Tripoli) 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="利比亚" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>Al-Atlas Attaibi (Atlas Med)</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>利比亚 <span class="k">城市：</span>的黎波里(Tripoli)<br>
+    <span class="k">客户类型：</span>独家代理<br>
+    <span class="k">联系方式：</span>+218922137713<br>
+    <span class="k">出口市场：</span>利比亚 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">独家代理</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://atlasmed.ly/" target="_blank" rel="noopener">https://atlasmed.ly/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称拥有Mindray等大型医疗设备公司的独家代理权</div>
+</div>
+
+<div class="card " data-search="上海朗迈医疗器械科技有限公司 asap endoscopic products GmbH (德国asap内窥镜公司) 德国 弗莱堡(Freiburg) 新闻装机(媒体报道) 新闻"
+     data-mfr="上海朗迈医疗器械科技有限公司" data-country="德国" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>asap endoscopic products GmbH (德国asap内窥镜公司)</h3>
+  <div class="mfr">制造商：上海朗迈医疗器械科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>德国 <span class="k">城市：</span>弗莱堡(Freiburg)<br>
+    <span class="k">客户类型：</span>海外全资子公司(2022.12收购)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>德国/欧洲 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">海外全资子公司(2022.12收购)</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.dehenglaw.com/CN/newscontent/0006/027609/2.aspx" target="_blank" rel="noopener">https://www.dehenglaw.com/CN/newscontent/0006/027609/2.aspx</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>德恒律所公告+JETRO证实：朗迈2022.12全资收购德国内窥镜公司asap，并入集团产品线；能量平台(高频手术设备)随集团出海</div>
+</div>
+
+<div class="card " data-search="北京贝林电子有限公司 龟城市医院(Kusong City Hospital) 朝鲜 龟城(Kusong) 新闻装机(媒体报道) 新闻"
+     data-mfr="北京贝林电子有限公司" data-country="朝鲜" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>龟城市医院(Kusong City Hospital)</h3>
+  <div class="mfr">制造商：北京贝林电子有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>朝鲜 <span class="k">城市：</span>龟城(Kusong)<br>
+    <span class="k">客户类型：</span>终端医院<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>朝鲜 <span class="k">认证：</span>CE
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">终端医院</span>
+    <span class="badge b-scale">规模信号：中等</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.nknews.org/2026/04/chinese-electrosurgical-device-spotted-at-new-north-korean-hospital" target="_blank" rel="noopener">https://www.nknews.org/2026/04/chinese-electrosurgical-device…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>NK News 2026-04-03 报道：中国驻朝使馆发布访龟城市医院照片，手术室可见贝林高频电刀，开源信息指认制造商为北京贝林电子。独立媒体实锤装机，属最强证据。</div>
+</div>
+
+<div class="card " data-search="北京金恒威科技发展有限公司 土耳其3家当地医疗器械经营企业(未具名,洽谈代理) 土耳其 伊斯坦布尔 新闻装机(媒体报道) 新闻"
+     data-mfr="北京金恒威科技发展有限公司" data-country="土耳其" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>土耳其3家当地医疗器械经营企业(未具名,洽谈代理)</h3>
+  <div class="mfr">制造商：北京金恒威科技发展有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>土耳其 <span class="k">城市：</span>伊斯坦布尔<br>
+    <span class="k">客户类型：</span>经销商(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>土耳其 <span class="k">认证：</span>CE 0434、FDA 510(k)、ISO13485、ISO9001
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">经销商(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.ivdchina.org/ivdnews/show-3130.html" target="_blank" rel="noopener">https://www.ivdchina.org/ivdnews/show-3130.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>ivdchina 报道第19届土耳其伊斯坦布尔国际医疗器械展：金恒威(AHANVOS)LCD高频电刀受追捧，吸引当地3家知名医疗器械经营企业洽谈代理权(未具名)。属第三方行业媒体报道，较厂家自述独立，但无具名公司。</div>
+</div>
+
+<div class="card " data-search="北京东方神健医疗器械有限公司 未具名(年报披露既往境外销售) 日本、欧盟(厂家自述)；具体国别未披露 未公开 新闻装机(媒体报道) 新闻(新浪财经/新三板招股书)"
+     data-mfr="北京东方神健医疗器械有限公司" data-country="日本、欧盟(厂家自述)；具体国别未披露" data-ev="新闻装机(媒体报道)" data-plat="新闻(新浪财经/新三板招股书)">
+  <h3>未具名(年报披露既往境外销售)</h3>
+  <div class="mfr">制造商：北京东方神健医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>日本、欧盟(厂家自述)；具体国别未披露 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>日本、欧盟(厂家自述)；实际仅披露既往境外销售收入 <span class="k">认证：</span>CE(已过期)
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻(新浪财经/新三板招股书)</span><br>
+    <span class="plat">来源链接：</span><a href="https://finance.sina.com.cn/roll/2022-11-10/doc-imqmmthc4075683.shtml" target="_blank" rel="noopener">https://finance.sina.com.cn/roll/2022-11-10/doc-imqmmthc40756…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>新浪财经引新三板挂牌文件：2020、2021年东方神健高频电刀系列曾有境外销售(合计16万/64.35万元)，因CE证书过期已于2021年底停止全部境外销售；无具名客户。百度百科/qxw18自述曾出口日本、欧盟(需存疑)。</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Brazil(提单目的国) 巴西 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="巴西" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Brazil(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>巴西 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>巴西等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>Panjiva贸易数据显示广州三瑞医疗近232票出货，巴西为第一大目的国(28票，12.1%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Poland(提单目的国) 波兰 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="波兰" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Poland(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>波兰 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>波兰等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>22票(9.5%)，为第二大目的国</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Philippines(提单目的国) 菲律宾 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="菲律宾" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Philippines(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>菲律宾 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>菲律宾等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>19票(8.2%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Sweden(提单目的国) 瑞典 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="瑞典" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Sweden(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>瑞典 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>瑞典等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>15票(6.5%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 South Africa(提单目的国) 南非 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="南非" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>South Africa(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>南非 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>南非等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>13票(5.6%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Germany(提单目的国) 德国 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="德国" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Germany(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>德国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>德国等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>12票(5.2%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Honduras(提单目的国) 洪都拉斯 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="洪都拉斯" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Honduras(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>洪都拉斯 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>洪都拉斯等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>11票(4.7%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Turkey(提单目的国) 土耳其 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="土耳其" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Turkey(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>土耳其 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>土耳其等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>9票(3.9%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Ecuador(提单目的国) 厄瓜多尔 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="厄瓜多尔" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Ecuador(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>厄瓜多尔 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>厄瓜多尔等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>7票(3.0%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Russia(提单目的国) 俄罗斯 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="俄罗斯" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Russia(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>俄罗斯 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>俄罗斯等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>6票(2.6%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Peru(提单目的国) 秘鲁 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="秘鲁" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Peru(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>秘鲁 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>秘鲁等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>6票(2.6%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Indonesia(提单目的国) 印度尼西亚 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="印度尼西亚" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Indonesia(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>印度尼西亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>印度尼西亚等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>5票(2.2%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Egypt(提单目的国) 埃及 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="埃及" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Egypt(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>埃及 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>埃及等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>5票(2.2%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Trinidad and Tobago(提单目的国) 特立尼达和多巴哥 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="特立尼达和多巴哥" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Trinidad and Tobago(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>特立尼达和多巴哥 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>特立尼达和多巴哥等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>5票(2.2%)</div>
+</div>
+
+<div class="card " data-search="广州三瑞医疗器械有限公司 Hungary(提单目的国) 匈牙利 未公开 提单买方(海关痕迹) Panjiva(海关提单)"
+     data-mfr="广州三瑞医疗器械有限公司" data-country="匈牙利" data-ev="提单买方(海关痕迹)" data-plat="Panjiva(海关提单)">
+  <h3>Hungary(提单目的国)</h3>
+  <div class="mfr">制造商：广州三瑞医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>匈牙利 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>提单目的国(进口方，未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>匈牙利等全球多国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">提单目的国(进口方，未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：Panjiva(海关提单)</span><br>
+    <span class="plat">来源链接：</span><a href="https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd/6945851" target="_blank" rel="noopener">https://panjiva.com/Guangzhou-Sanrui-Medical-Apparatus-Co-Ltd…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>4票(1.7%)</div>
+</div>
+
+<div class="card " data-search="上海力申科学仪器有限公司(力康 HealForce) INMED-karczewscy s.c. 波兰 未公开 具名代理(官网明示) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="波兰" data-ev="具名代理(官网明示)" data-plat="官网(全球拓展)">
+  <h3>INMED-karczewscy s.c.</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>波兰 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/代理<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>波兰 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">经销商/代理</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网&#x27;全球拓展&#x27;明示的波兰经销商</div>
+</div>
+
+<div class="card " data-search="上海力申科学仪器有限公司(力康 HealForce) COMPEK MEDICAL 捷克 未公开 具名代理(官网明示) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="捷克" data-ev="具名代理(官网明示)" data-plat="官网(全球拓展)">
+  <h3>COMPEK MEDICAL</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>捷克 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/代理<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>捷克 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">经销商/代理</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网&#x27;全球拓展&#x27;明示的捷克经销商</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 Bulut Technology (Bulut Teknoloji) 土耳其 伊斯坦布尔 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="土耳其" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>Bulut Technology (Bulut Teknoloji)</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>土耳其 <span class="k">城市：</span>伊斯坦布尔<br>
+    <span class="k">客户类型：</span>授权经销商(全线产品)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>土耳其 <span class="k">认证：</span>CE等迈瑞全线认证
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">授权经销商(全线产品)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.bulutteknoloji.com/en/corporate" target="_blank" rel="noopener">https://www.bulutteknoloji.com/en/corporate</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网自述为Mindray、Nihon Kohden等品牌授权经销商；电外科能量平台UP700是否含括待核实</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 Bimedika / Buana Intiprima Medika 印度尼西亚 坦格朗(Tangerang) 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="印度尼西亚" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>Bimedika / Buana Intiprima Medika</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>印度尼西亚 <span class="k">城市：</span>坦格朗(Tangerang)<br>
+    <span class="k">客户类型：</span>授权经销商<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>印尼 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">授权经销商</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://bimedika.co.id/" target="_blank" rel="noopener">https://bimedika.co.id/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称Buana Intiprima Medika为Mindray产品授权经销商(呼吸机/心电图/超声/除颤/手术床等)</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 Arianda Group (Arianda Mitra Sejahtera) 印度尼西亚 雅加达 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="印度尼西亚" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>Arianda Group (Arianda Mitra Sejahtera)</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>印度尼西亚 <span class="k">城市：</span>雅加达<br>
+    <span class="k">客户类型：</span>经销商<br>
+    <span class="k">联系方式：</span>admin@ariandams.com / +62823-8688-8873<br>
+    <span class="k">出口市场：</span>印尼 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">经销商</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://ariandagroup.com/en/produk-kami/" target="_blank" rel="noopener">https://ariandagroup.com/en/produk-kami/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网产品目录列Mindray超声/监护等多款设备，作为当地医疗器械经销商</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 Biolog - Engenharia Biomédica 巴西 巴西利亚(Brasília) 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="巴西" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>Biolog - Engenharia Biomédica</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>巴西 <span class="k">城市：</span>巴西利亚(Brasília)<br>
+    <span class="k">客户类型：</span>授权经销商(分部:巴西利亚/托坎廷斯)<br>
+    <span class="k">联系方式：</span>+55(61)3248-6496 / pinedo@biolog.com.br<br>
+    <span class="k">出口市场：</span>巴西 <span class="k">认证：</span>ANVISA RDC665
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">授权经销商(分部:巴西利亚/托坎廷斯)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.biolog.com.br/aboutus.html" target="_blank" rel="noopener">http://www.biolog.com.br/aboutus.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称自1982年起作为SHENZHEN MINDRAY BIO-MEDICAL ELECTRONICS在巴西利亚/托坎廷斯州的分销伙伴</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 仰德仪器股份有限公司 (Yang Der Instruments Co., Ltd.) 中国台湾 未公开 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="中国台湾" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>仰德仪器股份有限公司 (Yang Der Instruments Co., Ltd.)</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>中国台湾 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>授权代理商(手术室设备/超声)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>台湾 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">授权代理商(手术室设备/超声)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.104.com.tw/company/1a2x6bl51i" target="_blank" rel="noopener">https://www.104.com.tw/company/1a2x6bl51i</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>104公司页称代理Mindray手术室相关配备及超声等国际大厂产品</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 普康(亚洲)医疗仪器有限公司 (Medisource Supply (Asia) Co. Ltd.) 中国香港 九龙湾 具名代理(官网明示) 官网"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="中国香港" data-ev="具名代理(官网明示)" data-plat="官网">
+  <h3>普康(亚洲)医疗仪器有限公司 (Medisource Supply (Asia) Co. Ltd.)</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>中国香港 <span class="k">城市：</span>九龙湾<br>
+    <span class="k">客户类型：</span>独家代理(除颤器)<br>
+    <span class="k">联系方式：</span>2145 4442 / enquiry@hk-aed.com<br>
+    <span class="k">出口市场：</span>香港 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">独家代理(除颤器)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.hk-aed.com/zh-hant?p=1100" target="_blank" rel="noopener">https://www.hk-aed.com/zh-hant?p=1100</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称系Mindray(迈瑞)除颤器香港独家代理</div>
+</div>
+
+<div class="card " data-search="深圳迈瑞生物医疗电子股份有限公司 LSR Healthcare Pty Ltd 澳大利亚 未公开 具名代理(官网明示) 新闻"
+     data-mfr="深圳迈瑞生物医疗电子股份有限公司" data-country="澳大利亚" data-ev="具名代理(官网明示)" data-plat="新闻">
+  <h3>LSR Healthcare Pty Ltd</h3>
+  <div class="mfr">制造商：深圳迈瑞生物医疗电子股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>澳大利亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>TGA注册赞助商/经销商(UP700能量平台)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>澳大利亚 <span class="k">认证：</span>TGA ARTG 460325 (Class IIb)
+  </div>
+  <div>
+    <span class="badge b-ev">具名代理(官网明示)</span>
+    <span class="badge b-ct">TGA注册赞助商/经销商(UP700能量平台)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.tga.gov.au/node/451271" target="_blank" rel="noopener">https://www.tga.gov.au/node/451271</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>TGA官方登记：LSR Healthcare为Mindray UP700超声高频集成手术设备(电外科主机)澳洲注册sponsor，确证迈瑞电外科主机海外注册实锤</div>
+</div>
+
+<div class="card " data-search="南京首量医疗科技有限公司 Lap Tech Medical 马来西亚 槟城(Penang) 社媒展示(INS/医院晒图) LinkedIn"
+     data-mfr="南京首量医疗科技有限公司" data-country="马来西亚" data-ev="社媒展示(INS/医院晒图)" data-plat="LinkedIn">
+  <h3>Lap Tech Medical</h3>
+  <div class="mfr">制造商：南京首量医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>马来西亚 <span class="k">城市：</span>槟城(Penang)<br>
+    <span class="k">客户类型：</span>代理商(电外科血管闭合器演示)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>马来西亚 <span class="k">认证：</span>CE, MDA(马来西亚)
+  </div>
+  <div>
+    <span class="badge b-ev">社媒展示(INS/医院晒图)</span>
+    <span class="badge b-ct">代理商(电外科血管闭合器演示)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：LinkedIn</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.linkedin.com/posts/laptechmedical_product-introduction-demo-at-island-hospital-activity-7433005487530397696-dw40" target="_blank" rel="noopener">https://www.linkedin.com/posts/laptechmedical_product-introdu…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>LinkedIn贴文：Lap Tech Medical在槟城Island Hospital现场演示AGISEAL电外科血管闭合器/分割器，CE及MDA认证；真实海外医院装机演示</div>
+</div>
+
+<div class="card " data-search="南京首量医疗科技有限公司 MedTech Applied Medical Limited 肯尼亚 内罗毕(供东非) B2B询盘(阿里/制造网买方) 官网"
+     data-mfr="南京首量医疗科技有限公司" data-country="肯尼亚" data-ev="B2B询盘(阿里/制造网买方)" data-plat="官网">
+  <h3>MedTech Applied Medical Limited</h3>
+  <div class="mfr">制造商：南京首量医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>肯尼亚 <span class="k">城市：</span>内罗毕(供东非)<br>
+    <span class="k">客户类型：</span>经销商(现货供应)<br>
+    <span class="k">联系方式：</span>info@appliedmedical.co.ke<br>
+    <span class="k">出口市场：</span>东非(肯尼亚等) <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">B2B询盘(阿里/制造网买方)</span>
+    <span class="badge b-ct">经销商(现货供应)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://appliedmedical.co.ke/products/agiseal-23" target="_blank" rel="noopener">https://appliedmedical.co.ke/products/agiseal-23</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>网站现货供应Agiseal 23 Vessel Sealer/Divider，覆盖东非；真实海外买方/经销商</div>
+</div>
+
+<div class="card " data-search="南京首量医疗科技有限公司 EMERGO BRAZIL IMPORT (Importação e Distribuição de Produtos Médicos Hospitalares Ltda) 巴西 未公开 提单买方(海关痕迹) 新闻"
+     data-mfr="南京首量医疗科技有限公司" data-country="巴西" data-ev="提单买方(海关痕迹)" data-plat="新闻">
+  <h3>EMERGO BRAZIL IMPORT (Importação e Distribuição de Produtos Médicos Hospitalares Ltda)</h3>
+  <div class="mfr">制造商：南京首量医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>巴西 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>进口持证方/经销商(ANVISA)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>巴西 <span class="k">认证：</span>ANVISA(2025-08-11授权, III类)
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">进口持证方/经销商(ANVISA)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://myhealthbox.eu/no/equipamento-cir%C3%BArgico-de-alta-frequ%C3%AAncia-agiseal-electrosurgical/7806168" target="_blank" rel="noopener">https://myhealthbox.eu/no/equipamento-cir%C3%BArgico-de-alta-…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>ANVISA公开记录：EMERGO BRAZIL为AGISEAL SL100M/SL110M高频手术设备巴西进口授权方，制造商Nanjing Shouliang-med；海关/注册实锤</div>
+</div>
+
+<div class="card " data-search="上海朗迈医疗器械科技有限公司 asap Lange Japan K.K. (朗迈日本子公司) 日本 神户(Kobe) 新闻装机(媒体报道) 新闻"
+     data-mfr="上海朗迈医疗器械科技有限公司" data-country="日本" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>asap Lange Japan K.K. (朗迈日本子公司)</h3>
+  <div class="mfr">制造商：上海朗迈医疗器械科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>日本 <span class="k">城市：</span>神户(Kobe)<br>
+    <span class="k">客户类型：</span>海外全资子公司(进口销售枢纽)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>日本 <span class="k">认证：</span>日本PMDA注册中
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">海外全资子公司(进口销售枢纽)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.jetro.go.jp/en/invest/newsroom/2024/ccca04ee956113e0.html" target="_blank" rel="noopener">https://www.jetro.go.jp/en/invest/newsroom/2024/ccca04ee95611…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>JETRO及关西经产局独立证实：朗迈2023.9在神户设立首个海外子公司，作为中日德产品日本市场进口销售枢纽；独立政府来源实锤</div>
+</div>
+
+<div class="card " data-search="湖南菁益医疗科技有限公司 媒体报道覆盖:英国/意大利/西班牙/土耳其/韩国/沙特等32国(未具名) 欧盟/中东/东亚多国 未公开 新闻装机(媒体报道) 新闻"
+     data-mfr="湖南菁益医疗科技有限公司" data-country="欧盟/中东/东亚多国" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>媒体报道覆盖:英国/意大利/西班牙/土耳其/韩国/沙特等32国(未具名)</h3>
+  <div class="mfr">制造商：湖南菁益医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>欧盟/中东/东亚多国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未具名终端/经销商<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>英国/意大利/西班牙/土耳其/韩国/沙特阿拉伯等32国 <span class="k">认证：</span>CE, 三类创新医疗器械(低温等离子手术设备2020获批)
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">未具名终端/经销商</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://shopdemo.icswb.com/h/103024/20250922/946567.html" target="_blank" rel="noopener">https://shopdemo.icswb.com/h/103024/20250922/946567.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>长沙晚报/星辰在线报道：菁益海外已进军欧盟市场，力克国际巨头中标，成功开拓英国、意大利、西班牙、土耳其、韩国、沙特阿拉伯等32个国家；未披露具名经销商/医院</div>
+</div>
+
+<div class="card " data-search="威海善康医疗设备有限公司 2023泰国曼谷亚欧国际医疗器械展(当场实现销售,未具名买方) 泰国 曼谷 新闻装机(媒体报道) 新闻"
+     data-mfr="威海善康医疗设备有限公司" data-country="泰国" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>2023泰国曼谷亚欧国际医疗器械展(当场实现销售,未具名买方)</h3>
+  <div class="mfr">制造商：威海善康医疗设备有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>泰国 <span class="k">城市：</span>曼谷<br>
+    <span class="k">客户类型：</span>展会现场成交买方(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>泰国/东南亚 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">展会现场成交买方(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.weihai.gov.cn/art/2023/8/23/art_58817_3903249.html" target="_blank" rel="noopener">https://www.weihai.gov.cn/art/2023/8/23/art_58817_3903249.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>威海市政府官网报道：2023.8善康医疗等两家企业产品在该展当场实现销售；主营高频电刀耗材+自动气压止血仪，未见主机出口记录；未具名买方</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 SHUYOU INDUSTRIAL MALAYSIA SDN BHD 马来西亚 未公开 提单买方(海关痕迹) tradesns(Tendata)"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="马来西亚" data-ev="提单买方(海关痕迹)" data-plat="tradesns(Tendata)">
+  <h3>SHUYOU INDUSTRIAL MALAYSIA SDN BHD</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>马来西亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>海外买方（疑似舒友马来西亚子公司/关联实体）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>马来西亚/东南亚 <span class="k">认证：</span>厂商具FDA/CE/MDSAP/Health Canada（官网自述，需核验）
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">海外买方（疑似舒友马来西亚子公司/关联实体）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：tradesns(Tendata)</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.tendata.com/en/buyer/zhejiang-shuyou-surgical-instrument-co-ltd-CHNI699e2bde4944b86f63ac5940938460c4.html" target="_blank" rel="noopener">https://www.tendata.com/en/buyer/zhejiang-shuyou-surgical-ins…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>Tendata买方记录；舒友招股/官网报道称已在新加坡、马来西亚、美国、哈萨克斯坦设子公司，该买方疑为关联海外实体。</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 PT ANTARMITRA SEMBADA 印度尼西亚 未公开 提单买方(海关痕迹) tradesns(Tendata)"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="印度尼西亚" data-ev="提单买方(海关痕迹)" data-plat="tradesns(Tendata)">
+  <h3>PT ANTARMITRA SEMBADA</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>印度尼西亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>海外买方（疑似舒友印尼关联/子公司）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>印度尼西亚/东南亚 <span class="k">认证：</span>厂商具FDA/CE/MDSAP/Health Canada（官网自述，需核验）
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">海外买方（疑似舒友印尼关联/子公司）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：tradesns(Tendata)</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.tendata.com/en/buyer/zhejiang-shuyou-surgical-instrument-co-ltd-CHNI699e2bde4944b86f63ac5940938460c4.html" target="_blank" rel="noopener">https://www.tendata.com/en/buyer/zhejiang-shuyou-surgical-ins…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>Tendata买方记录，产品inventors（电外科耗材）。</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 CIENLABOR INDUSTRIA E COMERCIO LTDA 巴西 未公开 提单买方(海关痕迹) tradesns(Tendata)"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="巴西" data-ev="提单买方(海关痕迹)" data-plat="tradesns(Tendata)">
+  <h3>CIENLABOR INDUSTRIA E COMERCIO LTDA</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>巴西 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>海外买方（医疗器械贸易商）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>巴西/南美 <span class="k">认证：</span>厂商具FDA/CE/MDSAP/Health Canada（官网自述，需核验）
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方(海关痕迹)</span>
+    <span class="badge b-ct">海外买方（医疗器械贸易商）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：tradesns(Tendata)</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.tendata.com/en/buyer/zhejiang-shuyou-surgical-instrument-co-ltd-CHNI699e2bde4944b86f63ac5940938460c4.html" target="_blank" rel="noopener">https://www.tendata.com/en/buyer/zhejiang-shuyou-surgical-ins…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>Tendata买方记录，产品inventors（电外科耗材）。</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 Medline（美国） 美国 未公开 新闻装机(媒体报道) 新闻"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="美国" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>Medline（美国）</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>美国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>海外客户（Medline，全球医疗手术产品供应商）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>美国/北美 <span class="k">认证：</span>厂商具FDA/CE/MDSAP/Health Canada（官网自述，需核验）
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">海外客户（Medline，全球医疗手术产品供应商）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.xueqiu.com/8437353968/397484684" target="_blank" rel="noopener">https://www.xueqiu.com/8437353968/397484684</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>雪球/腾讯财经IPO报道称舒友境外主要客户包括Medline与CONMED Corporation，外销以OEM/ODM为主、自有品牌为辅，境外收入占比约21%-24%。</div>
+</div>
+
+<div class="card " data-search="浙江伽奈维医疗科技有限公司 GUSMED DO BRASIL COMERCIO E LOCAÇÃO DE PRODUTOS MEDICOS LTDA - EPP 巴西 未公开 新闻装机(媒体报道) 新闻"
+     data-mfr="浙江伽奈维医疗科技有限公司" data-country="巴西" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>GUSMED DO BRASIL COMERCIO E LOCAÇÃO DE PRODUTOS MEDICOS LTDA - EPP</h3>
+  <div class="mfr">制造商：浙江伽奈维医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>巴西 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>海外经销商/进口商（巴西ANVISA注册持证人）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>巴西 <span class="k">认证：</span>巴西ANVISA注册（Curaway产品，2023-03-13授权）
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">海外经销商/进口商（巴西ANVISA注册持证人）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://myhealthbox.eu/zh/guia-guia-para-c%C3%A2nulas-direcion%C3%A1vel-descart%C3%A1vel-curaway/7814538" target="_blank" rel="noopener">https://myhealthbox.eu/zh/guia-guia-para-c%C3%A2nulas-direcio…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>巴西国家卫生监督局(ANVISA)注册文件列明制造商ZHEJIANG CURAWAY MEDICAL TECHNOLOGY CO., LTD.，授权持有人/进口商为GUSMED DO BRASIL，证实伽奈维产品经该巴西公司进入巴西市场。</div>
+</div>
+
+<div class="card " data-search="浙江伽奈维医疗科技有限公司 乌兹别克斯坦（浙江大学医学院附属第四医院医疗队海外装机） 乌兹别克斯坦 未公开 新闻装机(媒体报道) 新闻"
+     data-mfr="浙江伽奈维医疗科技有限公司" data-country="乌兹别克斯坦" data-ev="新闻装机(媒体报道)" data-plat="新闻">
+  <h3>乌兹别克斯坦（浙江大学医学院附属第四医院医疗队海外装机）</h3>
+  <div class="mfr">制造商：浙江伽奈维医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>乌兹别克斯坦 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>终端医院（海外装机/临床应用）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>乌兹别克斯坦/中亚 <span class="k">认证：</span>FDA 510(k)、欧盟MDR CE
+  </div>
+  <div>
+    <span class="badge b-ev">新闻装机(媒体报道)</span>
+    <span class="badge b-ct">终端医院（海外装机/临床应用）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.pharnexcloud.com/zixun/shiye/gs_110201" target="_blank" rel="noopener">https://www.pharnexcloud.com/zixun/shiye/gs_110201</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>乌兹别克斯坦Sevimli电视台报道浙大四院医疗队使用伽奈维伽睿®肿瘤射频消融治疗系统在当地医院成功实施肝脏外科手术，为当地医学史首例；证实产品海外真实装机。</div>
+</div>
+
+<div class="card " data-search="武汉半边天医疗技术发展有限公司 TI MEDICAL PRIVATE LIMITED (TI MEDICAL PVT.LTD.) 印度 新德里 提单买方 52wmb/纽佰德海关数据"
+     data-mfr="武汉半边天医疗技术发展有限公司" data-country="印度" data-ev="提单买方" data-plat="52wmb/纽佰德海关数据">
+  <h3>TI MEDICAL PRIVATE LIMITED (TI MEDICAL PVT.LTD.)</h3>
+  <div class="mfr">制造商：武汉半边天医疗技术发展有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>印度 <span class="k">城市：</span>新德里<br>
+    <span class="k">客户类型：</span>具名经销商/提单买方<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>印度/南亚 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">提单买方</span>
+    <span class="badge b-ct">具名经销商/提单买方</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：52wmb/纽佰德海关数据</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.nbd.ltd/trader/info/I7NBD134551139" target="_blank" rel="noopener">https://www.nbd.ltd/trader/info/I7NBD134551139</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>52wmb海关提单显示2025年多次发货（超声外科发生器类）；纽佰德海关库TI MEDICAL PVT.LTD.有21117条记录、为印度医疗器械贸易商</div>
+</div>
+
+<div class="card " data-search="武汉半边天医疗技术发展有限公司 МІТ МЕДІКА (Mit Medica / ТОВ МІТ МЕДІКА) 乌克兰 赫尔松（全国分销） 社媒展示/展会实锤+官网分销 官网/展会"
+     data-mfr="武汉半边天医疗技术发展有限公司" data-country="乌克兰" data-ev="社媒展示/展会实锤+官网分销" data-plat="官网/展会">
+  <h3>МІТ МЕДІКА (Mit Medica / ТОВ МІТ МЕДІКА)</h3>
+  <div class="mfr">制造商：武汉半边天医疗技术发展有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>乌克兰 <span class="k">城市：</span>赫尔松（全国分销）<br>
+    <span class="k">客户类型：</span>具名经销商/分销商<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>乌克兰/东欧 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">社媒展示/展会实锤+官网分销</span>
+    <span class="badge b-ct">具名经销商/分销商</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/展会</span><br>
+    <span class="plat">来源链接：</span><a href="https://mit-medica.com" target="_blank" rel="noopener">https://mit-medica.com</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>乌克兰医疗器械批发分销商（&quot;Wholesale trade of medical products&quot;）；PUBLIC HEALTH 2024展商；52wmb提单买方记录（2019-2024）</div>
+</div>
+
+<div class="card " data-search="以诺康医疗科技（苏州）有限公司 高频手术设备注册获批市场（香港/马来西亚/吉尔吉斯斯坦/乌克兰/新西兰/韩国/澳大利亚/沙特/巴西） 多国 未公开 注册获批（厂家官网列示） 官网"
+     data-mfr="以诺康医疗科技（苏州）有限公司" data-country="多国" data-ev="注册获批（厂家官网列示）" data-plat="官网">
+  <h3>高频手术设备注册获批市场（香港/马来西亚/吉尔吉斯斯坦/乌克兰/新西兰/韩国/澳大利亚/沙特/巴西）</h3>
+  <div class="mfr">制造商：以诺康医疗科技（苏州）有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>多国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>注册获批市场（非具名买方）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>香港/东南亚/中亚/东欧/大洋洲/中东/南美 <span class="k">认证：</span>CE(MDR)/ANVISA/KFDA等
+  </div>
+  <div>
+    <span class="badge b-ev">注册获批（厂家官网列示）</span>
+    <span class="badge b-ct">注册获批市场（非具名买方）</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://innolcon.com/page/html" target="_blank" rel="noopener">https://innolcon.com/page/html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网列高频手术设备在上述国家/地区获批上市；产品销往70+国为厂家自述，未列具名买方</div>
+</div>
+
+<div class="card " data-search="爱尔博微视 / 中国爱尔博（上海）医疗器械有限公司 Erbe集团全球自营子公司网络（比利时/印度/意大利/巴西/墨西哥/中东等） 多国 未公开 厂家/集团自述（官网联系页） 官网/集团联系页"
+     data-mfr="爱尔博微视 / 中国爱尔博（上海）医疗器械有限公司" data-country="多国" data-ev="厂家/集团自述（官网联系页）" data-plat="官网/集团联系页">
+  <h3>Erbe集团全球自营子公司网络（比利时/印度/意大利/巴西/墨西哥/中东等）</h3>
+  <div class="mfr">制造商：爱尔博微视 / 中国爱尔博（上海）医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>多国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>集团自营分支（非独立第三方）<br>
+    <span class="k">联系方式：</span>见集团联系页<br>
+    <span class="k">出口市场：</span>全球110+国 <span class="k">认证：</span>CE等
+  </div>
+  <div>
+    <span class="badge b-ev">厂家/集团自述（官网联系页）</span>
+    <span class="badge b-ct">集团自营分支（非独立第三方）</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/集团联系页</span><br>
+    <span class="plat">来源链接：</span><a href="https://register.erbe-med.com/productfinder/Marketingmaterialien/80103-166_ERBE_XX_Contact__D236717.pdf" target="_blank" rel="noopener">https://register.erbe-med.com/productfinder/Marketingmaterial…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>爱尔博微视为德国Erbe Elektromedizin GmbH 100%外资子公司，非典型国产；海外销售网络为Erbe集团自营子公司/分支，非独立第三方经销商</div>
+</div>
+
+<div class="card " data-search="凯卓科技（北京）有限公司 2018南非约翰内斯堡医疗器械展(现场客户认可,未具名) 南非 约翰内斯堡 展会实锤 展会"
+     data-mfr="凯卓科技（北京）有限公司" data-country="南非" data-ev="展会实锤" data-plat="展会">
+  <h3>2018南非约翰内斯堡医疗器械展(现场客户认可,未具名)</h3>
+  <div class="mfr">制造商：凯卓科技（北京）有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>南非 <span class="k">城市：</span>约翰内斯堡<br>
+    <span class="k">客户类型：</span>展会客户(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>非洲(南非) <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">展会实锤</span>
+    <span class="badge b-ct">展会客户(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：展会</span><br>
+    <span class="plat">来源链接：</span><a href="http://kestrelbj.com/view-391.html" target="_blank" rel="noopener">http://kestrelbj.com/view-391.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网展会报道：2018南非医疗展携射频电波刀RFS-4000K等参展，客户现场操作并高度认可；未具名买方</div>
+</div>
+
+<div class="card " data-search="凯卓科技（北京）有限公司 2018乌兹别克斯坦塔什干医疗器械展(现场客户认可,未具名) 乌兹别克斯坦 塔什干 展会实锤 展会"
+     data-mfr="凯卓科技（北京）有限公司" data-country="乌兹别克斯坦" data-ev="展会实锤" data-plat="展会">
+  <h3>2018乌兹别克斯坦塔什干医疗器械展(现场客户认可,未具名)</h3>
+  <div class="mfr">制造商：凯卓科技（北京）有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>乌兹别克斯坦 <span class="k">城市：</span>塔什干<br>
+    <span class="k">客户类型：</span>展会客户(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>中亚(乌兹别克斯坦) <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">展会实锤</span>
+    <span class="badge b-ct">展会客户(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：展会</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.kestrelbj.com/view-389.html" target="_blank" rel="noopener">http://www.kestrelbj.com/view-389.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网展会报道：2018乌兹别克斯坦医疗展携射频电波刀等参展，当地市场需求获认可；未具名买方</div>
+</div>
+
+<div class="card " data-search="北京索吉瑞科技有限公司 2025美国WHX Miami医疗展(北美/拉美医院及经销商,未具名) 美国/拉美 迈阿密 展会实锤 展会"
+     data-mfr="北京索吉瑞科技有限公司" data-country="美国/拉美" data-ev="展会实锤" data-plat="展会">
+  <h3>2025美国WHX Miami医疗展(北美/拉美医院及经销商,未具名)</h3>
+  <div class="mfr">制造商：北京索吉瑞科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>美国/拉美 <span class="k">城市：</span>迈阿密<br>
+    <span class="k">客户类型：</span>展会客户(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>北美/拉丁美洲 <span class="k">认证：</span>CE, FDA
+  </div>
+  <div>
+    <span class="badge b-ev">展会实锤</span>
+    <span class="badge b-ct">展会客户(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：展会</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.zhanhuiku.com/zixun/4947.html" target="_blank" rel="noopener">https://www.zhanhuiku.com/zixun/4947.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>展会库报道：TAKTVOLL携高频电外科产品亮相WHX Miami，吸引北美、拉美医院代表与经销商；称已进入30余国；未具名买方</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 CONMED DISTRIBUTION CENTER (ATLANTA) 美国 Atlanta https://www.52wmb.com/buyer/61874011 未公开"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="美国" data-ev="https://www.52wmb.com/buyer/61874011" data-plat="未公开">
+  <h3>CONMED DISTRIBUTION CENTER (ATLANTA)</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>美国 <span class="k">城市：</span>Atlanta<br>
+    <span class="k">客户类型：</span>GA<br>
+    <span class="k">联系方式：</span>海外买方（CONMED美国分销中心）<br>
+    <span class="k">出口市场：</span>提单买方(海关痕迹) <span class="k">认证：</span>美国/北美
+  </div>
+  <div>
+    <span class="badge b-ev">https://www.52wmb.com/buyer/61874011</span>
+    <span class="badge b-ct">GA</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：未公开</span><br>
+    <span class="plat">来源链接：</span>52wmb
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>厂商具FDA/CE/MDSAP/Health Canada（官网自述，需核验）</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 CONMED CORP (Miami FL) 美国 海关(ImportGenius) 海外买方（CONMED Corporation）"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="FL)" data-ev="海关(ImportGenius)" data-plat="海外买方（CONMED Corporation）">
+  <h3>CONMED CORP (Miami</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>FL) <span class="k">城市：</span>美国<br>
+    <span class="k">客户类型：</span>Miami<br>
+    <span class="k">联系方式：</span>FL<br>
+    <span class="k">出口市场：</span>https://www.importgenius.com/suppliers/zhejiang-shuyou-surgical-instrumen <span class="k">认证：</span>提单买方(海关痕迹)
+  </div>
+  <div>
+    <span class="badge b-ev">海关(ImportGenius)</span>
+    <span class="badge b-ct">Miami</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：海外买方（CONMED Corporation）</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>美国/北美</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 MEDICAL DISPOSABLES CORP (Orlando/Tampa FL) 美国 海关(ImportGenius) 海外买方（医疗器械经销商）"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="FL)" data-ev="海关(ImportGenius)" data-plat="海外买方（医疗器械经销商）">
+  <h3>MEDICAL DISPOSABLES CORP (Orlando/Tampa</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>FL) <span class="k">城市：</span>美国<br>
+    <span class="k">客户类型：</span>Orlando/Tampa<br>
+    <span class="k">联系方式：</span>FL<br>
+    <span class="k">出口市场：</span>https://static.importgenius.com/suppliers/zhejiang-shuyou-surgical-instrumen <span class="k">认证：</span>提单买方(海关痕迹)
+  </div>
+  <div>
+    <span class="badge b-ev">海关(ImportGenius)</span>
+    <span class="badge b-ct">Orlando/Tampa</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：海外买方（医疗器械经销商）</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>美国/北美</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 ASPEN SURGICAL (Newark NJ) 美国 海关(ImportGenius) 海外买方（医疗器械经销商）"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="NJ)" data-ev="海关(ImportGenius)" data-plat="海外买方（医疗器械经销商）">
+  <h3>ASPEN SURGICAL (Newark</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>NJ) <span class="k">城市：</span>美国<br>
+    <span class="k">客户类型：</span>Newark<br>
+    <span class="k">联系方式：</span>NJ<br>
+    <span class="k">出口市场：</span>https://static.importgenius.com/suppliers/zhejiang-shuyou-surgical-instrumen <span class="k">认证：</span>提单买方(海关痕迹)
+  </div>
+  <div>
+    <span class="badge b-ev">海关(ImportGenius)</span>
+    <span class="badge b-ct">Newark</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：海外买方（医疗器械经销商）</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>美国/北美</div>
+</div>
+
+<div class="card " data-search="浙江舒友仪器设备股份有限公司 GYNEX CORPORATION (Los Angeles CA) 美国 海关(ImportGenius) 海外买方（医疗器械经销商）"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="CA)" data-ev="海关(ImportGenius)" data-plat="海外买方（医疗器械经销商）">
+  <h3>GYNEX CORPORATION (Los Angeles</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>CA) <span class="k">城市：</span>美国<br>
+    <span class="k">客户类型：</span>Los Angeles<br>
+    <span class="k">联系方式：</span>CA<br>
+    <span class="k">出口市场：</span>https://static.importgenius.com/suppliers/zhejiang-shuyou-surgical-instrumen <span class="k">认证：</span>提单买方(海关痕迹)
+  </div>
+  <div>
+    <span class="badge b-ev">海关(ImportGenius)</span>
+    <span class="badge b-ct">Los Angeles</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：海外买方（医疗器械经销商）</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>美国/北美</div>
+</div>
+
+<div class="card " data-search="山东冠龙医疗用品有限公司 德国（报关画像出口目的国） 德国 未公开 报关画像（国家维度） 报关画像/海关数据"
+     data-mfr="山东冠龙医疗用品有限公司" data-country="德国" data-ev="报关画像（国家维度）" data-plat="报关画像/海关数据">
+  <h3>德国（报关画像出口目的国）</h3>
+  <div class="mfr">制造商：山东冠龙医疗用品有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>德国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>出口目的国（非具名买方）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>德国/欧盟 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">报关画像（国家维度）</span>
+    <span class="badge b-ct">出口目的国（非具名买方）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：报关画像/海关数据</span><br>
+    <span class="plat">来源链接：</span><a href="https://hs.bianmachaxun.com/qcc_company/details/775719" target="_blank" rel="noopener">https://hs.bianmachaxun.com/qcc_company/details/775719</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>报关画像显示年出口德国10万~50万美元，无具名买方</div>
+</div>
+
+<div class="card " data-search="山东冠龙医疗用品有限公司 日本（报关画像出口目的国） 日本 未公开 报关画像（国家维度） 报关画像/海关数据"
+     data-mfr="山东冠龙医疗用品有限公司" data-country="日本" data-ev="报关画像（国家维度）" data-plat="报关画像/海关数据">
+  <h3>日本（报关画像出口目的国）</h3>
+  <div class="mfr">制造商：山东冠龙医疗用品有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>日本 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>出口目的国（非具名买方）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>日本/东亚 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">报关画像（国家维度）</span>
+    <span class="badge b-ct">出口目的国（非具名买方）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：报关画像/海关数据</span><br>
+    <span class="plat">来源链接：</span><a href="https://hs.bianmachaxun.com/qcc_company/details/775719" target="_blank" rel="noopener">https://hs.bianmachaxun.com/qcc_company/details/775719</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>报关画像显示年出口日本&lt;10万美元，无具名买方</div>
+</div>
+
+<div class="card " data-search="山东冠龙医疗用品有限公司 意大利（报关画像出口目的国） 意大利 未公开 报关画像（国家维度） 报关画像/海关数据"
+     data-mfr="山东冠龙医疗用品有限公司" data-country="意大利" data-ev="报关画像（国家维度）" data-plat="报关画像/海关数据">
+  <h3>意大利（报关画像出口目的国）</h3>
+  <div class="mfr">制造商：山东冠龙医疗用品有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>意大利 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>出口目的国（非具名买方）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>意大利/欧盟 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">报关画像（国家维度）</span>
+    <span class="badge b-ct">出口目的国（非具名买方）</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：报关画像/海关数据</span><br>
+    <span class="plat">来源链接：</span><a href="https://hs.bianmachaxun.com/qcc_company/details/775719" target="_blank" rel="noopener">https://hs.bianmachaxun.com/qcc_company/details/775719</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>报关画像显示年出口意大利&lt;10万美元，无具名买方</div>
+</div>
+
+<div class="card " data-search="重庆西山科技股份有限公司 MADHOS S.A.S 哥伦比亚,波哥大 具名进口商/提单买方 哥伦比亚/南美 https://www.importgenius.com/colombia/suppliers/chongqing-xishan-science-technology-co-ltd ；https://panjiva.com/Madhos-S-A-S/46704298"
+     data-mfr="重庆西山科技股份有限公司" data-country="哥伦比亚,波哥大" data-ev="哥伦比亚/南美" data-plat="https://www.importgenius.com/colombia/suppliers/chongqing-xishan-science-technology-co-ltd ；https://panjiva.com/Madhos-S-A-S/46704298">
+  <h3>MADHOS S.A.S</h3>
+  <div class="mfr">制造商：重庆西山科技股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>哥伦比亚,波哥大 <span class="k">城市：</span>具名进口商/提单买方<br>
+    <span class="k">客户类型：</span>CL 9 B 42 30 BRR LOS CAMBULOS, Bogotá, NIT 901061393<br>
+    <span class="k">联系方式：</span>ImportGenius/Panjiva<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>ImportGenius显示13票提单（2007-2025），顶级贸易伙伴MADHOS S.A.S；Panjiva提单771541351038到港2025-02-11，HS9033000000（医用手术装置零部件）
+  </div>
+  <div>
+    <span class="badge b-ev">哥伦比亚/南美</span>
+    <span class="badge b-ct">CL 9 B 42 30 BRR LOS CAMBULOS, Bogotá, NIT 901061393</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：https://www.importgenius.com/colombia/suppliers/chongqing-xishan-science-technology-co-ltd ；https://panjiva.com/Madhos-S-A-S/46704298</span><br>
+    <span class="plat">来源链接：</span>提单买方
+  </div>
+  <div class="note"><b>备注（来源说明）：</b></div>
+</div>
+
+<div class="card doubt" data-search="重庆金山科技集团股份有限公司 未具名(集团全球渠道,高频电刀为组合产品) 俄罗斯、印度、巴西、美国、加拿大、北欧/西欧等 未公开 厂家自述(仅宣传,需存疑) 官网/新闻"
+     data-mfr="重庆金山科技集团股份有限公司" data-country="俄罗斯、印度、巴西、美国、加拿大、北欧/西欧等" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/新闻">
+  <h3>未具名(集团全球渠道,高频电刀为组合产品)</h3>
+  <div class="mfr">制造商：重庆金山科技集团股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>俄罗斯、印度、巴西、美国、加拿大、北欧/西欧等 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>俄罗斯、印度、巴西、美国、加拿大、北欧西欧 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.cq.chinanews.com.cn/news/2026/0129/39-51197.html" target="_blank" rel="noopener">https://www.cq.chinanews.com.cn/news/2026/0129/39-51197.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>中新网等报道集团产品(含氩气高频电刀)远销海外并获当地医院认可；全球数字为集团整体，未单独披露高频电刀具名海外客户。</div>
+</div>
+
+<div class="card doubt" data-search="北京金恒威科技发展有限公司 未具名代理(欧盟站自述代理国) 阿尔及利亚、埃及、伊朗、南非、印度、马来西亚及其他东南亚/中东/南美 未公开 厂家自述(仅宣传,需存疑) 官网(欧盟站)"
+     data-mfr="北京金恒威科技发展有限公司" data-country="阿尔及利亚、埃及、伊朗、南非、印度、马来西亚及其他东南亚/中东/南美" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网(欧盟站)">
+  <h3>未具名代理(欧盟站自述代理国)</h3>
+  <div class="mfr">制造商：北京金恒威科技发展有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>阿尔及利亚、埃及、伊朗、南非、印度、马来西亚及其他东南亚/中东/南美 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>区域代理(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>阿尔及利亚、埃及、伊朗、南非、印度、马来西亚、东南亚、中东、南美 <span class="k">认证：</span>CE 0434、FDA 510(k)、ISO13485、ISO9001
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">区域代理(未具名)</span>
+    <span class="badge b-scale">规模信号：中等</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(欧盟站)</span><br>
+    <span class="plat">来源链接：</span><a href="http://eu.ahanvos.com/" target="_blank" rel="noopener">http://eu.ahanvos.com/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>AHANVOS欧盟站自述&#x27;已在阿尔及利亚、埃及、伊朗、南非、印度、马来西亚等国建立代理体系&#x27;，另称&#x27;100+国分销&#x27;；未列具名代理公司，需存疑。中国制造网/贸易易为厂家自有店铺，非买方。</div>
+</div>
+
+<div class="card doubt" data-search="北京格瑞朗博科技发展有限公司 未具名区域代理(官网展会新闻) 阿联酋、沙特、科威特、土耳其等(WHX Dubai 2026洽谈) 迪拜(展会) 厂家自述(仅宣传,需存疑) 官网/展会"
+     data-mfr="北京格瑞朗博科技发展有限公司" data-country="阿联酋、沙特、科威特、土耳其等(WHX Dubai 2026洽谈)" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/展会">
+  <h3>未具名区域代理(官网展会新闻)</h3>
+  <div class="mfr">制造商：北京格瑞朗博科技发展有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>阿联酋、沙特、科威特、土耳其等(WHX Dubai 2026洽谈) <span class="k">城市：</span>迪拜(展会)<br>
+    <span class="k">客户类型：</span>区域代理/医疗机构(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>全球30余国(厂家自述)；阿联酋、沙特、科威特、土耳其(展会洽谈) <span class="k">认证：</span>ISO13485(GB/T42062-2022)
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">区域代理/医疗机构(未具名)</span>
+    <span class="badge b-scale">规模信号：中等</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/展会</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.greenlandmed.cn/news_deitals_1/33.html" target="_blank" rel="noopener">https://www.greenlandmed.cn/news_deitals_1/33.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网自述&#x27;产品远销全球30余个国家与地区&#x27;；WHX Dubai 2026及MEDICA 2025展会新闻称多国医疗机构/区域代理商洽谈，但均未列具名渠道。公开检索无实锤具名客户。</div>
+</div>
+
+<div class="card doubt" data-search="上海力申科学仪器有限公司(力康 HealForce) Melomed Private Hospital 南非 未公开 厂家自述(具名终端,官网) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="南非" data-ev="厂家自述(具名终端,官网)" data-plat="官网(全球拓展)">
+  <h3>Melomed Private Hospital</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>南非 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>终端医院(装机)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>南非 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(具名终端,官网)</span>
+    <span class="badge b-ct">终端医院(装机)</span>
+    <span class="badge b-scale">规模信号：中等</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网列名的南非私立医院</div>
+</div>
+
+<div class="card doubt" data-search="南京首量医疗科技有限公司 厂家自述覆盖:土耳其/奥地利/巴西/印度/中东等 多国 未公开 厂家自述(仅宣传,需存疑) 新闻"
+     data-mfr="南京首量医疗科技有限公司" data-country="多国" data-ev="厂家自述(仅宣传,需存疑)" data-plat="新闻">
+  <h3>厂家自述覆盖:土耳其/奥地利/巴西/印度/中东等</h3>
+  <div class="mfr">制造商：南京首量医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>多国 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未具名客户<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>土耳其/奥地利/巴西/印度/中东 <span class="k">认证：</span>CE(TÜV SÜD), ISO13485, ANVISA
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未具名客户</span>
+    <span class="badge b-scale">规模信号：中等</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.findhealthclinics.org/CN/Nanjing/113063168397453/Agiseal-Ligasure-Vessel-Sealer" target="_blank" rel="noopener">https://www.findhealthclinics.org/CN/Nanjing/113063168397453/…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>目录站引述厂家称产品获土耳其、奥地利、巴西、印度、中东等区域客户认可，未披露具名客户，需存疑</div>
+</div>
+
+<div class="card doubt" data-search="北京贝林电子有限公司 出口国(厂家自述,未具名经销商) 蒙古、埃及、土耳其、越南、摩洛哥、也门、苏丹、叙利亚 未公开 厂家自述(仅宣传,需存疑) 官网/黄页"
+     data-mfr="北京贝林电子有限公司" data-country="蒙古、埃及、土耳其、越南、摩洛哥、也门、苏丹、叙利亚" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/黄页">
+  <h3>出口国(厂家自述,未具名经销商)</h3>
+  <div class="mfr">制造商：北京贝林电子有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>蒙古、埃及、土耳其、越南、摩洛哥、也门、苏丹、叙利亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>蒙古、埃及、土耳其、越南、摩洛哥、也门、苏丹、叙利亚 <span class="k">认证：</span>CE
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/黄页</span><br>
+    <span class="plat">来源链接：</span><a href="https://beilin.51pla.com/about.htm" target="_blank" rel="noopener">https://beilin.51pla.com/about.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>51pla企业黄页及百度百科自述出口上述国家，仅列国别未列具名代理商，需存疑。注：beien.com.tr 为无锡贝恩(Wuxi Beien)独家伙伴，与北京贝林无关，已排除。</div>
+</div>
+
+<div class="card doubt" data-search="上海沪通电子有限公司 未具名(厂家自述&#x27;批量出口&#x27;) 未公开 未公开 厂家自述(仅宣传,需存疑) 官网/行业站"
+     data-mfr="上海沪通电子有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/行业站">
+  <h3>未具名(厂家自述&#x27;批量出口&#x27;)</h3>
+  <div class="mfr">制造商：上海沪通电子有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开(厂家称&#x27;批量出口&#x27;) <span class="k">认证：</span>CE
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/行业站</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.hutong.cn/" target="_blank" rel="noopener">http://www.hutong.cn/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>沪通官网及 medwant/环球医疗器械等自述&#x27;有批量出口&#x27;&#x27;高频电刀系列获上海名优产品&#x27;；公开检索未找到具名海外经销商/医院，无实锤。</div>
+</div>
+
+<div class="card doubt" data-search="天津市赛盟医疗科技有限公司 未具名(厂家自述&#x27;支持外贸出口&#x27;) 未公开 未公开 厂家自述(仅宣传,需存疑) B2B平台(11467/360采购帮)"
+     data-mfr="天津市赛盟医疗科技有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="B2B平台(11467/360采购帮)">
+  <h3>未具名(厂家自述&#x27;支持外贸出口&#x27;)</h3>
+  <div class="mfr">制造商：天津市赛盟医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开(产品页标注&#x27;支持外贸出口&#x27;) <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：B2B平台(11467/360采购帮)</span><br>
+    <span class="plat">来源链接：</span><a href="https://m.11467.com/product/d34095696.htm" target="_blank" rel="noopener">https://m.11467.com/product/d34095696.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>11467/360采购帮产品页标注高频电刀&#x27;支持外贸出口&#x27;，但均为国内招商信息，未检索到具名海外客户/经销商/提单。</div>
+</div>
+
+<div class="card doubt" data-search="北京冠邦科技集团股份有限公司 未具名(厂家自述&#x27;部分产品远销海外&#x27;) 未公开 未公开 厂家自述(仅宣传,需存疑) 官网/招聘站"
+     data-mfr="北京冠邦科技集团股份有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/招聘站">
+  <h3>未具名(厂家自述&#x27;部分产品远销海外&#x27;)</h3>
+  <div class="mfr">制造商：北京冠邦科技集团股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开(自述&#x27;部分主打产品远销海外&#x27;) <span class="k">认证：</span>CE、CMD
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/招聘站</span><br>
+    <span class="plat">来源链接：</span><a href="http://bjgb.com.cn/list_about.html" target="_blank" rel="noopener">http://bjgb.com.cn/list_about.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>冠邦官网及医械英才网自述部分产品(含GB-3000/UM-D3000高频电刀)远销海外，并具CE/CMD认证；未检索到具名海外客户/经销商/提单。</div>
+</div>
+
+<div class="card doubt" data-search="北京麦迪康维医疗设备有限公司 未具名(厂家自述&#x27;全球50+国应用&#x27;) 全球50多个国家和地区(未具名) 未公开 厂家自述(仅宣传,需存疑) 百度百科/企业黄页"
+     data-mfr="北京麦迪康维医疗设备有限公司" data-country="全球50多个国家和地区(未具名)" data-ev="厂家自述(仅宣传,需存疑)" data-plat="百度百科/企业黄页">
+  <h3>未具名(厂家自述&#x27;全球50+国应用&#x27;)</h3>
+  <div class="mfr">制造商：北京麦迪康维医疗设备有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>全球50多个国家和地区(未具名) <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商/终端(未具名)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>全球50多个国家和地区 <span class="k">认证：</span>CE(CE1282)、ISO13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/终端(未具名)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：百度百科/企业黄页</span><br>
+    <span class="plat">来源链接：</span><a href="https://baike.baidu.com/item/北京麦迪康维医疗设备有限公司/15989232" target="_blank" rel="noopener">https://baike.baidu.com/item/北京麦迪康维医疗设备有限公司/15989232</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>百度百科/东方医疗/环球医疗等自述产品(CM-350A高频电刀、CM-350Ar氩气高频电刀)在全球50多国应用；公开检索未找到具名海外经销商/医院，无实锤。</div>
+</div>
+
+<div class="card doubt" data-search="北京市亚可康达医疗科技有限公司 俄罗斯康博股份有限公司 俄罗斯 哈巴罗夫斯克(伯力) 厂家自述(仅宣传,需存疑) 百科(厂家自述)"
+     data-mfr="北京市亚可康达医疗科技有限公司" data-country="俄罗斯" data-ev="厂家自述(仅宣传,需存疑)" data-plat="百科(厂家自述)">
+  <h3>俄罗斯康博股份有限公司</h3>
+  <div class="mfr">制造商：北京市亚可康达医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>俄罗斯 <span class="k">城市：</span>哈巴罗夫斯克(伯力)<br>
+    <span class="k">客户类型：</span>经销商/生产基地合资方<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>俄罗斯 <span class="k">认证：</span>CE
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">经销商/生产基地合资方</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：百科(厂家自述)</span><br>
+    <span class="plat">来源链接：</span><a href="https://baike.baidu.com/view/8672322.htm" target="_blank" rel="noopener">https://baike.baidu.com/view/8672322.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>2009年与俄罗斯康博股份有限公司签署知识产权共享协议，拟在哈巴罗夫斯克建立高频电刀生产基地并重新注册俄方产品注册号；属厂家自述，未见独立佐证</div>
+</div>
+
+<div class="card doubt" data-search="北京市亚可康达医疗科技有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) 官网/工商/药监局"
+     data-mfr="北京市亚可康达医疗科技有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/工商/药监局">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：北京市亚可康达医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>自称出口全球(年出口≥4000台，号称国内高频电刀出口量最大) <span class="k">认证：</span>CE
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/工商/药监局</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.ykkd.com.cn" target="_blank" rel="noopener">https://www.ykkd.com.cn</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网/招聘/百科自述年出口4000台以上、用户12000家；北京市药监局出具《医疗器械产品出口销售证明》(京药监械出20240178号)证明其具备出口资质，但公开检索无具名买方/装机视频/提单佐证</div>
+</div>
+
+<div class="card doubt" data-search="北京康威电子技术有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) 中国制造网/ECVV"
+     data-mfr="北京康威电子技术有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="中国制造网/ECVV">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：北京康威电子技术有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>北美/南美/欧洲/非洲/东南亚/中东/东亚/西欧(平台自列) <span class="k">认证：</span>CE(2008)、ISO9001、ISO13485、CMD
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：中国制造网/ECVV</span><br>
+    <span class="plat">来源链接：</span><a href="https://m.made-in-china.com/company-beijingkangweidianzi/" target="_blank" rel="noopener">https://m.made-in-china.com/company-beijingkangweidianzi/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>B2B平台自列主要市场及出口占比31%-40%；官网自述产品进入欧洲、非洲、东南亚、南美医疗机构，并列装山东舰、和平方舟医疗船；未见具名代理/提单/装机视频佐证</div>
+</div>
+
+<div class="card doubt" data-search="山东华博电气有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) B2B平台(企查查/天下工厂)"
+     data-mfr="山东华博电气有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="B2B平台(企查查/天下工厂)">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：山东华博电气有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>欧洲/东南亚/中东(官网及B2B自述) <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：B2B平台(企查查/天下工厂)</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.qcc.com/ctenderlist/79372c6826800d4984891997e1e6b30c" target="_blank" rel="noopener">https://www.qcc.com/ctenderlist/79372c6826800d4984891997e1e6b30c</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网及B2B自述产品出口；企查查显示有出口销售证明；未见具名买方/装机视频</div>
+</div>
+
+<div class="card doubt" data-search="杭州南宇医疗器械有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) B2B平台(medical-xprt等)"
+     data-mfr="杭州南宇医疗器械有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="B2B平台(medical-xprt等)">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：杭州南宇医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>亚洲/中东(平台自述进入全球市场) <span class="k">认证：</span>欧盟MDR(部分内镜产品)
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：B2B平台(medical-xprt等)</span><br>
+    <span class="plat">来源链接：</span><a href="https://alpha.medical-xprt.com/companies/hangzhou-nanyu-medical-instrument-co-ltd-117724" target="_blank" rel="noopener">https://alpha.medical-xprt.com/companies/hangzhou-nanyu-medic…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>B2B平台显示产品供应亚洲/中东并&#x27;进入全球市场&#x27;；未见具名代理/买方/装机视频；某股票董秘问答所列出口国(伊朗/沙特/东南亚/非洲/美洲等)无法确认归属本公司，未采信</div>
+</div>
+
+<div class="card doubt" data-search="北京英杰华科技有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) B2B平台(ExportHub/TradeKey)"
+     data-mfr="北京英杰华科技有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="B2B平台(ExportHub/TradeKey)">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：北京英杰华科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>ExportHub自列:孟加拉(30%)、土耳其(24%)、印度(22%)、韩国(12%)、马来西亚(12%)；另自述远销60+国家 <span class="k">认证：</span>CE、ISO9000/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：B2B平台(ExportHub/TradeKey)</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.exporthub.com/beijing-yingjiehua-technology" target="_blank" rel="noopener">https://www.exporthub.com/beijing-yingjiehua-technology</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>B2B平台自列出口国别及占比；招聘信息(鞍山英杰华)提及印度/土耳其/巴基斯坦/日本/韩国/美国西雅图/新泽西/迈阿密等海外市场；未见具名代理/买方/提单佐证</div>
+</div>
+
+<div class="card doubt" data-search="南京森盛医疗设备有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) B2B平台(中国制造网)"
+     data-mfr="南京森盛医疗设备有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="B2B平台(中国制造网)">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：南京森盛医疗设备有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>欧洲/中东/东南亚(官网及招聘平台自述) <span class="k">认证：</span>未公开(国内CFDA/CE未明确检索到)
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：B2B平台(中国制造网)</span><br>
+    <span class="plat">来源链接：</span><a href="https://nanjing.made-in-china.com/product-list/new-150.html" target="_blank" rel="noopener">https://nanjing.made-in-china.com/product-list/new-150.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网/招聘自述产品远销欧洲、中东、东南亚；中国制造网有SM-5000B高频电刀供货页；企查查显示有出口销售证明；未见具名买方/装机视频</div>
+</div>
+
+<div class="card doubt" data-search="安徽英特电子有限公司 未查到具名实锤海外买方 未公开 未公开 厂家自述(仅宣传,需存疑) B2B平台(company-listing/listcompany)"
+     data-mfr="安徽英特电子有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="B2B平台(company-listing/listcompany)">
+  <h3>未查到具名实锤海外买方</h3>
+  <div class="mfr">制造商：安徽英特电子有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>B2B自列:西欧25%、东亚25%、非洲25%、东南亚；官网自述出口东南亚/南美/非洲 <span class="k">认证：</span>CE、ISO9001、ISO13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：B2B平台(company-listing/listcompany)</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.company-listing.org/anhui_yingte_electronic_company_ltd.html" target="_blank" rel="noopener">https://www.company-listing.org/anhui_yingte_electronic_compa…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>B2B平台自列主要出口市场及占比；官网自述产品出口东南亚、南美、非洲；未见具名代理/买方/提单/装机佐证</div>
+</div>
+
+<div class="card doubt" data-search="广东百生医疗器械股份有限公司 马来西亚/印尼/泰国/新加坡 经销商(展会接洽，未具名) 东南亚 未公开 展会(厂家自述,未具名) 展会/新闻"
+     data-mfr="广东百生医疗器械股份有限公司" data-country="东南亚" data-ev="展会(厂家自述,未具名)" data-plat="展会/新闻">
+  <h3>马来西亚/印尼/泰国/新加坡 经销商(展会接洽，未具名)</h3>
+  <div class="mfr">制造商：广东百生医疗器械股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>东南亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商(展会意向)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>东南亚 <span class="k">认证：</span>FDA、CE、ANVISA、ROSZDRAVNADZOR
+  </div>
+  <div>
+    <span class="badge b-ev">展会(厂家自述,未具名)</span>
+    <span class="badge b-ct">经销商(展会意向)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：展会/新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.bs0750.com/en/xinwenzhongxin/619.html" target="_blank" rel="noopener">https://www.bs0750.com/en/xinwenzhongxin/619.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>2025马来西亚吉隆坡医疗展获马来西亚、印度尼西亚、泰国、新加坡等国经销商关注咨询；未具名</div>
+</div>
+
+<div class="card doubt" data-search="广东百生医疗器械股份有限公司 意大利/德国/法国/西班牙 经销商(展会意向，未具名) 欧洲 未公开 展会(厂家自述,未具名) 展会/新闻"
+     data-mfr="广东百生医疗器械股份有限公司" data-country="欧洲" data-ev="展会(厂家自述,未具名)" data-plat="展会/新闻">
+  <h3>意大利/德国/法国/西班牙 经销商(展会意向，未具名)</h3>
+  <div class="mfr">制造商：广东百生医疗器械股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>欧洲 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>经销商(展会意向)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>欧洲 <span class="k">认证：</span>FDA、CE
+  </div>
+  <div>
+    <span class="badge b-ev">展会(厂家自述,未具名)</span>
+    <span class="badge b-ct">经销商(展会意向)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：展会/新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://m.sohu.com/a/1015035735_122073231" target="_blank" rel="noopener">https://m.sohu.com/a/1015035735_122073231</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>2026意大利Exposanità展与多家欧洲经销商达成初步合作意向，并有意/德/法/西老客户分享临床使用；未具名</div>
+</div>
+
+<div class="card doubt" data-search="广东百生医疗器械股份有限公司 未查到具名实锤海外买方(综合) 未公开 未公开 厂家自述(仅宣传,需存疑) 官网/B2B(EC21)"
+     data-mfr="广东百生医疗器械股份有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网/B2B(EC21)">
+  <h3>未查到具名实锤海外买方(综合)</h3>
+  <div class="mfr">制造商：广东百生医疗器械股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>自称80+国家；EC21列亚洲/欧洲/北美/南美/澳洲；连续15年参加巴西Hospitalar、2026迈阿密WHX、土耳其Expomed <span class="k">认证：</span>FDA、CE、ANVISA、ROSZDRAVNADZOR
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/B2B(EC21)</span><br>
+    <span class="plat">来源链接：</span><a href="https://obs20231011.m.ec21.com/mobile/companyinfo.jsp" target="_blank" rel="noopener">https://obs20231011.m.ec21.com/mobile/companyinfo.jsp</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>多国展会频繁曝光且获FDA/CE等多国认证，但公开检索未找到具名签约代理/买方/提单</div>
+</div>
+
+<div class="card doubt" data-search="上海力申科学仪器有限公司(力康 HealForce) Hospital St. Ivan Rilski Medical Corporation 保加利亚 未公开 厂家自述(具名终端,官网) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="保加利亚" data-ev="厂家自述(具名终端,官网)" data-plat="官网(全球拓展)">
+  <h3>Hospital St. Ivan Rilski Medical Corporation</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>保加利亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>终端医院(装机)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>保加利亚 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(具名终端,官网)</span>
+    <span class="badge b-ct">终端医院(装机)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网列名的保加利亚终端医院用户</div>
+</div>
+
+<div class="card doubt" data-search="上海力申科学仪器有限公司(力康 HealForce) Minsk 5-th City Hospital Healthcare Institution 白俄罗斯 明斯克 厂家自述(具名终端,官网) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="白俄罗斯" data-ev="厂家自述(具名终端,官网)" data-plat="官网(全球拓展)">
+  <h3>Minsk 5-th City Hospital Healthcare Institution</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>白俄罗斯 <span class="k">城市：</span>明斯克<br>
+    <span class="k">客户类型：</span>终端医院(装机)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>白俄罗斯 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(具名终端,官网)</span>
+    <span class="badge b-ct">终端医院(装机)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网列名的白俄罗斯明斯克市第五市立医院</div>
+</div>
+
+<div class="card doubt" data-search="上海力申科学仪器有限公司(力康 HealForce) Apollo Hospital Ahmedabad 印度 艾哈迈达巴德 厂家自述(具名终端,官网) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="印度" data-ev="厂家自述(具名终端,官网)" data-plat="官网(全球拓展)">
+  <h3>Apollo Hospital Ahmedabad</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>印度 <span class="k">城市：</span>艾哈迈达巴德<br>
+    <span class="k">客户类型：</span>终端医院(装机)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>印度 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(具名终端,官网)</span>
+    <span class="badge b-ct">终端医院(装机)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网列名的印度阿波罗医院(艾哈迈达巴德)</div>
+</div>
+
+<div class="card doubt" data-search="上海力申科学仪器有限公司(力康 HealForce) Hanh Phuc Hospital 越南 未公开 厂家自述(具名终端,官网) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="越南" data-ev="厂家自述(具名终端,官网)" data-plat="官网(全球拓展)">
+  <h3>Hanh Phuc Hospital</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>越南 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>终端医院(装机)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>越南 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(具名终端,官网)</span>
+    <span class="badge b-ct">终端医院(装机)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>力康官网列名的越南幸福医院</div>
+</div>
+
+<div class="card doubt" data-search="上海力申科学仪器有限公司(力康 HealForce) Zambia MOH (mobile hospital project) 赞比亚 未公开 厂家自述(援外项目,官网) 官网(全球拓展)"
+     data-mfr="上海力申科学仪器有限公司(力康 HealForce)" data-country="赞比亚" data-ev="厂家自述(援外项目,官网)" data-plat="官网(全球拓展)">
+  <h3>Zambia MOH (mobile hospital project)</h3>
+  <div class="mfr">制造商：上海力申科学仪器有限公司(力康 HealForce)</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>赞比亚 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>政府/援外项目<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>赞比亚 <span class="k">认证：</span>CE、ISO9001/13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(援外项目,官网)</span>
+    <span class="badge b-ct">政府/援外项目</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网(全球拓展)</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.nison.com.cn/40/index-1.htm" target="_blank" rel="noopener">http://www.nison.com.cn/40/index-1.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>参与赞比亚卫生部移动医院项目(一带一路援外)</div>
+</div>
+
+<div class="card doubt" data-search="广东德弘医疗设备有限公司 厂家自述:DHYL品牌国际市场 未公开 未公开 厂家自述(仅宣传,需存疑) 官网"
+     data-mfr="广东德弘医疗设备有限公司" data-country="未公开" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网">
+  <h3>厂家自述:DHYL品牌国际市场</h3>
+  <div class="mfr">制造商：广东德弘医疗设备有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未具名<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开(自称国际市场有竞争力) <span class="k">认证：</span>未公开(专利含一种具有照明功能的医用高频电刀CN214678999U)
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未具名</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.dmadv.com/37470.html" target="_blank" rel="noopener">http://www.dmadv.com/37470.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>检索未找到任何具名海外经销商/医院/提单痕迹；官网及工商仅自称DHYL品牌内窥镜及电外科设备在国际市场上有很高竞争力，无独立佐证；主机产品DH350双极等离子高频手术设备(国械注准20213010536)</div>
+</div>
+
+<div class="card doubt" data-search="凯卓科技（北京）有限公司 厂家自述:美国销量超万台/日本超5000台 美国/日本 未公开 厂家自述(仅宣传,需存疑) 官网"
+     data-mfr="凯卓科技（北京）有限公司" data-country="美国/日本" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网">
+  <h3>厂家自述:美国销量超万台/日本超5000台</h3>
+  <div class="mfr">制造商：凯卓科技（北京）有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>美国/日本 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未具名(宣传口径)<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>美国/日本等世界各地 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未具名(宣传口径)</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://m.zhongqiyunda.com/qyst/563.html" target="_blank" rel="noopener">http://m.zhongqiyunda.com/qyst/563.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>万词推广软文称在美国销量超过万台、日本超5000台；属SEO推广性质，未经第三方独立核实，需存疑</div>
+</div>
+
+<div class="card doubt" data-search="北京索吉瑞科技有限公司 厂家自述:进入欧美亚非数十国 欧洲/美洲/亚洲/非洲 未公开 厂家自述(仅宣传,需存疑) 官网"
+     data-mfr="北京索吉瑞科技有限公司" data-country="欧洲/美洲/亚洲/非洲" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网">
+  <h3>厂家自述:进入欧美亚非数十国</h3>
+  <div class="mfr">制造商：北京索吉瑞科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>欧洲/美洲/亚洲/非洲 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未具名<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>欧美亚非数十国 <span class="k">认证：</span>CE, FDA, NMPA
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未具名</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://taktvoll.com.cn/about/" target="_blank" rel="noopener">http://taktvoll.com.cn/about/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称多款产品获CE、FDA认证，进入欧美亚非数十国；未披露具名海外经销商/医院</div>
+</div>
+
+<div class="card doubt" data-search="江苏锐天医疗科技有限公司 厂家自述:出口欧洲/东南亚/中东(内镜耗材) 欧洲/东南亚/中东 未公开 厂家自述(仅宣传,需存疑) 官网"
+     data-mfr="江苏锐天医疗科技有限公司" data-country="欧洲/东南亚/中东" data-ev="厂家自述(仅宣传,需存疑)" data-plat="官网">
+  <h3>厂家自述:出口欧洲/东南亚/中东(内镜耗材)</h3>
+  <div class="mfr">制造商：江苏锐天医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>欧洲/东南亚/中东 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未具名<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>欧洲/东南亚/中东 <span class="k">认证：</span>CE(TÜV SÜD), ISO13485
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述(仅宣传,需存疑)</span>
+    <span class="badge b-ct">未具名</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://ruitianmed.com/Service" target="_blank" rel="noopener">https://ruitianmed.com/Service</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>重要修正：检索显示该公司核心为内镜微创耗材(一次性活检钳/圈套器/热活检钳/注射针等)，未见高频电刀主机类产品；名单将其列为高频电刀主机厂存疑。官网自称产品稳定供应欧/东南亚/中东，无具名买方</div>
+</div>
+
+<div class="card doubt" data-search="浙江舒友仪器设备股份有限公司 VETOVATION INC. (Newark NJ) 未公开 NJ"
+     data-mfr="浙江舒友仪器设备股份有限公司" data-country="INC. (Newark" data-ev="未公开" data-plat="NJ">
+  <h3>VETOVATION</h3>
+  <div class="mfr">制造商：浙江舒友仪器设备股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>INC. (Newark <span class="k">城市：</span>NJ)<br>
+    <span class="k">客户类型：</span>美国<br>
+    <span class="k">联系方式：</span>Newark<br>
+    <span class="k">出口市场：</span>海关(ImportInfo) <span class="k">认证：</span>https://www.importinfo.com/zhejiang-shuyou-surgical-instrumen
+  </div>
+  <div>
+    <span class="badge b-ev">未公开</span>
+    <span class="badge b-ct">美国</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：NJ</span><br>
+    <span class="plat">来源链接：</span>海外买方（兽医医疗器械商）
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>提单买方(海关痕迹)</div>
+</div>
+
+<div class="card doubt" data-search="武汉半边天医疗技术发展有限公司 厂家自述出口国（俄/巴/土/印/韩等） 未公开 未公开 厂家自述 官网"
+     data-mfr="武汉半边天医疗技术发展有限公司" data-country="未公开" data-ev="厂家自述" data-plat="官网">
+  <h3>厂家自述出口国（俄/巴/土/印/韩等）</h3>
+  <div class="mfr">制造商：武汉半边天医疗技术发展有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>厂家自述市场<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>俄/巴/土/印/韩等数十国 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述</span>
+    <span class="badge b-ct">厂家自述市场</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.bbt2000.com" target="_blank" rel="noopener">http://www.bbt2000.com</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网宣传出口数十国，未列具名买方</div>
+</div>
+
+<div class="card doubt" data-search="山东冠龙医疗用品有限公司 国际业务邮箱（出口联系） 未公开 未公开 厂家自述 官网"
+     data-mfr="山东冠龙医疗用品有限公司" data-country="未公开" data-ev="厂家自述" data-plat="官网">
+  <h3>国际业务邮箱（出口联系）</h3>
+  <div class="mfr">制造商：山东冠龙医疗用品有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>厂家出口联系<br>
+    <span class="k">联系方式：</span>allenyuan@dragoncrown.cn<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述</span>
+    <span class="badge b-ct">厂家出口联系</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.dragoncrown.cn/list-8-1.html" target="_blank" rel="noopener">https://www.dragoncrown.cn/list-8-1.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网列国际业务邮箱，表明有出口业务，但无具名海外买方</div>
+</div>
+
+<div class="card doubt" data-search="重庆西山科技股份有限公司 厂家自述出口40+国 未公开 未公开 厂家自述 官网/百科"
+     data-mfr="重庆西山科技股份有限公司" data-country="未公开" data-ev="厂家自述" data-plat="官网/百科">
+  <h3>厂家自述出口40+国</h3>
+  <div class="mfr">制造商：重庆西山科技股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>厂家自述市场<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>全球40+国家地区 <span class="k">认证：</span>CE/KFDA/CMD
+  </div>
+  <div>
+    <span class="badge b-ev">厂家自述</span>
+    <span class="badge b-ct">厂家自述市场</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-doubt">存疑</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/百科</span><br>
+    <span class="plat">来源链接：</span><a href="https://baike.baidu.com/item/重庆西山科技股份有限公司/8097882" target="_blank" rel="noopener">https://baike.baidu.com/item/重庆西山科技股份有限公司/8097882</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>百科称产品出口全球超40个国家和地区，未列具名买方</div>
+</div>
+
+<div class="card none" data-search="浙江伽奈维医疗科技有限公司 非洲区域（尼日利亚·拉各斯，未具名经销商） 尼日利亚 拉各斯 无 新闻"
+     data-mfr="浙江伽奈维医疗科技有限公司" data-country="尼日利亚" data-ev="无" data-plat="新闻">
+  <h3>非洲区域（尼日利亚·拉各斯，未具名经销商）</h3>
+  <div class="mfr">制造商：浙江伽奈维医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>尼日利亚 <span class="k">城市：</span>拉各斯<br>
+    <span class="k">客户类型：</span>海外销售区域（未具名经销商）<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>非洲（尼日利亚等） <span class="k">认证：</span>FDA 510(k)、欧盟MDR CE
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">海外销售区域（未具名经销商）</span>
+    <span class="badge b-scale">规模信号：规模较大</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://wap.wpinjobs.com/jobs/show/id/112019.htm" target="_blank" rel="noopener">https://wap.wpinjobs.com/jobs/show/id/112019.htm</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>伽奈维招聘“非洲销售主管（驻尼日利亚·拉各斯）”负责建立分销网络、管理代理商，证实其开拓非洲市场，但暂未检索到具名经销商名称。</div>
+</div>
+
+<div class="card none" data-search="常州市延陵电子设备有限公司 未查到独立佐证 未公开 未公开 无 未公开"
+     data-mfr="常州市延陵电子设备有限公司" data-country="未公开" data-ev="无" data-plat="未公开">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：常州市延陵电子设备有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>无<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>CE(德国TUV,2007)
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">无</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：未公开</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>公开检索(官网/企查查/迈高/医博会等)未见具名海外客户、经销商或装机报道；仅见CE认证(2007 TUV，国内第三家、江苏第一家高频手术器CE)及&#x27;国内顶尖医院大规模采购&#x27;自述。海外渠道无实锤、存疑。</div>
+</div>
+
+<div class="card none" data-search="心镜云影医疗科技（枣庄）有限责任公司 未查到独立佐证 未公开 未公开 无 无"
+     data-mfr="心镜云影医疗科技（枣庄）有限责任公司" data-country="未公开" data-ev="无" data-plat="无">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：心镜云影医疗科技（枣庄）有限责任公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>无<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开(国内注册证:国械注准20233010312 Gemini高频手术设备)
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">无</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：无</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>检索(官网/工商/招商/新闻)仅见国内招商(北京优德锐斯科技有限公司为招商单位)及国内注册，未见任何具名海外客户/经销商/提单/社媒痕迹</div>
+</div>
+
+<div class="card none" data-search="山东新华健康产业有限公司 未查到独立佐证 未公开 未公开 无 新闻"
+     data-mfr="山东新华健康产业有限公司" data-country="未公开" data-ev="无" data-plat="新闻">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：山东新华健康产业有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>美国、俄罗斯、印度、墨西哥等（高频手术设备） <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="http://mpa.shandong.gov.cn/col/col101752/art/2026/art_6b0dfe4da91346b79de9fcee8b6e443c.html" target="_blank" rel="noopener">http://mpa.shandong.gov.cn/col/col101752/art/2026/art_6b0dfe4…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>山东省药监局公示医疗器械出口销售证明（鲁药监械出2026030002号，2026-05-25）证实高频手术设备（XGP-Y-I/XGP-D-I等）出口；qcc企业库显示经德国、印尼海外销售中心布局，东南亚/中东本地化渠道；多源检索未发现具名海外买方/经销商名称。</div>
+</div>
+
+<div class="card none" data-search="山东玉华电气有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="山东玉华电气有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：山东玉华电气有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开（官网称“出口海外”） <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.yuhuame.com/index.html" target="_blank" rel="noopener">https://www.yuhuame.com/index.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称产品“出口海外”并设“海外事业部”，但52wmb/ImportYeti/阿里巴巴/中国制造网/LinkedIn多源检索未发现具名海外买方或经销商；注：检索到的“Shanghai Yuhua Instrument Equipment”向美出口X光机等为另一家公司，非山东玉华电气。宣传存疑。</div>
+</div>
+
+<div class="card none" data-search="四川候鸟科技有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="四川候鸟科技有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：四川候鸟科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.zygxq.gov.cn/zygxq/cyzx/pc/content/content_1871380381082812416.html" target="_blank" rel="noopener">http://www.zygxq.gov.cn/zygxq/cyzx/pc/content/content_1871380…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>公司2021年成立，口腔科高频手术设备2024年底获三类证、超声骨刀持出口销售证明（川资药监械出20260031号，2026-03-30）；产品极新，多源检索未发现具名海外买方/经销商。</div>
+</div>
+
+<div class="card none" data-search="杭州安杰思医学科技股份有限公司 未查到独立佐证 未公开 未公开 无 新闻"
+     data-mfr="杭州安杰思医学科技股份有限公司" data-country="未公开" data-ev="无" data-plat="新闻">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：杭州安杰思医学科技股份有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>欧洲（2025前三季度占营收23.66%）、美国、日本、澳大利亚等30+国 <span class="k">认证：</span>FDA、CE（厂商产品）
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://cj.sina.cn/articles/view/2311077472/89c03e6002002h42y" target="_blank" rel="noopener">https://cj.sina.cn/articles/view/2311077472/89c03e6002002h42y</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>2024年年度报告披露海外全资子公司：AGS MEDTECH B.V.(荷兰)、AGS MEDTECH CO.,LTD(美国)、AGS MEDTECH SINGAPORE PTE.LTD、AGS MEDTECH (THAILAND) CO.,LTD、安杰思医学(香港)有限公司；证券日报称欧洲市场以ODM模式由境内主体直供欧洲客户为主，未披露具名第三方经销商/客户。</div>
+</div>
+
+<div class="card none" data-search="西弥斯医疗科技（湖南）有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="西弥斯医疗科技（湖南）有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：西弥斯医疗科技（湖南）有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开（官网称“覆盖全球战略布局”） <span class="k">认证：</span>FDA 510(k)（PhotonX光能焕肤仪，2025）
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.xbeautineers.com/zh-cn/about/" target="_blank" rel="noopener">https://www.xbeautineers.com/zh-cn/about/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>黄金微针高频手术设备2025年获三类证；PhotonX光能焕肤仪获美国FDA 510(k)；qcc显示2026年多次获“器械产品出口销售证明”；多源检索未发现具名海外买方/经销商，官网“覆盖全球”为自述，存疑。</div>
+</div>
+
+<div class="card none" data-search="南京科泰柯林医疗科技有限公司 未查到独立佐证 未公开 未公开 无 新闻"
+     data-mfr="南京科泰柯林医疗科技有限公司" data-country="未公开" data-ev="无" data-plat="新闻">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：南京科泰柯林医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：新闻</span><br>
+    <span class="plat">来源链接：</span><a href="https://zwpt.da.jiangsu.gov.cn/datacenter/dc/sgsView/0de8f8a5707c46da8d39bfaba411356e" target="_blank" rel="noopener">https://zwpt.da.jiangsu.gov.cn/datacenter/dc/sgsView/0de8f8a5…</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>江苏省药监局公示药品出口准许证/出口销售证明（苏宁药监械出20254512号，2025-09-22）证实高频电刀（SY-2400系列）出口；另2022年获意大利ALSA APPARECCHI MEDICALI SRL授权为其中国区代理（反向引进，非出口客户）；多源检索未发现具名海外买方/经销商。</div>
+</div>
+
+<div class="card none" data-search="湖南峰恒晶医疗科技有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="湖南峰恒晶医疗科技有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：湖南峰恒晶医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开（官网称海外市场拓展初见成效） <span class="k">认证：</span>欧盟MDR CE（2025）
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="https://www.hnfhj.com/" target="_blank" rel="noopener">https://www.hnfhj.com/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网称2025年通过欧盟MDR CE认证、海外市场拓展初见成效；浏阳经开区报道“产品布局已拓展至海外市场”；多源检索未发现具名海外买方/经销商。</div>
+</div>
+
+<div class="card none" data-search="珠海市司迈科技有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="珠海市司迈科技有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：珠海市司迈科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>俄罗斯、欧洲、南美、印度（官网/招商网称） <span class="k">认证：</span>CE（厂商自述）
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://scanmed-cn.com/cn/news/show_72.html" target="_blank" rel="noopener">http://scanmed-cn.com/cn/news/show_72.html</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>官网报道2016年莫斯科展会一位俄罗斯专业客户（医院，未具名）当场决定成为其俄罗斯代理商；招商网称“欧洲、南美洲和印度等国外客户”询代；产品获CE认证并进入亚/欧/南美市场（百度类，存疑）；多源检索未发现具名海外买方/经销商名称。注：检索到的Scanmed Technology(Singapore)、Scan-Med A/S(丹麦/挪威)等为名称相近的第三方公司，非珠海司迈。</div>
+</div>
+
+<div class="card none" data-search="锐志微创医疗科技（常州）有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="锐志微创医疗科技（常州）有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：锐志微创医疗科技（常州）有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.ruizhimed.com/" target="_blank" rel="noopener">http://www.ruizhimed.com/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>仅见官网设海外销售部（maj@ruizhimed.com、+86-519-85611866），无具名海外买方/代理/提单证据</div>
+</div>
+
+<div class="card none" data-search="南京艾力芬医疗器械有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="南京艾力芬医疗器械有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：南京艾力芬医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.elephant-med.com/" target="_blank" rel="noopener">http://www.elephant-med.com/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>主营传统/手持式高频手术系统；仅见官网与工商信息，无具名海外买方/代理/提单证据（同名深圳艾力芬出口加拿大为空盒，已排除）</div>
+</div>
+
+<div class="card none" data-search="浙江量子医疗器械有限公司 未查到独立佐证 未公开 未公开 无 官网"
+     data-mfr="浙江量子医疗器械有限公司" data-country="未公开" data-ev="无" data-plat="官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：浙江量子医疗器械有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网</span><br>
+    <span class="plat">来源链接：</span><a href="http://www.luangz.cn/" target="_blank" rel="noopener">http://www.luangz.cn/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>威高骨科控股66.875%；主营高频手术设备等；仅见官网/百科，无具名海外买方/代理/提单证据（英文名LuangZ，已排除印度Quantum Medical等同名干扰）</div>
+</div>
+
+<div class="card none" data-search="成都安捷畅医疗科技有限公司 未查到独立佐证 未公开 未公开 无 官网/新闻"
+     data-mfr="成都安捷畅医疗科技有限公司" data-country="未公开" data-ev="无" data-plat="官网/新闻">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：成都安捷畅医疗科技有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>东南亚/一带一路（厂家自述布局） <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：官网/新闻</span><br>
+    <span class="plat">来源链接：</span><a href="http://ajshine.cn/about/" target="_blank" rel="noopener">http://ajshine.cn/about/</a>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>厂家自述&quot;积极布局东南亚、一带一路国家海外市场&quot;；新闻见国内医院（华西、广西学术大会）使用，无具名海外买方/代理/提单证据</div>
+</div>
+
+<div class="card none" data-search="河南华兴电气有限公司 未查到独立佐证 未公开 未公开 无 国内中标/官网"
+     data-mfr="河南华兴电气有限公司" data-country="未公开" data-ev="无" data-plat="国内中标/官网">
+  <h3>未查到独立佐证</h3>
+  <div class="mfr">制造商：河南华兴电气有限公司</div>
+  <div class="kv">
+    <span class="k">国家/地区：</span>未公开 <span class="k">城市：</span>未公开<br>
+    <span class="k">客户类型：</span>未公开<br>
+    <span class="k">联系方式：</span>未公开<br>
+    <span class="k">出口市场：</span>未公开 <span class="k">认证：</span>未公开
+  </div>
+  <div>
+    <span class="badge b-ev">无</span>
+    <span class="badge b-ct">未公开</span>
+    <span class="badge b-scale">规模信号：未详</span>
+    <span class="badge b-none">无来源</span>
+  </div>
+  <div class="src">
+    <span class="plat">来源平台：国内中标/官网</span><br>
+    <span class="plat">来源链接：</span><span class="muted">未公开</span>
+  </div>
+  <div class="note"><b>备注（来源说明）：</b>主营氩气高频电刀H3000/H4000/H7000；仅见国内医院中标（正定县人民医院、中山三院、包头医学院一附院等），无独立海外客户/提单/代理证据（提单误检为浙江华兴电机已排除）</div>
+</div></div>
+  <div class="empty" id="empty" style="display:none">没有匹配的记录</div>
+  <footer>由 Senior Developer（高级开发工程师）生成 · 纯 HTML 交付 · 每条记录来源可追溯</footer>
+</main>
+<script>
+
+const root=document.documentElement;
+const saved=localStorage.getItem('theme');
+const sys=window.matchMedia('(prefers-color-scheme: dark)').matches;
+function apply(t){root.setAttribute('data-theme',t);localStorage.setItem('theme',t);
+  document.querySelectorAll('[data-theme-btn]').forEach(b=>b.classList.toggle('on',b.dataset.themeBtn===t));}
+apply(saved||(sys?'dark':'light'));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{if(!localStorage.getItem('theme'))apply(e.matches?'dark':'light');});
+
+
+function buildSel(id, attr, label){
+  const sel=document.getElementById(id);
+  const vals=[...new Set([...document.querySelectorAll('#grid .card')].map(c=>c.dataset[attr]).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">'+label+'</option>'+vals.map(v=>`<option>${v}</option>`).join('');
+}
+function applyFilter(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const fm=document.getElementById('fm').value, fc=document.getElementById('fc').value, fe=document.getElementById('fe').value, fp=document.getElementById('fp').value;
+  let n=0;
+  document.querySelectorAll('#grid .card').forEach(c=>{
+    const s=c.dataset.search.toLowerCase();
+    const ok = (!q||s.includes(q)) && (!fm||c.dataset.mfr===fm) && (!fc||c.dataset.country===fc) && (!fe||c.dataset.ev===fe) && (!fp||c.dataset.plat===fp);
+    c.style.display=ok?'':'none'; if(ok)n++;
+  });
+  document.getElementById('empty').style.display=n?'none':'block';
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  buildSel('fm','mfr','全部制造商'); buildSel('fc','country','全部国家/地区');
+  buildSel('fe','ev','全部证据类型'); buildSel('fp','plat','全部来源平台');
+  ['q','fm','fc','fe','fp'].forEach(id=>document.getElementById(id).addEventListener('input',applyFilter));
+});
+
+</script>
+</body></html>

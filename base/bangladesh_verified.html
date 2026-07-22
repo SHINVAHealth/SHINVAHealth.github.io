@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孟加拉国骨科/电外科/手术器械/手术设备经销商 — 已核实名单（整合版）</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+        .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 25px; }
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.t1 { border-top: 3px solid #e74c3c; }
+        .stat-card.t1 .num { color: #e74c3c; }
+        .stat-card.t2 { border-top: 3px solid #f39c12; }
+        .stat-card.t2 .num { color: #f39c12; }
+        .stat-card.t3 { border-top: 3px solid #3498db; }
+        .stat-card.t3 .num { color: #3498db; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:hover { background: #f8f9fb; }
+        tr.tier1 { background: #fff5f5; }
+        tr.tier1:hover { background: #ffeeee; }
+        tr.tier2 { background: #fffdf5; }
+        tr.tier2:hover { background: #fff8e0; }
+        tr.tier3 { background: #f5faff; }
+        tr.tier3:hover { background: #e8f4ff; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+        .badge-all { background: #e74c3c; color: #fff; }
+        .badge-ortho { background: #3498db; color: #fff; }
+        .badge-surgical { background: #2ecc71; color: #fff; }
+        .badge-electro { background: #f39c12; color: #fff; }
+        .badge-ot { background: #9b59b6; color: #fff; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; }
+        .section-header { background: #eef2f7; padding: 10px 15px; font-weight: 700; color: #1a3a6b; font-size: 14px; margin-top: 20px; border-radius: 6px 6px 0 0; border-left: 4px solid #1a3a6b; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; }
+        .product-detail { font-size: 11px; color: #666; margin-top: 4px; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .tier-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; margin-left: 5px; }
+        .tier-badge-1 { background: #e74c3c; color: #fff; }
+        .tier-badge-2 { background: #f39c12; color: #fff; }
+        .tier-badge-3 { background: #3498db; color: #fff; }</style>
+</head>
+<body>
+<div class="container">
+    <h1>孟加拉国骨科/电外科/手术器械/手术设备经销商<br>已核实名单（整合版）</h1>
+    <p class="subtitle">整合三批搜索结果 | 全部已通过访问官网核实产品线 | 数据更新：2026年7月8日</p>
+
+    <div class="stats">
+        <div class="stat-card total">
+            <div class="num">37</div>
+            <div class="label">已核实公司总数</div>
+        </div>
+        <div class="stat-card t1">
+            <div class="num">2</div>
+            <div class="label">全三类产品</div>
+        </div>
+        <div class="stat-card t2">
+            <div class="num">7</div>
+            <div class="label">两类产品</div>
+        </div>
+        <div class="stat-card t3">
+            <div class="num">28</div>
+            <div class="label">单一/OT设备</div>
+        </div>
+    </div>
+
+    <!-- Tier 1: All Three Categories -->
+    <div class="section-header">🔴 第一梯队：拥有全部三类产品（骨科+手术器械+电外科）— 2家</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:180px;">公司名称</th>
+                <th style="width:220px;">联系方式</th>
+                <th style="width:180px;">官网</th>
+                <th>产品核实</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tier1">
+                <td>1</td>
+                <td class="company-name">Medico Bangladesh</td>
+                <td class="contact-info">
+                    <div>📧 info@medicobangladesh.com</div>
+                </td>
+                <td><a href="https://medicobangladesh.com/" target="_blank">medicobangladesh.com</a></td>
+                <td>
+                    <span class="badge badge-all">全部三类</span>
+                    <span class="badge badge-ortho">骨科植入物</span>
+                    <span class="badge badge-surgical">手术器械</span>
+                    <span class="badge badge-electro">电刀</span>
+                </td>
+            </tr>
+            <tr class="tier1">
+                <td>2</td>
+                <td class="company-name">Sysmark Limited</td>
+                <td class="contact-info">
+                    <div>📧 info@sysmarkbd.com</div>
+                </td>
+                <td><a href="https://www.sysmarkbd.com/" target="_blank">sysmarkbd.com</a></td>
+                <td>
+                    <span class="badge badge-all">全部三类</span>
+                    <span class="badge badge-electro">电外科(Medtronic)</span>
+                    <span class="badge badge-ortho">骨科植入物(Meril)</span>
+                    <span class="badge badge-surgical">手术器械(Medtronic)</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tier 2: Two Categories -->
+    <div class="section-header">🟠 第二梯队：拥有两类核心产品 — 7家</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:180px;">公司名称</th>
+                <th style="width:220px;">联系方式</th>
+                <th style="width:180px;">官网</th>
+                <th>产品核实</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tier2">
+                <td>3</td>
+                <td class="company-name">Medolux Health Care</td>
+                <td class="contact-info">
+                    <div>📧 info@medoluxbd.com</div>
+                    <div>📅 成立: 2018年</div>
+                </td>
+                <td><a href="https://medoluxbd.com/" target="_blank">medoluxbd.com</a></td>
+                <td>
+                    <span class="badge badge-ortho">骨科植入物</span>
+                    <span class="badge badge-surgical">手术器械</span>
+                    <span class="badge badge-ot">OT灭菌设备</span>
+                    <div class="product-detail">产品明确列出 Orthopedic Implants + Surgical Instruments + OT Sterilization</div>
+                </td>
+            </tr>
+            <tr class="tier2">
+                <td>4</td>
+                <td class="company-name">Tasnia Surgical</td>
+                <td class="contact-info">
+                    <div>📧 info@tasniasurgical.com</div>
+                </td>
+                <td><a href="https://tasniasurgical.com/" target="_blank">tasniasurgical.com</a></td>
+                <td>
+                    <span class="badge badge-ortho">骨科植入物</span>
+                    <span class="badge badge-surgical">手术器械</span>
+                </td>
+            </tr>
+            <tr class="tier2">
+                <td>5</td>
+                <td class="company-name">Global Meditech Limited</td>
+                <td class="contact-info">
+                    <div>📧 info@gmt-bd.com</div>
+                </td>
+                <td><a href="https://gmt-bd.com/" target="_blank">gmt-bd.com</a></td>
+                <td>
+                    <span class="badge badge-ortho">骨科植入物</span>
+                    <span class="badge badge-surgical">手术器械</span>
+                </td>
+            </tr>
+            <tr class="tier2">
+                <td>6</td>
+                <td class="company-name">Aleef Surgical</td>
+                <td class="contact-info">
+                    <div>📞 (+88) 02-41000286</div>
+                    <div>📱 (+88) 01713-992472</div>
+                    <div>📧 aleefsurgical@gmail.com</div>
+                </td>
+                <td><a href="https://aleefsurgical.com/" target="_blank">aleefsurgical.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术器械</span>
+                    <span class="badge badge-ortho">骨科设备</span>
+                </td>
+            </tr>
+            <tr class="tier2">
+                <td>7</td>
+                <td class="company-name">ANZ Medical</td>
+                <td class="contact-info">
+                    <div>📱 +88 01738722919</div>
+                    <div>📧 info@anzmedical.com</div>
+                </td>
+                <td><a href="https://www.anzmedical.com/" target="_blank">anzmedical.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术产品</span>
+                    <span class="badge badge-electro">电刀(Diathermy 400W)</span>
+                </td>
+            </tr>
+            <tr class="tier2">
+                <td>8</td>
+                <td class="company-name">Techno Health</td>
+                <td class="contact-info">
+                    <div>📧 info@technohealth.com.bd</div>
+                </td>
+                <td><a href="https://technohealth.com.bd/" target="_blank">technohealth.com.bd</a></td>
+                <td>
+                    <span class="badge badge-electro">电刀(Diathermy)</span>
+                    <span class="badge badge-ot">OT台/OT灯</span>
+                    <span class="badge badge-ot">麻醉机</span>
+                    <span class="badge badge-surgical">手术设备</span>
+                </td>
+            </tr>
+            <tr class="tier2">
+                <td>9</td>
+                <td class="company-name">MediMax BD</td>
+                <td class="contact-info">
+                    <div>📧 info@medimaxbd.com</div>
+                </td>
+                <td><a href="https://medimaxbd.com/" target="_blank">medimaxbd.com</a></td>
+                <td>
+                    <span class="badge badge-electro">电刀(Healforce 350W)</span>
+                    <span class="badge badge-ot">OT/OR设备</span>
+                    <span class="badge badge-ot">Modular OT</span>
+                    <div class="product-detail">Electrosurgical Unit EB03 350W, OT/OR equipment & instruments</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tier 3: Single Category - Orthopedic -->
+    <div class="section-header">🔵 第三梯队A：骨科植入物专项 — 3家</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:180px;">公司名称</th>
+                <th style="width:220px;">联系方式</th>
+                <th style="width:180px;">官网</th>
+                <th>产品核实</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tier3">
+                <td>10</td>
+                <td class="company-name">Marjan International (MIPL)</td>
+                <td class="contact-info">
+                    <div>📧 info@mipl.com.bd</div>
+                </td>
+                <td><a href="https://mipl.com.bd/" target="_blank">mipl.com.bd</a></td>
+                <td>
+                    <span class="badge badge-ortho">骨科植入物</span>
+                    <div class="product-detail">各种锁定钢板、髋关节假体、螺钉等</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>11</td>
+                <td class="company-name">Banposac Orthopadeic Ind. Ltd</td>
+                <td class="contact-info">
+                    <div>📞 +880-2-8110941, 9131370</div>
+                    <div>📞 +880-2-8114664</div>
+                </td>
+                <td><a href="https://banposac.com/" target="_blank">banposac.com</a></td>
+                <td>
+                    <span class="badge badge-ortho">骨科植入物</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>12</td>
+                <td class="company-name">Recovery (RecoveryBD)</td>
+                <td class="contact-info">
+                    <div>📧 info@recoverybd.com</div>
+                </td>
+                <td><a href="https://recoverybd.com/" target="_blank">recoverybd.com</a></td>
+                <td>
+                    <span class="badge badge-ot">ICU设备</span>
+                    <span class="badge badge-ot">除颤器</span>
+                    <span class="badge badge-ortho">骨科支具</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tier 3: Single Category - Electrosurgical -->
+    <div class="section-header">🟡 第三梯队B：电外科/电医疗专项 — 3家</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:180px;">公司名称</th>
+                <th style="width:220px;">联系方式</th>
+                <th style="width:180px;">官网</th>
+                <th>产品核实</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tier3">
+                <td>13</td>
+                <td class="company-name">Biosys Technologies</td>
+                <td class="contact-info">
+                    <div>📞 09678-800 808</div>
+                    <div>📱 +88 01711128601</div>
+                    <div>📧 biosysbd@gmail.com</div>
+                </td>
+                <td><a href="https://biosys.com.bd/" target="_blank">biosys.com.bd</a></td>
+                <td>
+                    <span class="badge badge-electro">电刀</span>
+                    <span class="badge badge-electro">Electrosurgical Unit</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>14</td>
+                <td class="company-name">Medistar Technology</td>
+                <td class="contact-info">
+                    <div>📧 info@medistarbd.com</div>
+                </td>
+                <td><a href="https://medistarbd.com/" target="_blank">medistarbd.com</a></td>
+                <td>
+                    <span class="badge badge-electro">电刀</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>15</td>
+                <td class="company-name">BiBEAT Ltd</td>
+                <td class="contact-info">
+                    <div>📧 info@bibeat.com</div>
+                </td>
+                <td><a href="https://bibeat.com/" target="_blank">bibeat.com</a></td>
+                <td>
+                    <span class="badge badge-electro">电医疗设备</span>
+                    <span class="badge badge-electro">肌肉神经刺激器</span>
+                    <span class="badge badge-electro">ECG系统</span>
+                    <div class="product-detail">本地制造商，研发生产电医疗设备</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tier 3: Single Category - Surgical -->
+    <div class="section-header">🟢 第三梯队C：手术器械专项 — 8家</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:180px;">公司名称</th>
+                <th style="width:220px;">联系方式</th>
+                <th style="width:180px;">官网</th>
+                <th>产品核实</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tier3">
+                <td>16</td>
+                <td class="company-name">Bhuiya Surgicals</td>
+                <td class="contact-info">
+                    <div>📧 info@bhuiyasurgicals.com</div>
+                    <div>📧 s_kabir13@yahoo.com</div>
+                </td>
+                <td><a href="https://www.bhuiyasurgicals.com/" target="_blank">bhuiyasurgicals.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术产品</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>17</td>
+                <td class="company-name">Continental Surgical House</td>
+                <td class="contact-info">
+                    <div>📧 info@continentalsurgicalhouse.com</div>
+                </td>
+                <td><a href="https://continentalsurgicalhouse.com/" target="_blank">continentalsurgicalhouse.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术器械</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>18</td>
+                <td class="company-name">Continental Surgical (BD)</td>
+                <td class="contact-info">
+                    <div>📧 info@continentalsurgicalbd.com</div>
+                </td>
+                <td><a href="https://continentalsurgicalbd.com/" target="_blank">continentalsurgicalbd.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术器械</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>19</td>
+                <td class="company-name">Bengal Scientific & Surgical Co.</td>
+                <td class="contact-info">
+                    <div>📞 +880 – 29558771</div>
+                    <div>📧 sales@bengalscientificbd.com</div>
+                </td>
+                <td><a href="http://www.bengalscientificbd.com/" target="_blank">bengalscientificbd.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">外科设备</span>
+                    <span class="badge badge-ot">科学仪器</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>20</td>
+                <td class="company-name">Warsi Surgical</td>
+                <td class="contact-info">
+                    <div>📞 +88-02-57314792</div>
+                    <div>📱 +8801757485833</div>
+                    <div>📧 info@warsisurgical.com.bd</div>
+                </td>
+                <td><a href="https://warsisurgical.com.bd/" target="_blank">warsisurgical.com.bd</a></td>
+                <td>
+                    <span class="badge badge-surgical">医疗器械</span>
+                    <span class="badge badge-ot">医疗设备</span>
+                    <div class="product-detail">1972年成立，孟加拉国最早的私营医疗器械公司之一</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>21</td>
+                <td class="company-name">Globex Marketing Company Ltd</td>
+                <td class="contact-info">
+                    <div>📞 +880-2223-374533-34</div>
+                </td>
+                <td><a href="https://globexbd.com/" target="_blank">globexbd.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术器械</span>
+                    <span class="badge badge-ot">实验室设备</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>22</td>
+                <td class="company-name">SurgiBD</td>
+                <td class="contact-info">
+                    <div>📧 info@surgibd.com</div>
+                    <div>📋 ISO认证</div>
+                </td>
+                <td><a href="https://www.surgibd.com/" target="_blank">surgibd.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术器械</span>
+                    <span class="badge badge-ot">医疗设备</span>
+                    <div class="product-detail">ISO认证医疗器械、手术器械、医院家具、诊断设备、医疗耗材</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>23</td>
+                <td class="company-name">Unique Medi Trade</td>
+                <td class="contact-info">
+                    <div>📧 info@uniquemeditrade.com</div>
+                </td>
+                <td><a href="https://uniquemeditrade.com/" target="_blank">uniquemeditrade.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术器械</span>
+                    <span class="badge badge-ot">手术灯</span>
+                    <span class="badge badge-electro">射频消融系统</span>
+                    <div class="product-detail">手术灯、手术器械、射频消融系统、活检针</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tier 3: OT/Surgical Equipment -->
+    <div class="section-header">🟣 第三梯队D：OT/手术设备/ICU设备 — 14家</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:180px;">公司名称</th>
+                <th style="width:220px;">联系方式</th>
+                <th style="width:180px;">官网</th>
+                <th>产品核实</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tier3">
+                <td>24</td>
+                <td class="company-name">HealthTrix</td>
+                <td class="contact-info">
+                    <div>📧 info@healthtrix.net</div>
+                </td>
+                <td><a href="https://www.healthtrix.net/" target="_blank">healthtrix.net</a></td>
+                <td>
+                    <span class="badge badge-ot">手术台(Heyer OP850)</span>
+                    <span class="badge badge-ot">OT灯(OL9600)</span>
+                    <span class="badge badge-ot">麻醉机(Oricare A9800)</span>
+                    <span class="badge badge-ot">C臂(Perlove)</span>
+                    <span class="badge badge-ot">除颤器</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>25</td>
+                <td class="company-name">Life Care Medical BD</td>
+                <td class="contact-info">
+                    <div>📧 info@lifecaremedbd.com</div>
+                </td>
+                <td><a href="https://lifecaremedbd.com/" target="_blank">lifecaremedbd.com</a></td>
+                <td>
+                    <span class="badge badge-ot">OT灯/OT设备</span>
+                    <span class="badge badge-ot">麻醉机</span>
+                    <span class="badge badge-ot">ICU/NICU设备</span>
+                    <span class="badge badge-surgical">手术耗材</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>26</td>
+                <td class="company-name">Healing Technology</td>
+                <td class="contact-info">
+                    <div>📱 +88 01898 876703</div>
+                    <div>📧 info@healingtechnology.com.bd</div>
+                </td>
+                <td><a href="https://healingtechnology.com.bd/" target="_blank">healingtechnology.com.bd</a></td>
+                <td>
+                    <span class="badge badge-ot">OT设备</span>
+                    <span class="badge badge-surgical">手术设备</span>
+                    <span class="badge badge-ot">ICU设备</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>27</td>
+                <td class="company-name">Mashruba Medical Technologies</td>
+                <td class="contact-info">
+                    <div>📱 +88 01730798598</div>
+                    <div>📞 +88-09666775776</div>
+                    <div>📧 info@mashruba.com</div>
+                </td>
+                <td><a href="https://www.mashruba.com/" target="_blank">mashruba.com</a></td>
+                <td>
+                    <span class="badge badge-ot">OT设备</span>
+                    <span class="badge badge-ortho">骨科/胃肠</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>28</td>
+                <td class="company-name">Medikit International</td>
+                <td class="contact-info">
+                    <div>📧 medikit.int@gmail.com</div>
+                    <div>📱 01838830970</div>
+                    <div>📅 150+产品, 15+品牌</div>
+                </td>
+                <td><a href="https://medikitinternational.com/" target="_blank">medikitinternational.com</a></td>
+                <td>
+                    <span class="badge badge-ot">OT台(Hydraulic ST-08)</span>
+                    <span class="badge badge-ot">ICU/NICU设备</span>
+                    <span class="badge badge-ot">除颤器</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>29</td>
+                <td class="company-name">Sanforcebd</td>
+                <td class="contact-info">
+                    <div>📱 +8801713000959 (CEO)</div>
+                </td>
+                <td><a href="https://sanforcebd.com/" target="_blank">sanforcebd.com</a></td>
+                <td>
+                    <span class="badge badge-ot">OT设备</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>30</td>
+                <td class="company-name">Shan BD (Surgical & OT Equipment)</td>
+                <td class="contact-info">
+                    <div>📧 info@shan-bd.com</div>
+                </td>
+                <td><a href="https://www.shan-bd.com/" target="_blank">shan-bd.com</a></td>
+                <td>
+                    <span class="badge badge-ot">手术设备</span>
+                    <span class="badge badge-ot">OT设备</span>
+                    <div class="product-detail">网站有专门的 Surgical and OT Equipment 分类页面</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>31</td>
+                <td class="company-name">Hospica Bangladesh Ltd.</td>
+                <td class="contact-info">
+                    <div>📧 info@hospicabd.com</div>
+                    <div>📅 成立: 2025年</div>
+                </td>
+                <td><a href="https://www.hospicabd.com/" target="_blank">hospicabd.com</a></td>
+                <td>
+                    <span class="badge badge-ot">手术灯(Operation Light)</span>
+                    <span class="badge badge-ot">医院设备</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>32</td>
+                <td class="company-name">JMI Hospital Requisite (JHRML)</td>
+                <td class="contact-info">
+                    <div>📧 info@jhrml-bd.com</div>
+                </td>
+                <td><a href="https://jhrml-bd.com/" target="_blank">jhrml-bd.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术缝合线</span>
+                    <span class="badge badge-surgical">手术手套</span>
+                    <span class="badge badge-surgical">IV套管</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>33</td>
+                <td class="company-name">Atrium Health Ltd</td>
+                <td class="contact-info">
+                    <div>📧 info@atriumhealthltd.com</div>
+                    <div>📅 成立: 2008年</div>
+                </td>
+                <td><a href="https://atriumhealthltd.com/" target="_blank">atriumhealthltd.com</a></td>
+                <td>
+                    <span class="badge badge-surgical">手术产品</span>
+                    <span class="badge badge-surgical">手术手套</span>
+                    <span class="badge badge-surgical">输液器/注射器</span>
+                    <div class="product-detail">进口和分销药品、手术产品、医疗设备</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>34</td>
+                <td class="company-name">Novomed</td>
+                <td class="contact-info">
+                    <div>📱 +88 01711429689</div>
+                    <div>📱 +88 01713062628</div>
+                </td>
+                <td><a href="https://novomed.com.bd/" target="_blank">novomed.com.bd</a></td>
+                <td>
+                    <span class="badge badge-ot">Critical Care设备</span>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>35</td>
+                <td class="company-name">Space Med Enterprise</td>
+                <td class="contact-info">
+                    <div>📧 info@spacemedbd.com</div>
+                    <div>📍 BSEC Bhaban, Kawran Bazar, Dhaka</div>
+                    <div>📅 10+年经验</div>
+                </td>
+                <td><a href="http://spacemedbd.com/" target="_blank">spacemedbd.com</a></td>
+                <td>
+                    <span class="badge badge-ot">医疗设备</span>
+                    <div class="product-detail">State of Art Medical equipments，10+年市场经验</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>36</td>
+                <td class="company-name">Ispodon</td>
+                <td class="contact-info">
+                    <div>📧 info@ispondon.com</div>
+                    <div>📋 DGDA注册</div>
+                    <div>📅 服务250+医生, 120+医院</div>
+                </td>
+                <td><a href="https://ispondon.com/" target="_blank">ispondon.com</a></td>
+                <td>
+                    <span class="badge badge-ot">医疗设备分销</span>
+                    <div class="product-detail">DGDA注册分销商，覆盖全国8个分区</div>
+                </td>
+            </tr>
+            <tr class="tier3">
+                <td>37</td>
+                <td class="company-name">METH International</td>
+                <td class="contact-info">
+                    <div>📧 info@methdk.com</div>
+                    <div>📅 60名员工</div>
+                    <div>📋 DGDP注册</div>
+                </td>
+                <td><a href="https://www.methdk.com/" target="_blank">methdk.com</a></td>
+                <td>
+                    <span class="badge badge-ot">医疗设备进口</span>
+                    <div class="product-detail">DGDP国防采购注册，参与国际和国内招标</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>📌 整合来源：第一批(15家) + 第二批(10家，去重后8家) + 第三批(14家) = 37家已核实公司</p>
+        <p>🔍 全部公司均已通过访问其官方网站核实产品线</p>
+        <p>🏷️ 分梯队说明：第一梯队=全三类产品 | 第二梯队=两类核心产品 | 第三梯队=单一产品线/OT设备</p>
+        <p>⚠️ 已去重：Healing Technology、JMI Hospital Requisite 在多批中出现，已合并为单一条目</p>
+    </div>
+</div>
+</body>
+</html>

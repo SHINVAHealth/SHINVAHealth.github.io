@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孟加拉骨组织手术设备经销商 — 2026年7月9日全量汇总（211家+6条招标）</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI','Microsoft YaHei',sans-serif; background:#f0f2f5; color:#333; line-height:1.6; }
+.header { background:linear-gradient(135deg,#641e16,#922b21); color:#fff; padding:40px 30px; text-align:center; }
+.header h1 { font-size:26px; margin-bottom:10px; }
+.header .subtitle { font-size:14px; opacity:0.9; }
+.header .stats { display:flex; justify-content:center; gap:30px; margin-top:20px; flex-wrap:wrap; }
+.header .stat { text-align:center; }
+.header .stat .num { font-size:30px; font-weight:bold; color:#ffd54f; }
+.header .stat .label { font-size:12px; opacity:0.8; }
+.search-info { background:#e3f2fd; padding:15px 20px; text-align:center; font-size:13px; color:#1565c0; }
+.search-info strong { color:#0d47a1; }
+.container { max-width:1200px; margin:0 auto; padding:20px; }
+.tier { background:#fff; border-radius:12px; margin-bottom:24px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.tier-header { padding:16px 20px; color:#fff; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.tier-header .tier-badge { background:rgba(255,255,255,0.25); padding:4px 12px; border-radius:20px; font-size:13px; font-weight:bold; }
+.tier-header h2 { font-size:18px; }
+.tier-header .tier-desc { font-size:12px; opacity:0.9; width:100%; margin-top:4px; }
+.tier-1 .tier-header { background:linear-gradient(135deg,#c62828,#d32f2f); }
+.tier-2 .tier-header { background:linear-gradient(135deg,#e65100,#ef6c00); }
+.tier-3 .tier-header { background:linear-gradient(135deg,#1565c0,#1976d2); }
+.tier-4 .tier-header { background:linear-gradient(135deg,#2e7d32,#388e3c); }
+.tier-5 .tier-header { background:linear-gradient(135deg,#6a1b9a,#7b1fa2); }
+.company-list { padding:16px 20px; }
+.company-card { border:1px solid #e0e0e0; border-radius:8px; padding:14px; margin-bottom:12px; transition:box-shadow 0.2s; }
+.company-card:hover { box-shadow:0 2px 12px rgba(0,0,0,0.12); }
+.tier-1 .company-card { border-left:4px solid #c62828; }
+.tier-2 .company-card { border-left:4px solid #e65100; }
+.tier-3 .company-card { border-left:4px solid #1565c0; }
+.company-card .name { font-size:15px; font-weight:bold; color:#1a237e; margin-bottom:6px; }
+.tier-1 .company-card .name { color:#c62828; }
+.tier-2 .company-card .name { color:#e65100; }
+.company-card .name a { color:inherit; text-decoration:none; }
+.company-card .name a:hover { text-decoration:underline; }
+.company-card .products { font-size:13px; color:#555; margin-bottom:8px; font-style:italic; }
+.tier-1 .company-card .products { color:#c62828; }
+.tier-2 .company-card .products { color:#e65100; }
+.company-card .info { font-size:12px; color:#666; }
+.company-card .info > div { margin-bottom:3px; }
+.company-card .info .label { color:#999; display:inline-block; min-width:55px; }
+.company-card .tags { margin-top:8px; display:flex; flex-wrap:wrap; gap:5px; }
+.tag { padding:2px 8px; border-radius:4px; font-size:11px; font-weight:500; }
+.tag-ortho { background:#e8f5e9; color:#2e7d32; }
+.tag-implant { background:#fce4ec; color:#c62828; }
+.tag-surgical { background:#e3f2fd; color:#1565c0; }
+.tag-importer { background:#fff3e0; color:#e65100; }
+.tag-verified { background:#e8eaf6; color:#1a237e; }
+.tag-key { background:#fff9c4; color:#f57f17; }
+.tag-mfr { background:#f3e5f5; color:#6a1b9a; }
+.tag-tender { background:#e0f2f1; color:#00695c; }
+.tag-neuro { background:#d6eaf8; color:#2980b9; }
+.tag-large { background:#fce4ec; color:#ad1457; }
+.tag-bone { background:#fadbd8; color:#c0392b; }
+.tag-chittagong { background:#fce4ec; color:#880e4f; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:768px) { .grid-2 { grid-template-columns:1fr; } }
+.mini-card { border:1px solid #e0e0e0; border-radius:6px; padding:10px; margin-bottom:8px; }
+.mini-card .mname { font-size:13px; font-weight:bold; color:#333; }
+.mini-card .minfo { font-size:11px; color:#888; margin-top:2px; }
+.footer { text-align:center; padding:20px; color:#999; font-size:12px; }
+.note { background:#fffde7; border:1px solid #fff9c4; border-radius:8px; padding:20px; margin:20px 0; font-size:14px; }
+.note strong { color:#f57f17; }
+.round-tag { display:inline-block; background:#1a237e; color:#fff; padding:2px 8px; border-radius:3px; font-size:10px; margin-left:6px; }</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>孟加拉骨组织手术设备经销商 — 2026年7月9日全量汇总</h1>
+  <div class="subtitle">主营：骨钻 | 骨锯 | 开颅钻 | 开颅铣 | 骨组织内固定套装 | 磨钻 | 刨削刀 | 三轮搜索合并去重</div>
+  <div class="stats">
+    <div class="stat"><div class="num">211</div><div class="label">经销商总数</div></div>
+    <div class="stat"><div class="num">8</div><div class="label">骨科植入物专业商</div></div>
+    <div class="stat"><div class="num">11</div><div class="label">骨科/神经外科明确</div></div>
+    <div class="stat"><div class="num">117</div><div class="label">外科/医疗设备商</div></div>
+    <div class="stat"><div class="num">75</div><div class="label">名录公司</div></div>
+    <div class="stat"><div class="num">6</div><div class="label">政府招标线索</div></div>
+  </div>
+</div>
+
+<div class="search-info">
+  <strong>搜索日期：</strong>2026年7月9日 &nbsp;|&nbsp;
+  <strong>三轮搜索：</strong>第一轮24家 + 第二轮62家 + 第三轮125家（去重后）= 211家 &nbsp;|&nbsp;
+  <strong>已排除：</strong>Excel 55家 + 通用搜索168家 = 223家所有已有客户 &nbsp;|&nbsp;
+  <strong>搜索渠道：</strong>Google、AddressBazar、Pharmchoices(131家全量)、BangladeshYellowPages、ensun、TradeKey、TradeFord(77家买家)、EC21、Volza海关数据、Dorpatra招标平台、LinkedIn、Bangla Med Expo 2025、各公司官网
+</div>
+
+<div class="container">
+
+<div class="note">
+  <strong>优先联系建议：</strong>
+  <br><br>
+  <strong>第一梯队（骨科植入物/骨钻确认专业商，8家）：</strong>直接推销骨钻/骨锯/开颅钻等产品，匹配度最高
+  <br><strong>第二梯队（明确标注骨科/神经外科器械，11家）：</strong>优先电话核实是否有骨组织动力设备需求
+  <br><strong>第三梯队（外科/医疗设备经销商，117家）：</strong>有详细联系方式，可批量邮件/WhatsApp开发
+  <br><strong>第四梯队（名录公司，75家）：</strong>仅有公司名，需逐一查证联系方式
+  <br><strong>招标线索（6条）：</strong>终端医院客户，可直接参与投标或通过经销商投标
+  <br><br>
+  <strong>BMA Bhaban集群（Topkhana Road）：</strong>7家经销商集中于一栋大楼，建议一次性实地拜访
+</div>
+
+<!-- ========== TIER 1: Orthopedic Implant / Bone Drill Confirmed ========== -->
+<div class="tier tier-1">
+  <div class="tier-header">
+    <span class="tier-badge">第一梯队</span>
+    <h2>骨科植入物/骨钻确认专业商（8家）</h2>
+    <div class="tier-desc">官网确认骨钻产品，或明确经营骨科植入物/骨科器械的专业公司，与骨组织手术设备直接相关</div>
+  </div>
+  <div class="company-list">
+
+    <div class="company-card">
+      <div class="name">1. <a href="https://www.technopower.com.bd/product/surgical-orthopedic-bone-drill-wg0eb" target="_blank">Techno Power Bangladesh</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">Surgical Orthopedic Bone Drill ৳99,000 | Electric Plaster Cutter ৳15,000</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://www.technopower.com.bd" target="_blank">technopower.com.bd</a></div>
+        <div><span class="label">产品:</span> 骨钻产品页含详细规格（14.4V电池、0-1300rpm、8N.m扭矩），配有电动石膏锯</div>
+        <div><span class="label">备注:</span> 唯一在官网明确展示骨钻产品及价格的公司</div>
+      </div>
+      <div class="tags"><span class="tag tag-bone">骨钻确认</span><span class="tag tag-ortho">骨科</span><span class="tag tag-verified">有标价</span><span class="tag tag-key">最高优先</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">2. <a href="https://orthomedicalbd.com" target="_blank">OrthoMedical Bangladesh (OMB)</a> <span class="round-tag">第三轮</span></div>
+      <div class="products">骨科植入物与器械专业商 — 有骨科外科医生客户证言</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://orthomedicalbd.com" target="_blank">orthomedicalbd.com</a></div>
+        <div><span class="label">地址:</span> 6/1-B, Ring Road, Shyamoli, Dhaka-1207</div>
+        <div><span class="label">成立:</span> 2016年</div>
+        <div><span class="label">负责人:</span> Mr. Abu Syeed (Director, 13年经验，曾在沙特Al Ewan Medical) | Mr. Helal Ahmed (Director, 16年骨科手术OT经验)</div>
+        <div><span class="label">客户:</span> Dr. Mustafa Anwar (骨科外科顾问)、Dr. Chowdhury Foyzur Rob (骨科手术MS)、Dr. Debdulal Debnath (骨科专家)</div>
+        <div><span class="label">备注:</span> 专注骨科植入物和器械，两位Director均有骨科/手术背景</div>
+      </div>
+      <div class="tags"><span class="tag tag-implant">骨科植入物</span><span class="tag tag-ortho">骨科器械</span><span class="tag tag-verified">有客户证言</span><span class="tag tag-key">最高优先</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">3. <a href="https://tasniasurgical.com" target="_blank">Tasnia Surgical</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">骨科植入物及手术器械供应商 — 锁定钢板、髓内钉、螺钉、双极假体、器械套装</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://tasniasurgical.com" target="_blank">tasniasurgical.com</a></div>
+        <div><span class="label">产品:</span> Small/Large Fragment Locking Plate | Intramedullary Nails | Locked Screws | Bipolar Prosthesis | Instrument Set</div>
+        <div><span class="label">覆盖:</span> 全孟加拉配送</div>
+        <div><span class="label">备注:</span> 专门的骨科植入物供应商，骨钻/骨锯配套器械的潜在采购方</div>
+      </div>
+      <div class="tags"><span class="tag tag-implant">骨科植入物</span><span class="tag tag-ortho">骨固定</span><span class="tag tag-surgical">手术器械</span><span class="tag tag-key">最高优先</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">4. <a href="https://www.medicobangladesh.com" target="_blank">Medico Bangladesh Ltd.</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">骨科创伤植入物进口商 — 髋/膝/脊柱/颅颌面植入物、外固定器、关节镜、电刀</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://www.medicobangladesh.com" target="_blank">medicobangladesh.com</a></div>
+        <div><span class="label">产品:</span> Hip/Knee Implants | Locking Plate | IM Nail | Cannulated Screw | Pelvic Implants | Craniomaxillofacial Implants | Spine Implants | External Fixators | Arthroscopy | DHS/DCS | Electrosurgical Unit</div>
+        <div><span class="label">备注:</span> 拥有颅颌面(CMF)、脊柱植入物、外固定器等产品线，与开颅钻/骨钻/骨锯直接配套</div>
+      </div>
+      <div class="tags"><span class="tag tag-implant">骨科植入物</span><span class="tag tag-ortho">骨固定</span><span class="tag tag-neuro">颅颌面</span><span class="tag tag-surgical">电刀</span><span class="tag tag-importer">进口商</span><span class="tag tag-key">最高优先</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">5. <a href="https://www.sofiaorthopedicimplant.com/bangladesh/" target="_blank">Sofia Surgicals</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">骨科植入物及器械制造商 — 骨板、骨螺钉、骨刀、牵开器、持骨钳</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://www.sofiaorthopedicimplant.com/bangladesh/" target="_blank">sofiaorthopedicimplant.com</a> | <a href="https://www.sofiasurgicals.com" target="_blank">sofiasurgicals.com</a></div>
+        <div><span class="label">成立:</span> 2010年</div>
+        <div><span class="label">产品:</span> Bone Plates | Bone Cutters | Forceps | Retractors | Orthopaedic General Instruments</div>
+        <div><span class="label">备注:</span> 骨科器械制造商，骨钻/骨锯的配套器械使用方</div>
+      </div>
+      <div class="tags"><span class="tag tag-implant">骨板/骨螺钉</span><span class="tag tag-ortho">骨科器械</span><span class="tag tag-verified">制造商</span><span class="tag tag-key">最高优先</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">6. <a href="https://medoluxbd.com" target="_blank">Medolux Health Care</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械进口商 — 骨科植入物、手术器械、医院用品</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://medoluxbd.com" target="_blank">medoluxbd.com</a></div>
+        <div><span class="label">成立:</span> 2018年</div>
+        <div><span class="label">产品:</span> Orthopedic Implants | Medical Equipment | Surgical Instruments | Hospital Supplies | OT Sterilization</div>
+      </div>
+      <div class="tags"><span class="tag tag-implant">骨科植入物</span><span class="tag tag-surgical">手术器械</span><span class="tag tag-importer">进口商</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">7. <a href="https://bangladeshbusinessdir.com/aleef-surgical/" target="_blank">Aleef Surgical</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械进口商批发商 — 骨科器械、手术器械、医院家具</div>
+      <div class="info">
+        <div><span class="label">地址:</span> 1st Floor, Plot: C/35, Purobi Super Market, Main Road, Mirpur-11, Dhaka-1216</div>
+        <div><span class="label">电话:</span> +88 02-41000286 | +88 01713-992472 | WhatsApp: +8801713992472</div>
+        <div><span class="label">成立:</span> 2001年</div>
+        <div><span class="label">业务:</span> Medical equipment Importer, Wholesaler — orthopedic items, surgical instruments, hospital furniture</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科器械</span><span class="tag tag-surgical">手术器械</span><span class="tag tag-verified">黄页认证</span><span class="tag tag-importer">进口批发商</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">8. <a href="https://warsisurgical.com.bd" target="_blank">WARSI Surgical</a> <span class="round-tag">第三轮</span></div>
+      <div class="products">老牌外科器械商（1972年成立）— 手术器械、医疗设备、医院家具</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://warsisurgical.com.bd" target="_blank">warsisurgical.com.bd</a></div>
+        <div><span class="label">总部:</span> 35 Mitford Road, Dhaka-1100</div>
+        <div><span class="label">企业办:</span> 15/2, Topkhana Road, BMA Bhaban, Room #304, Dhaka-1100</div>
+        <div><span class="label">电话:</span> +88-02-57314792 | +8801757485833 | +8801819213715</div>
+        <div><span class="label">邮箱:</span> warsi.surgical@gmail.com | info@warsisurgical.com.bd</div>
+        <div><span class="label">成立:</span> 1972年（52年，创始人 Al Hajj MD. Abul Kalam）</div>
+        <div><span class="label">代理:</span> Dolsan(土耳其)、YX Hebei(中国)、Medikal 2000(土耳其)、Kimes(韩国)等9家国际制造商</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">手术器械</span><span class="tag tag-verified">52年老牌</span><span class="tag tag-importer">9家国际代理</span><span class="tag tag-key">最高优先</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== TIER 2: Ortho/Neuro Explicitly Listed ========== -->
+<div class="tier tier-2">
+  <div class="tier-header">
+    <span class="tier-badge">第二梯队</span>
+    <h2>明确标注骨科/神经外科器械（11家）</h2>
+    <div class="tier-desc">在黄页、官网或企业数据库中明确标注经营骨科/神经外科器械，产品线可能覆盖骨钻/骨锯</div>
+  </div>
+  <div class="company-list">
+
+    <div class="company-card">
+      <div class="name">9. Super Electro Medical Eqpt. Centre <span class="round-tag">第一轮</span></div>
+      <div class="products">Surgical | Electro Medical | Orthopaedics | Neuro Surgery | Cardiovascular Instruments</div>
+      <div class="info">
+        <div><span class="label">地址:</span> 12/B Bijoy Nagar, Aziz Co-operative Market, Dhaka</div>
+        <div><span class="label">电话:</span> +880-2-9565539, +880-2-8315942</div>
+        <div><span class="label">来源:</span> AddressBazar.com骨科设备目录</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科</span><span class="tag tag-neuro">神经外科</span><span class="tag tag-surgical">外科</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">10. Shena Kollan Bhaban Office <span class="round-tag">第一轮</span></div>
+      <div class="products">Surgical | Electro Medical | Orthopaedics | Neuro Surgery | Cardiovascular</div>
+      <div class="info">
+        <div><span class="label">地址:</span> Motalab Mansion (3rd Floor), Room-408, 2 R.K. Mission Road, Motijheel C/A, Dhaka</div>
+        <div><span class="label">电话:</span> +880-2-9558917, +880-2-9562570</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科</span><span class="tag tag-neuro">神经外科</span><span class="tag tag-surgical">外科</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">11. Fair Tailors <span class="round-tag">第一轮</span></div>
+      <div class="products">Surgical | Orthopaedics | Neuro Surgery | Cardiovascular Instruments</div>
+      <div class="info">
+        <div><span class="label">地址:</span> Rahman Chamber (8th Floor), 12-13 Motijheel C/A, Dhaka</div>
+        <div><span class="label">备注:</span> 名称虽异常，但黄页明确登记骨科/神经外科器械</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科</span><span class="tag tag-neuro">神经外科</span><span class="tag tag-surgical">外科</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">12. Pioneer Equipment & Chemical Co <span class="round-tag">第一轮</span></div>
+      <div class="products">Medical Equipment & Disposable Importer — 含骨科设备品类</div>
+      <div class="info">
+        <div><span class="label">地址:</span> 212, Syed Nazrul Islam Sarani (3rd Floor), Dhaka</div>
+        <div><span class="label">电话:</span> +880-2-9562597, +880-2-9562651</div>
+        <div><span class="label">品类:</span> 科学实验室仪器 | 骨科设备 | 医疗设备 | 一次性医疗及外科用品</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科</span><span class="tag tag-surgical">外科</span><span class="tag tag-verified">进口商</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">13. <a href="http://www.bengalscientificbd.com" target="_blank">Bengal Scientific & Surgical Co.</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">Medical Equipment Supplying, Installation & Maintaining</div>
+      <div class="info">
+        <div><span class="label">地址:</span> 26-A/2 (2nd Floor), Topkhana Road, Segun-Bagicha, Dhaka</div>
+        <div><span class="label">电话:</span> +880-2-9558771</div>
+        <div><span class="label">成立:</span> 1973年（52年历史），21名员工含工程师团队</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">外科</span><span class="tag tag-verified">1973年成立</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">14. Neurone Engineering <span class="round-tag">第一轮</span></div>
+      <div class="products">名称含"Neurone"（神经）— 可能经营神经外科设备</div>
+      <div class="info">
+        <div><span class="label">地址:</span> 279/7, Manikdi (Namapara), Dhaka Cantonment, Mirpur, Dhaka-1206</div>
+        <div><span class="label">电话:</span> 01757-961766</div>
+        <div><span class="label">邮箱:</span> neuroneengineering@gmail.com</div>
+      </div>
+      <div class="tags"><span class="tag tag-neuro">神经外科</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">15. Continental Surgical House <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械进口商 — 外科、电医疗、骨科、神经外科、心血管器械</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://continentalsurgicalhouse.com" target="_blank">continentalsurgicalhouse.com</a></div>
+        <div><span class="label">地址:</span> 33 Mitford Road, Dhaka-1100（总店）| BMA Bhaban Shop #305, Dhaka-1000（二店）</div>
+        <div><span class="label">电话:</span> +880-2-57310874, 57316138, 9662904, 9513245, 01999-327781</div>
+        <div><span class="label">经营:</span> Surgical | Electro Medical | Orthopaedics | Neuro Surgery | Cardiovascular</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科</span><span class="tag tag-neuro">神经外科</span><span class="tag tag-surgical">外科</span><span class="tag tag-verified">多店经营</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">16. Unison Biz Limited <span class="round-tag">第二轮</span></div>
+      <div class="products">电医疗设备供应安装 — 含骨科设备、神经外科设备</div>
+      <div class="info">
+        <div><span class="label">地址:</span> Dhaka, Bangladesh</div>
+        <div><span class="label">成立:</span> 2019年 | 11-50人</div>
+        <div><span class="label">业务:</span> Neurology/Neurosurgery devices, Orthopedics devices, OT equipment</div>
+        <div><span class="label">来源:</span> ensun.io企业数据库</div>
+      </div>
+      <div class="tags"><span class="tag tag-neuro">神经外科设备</span><span class="tag tag-ortho">骨科设备</span><span class="tag tag-surgical">OT设备</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">17. <a href="https://www.bhuiyasurgicals.com" target="_blank">Bhuiya Surgicals Ltd.</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械进口商 — 400+产品，手术器械、医疗设备、试剂</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://www.bhuiyasurgicals.com" target="_blank">bhuiyasurgicals.com</a></div>
+        <div><span class="label">地址:</span> 15/2 Topkhana Road, BMA Bhaban, Shop #309, Dhaka-1000</div>
+        <div><span class="label">电话:</span> +880 2 7173560</div>
+        <div><span class="label">邮箱:</span> info@bhuiyasurgicals.com</div>
+        <div><span class="label">成立:</span> 2002年 | 400+产品 | 120+客户 | 30+招标/年</div>
+        <div><span class="label">动态:</span> 参展MEDICA 2025 | 与Yuwell合作 | 与Beximco签MOU</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">手术器械</span><span class="tag tag-large">400+产品</span><span class="tag tag-verified">招标资质</span><span class="tag tag-importer">进口商</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">18. <a href="https://evencare.com.bd" target="_blank">EVENCARE</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">B2B机构医疗供应商 — 外科器械套装（含骨科）、一次性用品、OT设备</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://evencare.com.bd" target="_blank">evencare.com.bd</a></div>
+        <div><span class="label">产品:</span> Surgical Instrument Sets (General, Orthopedic, ENT, Gynecology Sets) | OT Equipment</div>
+        <div><span class="label">合规:</span> DGDA注册合规，全球认证制造商采购</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科器械套装</span><span class="tag tag-surgical">外科</span><span class="tag tag-verified">DGDA注册</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">19. <a href="https://cemcbd.com" target="_blank">City Electro Medics Co. (CEMCBD)</a> <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗综合解决方案商 — 麻醉、呼吸、监护、新生儿护理、OT设备、手术室建设</div>
+      <div class="info">
+        <div><span class="label">网站:</span> <a href="https://cemcbd.com" target="_blank">cemcbd.com</a></div>
+        <div><span class="label">分支:</span> 总部达卡 + 吉大港分部 + 达卡外科市场展厅</div>
+        <div><span class="label">产品:</span> Anesthesia | Ventilation | Monitoring | OT Table | OR Lights | Modular OT | CSSD</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">OT设备</span><span class="tag tag-ortho">手术室建设</span><span class="tag tag-chittagong">有吉大港分部</span><span class="tag tag-key">优先核实</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== TIER 3: Surgical/Medical Equipment Dealers (Detailed) ========== -->
+<div class="tier tier-3">
+  <div class="tier-header">
+    <span class="tier-badge">第三梯队</span>
+    <h2>外科器械及医疗设备经销商（117家）</h2>
+    <div class="tier-desc">经营外科器械/医疗设备/OT设备的经销商，产品线可能覆盖骨组织手术设备，含详细联系方式</div>
+  </div>
+  <div class="company-list">
+    <div class="company-card">
+      <div class="name">20. <a href="https://islam-trading.com" target="_blank">Islam Trading</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">EEG, ETT, EMG, BMD, Anesthesia, Diathermy(电刀), MRI</div>
+      <div class="info"><div><span class="label">地址:</span> House: 57, Road: 20, Rupnagar R/A, Mirpur, Dhaka-1216</div><div><span class="label">邮箱:</span> info@islam-trading.com</div><div><span class="label">备注:</span> Bangla Med Expo 2025参展商，有Diathermy产品线</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">21. <a href="https://www.hospicabd.com" target="_blank">Hospica Bangladesh Ltd.</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">Medical devices, surgical instruments, hospital furniture</div>
+      <div class="info"><div><span class="label">备注:</span> 2025年新成立</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">22. <a href="https://www.sterlinginternationalgroup.com" target="_blank">Sterling Multi-Technologies Limited</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> House: 31, Road: 04, Sector: 03, Uttara, Dhaka-1230</div><div><span class="label">邮箱:</span> office@sterlinginternationalgroup.com</div><div><span class="label">备注:</span> +88 02-58950512-13</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">23. <a href="https://simec-inc.net" target="_blank">SIMEC System Ltd.</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> Shonim Tower, 55 Shah Mokhdum Avenue, Uttara, Dhaka-1230</div><div><span class="label">邮箱:</span> info@simec-inc.net</div><div><span class="label">备注:</span> +880-(2)-48962921</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">24. <a href="https://www.noblemedi.com" target="_blank">Noble Medical Apparatus</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> Rupayan Prime, Green Rd, Dhaka 1205</div><div><span class="label">邮箱:</span> info@noblemedi.com</div><div><span class="label">备注:</span> 01787 691999</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">25. Medikit Corporation <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> House-190, Road-2, DOHS, Mohakhali, Dhaka</div><div><span class="label">邮箱:</span> shamim.ash@medikitcorp.com</div><div><span class="label">备注:</span> +880 1799200000</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">26. <a href="https://www.prominenthc.ltd" target="_blank">Prominent Healthcare Ltd</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> 19/B, Lake Circus, Kalabagan, Dhaka-1205</div><div><span class="label">邮箱:</span> murshed.prominent@gmail.com</div><div><span class="label">备注:</span> +88 02-58153164</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">27. <a href="https://www.tabassuminternational.com" target="_blank">Tabassum International</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> 152/2A/2 Rawshan Tower, Green Road, Dhaka-1205</div><div><span class="label">邮箱:</span> hmirmosharof@gmail.com</div><div><span class="label">备注:</span> +88 029128042</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">28. <a href="https://ssti-bd.com" target="_blank">SS Trade International</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> Road# 15, House# 44, Block D, Banani, Dhaka-1213</div><div><span class="label">邮箱:</span> sstrade07@gmail.com</div><div><span class="label">备注:</span> +8801713121602</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">29. <a href="https://www.medinvestbd.com" target="_blank">Medinvest Limited</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> House:42/1, Road: 5/a, Dhanmondi, Dhaka-1205</div><div><span class="label">邮箱:</span> info@medinvestbd.com</div><div><span class="label">备注:</span> +8801777756706</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">30. <a href="https://www.newtechgtl.com" target="_blank">NewTech GT Ltd</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> House-63/F, Lake Circus, Kalabagan, Dhaka-1205</div><div><span class="label">邮箱:</span> newtechgtl@gmail.com</div><div><span class="label">备注:</span> +88 02-223310415</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">31. <a href="https://www.stmclbd.com" target="_blank">ST Marketing Corporation Ltd</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> House # 1186, Avenue # 11, Mirpur DOHS, Dhaka-1216</div><div><span class="label">邮箱:</span> managingdirector@stmclbd.com</div><div><span class="label">备注:</span> +88 02-58071127, +8801790736161</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">32. <a href="https://www.technohealthcare.com.bd" target="_blank">Techno Healthcare Service</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> 57/6 West Panthapath, Dhaka-1205</div><div><span class="label">备注:</span> +880 1750-219100</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">33. <a href="https://medicasourcebd.com" target="_blank">Medica Source BD</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> 21/A, Mahabub Plaza, Topkhana Road, Dhaka-1000</div><div><span class="label">邮箱:</span> info@medicasourcebd.com</div><div><span class="label">备注:</span> +88 02-223355322, WhatsApp: +880 1795 906978</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">34. <a href="https://medicalmarketbd.com" target="_blank">Medical Market BD</a> <span class="round-tag">第一轮</span></div>
+      <div class="products">综合医疗设备</div>
+      <div class="info"><div><span class="label">地址:</span> House #, Road # 36, Gulshan-2, Dhaka-1212</div><div><span class="label">邮箱:</span> medicalmarketbd@gmail.com</div><div><span class="label">备注:</span> +88 02222283619</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">35. National Trading Syndicate Ltd. <span class="round-tag">第一轮</span></div>
+      <div class="products">Dental equipments, diagnostic test kits</div>
+      <div class="info"><div><span class="label">地址:</span> 41/1 Kazi Nazrul Islam Avenue, Dhaka</div><div><span class="label">备注:</span> AddressBazar.com</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">36. Precision Medical Resources <span class="round-tag">第一轮</span></div>
+      <div class="products">Medical Equipment Importer</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 2012年成立，pmrbd.com域名已过期</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">37. <a href="https://www.anzmedical.com" target="_blank">ANZ Medical</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">微创外科、电外科电刀、腹腔镜、LED光源</div>
+      <div class="info"><div><span class="label">地址:</span> Block C, Mirpur 6, Dhaka</div><div><span class="label">邮箱:</span> info@anzmedical.com</div><div><span class="label">备注:</span> +88 01324171575, CEO: +88 01738722919</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">38. United Surgical Limited <span class="round-tag">第二轮</span></div>
+      <div class="products">手术台、灯、内镜、腹腔镜器械</div>
+      <div class="info"><div><span class="label">备注:</span> TradesworthGroup行业博客推荐</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">39. Globex Marketing Co. Ltd. <span class="round-tag">第二轮</span></div>
+      <div class="products">Medical, Surgical, Laboratory Equipment</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 251-500人大型企业，有眼科手术器械</div></div>
+      <div class="tags"><span class="tag tag-large">大型企业</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">40. Global Surgical Mart <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> BMA Bhaban, Shop #30, 15/2 Topkhana Road, Dhaka-1000</div><div><span class="label">备注:</span> +88-02-9562943</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">41. Bio-Fair Surgical House <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> BMA Bhaban, Shop #11-15, 15/2 Topkhana Road, Dhaka-1000</div><div><span class="label">备注:</span> +88-02-9552953</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">42. N.K. International <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> BMA Bhaban, Shop #A-8, 15/2 Topkhana Road, Dhaka-1000</div><div><span class="label">备注:</span> +88-02-9571163</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">43. Medi Path Surgical <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> BMA Bhaban, Shop #3, 15/2 Topkhana Road, Dhaka-1000</div><div><span class="label">备注:</span> +88-02-9571162</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">44. H.M.B Surgicals <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 215 Mitford Road, Dhaka-1100</div><div><span class="label">备注:</span> +88-01197126881</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">45. <a href="https://www.mitfordsurgical.com" target="_blank">Mitford Surgical</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械</div>
+      <div class="info"><div><span class="label">备注:</span> Mitford Road医学集中区，有官网</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">46. Sumaiya Surgical <span class="round-tag">第二轮</span></div>
+      <div class="products">手术器械采购商/进口商</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> TradeKey上主动求购手术器械</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">47. Tradesworth Group <span class="round-tag">第二轮</span></div>
+      <div class="products">X-ray, Ultrasound, Ventilators, Patient Monitors</div>
+      <div class="info"><div><span class="label">备注:</span> 数十年经验，行业公认市场领导者</div></div>
+      <div class="tags"><span class="tag tag-large">大型企业</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">48. Meditech Bangladesh <span class="round-tag">第二轮</span></div>
+      <div class="products">Anesthesia, Oxygen Concentrators, Blood Analyzers</div>
+      <div class="info"><div><span class="label">备注:</span> TradesworthGroup行业博客推荐</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">49. Recovery <span class="round-tag">第二轮</span></div>
+      <div class="products">OT Equipment, ICU Equipment, Physiotherapy</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 2015年成立, 11-50人, ensun</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">50. <a href="https://isahealthcare.com.bd" target="_blank">Isa Healthcare</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">OT设备（含电刀）、骨科牵引架、影像、ICU</div>
+      <div class="info"><div><span class="label">备注:</span> 2023年成立, 24个国际品牌, 有骨科牵引架</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">51. <a href="https://www.medicalequipmentbd.com" target="_blank">Medical Equipment Bangladesh</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">30+产品类别，5城市办事处</div>
+      <div class="info"><div><span class="label">邮箱:</span> +88 01678076363</div><div><span class="label">备注:</span> Dhaka/Chittagong/Sylhet/Noakhali/Bogra, 64区覆盖</div></div>
+      <div class="tags"><span class="tag tag-large">大型企业</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">52. <a href="https://www.amrhealthcare-bd.com" target="_blank">AMR Healthcare</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">外科一次性用品、伤口护理</div>
+      <div class="info"><div><span class="label">地址:</span> 62 Bailey Road, Dhaka</div><div><span class="label">邮箱:</span> sales@amrhealthcare-bd.com</div><div><span class="label">备注:</span> 2015年, DGDA注册, ISO 13485, 150+客户</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">53. Sunny Corporation <span class="round-tag">第二轮</span></div>
+      <div class="products">外科用品经销商</div>
+      <div class="info"><div><span class="label">地址:</span> Plot No.1, Shyampur I/A, Kadamtali, Dhaka-1204</div><div><span class="label">备注:</span> +8801618249626, 1992年成立(33年)</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">54. Labomed Group <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> House #1/A, Road #1/B, Nikunja-2, Dhaka</div><div><span class="label">备注:</span> +88-02-8900540, 2007年成立, 认证14年+</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">55. Premier Scientific Stores <span class="round-tag">第二轮</span></div>
+      <div class="products">科学/医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> "Rassel Center" (1st Floor), 27 Shahid Nazrul Islam Sarak, Dhaka-1203</div><div><span class="label">备注:</span> 9581848, 2005年成立, 认证9年+</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">56. Innovative International <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 21/KA, PC Culture Housing Society, Ring Rd, Shyamoli, Dhaka</div><div><span class="label">备注:</span> 01812179624, 2013年成立, 认证11年+</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">57. Mahfuz Enterprise <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 105 Tajuddin Ahmed Sharani, Moghbazar, Dhaka-1217</div><div><span class="label">备注:</span> 01719125660, 2015年成立, 认证5年+</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">58. Sense Ltd. <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 59 Dilkusha, Motijheel, Dhaka</div><div><span class="label">备注:</span> +8801611012003, 1983年成立(42年)</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">59. Technotrade Int'l Associates Ltd. <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 9h, Motijheel C/A, Dhaka</div><div><span class="label">备注:</span> 9554343</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">60. Prism Scientific Instruments Co. <span class="round-tag">第二轮</span></div>
+      <div class="products">科学/医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 26 Hatkhola Road 5-6, Dellowar Complex, Dhaka</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">61. Lima Enterprise <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> Aziz Market, Shahbag, Dhaka-1000</div><div><span class="label">备注:</span> +88-02-8622319</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">62. Pantech Enterprise (Pvt.) Ltd <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> Aziz Super Market (1st Fl.), Room-110, Shahbagh, Dhaka</div><div><span class="label">备注:</span> +880-2-9669412</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">63. GSS Company (Overseas) <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> 30 Urdu Road (2nd Floor), GPO Box-2827, Dhaka</div><div><span class="label">备注:</span> +880-2-7312565</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">64. ARB Enterprise <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> Shekhertek, Mohammadpur, Dhaka-1207</div><div><span class="label">备注:</span> 01620619937, 2015年成立, 认证10年+</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">65. JMI-Bangladesh Co. Ltd <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商（关联JMI制造商）</div>
+      <div class="info"><div><span class="label">地址:</span> TMC Building (4th Floor), 52 New Eskaton Road, Dhaka-1000</div><div><span class="label">备注:</span> +88-02-9346630</div></div>
+      <div class="tags"><span class="tag tag-large">大型企业</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">66. Medicalstore bd <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械在线商店</div>
+      <div class="info"><div><span class="label">地址:</span> Shop 38, 3rd Floor, BMA Bhaban, 15/2 Topkhana Road, Dhaka-1000</div><div><span class="label">备注:</span> 01612947754, 2021年成立</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">67. SYSMAC Medi Systems Bangladesh <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗系统经销商</div>
+      <div class="info"><div><span class="label">地址:</span> DOHS Mohakhali, Motijheel, Dhaka</div><div><span class="label">备注:</span> 01639800800, 2019年成立</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">68. Widenations Group <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商</div>
+      <div class="info"><div><span class="label">地址:</span> Rupayan Khan Plaza, Room #A-9, Dhanmondi R/A, Dhaka-1205</div><div><span class="label">备注:</span> +88-02-9662431, 2000年成立</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">69. <a href="https://isfaqtraders.com" target="_blank">Isfaq Traders</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械电商分销商</div>
+      <div class="info"><div><span class="label">备注:</span> 10+年经验, 600+已交付订单</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">70. Sysmark Limited <span class="round-tag">第二轮</span></div>
+      <div class="products">诊断工具、急救用品、实验室产品</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 2016年成立, 11-50人, ensun</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">71. AirMed Systems <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械进口商 — 专注政府招标</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 2015年成立, 1-10人, ensun</div></div>
+      <div class="tags"><span class="tag tag-verified">认证</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">72. Acro Medical Limited <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗设备供应商</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 2019年成立, 51-100人, ensun</div></div>
+      <div class="tags"><span class="tag tag-large">大型企业</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">73. Uniworld Business Limited <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗设备供应商</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> 251-500人, ensun</div></div>
+      <div class="tags"><span class="tag tag-large">大型企业</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">74. Biomedix Healthcare <span class="round-tag">第二轮</span></div>
+      <div class="products">监护系统、实验室仪器、感染控制</div>
+      <div class="info"><div><span class="label">备注:</span> TradesworthGroup行业博客</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">75. MediTech Imaging Solutions <span class="round-tag">第二轮</span></div>
+      <div class="products">MRI、CT、超声、数字X光</div>
+      <div class="info"><div><span class="label">备注:</span> TradesworthGroup行业博客</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">76. <a href="https://medisolve.com.bd" target="_blank">Fixfellow / Medisolve</a> <span class="round-tag">第二轮</span></div>
+      <div class="products">电刀(Diathermy)、OT设备、医院规划咨询</div>
+      <div class="info"><div><span class="label">备注:</span> 有电刀产品线</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">77. BiBEAT Ltd <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗设备制造商（孟加拉本土）</div>
+      <div class="info"><div><span class="label">地址:</span> Apartment 11C, Square Tower, Mirpur Road, Dhaka-1205</div><div><span class="label">备注:</span> +88 01933 322692, Made in Bangladesh</div></div>
+      <div class="tags"><span class="tag tag-verified">认证</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">78. Taj Traders Pvt. Ltd. <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商（吉大港）— 1946年成立</div>
+      <div class="info"><div><span class="label">地址:</span> 400 Anderkilla, Chittagong</div><div><span class="label">备注:</span> +88031618636, 79年历史!</div></div>
+      <div class="tags"><span class="tag tag-chittagong">吉大港</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">79. Zebun Marine Link <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械经销商（吉大港）</div>
+      <div class="info"><div><span class="label">地址:</span> House #991, Mooring Road, Ghoshaildanga, Agrabad, Chittagong</div><div><span class="label">备注:</span> +8802333316054, 2015年成立</div></div>
+      <div class="tags"><span class="tag tag-chittagong">吉大港</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">80. BK. Instruments and Chemical Co. <span class="round-tag">第二轮</span></div>
+      <div class="products">仪器及化学试剂（吉大港）</div>
+      <div class="info"><div><span class="label">地址:</span> 6, Hotel Shahjahan, Chittagong</div><div><span class="label">备注:</span> 618345</div></div>
+      <div class="tags"><span class="tag tag-chittagong">吉大港</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">81. Taj Scientific Stores <span class="round-tag">第二轮</span></div>
+      <div class="products">科学/医疗器械（吉大港）</div>
+      <div class="info"><div><span class="label">地址:</span> 400 Andar Killah, Chittagong</div><div><span class="label">备注:</span> 618636, 与Taj Traders同地址</div></div>
+      <div class="tags"><span class="tag tag-chittagong">吉大港</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">82. Barns Engineers Ltd <span class="round-tag">第二轮</span></div>
+      <div class="products">工程设备商（吉大港）</div>
+      <div class="info"><div><span class="label">地址:</span> A-46, BSCIC Industrial Estate, Kalurghat, Chittagong</div><div><span class="label">备注:</span> +880-31-670226</div></div>
+      <div class="tags"><span class="tag tag-chittagong">吉大港</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">83. Frix Surgical Instruments <span class="round-tag">第二轮</span></div>
+      <div class="products">外科器械经销商（沙基拉）</div>
+      <div class="info"><div><span class="label">地址:</span> College Road, Shatkhira</div><div><span class="label">备注:</span> 认证13年+</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">84. Reliance Overseas Pvt. Ltd. <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗仪器采购商</div>
+      <div class="info"><div><span class="label">地址:</span> Bangladesh</div><div><span class="label">备注:</span> TradeKey主动求购</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">85. Rakab Trade Corporation <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械采购商</div>
+      <div class="info"><div><span class="label">地址:</span> Bangladesh</div><div><span class="label">备注:</span> TradeKey采购</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">86. Kontainer <span class="round-tag">第二轮</span></div>
+      <div class="products">手术器械采购商</div>
+      <div class="info"><div><span class="label">地址:</span> Bangladesh</div><div><span class="label">备注:</span> 2026年7月TradeKey求购</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">87. DB Marketing Company <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗仪器采购商</div>
+      <div class="info"><div><span class="label">地址:</span> Dhaka</div><div><span class="label">备注:</span> TradeKey采购</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">88. BioMedica Impex Ltd <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗科学产品进口商、分销商、代购商</div>
+      <div class="info"><div><span class="label">备注:</span> 全国分销网络</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">89. Allied Laboratories Corporation <span class="round-tag">第二轮</span></div>
+      <div class="products">医疗器械/实验室设备经销商</div>
+      <div class="info"><div><span class="label">地址:</span> H#4, Rd.#4, Block: C, Dhaka</div><div><span class="label">备注:</span> +88 01912-389446, 1994年成立</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">90. <a href="https://promixcogroup.com" target="_blank">PROMIXCO Group</a> <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗器械制造商 — 手术器械、呼吸护理、医院家具</div>
+      <div class="info"><div><span class="label">备注:</span> 本地制造商，有手术器械产品线</div></div>
+      <div class="tags"><span class="tag tag-mfr">制造商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">91. <a href="https://novomedbd.com" target="_blank">Novomed</a> <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗器械分销商</div>
+      <div class="info"><div><span class="label">地址:</span> 1003, SEL Rose & Dale, 116 Kazi Nazrul Islam Avenue, Dhaka</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">92. <a href="https://biotradeintl.com" target="_blank">Bio-Trade International</a> <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备进口商 — 进口、营销和分销</div>
+      <div class="info"></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">93. Transmed Limited <span class="round-tag">第三轮</span></div>
+      <div class="products">电医疗设备商 — 电医疗设备及耗材</div>
+      <div class="info"><div><span class="label">备注:</span> 经营十余年</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">94. GMESCO — General Medical Engineering Service Co. <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗工程服务公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">95. Global Medical Engineering (BD) Ltd <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗工程公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">96. Hospi Medica Ltd. <span class="round-tag">第三轮</span></div>
+      <div class="products">医院医疗设备</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">97. Medilife Corporation <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">98. Neotec Medical Services Ltd. <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗服务公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">99. OMC Limited <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">100. Digital Medical Systems Limited <span class="round-tag">第三轮</span></div>
+      <div class="products">数字医疗系统</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">101. Delta Limited <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">102. Dhaka Tech International Ltd. <span class="round-tag">第三轮</span></div>
+      <div class="products">达卡科技国际</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">103. Vastech Limited <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗科技公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">104. Technoworth Associates Ltd. <span class="round-tag">第三轮</span></div>
+      <div class="products">科技联合公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">105. Stream Ltd <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">106. Tradevision Ltd <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗贸易公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">107. Transco Medical System <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗系统公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">108. Transba Medical Services <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗服务公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">109. Unimed Limited <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">110. JMI Hospital Requisite Manufacturing Ltd. (JHRML) <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗器械制造商 — 缝合线、手套、IV插管、灭菌器</div>
+      <div class="info"><div><span class="label">备注:</span> 501-1000人, 2008年成立, ensun</div></div>
+      <div class="tags"><span class="tag tag-mfr">制造商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">111. CMED Health <span class="round-tag">第三轮</span></div>
+      <div class="products">健康科技公司</div>
+      <div class="info"><div><span class="label">备注:</span> 11-50人, 2016年成立, ensun</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">112. Medecom <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">113. New Vision Medisystem <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗系统公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">114. Lily Scientific & Surgical Mart <span class="round-tag">第三轮</span></div>
+      <div class="products">外科牙科器械进口商</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">115. M1 Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">外科缝合线批发零售商</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">116. Nafisa Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">外科器械公司</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">117. Roylax Pharma And Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">药品与外科器械</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">118. Alokito Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">外科器械 — 尿袋等</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">119. Mohammad Surgical Service <span class="round-tag">第三轮</span></div>
+      <div class="products">科学设备、玻璃器皿、病理试剂、医疗设备、外科器械</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录, 批发零售</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">120. Al Razzak Corporation <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备、外科器械营销与销售</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">121. Prime Surgical Point, Tangail <span class="round-tag">第三轮</span></div>
+      <div class="products">外科器械商铺</div>
+      <div class="info"><div><span class="label">地址:</span> Tangail New Bus Terminal</div><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">122. Diamond Tech Solution <span class="round-tag">第三轮</span></div>
+      <div class="products">政府招标器械与耗材转售商</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord, 专注政府招标</div></div>
+      <div class="tags"><span class="tag tag-tender">政府招标</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">123. Medical & Surgical Equipments Bangladesh <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗与外科设备</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">124. Tech Panda <span class="round-tag">第三轮</span></div>
+      <div class="products">外科器械进口商</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">125. Femus Chemical And Scientific Mart <span class="round-tag">第三轮</span></div>
+      <div class="products">化学与科学器械销售商</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">126. Bismillah Trade <span class="round-tag">第三轮</span></div>
+      <div class="products">贸易公司</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">127. Juri Surgical Store <span class="round-tag">第三轮</span></div>
+      <div class="products">外科器械商店</div>
+      <div class="info"><div><span class="label">地址:</span> Maulvibazar, Bangladesh</div><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">128. Magpiee International <span class="round-tag">第三轮</span></div>
+      <div class="products">出口、进口和供应 — 医疗器械</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">129. SARKER EXPORTS & IMPORTS <span class="round-tag">第三轮</span></div>
+      <div class="products">进口商 — 外科用品</div>
+      <div class="info"><div><span class="label">备注:</span> TradeFord买家目录</div></div>
+      <div class="tags"><span class="tag tag-importer">进口商</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">130. Muskan Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">外科器械公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">131. S.M. Scientific & Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">科学与外科器械</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">132. Sterile Surgical <span class="round-tag">第三轮</span></div>
+      <div class="products">无菌外科器械</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">133. Surgiicare Bangladesh <span class="round-tag">第三轮</span></div>
+      <div class="products">外科护理公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"><span class="tag tag-surgical">外科器械</span></div>
+    </div>
+    <div class="company-card">
+      <div class="name">134. Sunny Trading Agency Pvt. Ltd. <span class="round-tag">第三轮</span></div>
+      <div class="products">贸易代理公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">135. Tamam Corporation <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗设备公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+    <div class="company-card">
+      <div class="name">136. Timely Product Ltd. <span class="round-tag">第三轮</span></div>
+      <div class="products">医疗产品公司</div>
+      <div class="info"><div><span class="label">备注:</span> Pharmchoices名录</div></div>
+      <div class="tags"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TIER 4: Directory Companies (Compact) ========== -->
+<div class="tier tier-4">
+  <div class="tier-header">
+    <span class="tier-badge">第四梯队</span>
+    <h2>综合医疗设备公司 — 名录（75家）</h2>
+    <div class="tier-desc">来自Pharmchoices 131家全量名录、ensun数据库等渠道，有地址电话的公司</div>
+  </div>
+  <div class="company-list">
+    <div class="grid-2">
+      <div class="mini-card"><div class="mname">137. 4D Solution Ltd</div><div class="minfo">House: 156, 1st Floor, Road: 22, DOHS, Mohakhali, Dhaka-1206 | Tel: 8801686887389</div></div>
+      <div class="mini-card"><div class="mname">138. 71 Care</div><div class="minfo">1st Floor, 36, Kamal Ataturk Avenue, Banani | Tel: +880 1401-444888</div></div>
+      <div class="mini-card"><div class="mname">139. Abid Trade International</div><div class="minfo">House-8/3, Road-4/A, West Dhanmondi, Dhaka-1209 | Tel: +88 01736211666</div></div>
+      <div class="mini-card"><div class="mname">140. Al Fatah International</div><div class="minfo">Suit #403, 4th Floor, 28 Kazi Nazrul Islam Avenue, Banglamotor, Dhaka-1000 | Tel: +88 02-55168066-69</div></div>
+      <div class="mini-card"><div class="mname">141. Al-Madina</div><div class="minfo">Two Star Tower, 178-179, East Tejturi Bazar, Tejgaon, Dhaka-1215 | Tel: +88 02-58814412</div></div>
+      <div class="mini-card"><div class="mname">142. ANC Medical Device BD Ltd.</div><div class="minfo">Plot #21, Road #13, Block #G, Niketan, Gulshan-1, Dhaka-1212 | Tel: +880 1960-700500</div></div>
+      <div class="mini-card"><div class="mname">143. Anha Medical Technology</div><div class="minfo">42/3B Azimpur Road, Dhaka-1205 | Tel: +88 01772-959900</div></div>
+      <div class="mini-card"><div class="mname">144. Anifco Healthcare</div><div class="minfo">Plot #05, Road #12, Sector #10, Uttara, Dhaka-1230 | Tel: +88 02-55091818</div></div>
+      <div class="mini-card"><div class="mname">145. Anyoor International</div><div class="minfo">House: 63, Road:04, Block-B, Pallabi, Mirpur, Dhaka-1216 | Tel: +8801977 134630</div></div>
+      <div class="mini-card"><div class="mname">146. Ardent Healthcare</div><div class="minfo">Rupayan Prime, House #02 (3rd Floor), Road #07, Dhanmondi, Dhaka-1205 | Tel: +88 02-9672611-2</div></div>
+      <div class="mini-card"><div class="mname">147. ATS Corporation</div><div class="minfo">Doreen Vincita, Suit #9 (GF), Plot #4, Rupnagar, Mirpur, Dhaka-1216 | Tel: +880 1794-417260</div></div>
+      <div class="mini-card"><div class="mname">148. AYAT Healthcare Solution</div><div class="minfo">House: L-13, Extensions Pallabi, Rupnagar, Mirpur-11, Dhaka-1216 | Tel: +8801913587092</div></div>
+      <div class="mini-card"><div class="mname">149. Ayra Trading</div><div class="minfo">Sector: 4, Road: 17, House: 12, Uttara, Dhaka-1230 | Tel: 01817-629326</div></div>
+      <div class="mini-card"><div class="mname">150. Babel Corporation Ltd.</div><div class="minfo">12/1, Sangsad Avenue, Monipuripara, Dhaka-1215 | Tel: +880-2-58151658</div></div>
+      <div class="mini-card"><div class="mname">151. Bangladesh Medical Items Ltd</div><div class="minfo">Rahman Chamber (8th Floor), 12-13 Motijheel, Dhaka-1000 | Tel: +88 02-57165685</div></div>
+      <div class="mini-card"><div class="mname">152. Bangladesh Science House</div><div class="minfo">27, Mohakhali, Amtoli, Airport Road, Dhaka-1212 | Tel: 8801711529643</div></div>
+      <div class="mini-card"><div class="mname">153. Belal & Brother's</div><div class="minfo">House#407 (1st Floor), Road#29, New DOHS, Mohakhali, Dhaka-1206 | Tel: 02-9850817</div></div>
+      <div class="mini-card"><div class="mname">154. Bioband Safetymatics Ltd.</div><div class="minfo">Section-6, Block-A, Road-4, Plot-2, Mirpur, Dhaka-1216 | Tel: 01811-146854</div></div>
+      <div class="mini-card"><div class="mname">155. Biomed Corporation</div><div class="minfo">33, Topkhana Road, Meherba Plaza, Paltan, Dhaka-1000 | Tel: +8801815916022</div></div>
+      <div class="mini-card"><div class="mname">156. Bio Medical Science</div><div class="minfo">3/3/19, Bashbari, Mohammadpur, Dhaka-1207 | Tel: 01711-036467</div></div>
+      <div class="mini-card"><div class="mname">157. BioTech International (BTI)</div><div class="minfo">Rupayan Taj 1, H-6, 6th Floor, 1/1 Box Culvert Road, Naya Paltan, Dhaka-1000 | Tel: 01612947754</div></div>
+      <div class="mini-card"><div class="mname">158. BMA Bazar</div><div class="minfo">14/1 The Emporium Bhaban, Shyamoli, Dhaka-1207 | Tel: 8801718438253</div></div>
+      <div class="mini-card"><div class="mname">159. Bogra Trade Center</div><div class="minfo">35 Mitford Road, Saad Golden Tower, Level-2, Dhaka-1100 | Tel: +88 02-57318025</div></div>
+      <div class="mini-card"><div class="mname">160. Cardiohelp Bangladesh Limited</div><div class="minfo">Pharmchoices名录 — 心血管设备</div></div>
+      <div class="mini-card"><div class="mname">161. Crifoo Intertrade Limited</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">162. Daffodil Medi World</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">163. Desh Medica</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">164. Diamed</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">165. D.M International</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">166. Ear Care & Hearing Aid Centre Ltd</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">167. Ehsan Trade International</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">168. Ethan Medical Ins.</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">169. Ever Oxygen BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">170. Exim Trading Corporation</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">171. Golvandar Trade House</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">172. Grameen Trade International</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">173. Green Oxygen BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">174. Harun Enterprise</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">175. Health Aid BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">176. Healthcon</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">177. Impulse</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">178. Imran Home Care Pvt. Ltd.</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">179. Inogen System</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">180. Israt Care Givers</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">181. JBF Digital Trading Company Ltd</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">182. Life Source International</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">183. MediGear Corporation</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">184. Maks Trading Ltd</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">185. Mashruba Medical Technologies</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">186. Medi Firm</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">187. Medical Home Care BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">188. Medical Store</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">189. Med Tech BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">190. Meditel (Pvt) Limited</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">191. Medizone International</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">192. ED & AR Hospice Care</div><div class="minfo">ensun数据库 | 101-250人 | 2014年成立 | 临终关怀+医疗设备</div></div>
+      <div class="mini-card"><div class="mname">193. Medi Trust Limited</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">194. Medi square</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">195. Nafisa International</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">196. Natasa Health Engineering Ltd</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">197. One Trade</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">198. Oxygen Cylinder BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">199. Pharma & Firm</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">200. Pulse Healthcare Technology</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">201. Qmed Plus Ltd.</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">202. Ran Solutions</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">203. Safekin</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">204. Shakil Engineering</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">205. Smart Medical Technology</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">206. Space Med Enterprise Ltd.</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">207. Soft Touch Bio Medics</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">208. Unitrade Multi Corporation Ltd</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">209. Uni Biolife BD</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">210. Uni Smart Healthcare Ltd.</div><div class="minfo">Pharmchoices名录</div></div>
+      <div class="mini-card"><div class="mname">211. Unity Oxygen</div><div class="minfo">Pharmchoices名录</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TIER 5: Government Tender Leads ========== -->
+<div class="tier tier-5">
+  <div class="tier-header">
+    <span class="tier-badge">招标线索</span>
+    <h2>政府招标线索（6条）— 骨科/外科设备采购</h2>
+    <div class="tier-desc">来自Dorpatra招标平台 — 这些医院/机构正在采购骨科/外科设备，可作为终端客户线索</div>
+  </div>
+  <div class="company-list">
+
+    <div class="company-card">
+      <div class="name">Kurmitola General Hospital — 骨科设备及器械招标</div>
+      <div class="products">招标编号: 1159042 | 发布: 2025-11-04 | 截标: 2025-11-19</div>
+      <div class="info">
+        <div><span class="label">采购:</span> Orthopaedic Equipment & Instrument（骨科设备及器械）</div>
+        <div><span class="label">采购方:</span> Kurmitola General Hospital, DGHS</div>
+        <div><span class="label">备注:</span> 直接骨科设备招标！可作为终端客户开发</div>
+      </div>
+      <div class="tags"><span class="tag tag-ortho">骨科设备</span><span class="tag tag-tender">政府招标</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">NCCBCST, Bangladesh Medical University — 电外科工作站招标</div>
+      <div class="products">招标编号: 1226644 | 发布: 2026-02-10 | 截标: 2026-02-26</div>
+      <div class="info">
+        <div><span class="label">采购:</span> Electro Surgical Power Unit（电外科工作站）</div>
+        <div><span class="label">采购方:</span> NCCBCST, Bangladesh Medical University</div>
+        <div><span class="label">备注:</span> 电外科设备招标！与电刀产品直接相关</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">电外科</span><span class="tag tag-tender">政府招标</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">Bangladesh Police, Barisal — 内外科设备招标</div>
+      <div class="products">招标编号: 1298606/1299257 | 发布: 2026-06-17</div>
+      <div class="info">
+        <div><span class="label">采购:</span> Medical and Surgical Equipment (Lot-01/Lot-02)</div>
+        <div><span class="label">采购方:</span> Bangladesh Police, Barisal</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">外科设备</span><span class="tag tag-tender">政府招标</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">Bangladesh Ansar & VDP — 71种医疗设备招标</div>
+      <div class="products">招标编号: 1279362/1259820 | 发布: 2026-05-19</div>
+      <div class="info">
+        <div><span class="label">采购:</span> Medical Equipment 71 kinds（71种医疗设备）</div>
+        <div><span class="label">采购方:</span> Bangladesh Ansar & Village Defence Party</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">医疗设备</span><span class="tag tag-tender">政府招标</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">Bangladesh Railway — 外科设备及医疗用品招标</div>
+      <div class="products">招标编号: 1177480 | 发布: 2025-11-18</div>
+      <div class="info">
+        <div><span class="label">采购:</span> Surgical Equipment & Medical Appliances</div>
+        <div><span class="label">采购方:</span> Bangladesh Railway, Chief Medical Officer (West)</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">外科设备</span><span class="tag tag-tender">政府招标</span></div>
+    </div>
+
+    <div class="company-card">
+      <div class="name">RAB Forces Headquarters — 医疗设备招标</div>
+      <div class="products">招标编号: 1183161 | 发布: 2025-11-27</div>
+      <div class="info">
+        <div><span class="label">采购:</span> Medical Equipment for RAB Forces, Training School & Dog Squad</div>
+        <div><span class="label">采购方:</span> RAB Forces Headquarters（快速行动营总部）</div>
+      </div>
+      <div class="tags"><span class="tag tag-surgical">医疗设备</span><span class="tag tag-tender">军方招标</span></div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  <p>孟加拉骨组织手术设备经销商全量汇总 | 搜索日期: 2026年7月9日 | 三轮搜索合并去重</p>
+  <p>第一轮24家(逐个网站) + 第二轮62家(黄页批量) + 第三轮125家(8渠道并行,去重后) = 211家经销商 + 6条政府招标线索</p>
+  <p>已排除: Excel 55家 + 通用搜索168家 = 223家所有已有客户 | 去重删除: 3家(Aleef/Continental/Sumaiya)</p>
+  <p>搜索渠道: Google · AddressBazar · Pharmchoices(131家全量) · BangladeshYellowPages · ensun · TradeKey · TradeFord(77家) · EC21 · Volza海关 · Dorpatra招标 · LinkedIn · Bangla Med Expo 2025</p>
+</div>
+
+</body>
+</html>

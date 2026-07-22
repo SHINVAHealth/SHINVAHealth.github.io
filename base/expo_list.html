@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>孟加拉医疗器械展会展商总表</title>
+<style>
+  :root { --bg:#f5f7fa; --card:#fff; --ink:#1f2933; --muted:#6b7280; --line:#e3e8ef; --blue:#305496; --green:#1f8a4c; --amber:#b8860b; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; }
+  .wrap { max-width:1280px; margin:0 auto; padding:24px 18px 60px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:13px; margin-bottom:18px; }
+  .stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 16px; flex:1; min-width:150px; }
+  .stat b { display:block; font-size:24px; color:var(--blue); }
+  .stat span { font-size:12px; color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:20px; }
+  .card h2 { font-size:15px; margin:0 0 12px; color:var(--blue); }
+  .ov { display:grid; grid-template-columns:200px 1fr; gap:6px 14px; font-size:13px; }
+  .ov div:nth-child(odd) { color:var(--muted); }
+  .ov div:nth-child(even) { color:var(--ink); }
+  .toolbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+  .toolbar input[type=text] { flex:1; min-width:200px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; }
+  .toolbar label { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  thead th { background:var(--blue); color:#fff; text-align:left; padding:10px 10px; position:sticky; top:0; white-space:nowrap; }
+  tbody td { padding:8px 10px; border-top:1px solid var(--line); vertical-align:top; }
+  tbody tr:hover { background:#f0f5ff; }
+  tr.local td:nth-child(6) { color:var(--green); font-weight:600; }
+  tr.foreign td:nth-child(6) { color:var(--muted); }
+  tr.unk td:nth-child(6) { color:var(--amber); }
+  a { color:var(--blue); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .count { font-size:12px; color:var(--muted); margin-top:8px; }
+  @media (max-width:720px) { .ov { grid-template-columns:1fr; } table { font-size:12px; } }</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>孟加拉医疗器械展会 · 展商及联系方式总表</h1>
+  <div class="sub">2025–2026 年度公开可得展商汇总 · 生成于 2026-07-13</div>
+
+  <div class="stats">
+    <div class="stat"><b>49</b><span>累计核实展商（家）</span></div>
+    <div class="stat"><b>14</b><span>孟加拉本地企业（家）</span></div>
+    <div class="stat"><b>3</b><span>覆盖展会系列</span></div>
+    <div class="stat"><b>4</b><span>覆盖展会届次</span></div>
+  </div>
+
+  <div class="card">
+    <h2>说明与数据缺口</h2>
+    <div class="ov">
+      <div>生成日期</div><div>2026-07-13</div><div>数据来源</div><div>公开网络检索（主办方新闻稿、LinkedIn 自宣帖、展商自家新闻稿、展会聚合站）</div><div>累计核实展商数</div><div>49 家（均带来源链接，未编造联系方式）</div><div>其中孟加拉本地企业</div><div>14 家（对用户“孟加拉经销商目录”目标最关键）</div><div>覆盖展会</div><div>Meditex Bangladesh 2025/2026、Bangla Med Expo 2025、Medical Bangladesh 2026/11 届</div><div>重要缺口1</div><div>完整展商名录不公开：主办方与聚合站（jufair/shifair/qufair）的“会刊/展商目录”多为付费内容</div><div>重要缺口2</div><div>联系方式缺失普遍：绝大多数展商电话/邮箱未公开，表中留空；已公开的来自中国展商自宣稿及个别本地企业官网</div><div>补齐方法A</div><div>购买官方会刊：联系主办方销售索取完整名录（CEMS-Global、Bangladesh Exhibitions Pvt Ltd）</div><div>补齐方法B</div><div>定向补全本地经销商：对表中孟加拉本地企业访问其官网抓取电话/邮箱</div><div>补齐方法C</div><div>叠加 DGDA 注册库 / Tendata 等贸易数据平台补充进口商名单</div><div>补齐方法D</div><div>持续跟踪 2026 下半年展会（Bangla Med Expo 预计 8–10 月、Medical Bangladesh 2026/11）</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>展商总表</h2>
+    <div class="toolbar">
+      <input type="text" id="q" placeholder="搜索公司名 / 展会 / 国家 / 产品类别…" oninput="filter()">
+      <label><input type="checkbox" id="onlyLocal" onchange="filter()"> 仅显示孟加拉本地企业</label>
+    </div>
+    <table>
+      <thead><tr>
+        <th>序号</th><th>展会名称</th><th>届次/年份</th><th>公司名称</th><th>国家地区</th>
+        <th>是否孟加拉本地</th><th>产品类别</th><th>电话</th><th>邮箱</th><th>官网</th><th>展位号</th><th>来源</th>
+      </tr></thead>
+      <tbody id="tbody">
+      <tr class="foreign">
+<td>1</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>江西3L集团 / Jiangxi 3L Medical Group</td>
+<td>中国</td><td>否(外资)</td><td>医用耗材(手术薄膜/胶带/无菌防护套/组合包)</td>
+<td></td><td></td><td><a href="https://3l.com.cn" target="_blank" rel="noopener">3l.com.cn</a></td><td>Hall 3, C19</td><td><a href="https://3l.com.cn/news/605.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>2</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>热景生物 / Hotgen</td>
+<td>中国</td><td>否(外资)</td><td>IVD(化学发光/POCT/结核/ELISA)</td>
+<td></td><td></td><td><a href="https://hotgen.com.cn" target="_blank" rel="noopener">hotgen.com.cn</a></td><td>Hall 4, D-07</td><td><a href="https://hotgen.com.cn/detail/838.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>3</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>Periodmed</td>
+<td>中国</td><td>否(外资)</td><td>病人监护仪/超声诊断</td>
+<td></td><td>info@periodmed.com</td><td><a href="https://periodmed.com" target="_blank" rel="noopener">periodmed.com</a></td><td>H4, D20</td><td><a href="https://www.periodmed.com/Media--events/meditex-bangladesh-2026-invitation" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>4</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>杭州川方至医疗器械 / Trifanz</td>
+<td>中国</td><td>否(外资)</td><td>医疗器械</td>
+<td></td><td></td><td><a href="https://cn.trifanz.com" target="_blank" rel="noopener">cn.trifanz.com</a></td><td>Hall 4, D01</td><td><a href="http://cn.trifanz.com/Ndetail/b_42_p_1_c_189.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>5</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>EPCB Boiler</td>
+<td>中国</td><td>否(外资)</td><td>工业锅炉(医疗蒸汽系统)</td>
+<td></td><td></td><td><a href="https://epcbboiler.com" target="_blank" rel="noopener">epcbboiler.com</a></td><td>Hall H3, C-52</td><td><a href="https://www.epcbboiler.com/epcb-boiler-powers-meditex-2026-with-industry-leading-solutions.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>6</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>CFC-SIBL Reproductive Health Initiative</td>
+<td>孟加拉</td><td>是(本地)</td><td>生殖健康</td>
+<td></td><td></td><td><a href="https://sibl-bd.com" target="_blank" rel="noopener">sibl-bd.com</a></td><td></td><td><a href="https://www.thedailystar.net/business/organisation-news/news/meditex-health-tourism-expos-begin-dhaka-may-7-4159081" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>7</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>Healthcare Diagnostic Solutions</td>
+<td>孟加拉</td><td>是(本地)</td><td>诊断服务</td>
+<td></td><td></td><td><a href="https://medinetbd.com" target="_blank" rel="noopener">medinetbd.com</a></td><td></td><td><a href="https://www.thedailystar.net/business/organisation-news/news/meditex-health-tourism-expos-begin-dhaka-may-7-4159081" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>8</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>BTL Medical Devices Bangladesh Ltd</td>
+<td>孟加拉</td><td>是(本地)</td><td>医疗设备(理疗/康复/心肺)</td>
+<td>+8801913897416</td><td>info@btl.com.bd</td><td><a href="https://www.btl.com.bd" target="_blank" rel="noopener">www.btl.com.bd</a></td><td></td><td><a href="https://btl.com.bd/contact-us/" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>9</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>Medipack Technologies Ltd</td>
+<td>孟加拉</td><td>是(本地)</td><td>医疗设备/IVD(雅培诊断代理)</td>
+<td></td><td></td><td><a href="https://medipacbd.com" target="_blank" rel="noopener">medipacbd.com</a></td><td></td><td><a href="https://medipacbd.com/aboutUs" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>10</td><td>Meditex Bangladesh</td><td>2026(第17届)</td><td>Alive Healthcare</td>
+<td>孟加拉</td><td>是(本地)</td><td>医疗设备(超声/呼吸)</td>
+<td></td><td></td><td><a href="https://alivehealthcare.net" target="_blank" rel="noopener">alivehealthcare.net</a></td><td></td><td><a href="https://www.tendata.com/en/supplier/alive-healthcare-ltd-BGDIf375bed4c7688a3795be33d896da79d2.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>11</td><td>Meditex Bangladesh</td><td>2025(第16届)</td><td>Golden Info Systems Ltd</td>
+<td>孟加拉</td><td>是(本地)</td><td>医疗IT(HIS/LIS/PACS/AI)</td>
+<td></td><td>info@goldeninfosystems.com</td><td><a href="https://www.goldeninfosystems.com" target="_blank" rel="noopener">www.goldeninfosystems.com</a></td><td>Hall 3, C-46</td><td><a href="https://goldeninfosystems.com/events/" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>12</td><td>Meditex Bangladesh</td><td>2025(第16届)</td><td>Modern Biotech</td>
+<td>孟加拉</td><td>是(本地)</td><td>IVD/手术室方案</td>
+<td></td><td></td><td><a href="https://modernbiotechbd.com" target="_blank" rel="noopener">modernbiotechbd.com</a></td><td>Hall 4 (Noboratri)</td><td><a href="https://modernbiotechbd.com/news/6825edd34d44ef1301c39071" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>13</td><td>Meditex Bangladesh</td><td>2025(第16届)</td><td>世卓 / Sejoy</td>
+<td>中国</td><td>否(外资)</td><td>IVD/POCT</td>
+<td></td><td></td><td><a href="https://sejoy.com" target="_blank" rel="noopener">sejoy.com</a></td><td>Hall 4, D-48</td><td><a href="https://www.sejoy.com/zh/news/the-16th-meditex-bangladesh-2025-grandly-kicks-off-sejoy-sincerely-invites-you-to-visit-booth-d-48" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>14</td><td>Meditex Bangladesh</td><td>2025(第16届)</td><td>KWS Medical</td>
+<td>中国</td><td>否(外资)</td><td>实验室耗材(采血管/采血针/尿杯/负压引流袋)</td>
+<td>0086-15130071914</td><td>estherjiao@outlook.com</td><td><a href="https://kwsmedical.com" target="_blank" rel="noopener">kwsmedical.com</a></td><td>Hall 4, D21</td><td><a href="https://www.kwsmedical.com/news/exhibition-news-16th-meditex-bangladesh-intl-expo-2025-concurrents" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>15</td><td>Meditex Bangladesh</td><td>2025(第16届)</td><td>深圳图右医疗影像 / Tuyou Medical</td>
+<td>中国</td><td>否(外资)</td><td>内镜摄像系统(影像)</td>
+<td></td><td></td><td><a href="https://tuyoumed.com" target="_blank" rel="noopener">tuyoumed.com</a></td><td>Hall 3, C43A</td><td><a href="https://www.tuyoumed.com/showcasing-innovation-at-meditex-bangladesh-2025-tuyou-medical-your-trusted-endoscopy-camera-system-supplier" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>16</td><td>Bangla Med Expo</td><td>2025</td><td>Monir Neuro Spine Surgical Mart</td>
+<td>孟加拉国</td><td>是(本地)</td><td>外科器械/手术室设备/医院家具</td>
+<td></td><td></td><td></td><td></td><td><a href="https://www.tbsnews.net/bangladesh/health/medical-equipment-sector-dampened-political-uncertainty-say-businesses-1218166" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>17</td><td>Bangla Med Expo</td><td>2025</td><td>Brown Group</td>
+<td>印度</td><td>否(外资)</td><td>医疗</td>
+<td></td><td></td><td></td><td></td><td><a href="https://thefinancialexpress.com.bd/trade/bangla-med-expo-2025-showcases-cutting-edge-healthcare-innovations" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>18</td><td>Bangla Med Expo</td><td>2025</td><td>Soft Imaging</td>
+<td>印度</td><td>否(外资)</td><td>医疗影像</td>
+<td></td><td></td><td></td><td></td><td><a href="https://thefinancialexpress.com.bd/trade/bangla-med-expo-2025-showcases-cutting-edge-healthcare-innovations" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>19</td><td>Bangla Med Expo</td><td>2025</td><td>Aaymed</td>
+<td>巴基斯坦</td><td>否(外资)</td><td>医疗</td>
+<td></td><td></td><td></td><td></td><td><a href="https://thefinancialexpress.com.bd/trade/bangla-med-expo-2025-showcases-cutting-edge-healthcare-innovations" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>20</td><td>Bangla Med Expo</td><td>2025</td><td>Rossmax</td>
+<td>瑞士</td><td>否(外资)</td><td>血压计/健康监测设备</td>
+<td></td><td></td><td><a href="https://www.rossmax.com" target="_blank" rel="noopener">www.rossmax.com</a></td><td></td><td><a href="https://thefinancialexpress.com.bd/trade/bangla-med-expo-2025-showcases-cutting-edge-healthcare-innovations" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>21</td><td>Bangla Med Expo</td><td>2025</td><td>Precision Medical Resources</td>
+<td>孟加拉国</td><td>是(本地)</td><td>医疗设备(年年来展)</td>
+<td></td><td></td><td></td><td></td><td><a href="https://thefinancialexpress.com.bd/trade/bangla-med-expo-2025-showcases-cutting-edge-healthcare-innovations" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>22</td><td>Bangla Med Expo</td><td>2025</td><td>Islamic Tradings (Islam Trading)</td>
+<td>孟加拉国</td><td>是(本地)</td><td>进口经销(中国/印度);POCT iCare1300(Sinocare)</td>
+<td></td><td></td><td></td><td></td><td><a href="https://www.tbsnews.net/bangladesh/health/medical-equipment-sector-dampened-political-uncertainty-say-businesses-1218166" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>23</td><td>Bangla Med Expo</td><td>2025</td><td>MicroMed</td>
+<td>孟加拉国</td><td>是(本地)</td><td>家用医疗产品(在孟约22年)</td>
+<td></td><td></td><td></td><td></td><td><a href="https://www.tbsnews.net/bangladesh/health/medical-equipment-sector-dampened-political-uncertainty-say-businesses-1218166" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>24</td><td>Bangla Med Expo</td><td>2025</td><td>Spartech</td>
+<td>孟加拉国</td><td>是(本地)</td><td>外科器械(首次参展)</td>
+<td></td><td></td><td></td><td></td><td><a href="https://www.tbsnews.net/bangladesh/health/medical-equipment-sector-dampened-political-uncertainty-say-businesses-1218166" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="unk">
+<td>25</td><td>Bangla Med Expo</td><td>2025</td><td>JR BROTHERS SURGICAL INSTRUMENTS</td>
+<td>未知</td><td>未知</td><td>外科器械</td>
+<td></td><td></td><td></td><td>M-237</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_banglamedexpo2025-medicalexpo-exhibitionwithus-activity-7351855829236531200-j-7u" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>26</td><td>Bangla Med Expo</td><td>2025</td><td>SHENZHEN TIANLANG MEDICAL EQUIPMENT CO., LTD.</td>
+<td>中国</td><td>否(外资)</td><td>自动心肺复苏机(Tianglang/TECHMENZ子公司)</td>
+<td></td><td></td><td></td><td>M-265</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_medicalexpo-exhibitionwithus-healthcarebusiness-activity-7354053433374511107-J11Q" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>27</td><td>Bangla Med Expo</td><td>2025</td><td>SUOXI MEDICAL EQUIPMENT IMPORTER &amp; SUPPLIER LTD</td>
+<td>孟加拉国</td><td>是(本地)</td><td>医疗设备进出口/供应</td>
+<td></td><td></td><td></td><td>M-211</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_medicalexpo-exhibitionwithus-healthcarebusiness-activity-7358008130951172096-Q2cW" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="unk">
+<td>28</td><td>Bangla Med Expo</td><td>2025</td><td>MONOWARA MEDICAL ENGINEERING CO</td>
+<td>未知</td><td>未知</td><td>医疗工程</td>
+<td></td><td></td><td></td><td>M-218</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_medicalexpo-exhibitionwithus-healthcarebusiness-activity-7353707863032147969-CSWS" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="unk">
+<td>29</td><td>Bangla Med Expo</td><td>2025</td><td>MEDI HEART</td>
+<td>未知</td><td>未知</td><td>医疗(心脏相关)</td>
+<td></td><td></td><td></td><td>M-221</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_medicalexpo-exhibitionwithus-healthcarebusiness-activity-7353686681302044673-nYRH" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="local">
+<td>30</td><td>Bangla Med Expo</td><td>2025</td><td>MODERN BIOTECH</td>
+<td>孟加拉国</td><td>是(本地)</td><td>生物科技/医疗</td>
+<td></td><td></td><td></td><td>M-236</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_medicalexpo-exhibitionwithus-healthcarebusiness-activity-7353706696453599234-rNVV" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>31</td><td>Bangla Med Expo</td><td>2025</td><td>XUZHOU HENGJIA ELECTRONIC TECHNOLOGY CO., LTD.</td>
+<td>中国</td><td>否(外资)</td><td>电子医疗设备</td>
+<td></td><td></td><td></td><td>M-266</td><td><a href="https://www.linkedin.com/posts/bangla-med-expo_medicalexpo-exhibitionwithus-healthcarebusiness-activity-7358011670796906496-hV0k" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>32</td><td>Bangla Med Expo</td><td>2025</td><td>HILTONBRO SURGIDENT CO</td>
+<td>巴基斯坦</td><td>否(外资)</td><td>外科/牙科器械</td>
+<td></td><td></td><td></td><td>M-276</td><td><a href="https://www.linkedin.com/posts/hiltonbro-surgident-co_whxdubai-whxmiami-whxcapetown-activity-7363508622040981509-wsTL" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>33</td><td>Bangla Med Expo</td><td>2025</td><td>Coopwin Medical</td>
+<td>中国</td><td>否(外资)</td><td>医疗设备</td>
+<td></td><td></td><td><a href="https://www.coopwinmedical.com" target="_blank" rel="noopener">www.coopwinmedical.com</a></td><td>Hall 4 M255-C</td><td><a href="https://www.coopwinmedical.com/news-welcome-to-visit-our-stand-in-2025-bangla-medexpo.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="unk">
+<td>34</td><td>Bangla Med Expo</td><td>2025</td><td>SBRG MedTech</td>
+<td>未知</td><td>未知</td><td>医疗设备</td>
+<td></td><td></td><td><a href="https://www.sbrgmedtech.com" target="_blank" rel="noopener">www.sbrgmedtech.com</a></td><td>M-228, Hall 4</td><td><a href="http://www.sbrgmedtech.com/exhibitions" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>35</td><td>Bangla Med Expo</td><td>2025</td><td>泰雷兹医疗 / Techmenz (Tianglang)</td>
+<td>中国</td><td>否(外资)</td><td>便携式心肺复苏机/医用电子内窥镜</td>
+<td></td><td></td><td><a href="https://techmenz.cn" target="_blank" rel="noopener">techmenz.cn</a></td><td></td><td><a href="http://techmenz.cn/xinwen/gsxw/show337.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>36</td><td>Bangla Med Expo</td><td>2025</td><td>Kay &amp; Company (Kayco India)</td>
+<td>印度</td><td>否(外资)</td><td>医院家具/手术无影灯/手术台/新生儿设备/耗材/实验室设备</td>
+<td></td><td></td><td><a href="https://www.kaycoindia.com" target="_blank" rel="noopener">www.kaycoindia.com</a></td><td></td><td><a href="https://www.kaycoindia.com/bangla-medexpo" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>37</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>浙江源力医疗科技有限公司</td>
+<td>中国</td><td>否(外资)</td><td>急救箱/急救包/绷带/急救毯/创可贴</td>
+<td>0579-85275838</td><td></td><td></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>38</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>江苏锐天医疗科技有限公司</td>
+<td>中国</td><td>否(外资)</td><td>内镜微创医疗器械</td>
+<td>+86 519 8366 8168</td><td>sale@realsky-medical.com</td><td><a href="https://www.realsky-medical.com" target="_blank" rel="noopener">www.realsky-medical.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>39</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>浙江舒洁医疗科技有限公司</td>
+<td>中国</td><td>否(外资)</td><td>一次性手术体位垫/防褥疮垫/关节支托</td>
+<td>0576-84955488</td><td>983328048@qq.com</td><td><a href="https://www.cnsjyl.com" target="_blank" rel="noopener">www.cnsjyl.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>40</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>东莞市健来五金科技有限公司</td>
+<td>中国</td><td>否(外资)</td><td>医用导丝(涂层/不锈钢)</td>
+<td>13510309842</td><td>info@gdjianlai.com</td><td><a href="https://www.gdjianlai.com" target="_blank" rel="noopener">www.gdjianlai.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>41</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>海盐康源医疗器械有限公司</td>
+<td>中国</td><td>否(外资)</td><td>导尿管/喉罩/气管插管/吸痰管/呼吸过滤器/面罩</td>
+<td>0573-86725889 / 86725882</td><td></td><td><a href="https://www.kymedical.cn" target="_blank" rel="noopener">www.kymedical.cn</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>42</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>河北迈锐医疗器械有限公司</td>
+<td>中国</td><td>否(外资)</td><td>医疗器械(衡水冀州产业集群)</td>
+<td>17333868107</td><td></td><td></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>43</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>上海纳辉干燥试剂厂</td>
+<td>中国</td><td>否(外资)</td><td>干燥试剂/干燥剂</td>
+<td></td><td></td><td><a href="https://shnhgzsjc.yunfale.com" target="_blank" rel="noopener">shnhgzsjc.yunfale.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>44</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>永康市康飞医疗器械有限公司</td>
+<td>中国</td><td>否(外资)</td><td>第一类医疗器械/体育康复/塑料制品</td>
+<td></td><td>121014419@qq.com</td><td></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>45</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>北京好乐杰医疗器械有限公司</td>
+<td>中国</td><td>否(外资)</td><td>双能X射线骨密度仪/移动式C形臂(Hologic代理)</td>
+<td>400-6506-032 / 15801693493</td><td>chuan.wang@healthcoming.com.cn</td><td><a href="https://www.healthcoming.com.cn" target="_blank" rel="noopener">www.healthcoming.com.cn</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>46</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>上海艾乐影像材料有限公司</td>
+<td>中国</td><td>否(外资)</td><td>医用胶片/自助取片机/胶片打印机</td>
+<td>021-67655811</td><td>kelly@allecard.com</td><td><a href="https://www.allecard.com" target="_blank" rel="noopener">www.allecard.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>47</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>山东普塑医疗科技有限公司</td>
+<td>中国</td><td>否(外资)</td><td>医用塑胶/橡胶制品/流量调节器/输液器配件</td>
+<td>0533-2855892</td><td>hhm@unicorn-med.com</td><td><a href="https://www.hapoolmed.com" target="_blank" rel="noopener">www.hapoolmed.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>48</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>保定飞凌嵌入式技术有限公司</td>
+<td>中国</td><td>否(外资)</td><td>ARM嵌入式核心板/开发板(医疗设备/工控)</td>
+<td>400-699-6866 / 0312-3102650</td><td>linux@forlinx.com</td><td><a href="https://www.forlinx.com" target="_blank" rel="noopener">www.forlinx.com</a></td><td></td><td><a href="https://www.jufair.com/exhibition/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+<tr class="foreign">
+<td>49</td><td>Medical Bangladesh / Healthcare Expo</td><td>2026年11月届(Health &amp; Hygiene Expo, ICCB)</td><td>河南优德医疗设备股份有限公司</td>
+<td>中国</td><td>否(外资)</td><td>康复医疗设备</td>
+<td>0371-67897712</td><td>info@youde-medical.com</td><td><a href="https://www.youde-medical.com" target="_blank" rel="noopener">www.youde-medical.com</a></td><td></td><td><a href="https://www.jufair.com/community/18104.html" target="_blank" rel="noopener">来源</a></td>
+</tr>
+      </tbody>
+    </table>
+    <div class="count" id="cnt"></div>
+  </div>
+</div>
+<script>
+function filter() {
+  var q = document.getElementById('q').value.toLowerCase().trim();
+  var onlyLocal = document.getElementById('onlyLocal').checked;
+  var trs = document.querySelectorAll('#tbody tr');
+  var n = 0;
+  trs.forEach(function(tr){
+    var text = tr.innerText.toLowerCase();
+    var isLocal = tr.classList.contains('local');
+    var ok = (q === '' || text.indexOf(q) > -1) && (!onlyLocal || isLocal);
+    tr.style.display = ok ? '' : 'none';
+    if (ok) n++;
+  });
+  document.getElementById('cnt').innerText = '当前显示 ' + n + ' 家';
+}
+filter();
+</script>
+</body>
+</html>

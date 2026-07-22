@@ -1,0 +1,24 @@
+# === 仅构建期使用的开发产物，运行时网页不需要，排除以精简仓库 ===
+airports_full.json
+airports_part.json
+bg_origin.jpg
+build_*.js
+build_*.py
+download_*.js
+_bdanalyze*.js
+_bdanalyze2.js
+_barisal.js
+wb_meta.json
+wb_pop.json
+rc_all.json
+ne_countries.txt
+
+# === 省份边界: 当前网页只用尼日利亚(ng); 其余国家文件过大(>100MB 上限)且不使用, 排除 ===
+provinces/*.json
+!provinces/ng.json
+!provinces/ng_adm2.min.json
+
+# === 通用忽略 ===
+node_modules/
+.DS_Store
+*.log

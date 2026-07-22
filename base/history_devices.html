@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高频手术设备与骨组织手术设备历代研究发展史</title>
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-card: #1a1f2b;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --accent-red: #f85149;
+  --accent-orange: #d29922;
+  --accent-green: #3fb950;
+  --accent-blue: #58a6ff;
+  --accent-purple: #bc8cff;
+  --accent-cyan: #39d2c0;
+  --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --shadow-glow: 0 0 30px rgba(88, 166, 255, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 50%, rgba(188,140,255,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 20% 80%, rgba(248,81,73,0.05) 0%, transparent 50%);
+  padding: 80px 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  background: rgba(33, 38, 45, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.hero-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+}
+
+.hero h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 50%, #bc8cff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero p {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin-bottom: 48px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat-num {
+  font-size: 42px;
+  font-weight: 800;
+  background: var(--gradient-3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ===== Section Styling ===== */
+section {
+  padding: 80px 0;
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.tag-electro { background: rgba(88,166,255,0.15); color: var(--accent-blue); border: 1px solid rgba(88,166,255,0.3); }
+.tag-bone { background: rgba(63,185,80,0.15); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.3); }
+.tag-compare { background: rgba(188,140,255,0.15); color: var(--accent-purple); border: 1px solid rgba(188,140,255,0.3); }
+.tag-future { background: rgba(248,81,73,0.15); color: var(--accent-red); border: 1px solid rgba(248,81,73,0.3); }
+
+.section-header h2 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.section-header .subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ===== Timeline ===== */
+.timeline {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--border-color) 5%, var(--border-color) 95%, transparent);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 20px 40px;
+  margin-bottom: 8px;
+}
+
+.timeline-item:nth-child(odd) {
+  left: 0;
+  text-align: right;
+}
+
+.timeline-item:nth-child(even) {
+  left: 50%;
+}
+
+.timeline-item::after {
+  content: '';
+  position: absolute;
+  top: 28px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid var(--bg-primary);
+  z-index: 2;
+}
+
+.timeline-item:nth-child(odd)::after {
+  right: -7px;
+}
+
+.timeline-item:nth-child(even)::after {
+  left: -7px;
+}
+
+.timeline-item.blue::after { background: var(--accent-blue); box-shadow: 0 0 12px rgba(88,166,255,0.6); }
+.timeline-item.green::after { background: var(--accent-green); box-shadow: 0 0 12px rgba(63,185,80,0.6); }
+.timeline-item.red::after { background: var(--accent-red); box-shadow: 0 0 12px rgba(248,81,73,0.6); }
+.timeline-item.orange::after { background: var(--accent-orange); box-shadow: 0 0 12px rgba(210,153,34,0.6); }
+.timeline-item.purple::after { background: var(--accent-purple); box-shadow: 0 0 12px rgba(188,140,255,0.6); }
+
+.timeline-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px 24px;
+  transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.timeline-year {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.timeline-year.blue { color: var(--accent-blue); }
+.timeline-year.green { color: var(--accent-green); }
+.timeline-year.red { color: var(--accent-red); }
+.timeline-year.orange { color: var(--accent-orange); }
+.timeline-year.purple { color: var(--accent-purple); }
+
+.timeline-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.timeline-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.timeline-desc strong {
+  color: var(--text-primary);
+}
+
+/* ===== Era Cards ===== */
+.era-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.era-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.era-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+}
+
+.era-card.blue::before { background: var(--accent-blue); }
+.era-card.green::before { background: var(--accent-green); }
+.era-card.red::before { background: var(--accent-red); }
+.era-card.orange::before { background: var(--accent-orange); }
+.era-card.purple::before { background: var(--accent-purple); }
+.era-card.cyan::before { background: var(--accent-cyan); }
+
+.era-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+.era-num {
+  font-size: 48px;
+  font-weight: 800;
+  opacity: 0.1;
+  position: absolute;
+  top: 12px;
+  right: 20px;
+}
+
+.era-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.era-period {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.era-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.era-card li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.era-card li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.era-card.blue li::before { background: var(--accent-blue); }
+.era-card.green li::before { background: var(--accent-green); }
+.era-card.red li::before { background: var(--accent-red); }
+.era-card.orange li::before { background: var(--accent-orange); }
+.era-card.purple li::before { background: var(--accent-purple); }
+.era-card.cyan li::before { background: var(--accent-cyan); }
+
+/* ===== Comparison Table ===== */
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0 auto;
+  max-width: 1100px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.comparison-table th {
+  background: var(--bg-tertiary);
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.comparison-table td {
+  padding: 14px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  line-height: 1.6;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table tr:hover td {
+  background: rgba(88,166,255,0.03);
+}
+
+.comparison-table td:first-child {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* ===== Tech Evolution Bar ===== */
+.evolution-bar {
+  max-width: 1000px;
+  margin: 48px auto;
+  position: relative;
+}
+
+.evolution-track {
+  display: flex;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.evolution-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 12px 8px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.evolution-stage:hover {
+  filter: brightness(1.2);
+}
+
+.evolution-stage span {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.evolution-stage strong {
+  font-size: 14px;
+  color: #fff;
+}
+
+/* ===== Key Person Card ===== */
+.person-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.person-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.person-card:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+}
+
+.person-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.person-card h4 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.person-role {
+  font-size: 13px;
+  color: var(--accent-blue);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.person-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ===== Brand Table ===== */
+.brand-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.brand-table th {
+  background: var(--bg-tertiary);
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand-table td {
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  line-height: 1.6;
+}
+
+.brand-table tr:last-child td {
+  border-bottom: none;
+}
+
+.brand-table tr:hover td {
+  background: rgba(63,185,80,0.03);
+}
+
+.brand-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-intl { background: rgba(88,166,255,0.15); color: var(--accent-blue); }
+.badge-domestic { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+
+/* ===== Future Cards ===== */
+.future-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.future-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.future-card:hover {
+  border-color: var(--accent-purple);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.future-card .icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.future-card h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.future-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ===== Summary Box ===== */
+.summary-box {
+  max-width: 900px;
+  margin: 48px auto;
+  background: linear-gradient(135deg, rgba(88,166,255,0.05), rgba(188,140,255,0.05));
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 36px;
+}
+
+.summary-box h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-box p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 16px;
+}
+
+/* ===== Divider ===== */
+.divider {
+  max-width: 1000px;
+  margin: 0 auto;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  padding: 60px 24px 40px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 40px;
+}
+
+footer p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .timeline::before { left: 24px; }
+  .timeline-item {
+    width: 100%;
+    left: 0 !important;
+    text-align: left !important;
+    padding-left: 48px;
+    padding-right: 0;
+  }
+  .timeline-item::after {
+    left: 17px !important;
+    right: auto !important;
+  }
+  .hero-stats { gap: 24px; }
+}</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-badge">深度研究报告 · 医疗器械发展史</div>
+  <h1>高频手术设备与骨组织手术设备<br>历代研究发展史</h1>
+  <p>从史前燧石穿颅到 AI 驱动的智能手术平台——一部跨越万年的外科能量与骨动力技术演进全景</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">2</div>
+      <div class="hero-stat-label">核心领域</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">10+</div>
+      <div class="hero-stat-label">技术代际</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">30+</div>
+      <div class="hero-stat-label">关键里程碑</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">20+</div>
+      <div class="hero-stat-label">代表厂商</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PART I: 高频电刀发展史 ===== -->
+<section id="part1">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-electro">Part I · 高频电刀</span>
+      <h2>高频手术设备（高频电刀）发展史</h2>
+      <p class="subtitle">高频电刀（Electrosurgical Unit, ESU）利用 200kHz–4MHz 高频电流通过人体组织产生热效应，实现切割与凝血。它是现代外科最基本、最不可或缺的能量设备之一。</p>
+    </div>
+
+    <!-- 技术演进路线 -->
+    <div class="evolution-bar">
+      <p style="text-align:center; color:var(--text-secondary); font-size:14px; margin-bottom:16px;">高频电刀核心技术代际演进路线</p>
+      <div class="evolution-track">
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #2d333b, #1a1f2b);">
+          <strong>第一代</strong>
+          <span>火花隙放电<br>1920s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #1a3a5c, #0d2538);">
+          <strong>第二代</strong>
+          <span>真空管振荡<br>1930s-1960s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #2a4d3e, #15302a);">
+          <strong>第三代</strong>
+          <span>固态晶体管<br>1968-1990s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #4a3520, #2a1d10);">
+          <strong>第四代</strong>
+          <span>微处理器控制<br>1990s-2000s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #3d2a4d, #1d1030);">
+          <strong>第五代</strong>
+          <span>智能组织感知+AI<br>2010s-至今</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 五个时代卡片 -->
+    <div class="era-grid">
+      <div class="era-card blue">
+        <div class="era-num">01</div>
+        <h3>理论奠基与早期探索</h3>
+        <div class="era-period">1891 — 1925</div>
+        <ul>
+          <li><strong>1891</strong> · d'Arsonval 发现高频电流（>10kHz）通过人体不引起肌肉收缩但产生热效应，奠定电外科物理基础</li>
+          <li><strong>1897</strong> · Franz Nagelschmidt 撰写"电热疗法"文章</li>
+          <li><strong>1900</strong> · 巴黎医生 Joseph Riviere 完成首例高频电流外科手术（电弧治疗手部癌性溃疡）</li>
+          <li><strong>1910</strong> · Clark 设计可产生 3A 电流的设备，增大热量、缩短时间</li>
+          <li><strong>1914</strong> · Clark 提出"干燥方法"（desiccation），用于皮肤、头颈、乳房和子宫颈恶性增生</li>
+        </ul>
+      </div>
+
+      <div class="era-card orange">
+        <div class="era-num">02</div>
+        <h3>Bovie 电刀的诞生</h3>
+        <div class="era-period">1926 — 1930</div>
+        <ul>
+          <li><strong>1926.10.01</strong> · William T. Bovie（哈佛生物物理学家）发明电刀，与神经外科之父 Harvey Cushing 在 Peter Bent Brigham Hospital 完成历史性手术</li>
+          <li>Bovie 将设备从 4 个街区外推到手术室，电源来自一盏路灯的交流电</li>
+          <li>最初使用<strong>两台设备</strong>：真空管切割 + 火花隙凝固</li>
+          <li><strong>1928</strong> · Cushing 发表 547 例病例报告，电外科正式确立；高频电刀开始商品化</li>
+          <li><strong>1930</strong> · Bovie 获得美国专利（US 1,586,645；另有 Bierman 1926 专利争议）</li>
+        </ul>
+      </div>
+
+      <div class="era-card purple">
+        <div class="era-num">03</div>
+        <h3>真空管时代</h3>
+        <div class="era-period">1930s — 1960s</div>
+        <ul>
+          <li>从火花隙阻尼波升级为<strong>连续正弦波</strong>，切割精度大幅提升</li>
+          <li>主要厂商：Erbe（1851 年成立于德国）、Liebel-Flarsheim、Birtcher</li>
+          <li>切割与凝血开始集成于同一设备</li>
+          <li>输出功率控制仍依赖手动旋钮调节</li>
+          <li>安全性依赖操作者经验，组织热损伤仍较显著</li>
+        </ul>
+      </div>
+
+      <div class="era-card cyan">
+        <div class="era-num">04</div>
+        <h3>固态与微处理器时代</h3>
+        <div class="era-period">1968 — 2000</div>
+        <ul>
+          <li><strong>1967</strong> · Valleylab 成立于美国科罗拉多</li>
+          <li><strong>1968</strong> · Valleylab 推出世界首台<strong>隔离式</strong>电刀（isolated ESU），杜绝负极板误贴风险</li>
+          <li><strong>1982</strong> · Valleylab Force 2 首创<strong>负极板接触质量监测</strong>（REM），实时检测极板阻抗</li>
+          <li><strong>1992</strong> · Erbe 推出 ICC 智能系列；Johnson & Johnson 的 Harmonic 超声刀问世</li>
+          <li><strong>1995</strong> · Valleylab Force FX 首创<strong>即时反馈技术</strong>（Instant Response），根据组织阻抗自动调节输出</li>
+        </ul>
+      </div>
+
+      <div class="era-card red">
+        <div class="era-num">05</div>
+        <h3>智能能量时代</h3>
+        <div class="era-period">1999 — 至今</div>
+        <ul>
+          <li><strong>1999</strong> · Valleylab 推出 <strong>LigaSure</strong> 血管闭合技术，可永久闭合直径达 7mm 的血管，无需缝线</li>
+          <li><strong>2000s</strong> · TissueFect 智能组织感知技术，通过感知组织阻抗变化精确管理能量输出</li>
+          <li><strong>2010s</strong> · 能量平台整合：电刀+超声刀+血管闭合+氩气刀一体机</li>
+          <li><strong>2019</strong> · da Vinci 手术机器人集成电外科系统（E-100）</li>
+          <li><strong>2020s</strong> · AI 驱动的自适应能量控制，实时组织识别与功率动态调节</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 高频电刀详细时间线 ===== -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-electro">Part I · 详细时间线</span>
+      <h2>高频电刀关键里程碑</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item blue">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1891</div>
+          <div class="timeline-title">d'Arsonval 高频电流实验</div>
+          <div class="timeline-desc">法国物理学家 <strong>Jacques-Arsène d'Arsonval</strong> 发现频率高于 10kHz 的交流电通过人体时不引起肌肉收缩（法拉第效应），但会产生热效应。这一发现奠定了电外科的物理基础。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item blue">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1900</div>
+          <div class="timeline-title">首例高频电流外科手术</div>
+          <div class="timeline-desc">巴黎医生 <strong>Joseph Rivière</strong> 用类似 Nagelschmidt 发电机产生的电流治疗失眠症患者时，电极间火花电弧使皮肤凝固。随后用此电弧电流成功治疗手部癌性溃疡——<strong>这是首例被记录的高频电流外科手术</strong>。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item blue">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1914</div>
+          <div class="timeline-title">Clark 的"干燥方法"</div>
+          <div class="timeline-desc"><strong>William Clark</strong> 提出"干燥方法"（desiccation），利用高频电流使组织脱水、碳化。他成为第一个常规使用高频电刀去除皮肤、头颈、乳房和子宫颈恶性增生的美国人，推动了美国电外科技术的快速发展。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item orange">
+        <div class="timeline-content">
+          <div class="timeline-year orange">1926</div>
+          <div class="timeline-title">🔥 Bovie 电刀诞生 — 改变外科的历史时刻</div>
+          <div class="timeline-desc"><strong>William T. Bovie</strong>（哈佛大学生物物理学家）发明了世界上第一台实用电刀。1926 年 10 月 1 日，他将这台桌子大小的设备从实验室推了 4 个街区到 Peter Bent Brigham Hospital 的 4 号手术室，与神经外科之父 <strong>Harvey Cushing</strong> 合作完成了历史性手术——切除一例此前因大出血而无法切除的颅内肿瘤。电源来自一盏路灯引出的交流电。Bovie 最初使用<strong>两台设备</strong>：真空管产生切割波形 + 火花隙产生凝固波形。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item orange">
+        <div class="timeline-content">
+          <div class="timeline-year orange">1928</div>
+          <div class="timeline-title">电外科正式确立</div>
+          <div class="timeline-desc">Cushing 发表了 <strong>547 例</strong>使用 Bovie 电刀的病例报告，证明了电外科在神经外科中的巨大价值——显著减少术中出血、缩短手术时间。同年高频电刀开始商品化，迅速成为外科应用最广、价值最高的设备。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item purple">
+        <div class="timeline-content">
+          <div class="timeline-year purple">1930s-1960s</div>
+          <div class="timeline-title">真空管时代</div>
+          <div class="timeline-desc">真空管振荡器替代火花隙，产生稳定的<strong>连续正弦波</strong>。输出功率和波形可控性大幅提升。德国 Erbe（1851 年成立）成为欧洲主要厂商，美国 Birtcher 和 Liebel-Flarsheim 也占据重要市场。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1968</div>
+          <div class="timeline-title">Valleylab 推出首台隔离式电刀</div>
+          <div class="timeline-desc"><strong>Valleylab</strong>（成立于 1967 年，美国科罗拉多）推出世界首台隔离式电刀，将患者回路与地隔离，从根本上消除了负极板误贴部位灼伤的风险，是电外科安全性的重大飞跃。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1982</div>
+          <div class="timeline-title">Force 2 — 负极板监测系统（REM）</div>
+          <div class="timeline-desc">Valleylab <strong>Force 2</strong> 首创<strong>返回电极监测</strong>（Return Electrode Monitoring, REM），实时检测负极板与患者皮肤之间的接触阻抗。一旦接触面积不足或接触松动，系统立即声光报警并切断输出——彻底解决了负极板部位灼伤这一致命风险。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1992</div>
+          <div class="timeline-title">Erbe ICC 系列 & Harmonic 超声刀</div>
+          <div class="timeline-desc">德国 Erbe 推出 <strong>ICC 智能系列</strong>，内置微处理器根据组织阻抗自动调节功率输出。同年 Johnson & Johnson Ethicon 推出 <strong>Harmonic</strong> 超声刀，以 55.5kHz 超声振动切割并凝血，热损伤远小于传统电刀，开创了"非电弧"能量外科的先河。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1995</div>
+          <div class="timeline-title">Force FX — 即时反馈技术</div>
+          <div class="timeline-desc">Valleylab <strong>Force FX</strong> 首创即时反馈技术（Instant Response），每秒 200 次监测组织阻抗变化并实时调整输出功率，确保在任何组织类型中均保持一致的切割和凝血效果。该技术至今仍是高端电刀的标配。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item red">
+        <div class="timeline-content">
+          <div class="timeline-year red">1999</div>
+          <div class="timeline-title">LigaSure 血管闭合技术</div>
+          <div class="timeline-desc">Valleylab 推出 <strong>LigaSure</strong>——通过智能双极技术结合物理压迫和精确能量传递，使血管壁胶原蛋白和弹性蛋白变性融合，<strong>可永久闭合直径达 7mm 的血管</strong>，无需缝线或钛夹。 burst 压力可承受 3 倍正常收缩压，是腔镜外科的革命性突破。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item red">
+        <div class="timeline-content">
+          <div class="timeline-year red">2000s-2010s</div>
+          <div class="timeline-title">TissueFect 组织感知 & 能量平台整合</div>
+          <div class="timeline-desc">Valleylab 推出 <strong>TissueFect</strong> 智能组织感知技术，通过感知工作电极处组织阻抗变化精确管理能量输出，在单极、双极和血管闭合所有模式下实现组织级别精度的自动控制。能量平台整合趋势加速：电刀+超声刀+血管闭合+氩气刀一体机成为手术室标配。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item red">
+        <div class="timeline-content">
+          <div class="timeline-year red">2019</div>
+          <div class="timeline-title">da Vinci 机器人集成电外科</div>
+          <div class="timeline-desc">Intuitive Surgical 的 <strong>da Vinci 手术机器人</strong>正式集成电外科能量系统（E-100），外科医生可在控制台直接控制电切、电凝和血管闭合，实现了机器人外科与电外科的深度融合。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item red">
+        <div class="timeline-content">
+          <div class="timeline-year red">2020s</div>
+          <div class="timeline-title">AI 驱动的自适应能量控制</div>
+          <div class="timeline-desc">人工智能算法开始应用于电外科：实时识别组织类型（脂肪/肌肉/血管/神经），动态调节功率曲线；预测性闭合算法在血管完全闭合后自动停止输出；智能烟雾过滤与术中导航联动。能量外科进入<strong>"感知-决策-执行"</strong>闭环时代。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 中国电刀市场 ===== -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-electro">Part I · 中国市场</span>
+      <h2>中国高频电刀市场格局</h2>
+      <p class="subtitle">2019 年国内市场规模约 16.8 亿元，行业增速保持 20% 以上。高频电刀是二、三级医院的标准配置设备。</p>
+    </div>
+
+    <table class="brand-table">
+      <thead>
+        <tr>
+          <th>厂商</th>
+          <th>成立年份</th>
+          <th>类型</th>
+          <th>代表产品/技术特点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>上海沪通电子</strong></td>
+          <td>1990</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>国产占有率第一（>60%）。产品线涵盖氩气刀、多功能高频电刀、恒功率自适应电刀、超高频电波刀（4.096MHz）、LEEP 刀等。GD350 系列采用微机 CPU 双重闭环控制，双片极板接触质量监测。</td>
+        </tr>
+        <tr>
+          <td><strong>常州延陵电子设备</strong></td>
+          <td>1992</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>POWER-420FX 全科型单/双极电刀，具备组织密度即时反馈技术、低压腔镜专用模式、大组织闭合设备（5mm/13mm/钳状闭合器械，可闭合 7mm 脉管）。</td>
+        </tr>
+        <tr>
+          <td><strong>南京康友</strong></td>
+          <td>1994</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>多功能高频电刀、射频刀等系列产品，覆盖普外、妇科等科室。</td>
+        </tr>
+        <tr>
+          <td><strong>北京安进医疗</strong></td>
+          <td>2010</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td><strong>电磁刀（nEMF）</strong>——国产首创。AJ-200 型高频手术系统，对周围组织热损伤极小，适合神经外科等高精密手术。脑膜瘤全切率 95%，垂体瘤 85%。</td>
+        </tr>
+        <tr>
+          <td><strong>北京杰西慧中</strong></td>
+          <td>2011</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>高频电刀、氩气刀和射频等离子手术产品。布局耳鼻喉、运动医学、脊柱等科室近百种电极/等离子刀头。</td>
+        </tr>
+        <tr>
+          <td><strong>Valleylab / Medtronic</strong></td>
+          <td>1967</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>进口占有率第一。Force FX、Force Triad、LigaSure、TissueFect 全产品线。</td>
+        </tr>
+        <tr>
+          <td><strong>Erbe（德国爱尔博）</strong></td>
+          <td>1851</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>VIO 系列高频电刀、BiCision/BiClamp 双极闭合系统、APC 氩气刀。全球历史最悠久的电外科厂商。</td>
+        </tr>
+        <tr>
+          <td><strong>Johnson & Johnson Ethicon</strong></td>
+          <td>—</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>Harmonic 超声刀、Enseal 智能双极闭合系统。能量外科综合解决方案。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="summary-box">
+      <h3>📊 中国市场核心趋势</h3>
+      <p><strong>进口替代加速：</strong>国产产品中上海沪通市场占有率最高（国产第一），但整体市场仍以进口产品为主导。国产厂商同质化较为严重，主要差异在于工作频率和刀头设计。</p>
+      <p><strong>技术差距：</strong>国内能够生产高频电刀+射频刀+氩气刀+等离子刀一体机的厂商很少。大组织闭合设备（类 LigaSure）国内仍较少，部分企业通过并购加速产品线融合。</p>
+      <p><strong>复合化趋势：</strong>高频电刀与氩气喷射技术结合形成氩气刀；与超声刀组合形成能量平台工作站；术中根据不同需求切换器械，是高频电刀复合化发展的典范。</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== PART II: 骨组织手术设备发展史 ===== -->
+<section id="part2">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-bone">Part II · 骨组织手术设备</span>
+      <h2>骨组织手术设备发展史</h2>
+      <p class="subtitle">骨组织手术设备涵盖骨锯、骨钻、骨凿、超声骨刀、气动骨动力系统及智能机器人辅助系统等。从史前穿颅术到今天的 AI 机器人骨科手术，跨越万年。</p>
+    </div>
+
+    <!-- 技术演进路线 -->
+    <div class="evolution-bar">
+      <p style="text-align:center; color:var(--text-secondary); font-size:14px; margin-bottom:16px;">骨组织手术设备核心技术代际演进路线</p>
+      <div class="evolution-track">
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #2d333b, #1a1f2b);">
+          <strong>第一代</strong>
+          <span>手动工具<br>远古-1900s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #1a3a5c, #0d2538);">
+          <strong>第二代</strong>
+          <span>电动骨锯/钻<br>1935-1960s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #2a4d3e, #15302a);">
+          <strong>第三代</strong>
+          <span>气动骨动力<br>1960s-1980s</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #4a3520, #2a1d10);">
+          <strong>第四代</strong>
+          <span>超声骨刀<br>1990s-至今</span>
+        </div>
+        <div class="evolution-stage" style="background: linear-gradient(135deg, #3d2a4d, #1d1030);">
+          <strong>第五代</strong>
+          <span>智能机器人辅助<br>2000s-至今</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 五个时代卡片 -->
+    <div class="era-grid">
+      <div class="era-card orange">
+        <div class="era-num">01</div>
+        <h3>手动工具时代</h3>
+        <div class="era-period">公元前 10000 — 1900s</div>
+        <ul>
+          <li><strong>公元前 10000-8000</strong> · 燧石刀穿颅术（trepanation），已知最早的骨骼手术</li>
+          <li><strong>公元前 3500</strong> · 铜冶炼出现，首批金属刀片问世</li>
+          <li><strong>公元前 1200</strong> · 钢制刀片出现</li>
+          <li><strong>公元前 400</strong> · 希波克拉底记载使用铁制刀片进行手术</li>
+          <li><strong>公元 2 世纪</strong> · 罗马人发明"scalpel"（拉丁语 scallpellus）</li>
+          <li><strong>1500s</strong> · Ambroise Paré 改进截肢术，控制出血、改善残端覆盖</li>
+          <li><strong>1850</strong> · Dr. Richard Butcher 发明可调节旋转刀片框架锯</li>
+        </ul>
+      </div>
+
+      <div class="era-card blue">
+        <div class="era-num">02</div>
+        <h3>电动骨动力时代</h3>
+        <div class="era-period">1935 — 1960s</div>
+        <ul>
+          <li><strong>1935</strong> · 德国 <strong>Aesculap</strong> 推出世界首台外科用电动机</li>
+          <li><strong>1941</strong> · <strong>Homer Stryker</strong> 创立 Orthopedic Frame Company（Stryker 前身）</li>
+          <li><strong>1947</strong> · Homer Stryker 专利<strong>振荡锯</strong>（oscillating saw），最初用于切割石膏，但其技术奠定了医用动力工具"保护软组织"的基本逻辑</li>
+          <li><strong>1914</strong> · Morgan Parker 发明现代手术刀（两件式刀片+刀柄）</li>
+          <li>电力驱动使骨切割速度和精度大幅提升，为现代骨科手术奠定基础</li>
+        </ul>
+      </div>
+
+      <div class="era-card green">
+        <div class="era-num">03</div>
+        <h3>气动骨动力时代</h3>
+        <div class="era-period">1960s — 1980s</div>
+        <ul>
+          <li><strong>1963</strong> · <strong>CONMED Hall</strong> 开始气动骨锯研发</li>
+          <li><strong>1967</strong> · Aesculap 推出首台<strong>气动电动机</strong></li>
+          <li><strong>1968</strong> · Stryker 专利<strong>微型往复锯</strong>（micro reciprocating saw），开启精细截骨时代</li>
+          <li>气动 vs 电动两条技术路线互补共存：大骨用气动（功率大）、小骨用电动（精度高）</li>
+          <li><strong>1980s</strong> · Stryker 推出首台<strong>矢状锯</strong>（Sagittal Saw），配 2000 系列刀片</li>
+        </ul>
+      </div>
+
+      <div class="era-card purple">
+        <div class="era-num">04</div>
+        <h3>超声骨刀时代</h3>
+        <div class="era-period">1988 — 至今</div>
+        <ul>
+          <li><strong>1988</strong> · 意大利 <strong>Vercellotti</strong> 获得压电骨手术专利</li>
+          <li><strong>1999</strong> · Vercellotti 与 <strong>Mectron</strong> 正式发明 Piezosurgery 压电骨手术系统</li>
+          <li>核心突破：<strong>选择性切割骨组织同时保护软组织</strong>——利用骨的刚性与软组织弹性的差异</li>
+          <li>工作频率 24-39kHz，微米级振幅，刀头温度低于 38°C</li>
+          <li><strong>Misonix BoneScalpel</strong> 将技术带入脊柱外科</li>
+          <li><strong>2015</strong> · 中国食药监总局界定超声骨刀为 III 类医疗器械（编码 6823）</li>
+          <li><strong>2018</strong> · 中国行业标准 YY/T 1601-2018《超声骨组织手术设备》发布</li>
+        </ul>
+      </div>
+
+      <div class="era-card cyan">
+        <div class="era-num">05</div>
+        <h3>智能机器人时代</h3>
+        <div class="era-period">1992 — 至今</div>
+        <ul>
+          <li><strong>1992</strong> · <strong>ROBODOC</strong> 完成首例机器人骨科手术（全髋关节置换）</li>
+          <li><strong>2006</strong> · <strong>Mako</strong> 半自动化机器人辅助膝关节手术</li>
+          <li><strong>2013</strong> · Stryker 收购 Mako，推动机器人骨科手术商业化</li>
+          <li><strong>2016</strong> · Zimmer Biomet 收购 ROSA 膝/脊柱机器人</li>
+          <li><strong>2024</strong> · Mako THA 4.0 智能规划系统，术前 CT 三维规划+术中实时反馈</li>
+          <li>导航一体化骨动力系统：GPS 式精确定位+机械臂辅助截骨</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 骨组织手术设备详细时间线 ===== -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-bone">Part II · 详细时间线</span>
+      <h2>骨组织手术设备关键里程碑</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item orange">
+        <div class="timeline-content">
+          <div class="timeline-year orange">公元前 10000</div>
+          <div class="timeline-title">燧石穿颅术 — 已知最早的骨骼手术</div>
+          <div class="timeline-desc">史前人类使用<strong>燧石刀</strong>在颅骨上钻孔（trepanation），意图释放引起头痛、抑郁和癫痫的"恶魔"。考古证据显示部分患者术后存活——这是已知最早的骨骼手术。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item orange">
+        <div class="timeline-content">
+          <div class="timeline-year orange">公元前 3500-1200</div>
+          <div class="timeline-title">金属刀片的演进</div>
+          <div class="timeline-desc"><strong>公元前 3500</strong>：铜冶炼出现，首批金属刀片问世。<strong>公元前 1400</strong>：铁制刀片。<strong>公元前 1200</strong>：钢制刀片。<strong>公元前 1754</strong>：汉谟拉比法典记载手部截肢——表明刀片已足够锋利切断骨骼。<strong>公元前 400</strong>：希波克拉底记载铁制刀片用于手术瘢痕切除。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item orange">
+        <div class="timeline-content">
+          <div class="timeline-year orange">1500s</div>
+          <div class="timeline-title">Ambroise Paré 改进截肢术</div>
+          <div class="timeline-desc">法国医生 <strong>Ambroise Paré</strong> 从理发师外科医生崛起为亨利二世的御医。他改进了截肢术的出血控制和残端覆盖方法，设计了精美装饰手柄的手术刀，影响了此后数百年。此前，未经训练的理发师外科医生使用斧头、锯子和重型凿子进行截肢。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item orange">
+        <div class="timeline-content">
+          <div class="timeline-year orange">1821-1860</div>
+          <div class="timeline-title">近代骨外科的萌芽</div>
+          <div class="timeline-desc"><strong>1821</strong>：伦敦 Westminster 医院的 Anthony White 完成首例成功<strong>髋关节成形术</strong>。<strong>1850</strong>：英国外科医生 Dr. Richard Butcher 发明<strong>可调节旋转刀片框架锯</strong>，可在任意角度切割。<strong>1860</strong>：德国外科医生 Themistocles Gluck 开始全膝关节成形术开发。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item blue">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1935</div>
+          <div class="timeline-title">世界首台外科用电动机</div>
+          <div class="timeline-desc">德国 <strong>Aesculap</strong>（成立于 1867 年）推出世界首台外科用电动机，将电力引入骨外科。这标志着骨手术从纯手动时代进入电动时代，大幅提升了骨切割和钻孔的速度与一致性。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item blue">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1941-1947</div>
+          <div class="timeline-title">Homer Stryker 与振荡锯</div>
+          <div class="timeline-desc"><strong>1941</strong>：密歇根州 Kalamazoo 的骨科医生 <strong>Homer Stryker</strong> 因对现有医疗产品不满，创立 Orthopedic Frame Company（Stryker 前身），发明了多种骨科辅助器具。<strong>1947</strong>：Stryker 专利<strong>振荡锯</strong>（oscillating saw）——刀片做高频小幅往复运动而非全圆旋转，最初用于切割石膏，但其"不伤软组织"的技术逻辑奠定了现代骨锯的基本原理。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item green">
+        <div class="timeline-content">
+          <div class="timeline-year green">1963-1967</div>
+          <div class="timeline-title">气动骨动力系统</div>
+          <div class="timeline-desc"><strong>1963</strong>：<strong>CONMED Hall</strong> 开始研发气动骨锯，推动气动路线发展。<strong>1967</strong>：Aesculap 推出首台<strong>气动电动机</strong>。气动骨锯以压缩空气驱动，功率大、可高温高压灭菌，适合大骨切割；电动骨锯精度高、噪音低，适合小骨和精细手术——形成互补共存格局。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item green">
+        <div class="timeline-content">
+          <div class="timeline-year green">1968</div>
+          <div class="timeline-title">Stryker 微型往复锯专利</div>
+          <div class="timeline-desc">Stryker 专利<strong>微型往复锯</strong>（micro reciprocating saw）技术，开启了精细截骨的新时代。该技术使骨切割精度大幅提升，适用于脊柱、颌面等精细部位。同年，世界上首例膝关节置换手术完成。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item green">
+        <div class="timeline-content">
+          <div class="timeline-year green">1980s-2000</div>
+          <div class="timeline-title">Stryker 矢状锯与刀片技术迭代</div>
+          <div class="timeline-desc"><strong>1980s</strong>：Stryker 推出首台<strong>矢状锯</strong>（Sagittal Saw），配 2000 系列刀片，成为骨科手术室标配。<strong>2000</strong>：推出 Dual Cut 刀片，独创<strong>偏移齿形几何</strong>设计（offset tooth geometry），成为市场上最高效的骨切割刀片。<strong>2006</strong>：推出 Performance Series 专利刀片技术，刀齿将骨屑导入排屑区，减少骨碎片堆积和飞散。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item purple">
+        <div class="timeline-content">
+          <div class="timeline-year purple">1988</div>
+          <div class="timeline-title">超声骨刀发明</div>
+          <div class="timeline-desc">意大利牙科医生 <strong>Vercellotti</strong> 获得压电骨手术专利。他发现利用压电换能器将电能转化为 24-29.5kHz 的超声机械振动，可以<strong>选择性切割刚性骨组织而几乎不损伤弹性软组织</strong>——因为骨的固有频率与超声频率共振，而软组织会随振动弹开。这是骨外科设备史上最革命性的突破之一。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item purple">
+        <div class="timeline-content">
+          <div class="timeline-year purple">1999</div>
+          <div class="timeline-title">Piezosurgery 正式问世</div>
+          <div class="timeline-desc">Vercellotti 与意大利 <strong>Mectron</strong> 公司合作正式推出 Piezosurgery 压电骨手术系统。工作频率 24-29.5kHz，微米级振幅（20-200μm），刀头温度低于 38°C，切割时无热量积累，兼具局部止血功能。最初应用于口腔颌面外科，后逐步扩展到脊柱、神经外科等精细领域。美国 <strong>Misonix</strong> 推出 <strong>BoneScalpel</strong>，将技术带入脊柱外科。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">1992-2006</div>
+          <div class="timeline-title">机器人辅助骨手术</div>
+          <div class="timeline-desc"><strong>1992</strong>：<strong>ROBODOC</strong> 完成世界首例机器人骨科手术（全髋关节置换 THA），由计算机辅助完成股骨侧骨髓腔磨削。<strong>2006</strong>：<strong>Mako RIO</strong> 半自动化机器人辅助膝关节单髁置换，术中式韧带张力感知+骨切割实时控制。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">2013-2016</div>
+          <div class="timeline-title">骨科机器人商业化加速</div>
+          <div class="timeline-desc"><strong>2013</strong>：<strong>Stryker</strong> 以 16.5 亿美元收购 Mako，成为全球骨科机器人领导者。Mako 系统累计完成超过 50 万例手术。<strong>2016</strong>：<strong>Zimmer Biomet</strong> 收购 ROSA 膝关节和脊柱手术机器人。ROSA 采用 3D 术中规划和动态追踪技术，无需术前 CT。</div>
+        </div>
+      </div>
+
+      <div class="timeline-item cyan">
+        <div class="timeline-content">
+          <div class="timeline-year blue">2023-2024</div>
+          <div class="timeline-title">国产超声骨刀崛起 & Mako 4.0</div>
+          <div class="timeline-desc"><strong>2023</strong>：重庆<strong>西山科技</strong>发布自主研发超声骨刀 UT-C-S1，实现进口替代。截至 2024 年，国产超声骨刀市场份额超 60%，12 家企业获 NMPA 注册证。<strong>2024</strong>：Stryker 推出 <strong>Mako THA 4.0</strong> 智能规划系统，支持术前 CT 三维建模+术中实时力线反馈+AI 辅助规划，标志着骨科机器人进入智能化新阶段。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 骨组织设备中国市场 ===== -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-bone">Part II · 中国市场</span>
+      <h2>中国骨组织手术设备市场格局</h2>
+      <p class="subtitle">2024 年国产骨动力系统市场份额超 60%，超声骨刀领域国产替代加速，12+ 家企业获 NMPA 注册证。</p>
+    </div>
+
+    <table class="brand-table">
+      <thead>
+        <tr>
+          <th>厂商</th>
+          <th>成立年份</th>
+          <th>类型</th>
+          <th>代表产品/技术特点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>重庆西山科技</strong></td>
+          <td>—</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td><strong>UT-C-S1 超声骨组织手术设备</strong>（2023 年发布），自主研发实现进口替代。支持脊柱外科、神经外科等多科室应用。</td>
+        </tr>
+        <tr>
+          <td><strong>北京水木天蓬</strong></td>
+          <td>2010</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>超声骨动力系统 <strong>XD860A/XD880A</strong>。行业标准 YY/T 1601-2018 起草单位。工作频率 39kHz（高于人耳听觉范围），通过 NMPA/CE/FDA 三重认证。支持开放手术和通道/孔镜下微创手术。</td>
+        </tr>
+        <tr>
+          <td><strong>北京速迈医疗</strong></td>
+          <td>2007</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>前身为清华大学超声医疗仪器研究中心。超声手术系统 <strong>USI1004A</strong>，模块化设计：超声骨刀+超声磨钻+超声吸引刀+超声止血刀+超声清创刀一机多用。</td>
+        </tr>
+        <tr>
+          <td><strong>桂林啄木鸟</strong></td>
+          <td>1989</td>
+          <td><span class="brand-badge badge-domestic">国产</span></td>
+          <td>UltraSurgery LED 超声骨刀。24-29.5kHz，横向振幅 <30μm。产品出口 137 个国家，60% 销往海外，50% 以上销往发达国家。</td>
+        </tr>
+        <tr>
+          <td><strong>Stryker（美国）</strong></td>
+          <td>1941</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>骨动力系统全系列：矢状锯、往复锯、摆动锯 + Performance/Precision 系列刀片。Mako 智能机器人辅助系统（2013 收购）。</td>
+        </tr>
+        <tr>
+          <td><strong>Aesculap（德国）</strong></td>
+          <td>1867</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>世界首台外科电动机（1935）和首台气动电动机（1967）发明者。Unidrive 系列骨动力平台。</td>
+        </tr>
+        <tr>
+          <td><strong>CONMED Hall（美国）</strong></td>
+          <td>1963</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>气动骨动力先驱。Hall 系列气动骨锯/骨钻，以功率大、可高温灭菌著称。</td>
+        </tr>
+        <tr>
+          <td><strong>Mectron（意大利）</strong></td>
+          <td>—</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>Piezosurgery 压电骨手术系统发明者（与 Vercellotti 合作，1999），超声骨刀的原创品牌。</td>
+        </tr>
+        <tr>
+          <td><strong>Misonix（美国）</strong></td>
+          <td>—</td>
+          <td><span class="brand-badge badge-intl">进口</span></td>
+          <td>BoneScalpel 超声骨刀，率先将超声骨切割技术应用于脊柱外科。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 超声骨刀技术对比 -->
+    <div style="max-width:1100px; margin:40px auto;">
+      <h3 style="text-align:center; margin-bottom:24px; font-size:20px;">超声骨刀核心技术特征</h3>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>技术参数</th>
+            <th>水木天蓬 XD880A</th>
+            <th>啄木鸟 UltraSurgery</th>
+            <th>速迈 USI1004A</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>工作频率</td>
+            <td>39 kHz</td>
+            <td>24-29.5 kHz</td>
+            <td>自适应</td>
+          </tr>
+          <tr>
+            <td>振幅精度</td>
+            <td>微米级</td>
+            <td>横向 <30μm<br>径向 20-200μm</td>
+            <td>微米级</td>
+          </tr>
+          <tr>
+            <td>刀头温度</td>
+            <td><38°C</td>
+            <td><38°C</td>
+            <td><38°C</td>
+          </tr>
+          <tr>
+            <td>组织选择性</td>
+            <td colspan="3" style="text-align:center;">选择性切割骨组织，不损伤硬膜/神经/血管等软组织（"吃硬不吃软"）</td>
+          </tr>
+          <tr>
+            <td>认证</td>
+            <td>NMPA / CE / FDA</td>
+            <td>FDA / CE / NMPA</td>
+            <td>NMPA</td>
+          </tr>
+          <tr>
+            <td>适用科室</td>
+            <td>脊柱/神外/手足</td>
+            <td>口腔颌面</td>
+            <td>脊柱/神外/颌面/关节/胸外</td>
+          </tr>
+          <tr>
+            <td>特色功能</td>
+            <td>支持孔镜微创手术</td>
+            <td>LED 照明手柄</td>
+            <td>模块化：骨刀+磨钻+吸引+止血+清创</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== PART III: 对比分析 ===== -->
+<section id="part3">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-compare">Part III · 对比分析</span>
+      <h2>两大领域发展对比</h2>
+      <p class="subtitle">高频电刀与骨组织手术设备虽然技术原理不同，但发展轨迹惊人地相似：都经历了"手动→动力化→智能化"的三级跳跃。</p>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>对比维度</th>
+          <th>高频电刀（ESU）</th>
+          <th>骨组织手术设备</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>核心技术原理</td>
+          <td>高频电流（200kHz-4MHz）通过组织产生热效应，实现切割与凝血</td>
+          <td>机械力切割（锯/钻/凿）或超声振动选择性碎骨</td>
+        </tr>
+        <tr>
+          <td>起源年代</td>
+          <td>1891 年（d'Arsonval 理论发现）</td>
+          <td>公元前 10000 年（燧石穿颅术）</td>
+        </tr>
+        <tr>
+          <td>关键发明者</td>
+          <td>William T. Bovie（1926 实用电刀）</td>
+          <td>Homer Stryker（1947 振荡锯）；Vercellotti（1988 超声骨刀）</td>
+        </tr>
+        <tr>
+          <td>第一代技术</td>
+          <td>火花隙放电（1920s）</td>
+          <td>手动工具（骨锯/骨凿/骨钻）</td>
+        </tr>
+        <tr>
+          <td>第二代技术</td>
+          <td>真空管振荡（1930s-1960s）</td>
+          <td>电动骨动力（1935-）</td>
+        </tr>
+        <tr>
+          <td>第三代技术</td>
+          <td>固态晶体管+微处理器（1968-）</td>
+          <td>气动骨动力（1963-）</td>
+        </tr>
+        <tr>
+          <td>第四代技术</td>
+          <td>智能组织感知+血管闭合（1999-）</td>
+          <td>超声骨刀/Piezoelectric（1988-）</td>
+        </tr>
+        <tr>
+          <td>第五代技术</td>
+          <td>AI 自适应能量控制+机器人集成（2019-）</td>
+          <td>智能机器人辅助骨科手术（2006-/2013-）</td>
+        </tr>
+        <tr>
+          <td>核心安全突破</td>
+          <td>隔离式设计（1968）→ 负极板监测 REM（1982）→ 即时反馈（1995）</td>
+          <td>振荡锯原理（1947，不伤软组织）→ 超声选择性切割（1988，切骨不伤软组织）</td>
+        </tr>
+        <tr>
+          <td>国产化程度</td>
+          <td>国产占有率约 60%+（沪通领先），但高端血管闭合仍以进口为主</td>
+          <td>国产超声骨刀份额超 60%，但传统骨动力系统仍以 Stryker/Aesculap 为主</td>
+        </tr>
+        <tr>
+          <td>机器人集成度</td>
+          <td>da Vinci 集成电外科（2019）</td>
+          <td>Mako/ROSA 机器人骨科手术（2006/2016 商业化）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 关键人物 ===== -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-compare">Part III · 关键人物</span>
+      <h2>改变外科历史的关键人物</h2>
+    </div>
+
+    <div class="person-grid">
+      <div class="person-card">
+        <div class="person-avatar" style="background: rgba(210,153,34,0.2); color: var(--accent-orange);">B</div>
+        <h4>William T. Bovie</h4>
+        <div class="person-role">电刀之父 · 生物物理学家</div>
+        <p>1882-1958。哈佛大学生物物理学家。1926 年发明了世界上第一台实用高频电刀，将电外科从实验阶段推向临床实用。他与神经外科之父 Harvey Cushing 的合作，使电刀在 547 例手术中证明了价值。尽管 Bierman 1926 年的专利引发了一定争议，Bovie 仍被公认为高频电刀之父。</p>
+      </div>
+
+      <div class="person-card">
+        <div class="person-avatar" style="background: rgba(88,166,255,0.2); color: var(--accent-blue);">C</div>
+        <h4>Harvey Cushing</h4>
+        <div class="person-role">神经外科之父 · 电刀推广者</div>
+        <p>1869-1939。美国神经外科先驱。1926 年 10 月 1 日邀请 Bovie 携电刀到手术室，完成了一例此前因大出血无法切除的颅内肿瘤手术。1928 年发表 547 例病例报告，将电外科从边缘技术推向主流，彻底改变了神经外科的面貌。</p>
+      </div>
+
+      <div class="person-card">
+        <div class="person-avatar" style="background: rgba(63,185,80,0.2); color: var(--accent-green);">S</div>
+        <h4>Homer H. Stryker</h4>
+        <div class="person-role">骨动力系统先驱 · Stryker 创始人</div>
+        <p>1894-1980。美国密歇根州骨科医生。因不满现有医疗产品，1941 年创立公司。1947 年专利振荡锯——刀片做高频小幅往复运动，最初用于切石膏，但其"不伤软组织"的原理奠定了现代骨锯基础。1968 年专利微型往复锯，开启精细截骨时代。</p>
+      </div>
+
+      <div class="person-card">
+        <div class="person-avatar" style="background: rgba(188,140,255,0.2); color: var(--accent-purple);">V</div>
+        <h4>Tomaso Vercellotti</h4>
+        <div class="person-role">超声骨刀发明者 · 牙科医生</div>
+        <p>意大利牙科医生。1988 年获得压电骨手术专利，1999 年与 Mectron 公司合作正式推出 Piezosurgery 系统。他的核心发现：利用超声频率与骨的固有频率共振，可选择性切割刚性骨组织而几乎不损伤弹性软组织——这是骨外科设备史上最革命性的突破之一。</p>
+      </div>
+
+      <div class="person-card">
+        <div class="person-avatar" style="background: rgba(88,166,255,0.2); color: var(--accent-blue);">d</div>
+        <h4>Jacques d'Arsonval</h4>
+        <div class="person-role">电外科理论奠基者 · 物理学家</div>
+        <p>1851-1940。法国物理学家。1891 年发现高频交流电（>10kHz）通过人体时不引起肌肉收缩（法拉第效应），但会产生热效应。这一发现奠定了所有电外科技术的物理基础——没有 d'Arsonval，就没有后来的 Bovie 电刀。</p>
+      </div>
+
+      <div class="person-card">
+        <div class="person-avatar" style="background: rgba(57,210,192,0.2); color: var(--accent-cyan);">P</div>
+        <h4>Ambroise Paré</h4>
+        <div class="person-role">现代外科之父 · 截肢术改革者</div>
+        <p>1510-1590。法国医生。从理发师外科医生崛起为亨利二世的御医。他改进了截肢术的出血控制（结扎法替代烧灼）和残端覆盖方法，设计了精美手术刀。在黑暗时代后重新点燃了外科技术的进步之火。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== PART IV: 未来趋势 ===== -->
+<section id="part4">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag tag-future">Part IV · 未来趋势</span>
+      <h2>未来发展趋势</h2>
+      <p class="subtitle">两大领域正汇聚于"智能感知+精准执行+机器人辅助"的共同未来。</p>
+    </div>
+
+    <div class="future-grid">
+      <div class="future-card" style="border-color: rgba(88,166,255,0.3);">
+        <span class="icon">🤖</span>
+        <h4>AI 自适应控制</h4>
+        <p>人工智能算法实时识别组织类型，动态调节输出参数。电刀方向：预测性血管闭合算法，血管完全闭合后自动停止。骨刀方向：实时骨密度感知，自动调节切割力度和速度，避免骨裂。</p>
+      </div>
+
+      <div class="future-card" style="border-color: rgba(63,185,80,0.3);">
+        <span class="icon">🦾</span>
+        <h4>机器人深度集成</h4>
+        <p>能量设备与手术机器人深度融合。电刀方向：da Vinci 式控制台直控能量平台。骨刀方向：Mako/ROSA 式术前 3D 规划+术中机械臂辅助截骨+实时力线反馈。从"医生手持工具"进化为"机器人精确执行"。</p>
+      </div>
+
+      <div class="future-card" style="border-color: rgba(188,140,255,0.3);">
+        <span class="icon">📡</span>
+        <h4>多模态能量融合</h4>
+        <p>一台设备集成多种能量模式。电刀方向：电刀+超声刀+血管闭合+氩气刀+等离子刀一体化能量平台。骨刀方向：超声骨刀+超声磨钻+超声吸引刀+止血刀模块化组合。术中按需切换，降低医疗成本。</p>
+      </div>
+
+      <div class="future-card" style="border-color: rgba(248,81,73,0.3);">
+        <span class="icon">🧠</span>
+        <h4>术中导航与数字孪生</h4>
+        <p>术前 CT/MRI 三维重建+术中实时影像导航+数字孪生模型预测手术效果。骨刀方向：Mako 4.0 已实现术前三维规划+术中实时反馈。电刀方向：术中实时热损伤深度可视化，确保切缘安全。</p>
+      </div>
+
+      <div class="future-card" style="border-color: rgba(210,153,34,0.3);">
+        <span class="icon">🇨🇳</span>
+        <h4>国产替代加速</h4>
+        <p>中国高端医疗器械国产替代政策推动下，国产电刀和超声骨刀市场份额持续提升。国产超声骨刀已超 60%，高频电刀国产份额约 60%+（沪通领先）。下一步突破口：高端血管闭合设备和骨科机器人系统。</p>
+      </div>
+
+      <div class="future-card" style="border-color: rgba(57,210,192,0.3);">
+        <span class="icon">🔬</span>
+        <h4>纳米级精准与微创化</h4>
+        <p>从宏观切割到纳米级精准操作。电刀方向：超高频电波刀（4MHz+）实现细胞级汽化切割，热损伤 <50μm。骨刀方向：微创通道和椎间孔镜下超声骨刀，切口仅数毫米即可完成脊柱手术。5G 远程手术中能量设备的远程精确控制。</p>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <h3>🎯 核心洞察</h3>
+      <p>纵观高频电刀与骨组织手术设备的发展史，两条技术线呈现出<strong>惊人的平行演化规律</strong>：</p>
+      <p><strong>1. 从经验到科学：</strong>都经历了从"试出来的经验操作"到"物理原理驱动的设计"的转变。电刀从偶然发现火花到精确波形控制；骨刀从斧头劈骨到压电选择性切割。</p>
+      <p><strong>2. 从手动到智能：</strong>都经历了"纯手动→电动/气动→电子化→智能化→机器人辅助"的五代演进路线，最终汇聚于 AI+ 机器人+ 精准感知的共同未来。</p>
+      <p><strong>3. 安全性的永恒追求：</strong>电刀从"负极板灼伤"到 REM 监测到 AI 预测；骨刀从"软组织误伤"到振荡锯到超声选择性切割——<strong>"不伤不该伤的组织"</strong>是贯穿始终的核心命题。</p>
+      <p><strong>4. 国产替代的历史窗口：</strong>两大领域都处于国产替代加速期。传统成熟产品（高频电刀主机、超声骨刀主机）国产化率已超 60%，但高端领域（智能血管闭合、骨科机器人）仍是进口主导——这也是未来 5-10 年最大的产业机会。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p>高频手术设备与骨组织手术设备历代研究发展史 · 深度研究报告</p>
+  <p style="margin-top:8px;">数据来源：学术文献、企业官网、行业报告、NMPA/FDA 注册信息 · 2026 年 7 月</p>
+</footer>
+
+</body>
+</html>

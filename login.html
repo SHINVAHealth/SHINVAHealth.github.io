@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHINVA Health</title>
+<style>
+  *{box-sizing:border-box;}
+  /* 主题化光标：十字准星，进入页面即生效 */
+  html, body{ cursor:default; }
+  a, button, .card button, label, .hint{ cursor:pointer; }
+  input{ cursor:text; }
+  html{height:100%;}
+  body{margin:0;min-height:100vh;display:flex;font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;padding:20px;position:relative;overflow:auto;background:#0f172a;}
+  .bg{position:fixed;inset:0;background:url('bg.jpg') center center / cover no-repeat;opacity:.5;transform:scale(1.12);z-index:-2;}
+  .bg-overlay{position:fixed;inset:0;background:rgba(15,23,42,.38);z-index:-1;}
+  .card{position:relative;margin:auto;background:rgba(255,255,255,.96);border-radius:16px;padding:36px 30px;width:360px;max-width:100%;box-shadow:0 24px 60px rgba(15,23,42,.35);}
+  .card .logo{display:block;margin:0 auto 18px;max-height:50px;max-width:240px;width:auto;height:auto;}
+  .card label{display:block;font-size:12px;color:#475569;font-weight:600;margin:12px 0 5px;}
+  .card input{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;}
+  .card input:focus{outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.15);}
+  .card button{width:100%;margin-top:18px;padding:11px;border:none;border-radius:9px;background:#0d9488;color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
+  .card button:hover{background:#0f766e;}
+  .err{color:#dc2626;font-size:12.5px;margin-top:10px;min-height:16px;}
+  .hint{font-size:11px;color:#64748b;margin-top:14px;text-align:center;}
+  /* 底部免责声明（简洁静态） */
+  .corner-note{ position:fixed; left:0; right:0; bottom:14px; padding:0 14px; text-align:center; font-size:12px; line-height:1.4; color:#fff; white-space:nowrap; text-shadow:0 1px 4px rgba(0,0,0,.65); z-index:3; pointer-events:none; }
+  @media (max-width:600px){ .corner-note{ white-space:normal; max-width:94%; margin:0 auto; font-size:10.5px; line-height:1.5; bottom:12px; } }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg-overlay"></div>
+<form class="card" id="f" autocomplete="off">
+  <img src="shinva_logo.png" alt="SHINVA Health" class="logo">
+  <label for="u">账号</label>
+  <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
+  <label for="p">密码</label>
+  <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
+  <button type="submit">登 录</button>
+  <div class="err" id="err"></div>
+  <div class="hint">新华健康产业有限公司</div>
+</form>
+<div class="corner-note">本系统仅为辅助工具，不属于公司官方平台，页面背景、Logo仅临时使用，公司拥有全部修改、调整权限，如有优化意见可随时沟通联系13011609352</div>
+<script>
+  // 账户与角色：admin=系统管理员 / vip=VIP账户 / test=测试账号（无业务权限，仅公共版块）
+  var ACCOUNTS={
+    "zhang":      {password:"179654",         role:"admin", label:"系统管理员"},
+    "jiangjie":   {password:"tiaosanhuajiao",  role:"vip",   label:"VIP账户"},
+    "lianweikang":{password:"william",         role:"vip",   label:"VIP账户"},
+    "wangkun":    {password:"159357",          role:"vip",   label:"VIP账户"},
+    "admin":      {password:"xhjk1234",        role:"test",  label:"测试账号"}
+  };
+  var TTL=8*60*60*1000;
+  function qs(n){var m=location.search.match(new RegExp('[?&]'+n+'=([^&]*)'));return m?decodeURIComponent(m[1]):'';}
+  var next=qs('next')||'./index.html';
+  // 已登录则直接进（验证状态保持 8 小时，避免重复验证）
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL){location.replace(next);}}catch(e){}
+  document.getElementById('f').addEventListener('submit',function(e){
+    e.preventDefault();
+    var u=document.getElementById('u').value.trim();
+    var p=document.getElementById('p').value;
+    var err=document.getElementById('err');err.textContent='';
+    if(!ACCOUNTS[u]||ACCOUNTS[u].password!==p){err.textContent='账号或密码不正确';return;}
+    // 令牌携带角色与标签，供首页按权限渲染版块
+    try{localStorage.setItem('xh_auth',JSON.stringify({u:u,role:ACCOUNTS[u].role,label:ACCOUNTS[u].label,ts:Date.now()}));}catch(e){}
+    location.replace(next);
+  });
+</script>
+</body>
+</html>

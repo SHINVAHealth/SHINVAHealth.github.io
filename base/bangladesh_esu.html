@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孟加拉Diathermy/ESU电刀及外科设备经销商 — 2026年7月9日搜索（57家+6条招标）</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI','Microsoft YaHei',sans-serif; background:#f0f2f5; color:#333; line-height:1.6; }
+.header { background:linear-gradient(135deg,#1565c0,#0d47a1); color:#fff; padding:40px 30px; text-align:center; }
+.header h1 { font-size:26px; margin-bottom:10px; }
+.header .subtitle { font-size:14px; opacity:0.9; }
+.header .stats { display:flex; justify-content:center; gap:30px; margin-top:20px; flex-wrap:wrap; }
+.header .stat { text-align:center; }
+.header .stat .num { font-size:30px; font-weight:bold; color:#ffd54f; }
+.header .stat .label { font-size:12px; opacity:0.8; }
+.search-info { background:#e3f2fd; padding:15px 20px; text-align:center; font-size:13px; color:#1565c0; }
+.search-info strong { color:#0d47a1; }
+.container { max-width:1200px; margin:0 auto; padding:20px; }
+.tier { background:#fff; border-radius:12px; margin-bottom:24px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.tier-header { padding:16px 20px; color:#fff; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.tier-header .tier-badge { background:rgba(255,255,255,0.25); padding:4px 12px; border-radius:20px; font-size:13px; font-weight:bold; }
+.tier-header h2 { font-size:18px; }
+.tier-header .tier-desc { font-size:12px; opacity:0.9; width:100%; margin-top:4px; }
+.tier-1 .tier-header { background:linear-gradient(135deg,#c62828,#d32f2f); }
+.tier-2 .tier-header { background:linear-gradient(135deg,#e65100,#ef6c00); }
+.tier-3 .tier-header { background:linear-gradient(135deg,#1565c0,#1976d2); }
+.tier-4 .tier-header { background:linear-gradient(135deg,#2e7d32,#388e3c); }
+.tier-5 .tier-header { background:linear-gradient(135deg,#6a1b9a,#7b1fa2); }
+.company-list { padding:16px 20px; }
+.company-card { border:1px solid #e0e0e0; border-radius:8px; padding:14px; margin-bottom:12px; transition:box-shadow 0.2s; }
+.company-card:hover { box-shadow:0 2px 12px rgba(0,0,0,0.12); }
+.tier-1 .company-card { border-left:4px solid #c62828; }
+.tier-2 .company-card { border-left:4px solid #e65100; }
+.tier-3 .company-card { border-left:4px solid #1565c0; }
+.tier-4 .company-card { border-left:4px solid #2e7d32; }
+.tier-5 .company-card { border-left:4px solid #6a1b9a; }
+.company-card .name { font-size:15px; font-weight:bold; color:#1a237e; margin-bottom:6px; }
+.tier-1 .company-card .name { color:#c62828; }
+.tier-2 .company-card .name { color:#e65100; }
+.company-card .name a { color:inherit; text-decoration:none; }
+.company-card .name a:hover { text-decoration:underline; }
+.company-card .products { font-size:13px; color:#555; margin-bottom:8px; font-style:italic; }
+.tier-1 .company-card .products { color:#c62828; }
+.tier-2 .company-card .products { color:#e65100; }
+.company-card .info { font-size:12px; color:#666; }
+.company-card .info > div { margin-bottom:3px; }
+.company-card .info .label { color:#999; display:inline-block; min-width:55px; }
+.company-card .notes { font-size:12px; color:#555; margin-top:8px; padding:8px; background:#f5f5f5; border-radius:4px; }
+.company-card .source { font-size:11px; color:#999; margin-top:4px; }
+.company-card .tags { margin-top:8px; display:flex; flex-wrap:wrap; gap:5px; }
+.tag { padding:2px 8px; border-radius:4px; font-size:11px; font-weight:500; }
+.tag-esu { background:#ffebee; color:#c62828; font-weight:bold; }
+.tag-surgical { background:#e3f2fd; color:#1565c0; }
+.tag-ot { background:#fff3e0; color:#e65100; }
+.tag-importer { background:#e8f5e9; color:#2e7d32; }
+.tag-tender { background:#f3e5f5; color:#6a1b9a; }
+.tag-brand { background:#fff9c4; color:#f57f17; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:768px) { .grid-2 { grid-template-columns:1fr; } }
+.mini-card { border:1px solid #e0e0e0; border-radius:6px; padding:10px; margin-bottom:8px; }
+.mini-card .mname { font-size:13px; font-weight:bold; color:#333; }
+.mini-card .minfo { font-size:11px; color:#888; margin-top:2px; }
+.footer { text-align:center; padding:20px; color:#999; font-size:12px; }
+.note { background:#fffde7; border:1px solid #fff9c4; border-radius:8px; padding:20px; margin:20px 0; font-size:14px; }
+.note strong { color:#f57f17; }
+.esu-highlight { background:#ffebee; border:2px solid #c62828; border-radius:8px; padding:15px; margin:15px 0; }
+.esu-highlight h3 { color:#c62828; font-size:15px; margin-bottom:8px; }</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>孟加拉 Diathermy/ESU电刀 及 外科设备 经销商搜索</h1>
+  <div class="subtitle">主营：高频电刀(Diathermy/Electrosurgical Unit) | 外科设备 | 手术室设备 | 排除Excel表55家客户</div>
+  <div class="stats">
+    <div class="stat"><div class="num">57</div><div class="label">新发现经销商</div></div>
+    <div class="stat"><div class="num">7</div><div class="label">确认经营ESU电刀</div></div>
+    <div class="stat"><div class="num">15</div><div class="label">外科/OT设备明确</div></div>
+    <div class="stat"><div class="num">6</div><div class="label">招标线索</div></div>
+  </div>
+</div>
+
+<div class="search-info">
+  <strong>搜索范围：</strong> Google精准搜索 + 品牌代理商搜索 + TradeKey/TradeFord/EC21/Alibaba B2B平台 + Pharmchoices/AddressBazar/BangladeshYellowPages/ensun黄页目录 + Volza海关数据 + 政府招标平台 + LinkedIn + Bangla Med Expo展会 + 逐个网站深扒
+  <br><strong>排除名单：</strong> Excel表55家现有客户 + 211家骨外科设备搜索客户 + 168家前期搜索客户（共约434家）
+</div>
+
+<div class="container">
+  <div class="esu-highlight">
+    <h3>⚡ 重点发现：确认经营Diathermy/ESU电刀的7家公司</h3>
+    <p>以下7家公司通过网站产品页、B2B平台 listing、海关数据等渠道<strong>确认</strong>经营Diathermy/Electrosurgical Unit电刀产品，是本次搜索的核心价值：</p>
+    <ol style="margin-left:20px; margin-top:8px;">
+      <li><strong>Empex Medical System</strong> — 网站设'Surgical Diathermy'专属分类</li>
+      <li><strong>Techno Health</strong> — 售ESS-TUR 400W、ES-S300 300W、EB03多款电刀</li>
+      <li><strong>Medibazar BD</strong> — 售ESS-TUR电刀，兼营维修服务</li>
+      <li><strong>National Electrocare</strong> — 明确进口Surgical Diathermy</li>
+      <li><strong>Pulse Technologies</strong> — 代理Zerone/Topcare品牌电刀，BMA Bhaban展厅</li>
+      <li><strong>Laser Service BD</strong> — 售Electro-surgical Unit/Diathermy</li>
+      <li><strong>Erbis Engineering</strong> — Canon/TOSHIBA代理，经营外科和电疗设备</li>
+    </ol>
+  </div>
+
+  <div class="tier tier-1">
+    <div class="tier-header">
+      <span class="tier-badge">第一梯队</span>
+      <h2>确认经营 Diathermy/ESU 电刀产品</h2>
+      <div class="tier-desc">7家 — 通过网站产品页/B2B平台/海关数据确认经营高频电刀设备</div>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">1. <a href="https://www.empex.com.bd" target="_blank">Empex Medical System</a> <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">Surgical Diathermy（电刀）, ECG, Biochemistry Analyzer, Hematology Analyzer, Ultrasound</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh（具体地址待确认）</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">网站设有'Surgical Diathermy'专属产品分类，确认经营电刀产品。自称Bangladesh Top 10医疗设备供应商，股份制公司(joint-stock company)，覆盖全国</div>
+        <div class="source">数据来源：Google搜索 + empex.com.bd网站确认</div>
+      </div>
+      <div class="company-card">
+        <div class="name">2. <a href="https://technohealth.com.bd" target="_blank">Techno Health</a> <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">Diathermy Machine（ESS-TUR 400W电刀）, Electrosurgical Diathermy（ES-S300 300W）, Short Wave Diathermy（EB03）, X-ray, ECG, Ultrasound, Physiotherapy</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh（Baghdad Surgical Market区域）</div>
+          <div><span class="label">电话：</span>01842-756014</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">2018年成立，孟加拉最大的医疗设备零售商之一。网站有多个电刀产品页面，明确售价。产品包括ESS-TUR 400W（切割/凝血/双极）、ES-S300 300W、EB03电外科发生器</div>
+        <div class="source">数据来源：Google搜索 + technohealth.com.bd网站确认</div>
+      </div>
+      <div class="company-card">
+        <div class="name">3. <a href="https://www.medibazarbd.com" target="_blank">Medibazar BD</a> <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">Diathermy Machine（ESS-TUR电刀）, Ultrasound, ECG, Hospital Bed, Biochemistry Analyzer, Pulse Oximeter, CPAP Mask</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">在线医疗设备商城，网站有Diathermy Machine产品页面。同时提供设备维修服务(Repair &amp; Maintenance)。产品种类丰富，涵盖超声、ECG、检验设备等</div>
+        <div class="source">数据来源：Google搜索 + medibazarbd.com网站确认</div>
+      </div>
+      <div class="company-card">
+        <div class="name">4. National Electrocare Pvt. Ltd. <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">Surgical Diathermy（外科透热机/电刀）, MST/TNS Therapy, Auto Traction Bed（自动牵引床）</div>
+        <div class="info">
+          <div><span class="label">地址：</span>18/3 Begumgong Lane, Sutrapur, Dhaka-1100, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">2015年成立，MD: Syed Rezaul Karim。明确进口和供应外科透热机(Surgical Diathermy)。同时经营物理治疗设备。产品在Medibazar BD等平台有售</div>
+        <div class="source">数据来源：TradeIndia.com B2B平台</div>
+      </div>
+      <div class="company-card">
+        <div class="name">5. <a href="https://pulsetechbd.com" target="_blank">Pulse Technologies</a> <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">Diathermy（Zerone品牌）, Diathermy（Topcare品牌）, Mindray全线产品, 医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Corporate: 31/E Topkhana Road, SK Tower 5th Floor, Dhaka-1000; Showroom: 15/2 Topkhana Road (2nd Floor) BMA Bhaban Suit#313, 18, 33, 34</div>
+          <div><span class="label">电话：</span>+880-2-9587840, 01715-616277, 01675-019681</div>
+          <div><span class="label">邮箱：</span>pulse.technologybd@gmail.com</div>
+        </div>
+        <div class="notes">明确销售Diathermy设备，代理韩国Zerone和国产Topcare品牌透热机。同时代理Mindray全线产品。位于Topkhana Road核心医疗设备商圈，BMA Bhaban设有展厅</div>
+        <div class="source">数据来源：pulsetechbd.com + bdtradeinfo.com + businesssolution.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">6. <a href="https://laserservicebd.com" target="_blank">Laser Service BD</a> <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">Electro-surgical Unit / Diathermy, 医疗激光设备, 医疗设备维修</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">明确销售Electro-surgical Unit / Diathermy设备。同时经营医疗激光设备和维修服务</div>
+        <div class="source">数据来源：Google搜索 + 黄页目录</div>
+      </div>
+      <div class="company-card">
+        <div class="name">7. <a href="https://www.erbismedical.com" target="_blank">Erbis Engineering (BD) Ltd.</a> <span class="tag tag-esu">⚡确认ESU电刀</span></div>
+        <div class="products">TOSHIBA/Canon医疗系统, 外科设备, 电疗设备(Electrotherapy), 眼科设备, 骨科设备, 妇科设备, ENT设备, 神经外科及心血管器械</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Rahman Chamber (8th Floor), 12-13, Motijheel C/A, Dhaka-1000, Bangladesh</div>
+          <div><span class="label">电话：</span>880-2-9586378, 9551517, 7168446</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Canon/TOSHIBA医疗系统在孟加拉的授权代理商。经营范围明确包含外科设备和电疗设备(Electrotherapy)。在印度Chennai也设有办公室，正规跨国代理商</div>
+        <div class="source">数据来源：goldenbusinessbd.com + erbismedical.com + addressbazar.com</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier tier-2">
+    <div class="tier-header">
+      <span class="tier-badge">第二梯队</span>
+      <h2>外科/手术室设备明确经营</h2>
+      <div class="tier-desc">15家 — 明确经营外科器械/手术室(OT)设备/外科用品，高度可能经营电刀</div>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">1. <a href="https://abtahiengineeringtechnology.com" target="_blank">Abtahi Engineering Technology</a> <span class="tag tag-surgical">外科器械</span> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">X-ray Machine, Anesthesia Machine, Analyzer Machine, Ultrasonography Machine, 医疗设备进口与维修</div>
+        <div class="info">
+          <div><span class="label">地址：</span>House 04 (1st Floor), Road 4/A, Sector 05, Uttara, Dhaka-1230, Bangladesh</div>
+          <div><span class="label">电话：</span>+88 02 48956523, +88 02 48952108</div>
+          <div><span class="label">邮箱：</span>info@abtahiengineeringtechnology.com, abtahi.aet@gmail.com</div>
+        </div>
+        <div class="notes">CEO: Engr MD Kamrul Islam。专业医疗设备进口商和分销商，提供安装、维护和培训服务。客户包括医院、诊断中心、诊所。提供产品目录下载</div>
+        <div class="source">数据来源：abtahiengineeringtechnology.com网站确认 + ensun.io</div>
+      </div>
+      <div class="company-card">
+        <div class="name">2. <a href="https://www.ntibd.com" target="_blank">Netcom Trade International (NTI)</a> <span class="tag tag-surgical">外科器械</span> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">Medical &amp; Surgical Items（医疗和外科用品）, Hospital Equipment, BP机, 血糖仪, 雾化器, 导管, 输血套件</div>
+        <div class="info">
+          <div><span class="label">地址：</span>House # 37/14, Johuri Mohalla, Block-F, Shyamoli, Mohammadpur, Dhaka-1207, Bangladesh</div>
+          <div><span class="label">电话：</span>01886-221100, 01841-777883</div>
+          <div><span class="label">邮箱：</span>marketing@ntibd.com</div>
+        </div>
+        <div class="notes">医疗和外科用品进口商，品牌NTI在孟加拉和国际注册，DPDT批准。从日本、中国、印度、新加坡、马来西亚、泰国进口</div>
+        <div class="source">数据来源：ntibd.com + khojkorun.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">3. <a href="https://fortunemedicalsystems.com" target="_blank">Fortune Medical Systems Limited</a> <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">医疗仪器, 外科产品(Surgical Products), 实验室设备, 医疗耗材, 综合医疗解决方案</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Zakir Complex, Ka 218 Kuril Chowrasta, Progati Sarani, Kuril, Dhaka-1229, Bangladesh</div>
+          <div><span class="label">电话：</span>+8809647477667</div>
+          <div><span class="label">邮箱：</span>info@fortunemedicalsystems.com</div>
+        </div>
+        <div class="notes">孟加拉顶级医疗仪器、外科用品、实验室设备和医疗耗材供应商之一，拥有100+专业团队</div>
+        <div class="source">数据来源：fortunemedicalsystems.com + Google搜索</div>
+      </div>
+      <div class="company-card">
+        <div class="name">4. <a href="http://www.scientificbazar.com.bd" target="_blank">A. K. Bhuiyan &amp; Co (Scientific Bazar)</a> <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">Brandlab Net Scientific, 外科产品(Surgical Products), 制药产品, 医疗器械, 化学品和玻璃器皿</div>
+        <div class="info">
+          <div><span class="label">地址：</span>33/2, Shahid Nazrul Islam Road, Hatkhola, Tikatuly, Dhaka-1203, Bangladesh</div>
+          <div><span class="label">电话：</span>+880-2-7122211, 01819-281414</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">品牌名ScientificBazar，经营范围明确包含外科产品。位于Hatkhola Road外科器械集散地</div>
+        <div class="source">数据来源：goldenbusinessbd.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">5. Fortuna Trade International (Pvt) Ltd. <span class="tag tag-surgical">外科器械</span> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">Brand-Lab Net Scientific, Surgical（外科）, Pharmaceuticals, 医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>5/4, Block-D Lalmatia, Dhaka-1207, Bangladesh</div>
+          <div><span class="label">电话：</span>+880-2-9118893, 9136938</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">从外国供应商进口科学、外科和制药产品。Lalmatia区域</div>
+        <div class="source">数据来源：goldenbusinessbd.com + addressbazar.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">6. <a href="https://mediquipment.com.bd" target="_blank">Mediquipment House</a> <span class="tag tag-surgical">外科器械</span> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和供应（自1995年起）</div>
+        <div class="info">
+          <div><span class="label">地址：</span>26, Aziz Co-operative Super Market (2nd Floor), Shahabag, Dhaka-1000, Bangladesh</div>
+          <div><span class="label">电话：</span>+880-2-9669763, 9669765, 01711-542445</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">成立于1995年，长期从事医疗设备进口和供应。位于Shahabag（靠近BMA Bhaban医疗商圈）</div>
+        <div class="source">数据来源：goldenbusinessbd.com + mediquipment.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">7. Meditrade Bangladesh (Pvt) Ltd <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>House # 307, Road # 21, New DOHS, Mohakhali, Dhaka-1206, Bangladesh</div>
+          <div><span class="label">电话：</span>+880-2-9887081, 9886058</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">位于DOHS Mohakhali医疗企业密集区。公司名含'Meditrade'暗示医疗设备贸易</div>
+        <div class="source">数据来源：goldenbusinessbd.com + bdtradeinfo.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">8. <a href="https://sanforcebd.com" target="_blank">Sanforce BD</a> <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">医疗设备, 医疗设备配件, 医院和诊所设备, 病理实验室设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">2020年成立，为医院、诊所和病理实验室提供医疗设备销售和服务</div>
+        <div class="source">数据来源：Google搜索 + sanforcebd.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">9. <a href="https://ispondon.com" target="_blank">Ispondon</a> <span class="tag tag-surgical">外科器械</span> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">Medical Devices &amp; Equipment（医疗设备和器械）</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">孟加拉医疗设备分销公司，专业进口和供应先进医疗设备和器械给医院、诊所。网站有浏览器验证，无法完全抓取</div>
+        <div class="source">数据来源：Google搜索 + ispondon.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">10. Projukti Service Limited <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">医疗设备和器械营销(Marketing), 维护服务(Maintenance)</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">长期从事医疗设备和器械营销，同时提供维护服务。来自listofcompaniesin.com目录</div>
+        <div class="source">数据来源：listofcompaniesin.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">11. <a href="https://classic-bd.com" target="_blank">Classic Medical Supply</a> <span class="tag tag-surgical">外科器械</span> <span class="tag tag-ot">OT设备</span></div>
+        <div class="products">OT设备(Operating Theatre), 医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">经营OT设备，网站未明确列出ESU但OT设备通常包含电刀。建议联系确认</div>
+        <div class="source">数据来源：Google搜索 + classic-bd.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">12. <a href="https://www.hm-bd.com" target="_blank">H.M. Group</a> <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">牙科设备, X-Ray机, ECG, 医用气体管道设备(MGPS), 医用空气压缩机, 麻醉气体净化系统, O2 &amp; N2发生器, 麻醉机</div>
+        <div class="info">
+          <div><span class="label">地址：</span>83/B Shiddeshwary Circular Road, Mouchak Tower, Suite-607, Malibag Turn, Dhaka-1217, Bangladesh</div>
+          <div><span class="label">电话：</span>+880-2-9339100, 9342104, 01929-911722</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">涉及医院基础设施建设项目（医用气体管道、空压机），同时代理牙科和麻醉设备。麻醉机与电刀同属OT核心设备</div>
+        <div class="source">数据来源：goldenbusinessbd.com + hm-bd.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">13. Endolap Service Limited <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">腹腔镜(Laparoscopy), 内窥镜(Endoscopy), 手术设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">专业腹腔镜和内窥镜手术设备公司。腹腔镜手术中电刀是必备设备，高度相关</div>
+        <div class="source">数据来源：businesssolution.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">14. HTI Surgical <span class="tag tag-surgical">外科器械</span> <span class="tag tag-ot">OT设备</span></div>
+        <div class="products">OT项目, 显微手术(Microsurgery), 神经外科设备(Neuro Surgery)</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">专业OT项目和显微手术设备。神经外科手术中电刀是核心设备，高度相关</div>
+        <div class="source">数据来源：businesssolution.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">15. Monir Neuro Spine Surgical Mart <span class="tag tag-surgical">外科器械</span></div>
+        <div class="products">神经外科(Neuro), 脊柱外科(Spine), 外科用品(Surgical)</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">公司名明确含'Neuro Spine Surgical'，专业神经脊柱外科设备商。神经外科手术中电刀是核心设备</div>
+        <div class="source">数据来源：businesssolution.com.bd</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier tier-3">
+    <div class="tier-header">
+      <span class="tier-badge">第三梯队</span>
+      <h2>综合医疗器械经销商</h2>
+      <div class="tier-desc">25家 — 综合医疗设备进口商/供应商，有详细联系信息，可能覆盖外科/电外科设备</div>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">1. <a href="https://monemenltd.com" target="_blank">Moon-E-Meen Ltd.</a> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备, ECG, Ultrasonogram, 患者监护仪, 医院床, 医疗成像设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>17/2, Top Khana Road (3rd Floor), East Side of BMA Bhaban, Dhaka-1000</div>
+          <div><span class="label">电话：</span>+88-02-47113003, +8801552-303995</div>
+          <div><span class="label">邮箱：</span>info@monemenltd.com, monemen@dhaka.net</div>
+        </div>
+        <div class="notes">2001年成立，医疗设备进口商，供应政府和私立医疗机构。BMA Bazar入驻商家</div>
+        <div class="source">数据来源：monemenltd.com + bmabazar.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">2. <a href="https://angelcorbd.fm.alibaba.com" target="_blank">Angel Corporation</a> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备, 手术器械, 医疗检测设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>21, Armenian Street, Mona Complex, Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>+880 1819-403432</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">1993年成立，专业医疗、外科和保健产品。Alibaba国际站店铺运营13年以上</div>
+        <div class="source">数据来源：listofcompaniesin.com + alibaba.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">3. <a href="https://ssint.com.bd" target="_blank">S.S. International</a> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备, 电气产品, 电子产品</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Darus Salam Academy (8th Floor), 14 Purana Paltan, Dhaka-1205</div>
+          <div><span class="label">电话：</span>+88-01852-278190, 01852-278191</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">专业医疗、电气和电子产品供应商。与SS Trade International(Banani)是不同公司</div>
+        <div class="source">数据来源：bdtradeinfo.com + ssint.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">4. Zain International Ltd. <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Rahman Complex (2nd Floor), Road # 1, Plot # 13, Senpara Parbata, Mirpur-10, Dhaka-1216</div>
+          <div><span class="label">电话：</span>02-9026132, 01847-027755</div>
+          <div><span class="label">邮箱：</span>zainmedical@gmail.com</div>
+        </div>
+        <div class="notes">医疗设备进口商和批发商。Volza海关数据库有进口记录</div>
+        <div class="source">数据来源：marketbangladesh.com + volza.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">5. <a href="https://bdh-ltd.org" target="_blank">BD Healthcare Ltd. (BDH Ltd.)</a> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备, 药品供应, 理疗设备, 保健产品</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Plot-23 (9th Floor), Main Road-3, Block-A, Sec-11, Mirpur, Dhaka</div>
+          <div><span class="label">电话：</span>+880 1857 113331</div>
+          <div><span class="label">邮箱：</span>bdhc.ltd@gmail.com</div>
+        </div>
+        <div class="notes">FDA认证产品质量保证，覆盖孟加拉全国</div>
+        <div class="source">数据来源：bdh-ltd.org</div>
+      </div>
+      <div class="company-card">
+        <div class="name">6. Mix Medical <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>9/A, Motaleb Tower, 8/2 Parinagh, Hatirpool, Dhaka-1000</div>
+          <div><span class="label">电话：</span>02-8621230, 8629926</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">医疗设备进口商和批发商，Hatirpool区域</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">7. Sasco Trading Ltd. <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>14, Purana Paltan, 7th Floor, Dar-us Salam Academy, Dhaka-1000</div>
+          <div><span class="label">电话：</span>02-9555167, 7176215</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Purana Paltan医疗商圈的医疗设备进口商</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">8. Ema International <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Noorjahan Sharif Plaza, 34 Purana Paltan (2nd Floor), Dhaka-1000</div>
+          <div><span class="label">电话：</span>02-9573891</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Purana Paltan医疗商圈，与GMESCO同楼</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">9. Nahar Enterprise <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>131 (1st Floor), Paka Mosjid Market Complex, Khilgaon Taltala, Dhaka-1219</div>
+          <div><span class="label">电话：</span>02-55121945</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Khilgaon区域医疗设备进口商</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">10. Omnivision Traders <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Tropicana Tower (10th Floor), Suit # 10/D, Paltan, Dhaka-1000</div>
+          <div><span class="label">电话：</span>01789-420998</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Paltan区域医疗设备进口商</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">11. ZK Technology <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备进口和批发</div>
+        <div class="info">
+          <div><span class="label">地址：</span>24/7 Pallabi, Mirpur, Dhaka-1216</div>
+          <div><span class="label">电话：</span>02-9007710</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Mirpur区域医疗设备公司</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">12. Nidus Corporation (Pvt.) Ltd. <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>House # 261/1 (1st Floor), Road # 10/A (New), 19 (Old), West Dhanmondi, Dhaka-1209</div>
+          <div><span class="label">电话：</span>01817-144596</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Dhanmondi区域医疗设备公司</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">13. Alburuz Trading International <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Concept Tower, 68-69 Green Road, Dhaka-1205</div>
+          <div><span class="label">电话：</span>01911729778</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Green Road医疗设备商圈的贸易公司</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">14. Bangladesh Scientific Instrument Company <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备, 科学仪器</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Rahmania International Complex, 28/1/C Toyenbee Circular Road, Motijheel, Dhaka-1000</div>
+          <div><span class="label">电话：</span>02-9554138, 9553274</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">Motijheel商业区，医疗设备和科学仪器零售商</div>
+        <div class="source">数据来源：marketbangladesh.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">15. Alma Lasers Bangladesh <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗激光设备, 美容医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>House: 100, (Level-5B), Block: F, Road: 08, Banani, Dhaka-1213</div>
+          <div><span class="label">电话：</span>+8801722302204</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">2016年成立，代理Alma Lasers品牌医疗激光设备。Banani商务区</div>
+        <div class="source">数据来源：bangladeshyp.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">16. Labtex Bangladesh <span class="tag tag-importer">进口商</span></div>
+        <div class="products">实验室设备, 医疗器械</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Office No. 124, Eastern Kamalapur Complex (1st Floor), 64-68, North Kamalapur, Dhaka</div>
+          <div><span class="label">电话：</span>01991377303</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">2019年成立，实验室和医疗设备公司</div>
+        <div class="source">数据来源：bangladeshyp.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">17. <a href="https://medicalshop.com.bd" target="_blank">Medical Shop BD</a> <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗和外科设备, 氧气瓶, 医院设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh（全孟加拉配送）</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">2017年成立，在线医疗设备平台，服务医院、诊所和家庭用户</div>
+        <div class="source">数据来源：medicalshop.com.bd + Google搜索</div>
+      </div>
+      <div class="company-card">
+        <div class="name">18. ELECTRO-MEDICS <span class="tag tag-importer">进口商</span></div>
+        <div class="products">X-ray, ECG, Ultrasonogram, 临床及医院设备进口和供应（含维修中心）</div>
+        <div class="info">
+          <div><span class="label">地址：</span>152/2 Green Road (Ground floor), Behind of Pathapath Firoj Tower, Dhaka-1205</div>
+          <div><span class="label">电话：</span>+880-2-9130231, 8130709, 01711-522516</div>
+          <div><span class="label">邮箱：</span>emedics05@yahoo.com</div>
+        </div>
+        <div class="notes">电疗设备进口商和供应商，公司名'ELECTRO'暗示电外科相关。同时提供维修服务</div>
+        <div class="source">数据来源：goldenbusinessbd.com + addressbazar.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">19. Meditech (BMA Bhaban) <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>BMA Bhaban, 15/2 Topkhana Road, Dhaka-1000</div>
+          <div><span class="label">电话：</span>+880-2-9565415, 7160641</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">位于BMA Bhaban核心医疗设备商圈。注意：与Meditech Bangladesh(已搜索)可能为关联公司</div>
+        <div class="source">数据来源：goldenbusinessbd.com</div>
+      </div>
+      <div class="company-card">
+        <div class="name">20. MODUS INTERNATIONAL <span class="tag tag-importer">进口商</span></div>
+        <div class="products">OT设备, 手术室设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">经营OT/手术室设备，来自businesssolution.com.bd文章</div>
+        <div class="source">数据来源：businesssolution.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">21. Focus Healthcare <span class="tag tag-importer">进口商</span></div>
+        <div class="products">外科+ICU/OT设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">经营外科、ICU和OT设备。来自businesssolution.com.bd文章</div>
+        <div class="source">数据来源：businesssolution.com.bd</div>
+      </div>
+      <div class="company-card">
+        <div class="name">22. Alive Healthcare <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">来自10times展会目录</div>
+        <div class="source">数据来源：10times展会目录</div>
+      </div>
+      <div class="company-card">
+        <div class="name">23. SR Shop Dental &amp; Surgical <span class="tag tag-importer">进口商</span></div>
+        <div class="products">牙科设备, 外科设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">公司名含'Dental &amp; Surgical'，经营外科设备。来自ensun.io</div>
+        <div class="source">数据来源：ensun.io</div>
+      </div>
+      <div class="company-card">
+        <div class="name">24. Care Zone Ltd <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">来自Google搜索</div>
+        <div class="source">数据来源：Google搜索</div>
+      </div>
+      <div class="company-card">
+        <div class="name">25. Shahid International Traders <span class="tag tag-importer">进口商</span></div>
+        <div class="products">医疗设备</div>
+        <div class="info">
+          <div><span class="label">地址：</span>Dhaka, Bangladesh</div>
+          <div><span class="label">电话：</span>待确认</div>
+          <div><span class="label">邮箱：</span>待确认</div>
+        </div>
+        <div class="notes">来自bangladeshyp.com</div>
+        <div class="source">数据来源：bangladeshyp.com</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier tier-4">
+    <div class="tier-header">
+      <span class="tier-badge">第四梯队</span>
+      <h2>其他医疗/贸易公司</h2>
+      <div class="tier-desc">10家 — 来自展会目录/黄页，信息有限，需进一步核实</div>
+    </div>
+    <div class="company-list">
+      <div class="grid-2">
+        <div class="mini-card">
+          <div class="mname">1. Makhraj International</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">来自10times展会目录</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">2. Diacare Solutions</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">来自10times展会目录，名称含'Diacare'</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">3. Techno Medical System</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">来自10times展会目录</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">4. Transcom Distribution Company</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">来自10times展会目录。Transcom是孟加拉大型集团</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">5. AIZ &amp; CO</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">来自10times展会目录</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">6. BMEISA Member Companies (其他)</div>
+          <div class="minfo">BMA Bhaban, Topkhana Road, Dhaka</div>
+          <div class="minfo">BMEISA(孟加拉医疗设备进口商和供应商协会)成员中可能还有未搜索到的公司</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">7. Medical Equipment Bangladesh (Winux Enterprise)</div>
+          <div class="minfo">House # 16, Road # 36, Gulshan-2, Dhaka-1212</div>
+          <div class="minfo">产品分销至64个县，在达卡、吉大港、锡尔赫特、诺阿卡利、博古拉有办事处</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">8. Biotech Services</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">来自LinkedIn文章，医疗和实验室设备供应商</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">9. Medical Shop BD (medicalshop.com.bd)</div>
+          <div class="minfo">Dhaka, Bangladesh</div>
+          <div class="minfo">2017年成立，在线医疗设备平台（注意：与Medicalstore bd不同）</div>
+        </div>
+        <div class="mini-card">
+          <div class="mname">10. SS International Bangladesh (Banani)</div>
+          <div class="minfo">House: 100, (Level-5B), Block: F, Road: 08, Banani, Dhaka-1213</div>
+          <div class="minfo">与Alma Lasers Bangladesh同地址，可能为关联公司</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier tier-5">
+    <div class="tier-header">
+      <span class="tier-badge">第五梯队</span>
+      <h2>政府招标线索 — Diathermy/ESU采购</h2>
+      <div class="tier-desc">6条 — 2025-2026财年政府机构电刀/电外科设备采购招标，可追踪中标供应商</div>
+    </div>
+    <div class="company-list">
+      <div class="company-card">
+        <div class="name">1. DGHS — Diathermy Machine采购 FY 2025-2026 <span class="tag tag-tender">招标</span></div>
+        <div class="products">Diathermy Machine</div>
+        <div class="notes">招标编号: Tender Notice No. 1262795。发布机构: DGHS (卫生总局)。可通过中标公告追踪中标供应商</div>
+      </div>
+      <div class="company-card">
+        <div class="name">2. DGHS — Electro-Surgical Unit (Diathermy)采购 FY 2025-26 <span class="tag tag-tender">招标</span></div>
+        <div class="products">Electro-Surgical Unit (Diathermy Machine)</div>
+        <div class="notes">招标编号: Tender Notice No. 1264337。发布机构: DGHS。明确采购电外科工作站</div>
+      </div>
+      <div class="company-card">
+        <div class="name">3. National Institute of ENT — Diathermy采购 <span class="tag tag-tender">招标</span></div>
+        <div class="products">Electro-Surgical Unit (Diathermy Machine)</div>
+        <div class="notes">招标编号: NIENT/TENDER/HE/2025-2026/05。发布机构: Ministry of Health and Family Welfare, DGHS</div>
+      </div>
+      <div class="company-card">
+        <div class="name">4. BMRC — Electro-Surgical Unit采购 <span class="tag tag-tender">招标</span></div>
+        <div class="products">Electro-Surgical Unit (Diathermy Machine)</div>
+        <div class="notes">招标编号: Tender Notice No. 1304536。发布机构: Bangladesh Medical Research Council</div>
+      </div>
+      <div class="company-card">
+        <div class="name">5. SIBL Foundation Hospital — Diathermy采购 <span class="tag tag-tender">招标</span></div>
+        <div class="products">Electro-Surgical Unit</div>
+        <div class="notes">招标编号: SIBLFH/Admin/39/Proc/Diatherm/2025/257。日期: 2025年10月22日。采购1台ESU。私立医院自行采购</div>
+      </div>
+      <div class="company-card">
+        <div class="name">6. National Electro-Medical Equipment Workshop — 80台ESU维修 <span class="tag tag-tender">招标</span></div>
+        <div class="products">ESU/Electrocautery/Surgical Diathermy维修</div>
+        <div class="notes">卫生部下属机构招标维修80台ESU。涉及品牌: HV, EB, Encore, Zerone, Daiwha, Enertech, Shalya, Alan, Remed, Healforce。可了解市场主流ESU品牌</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>📌 搜索说明：</strong>
+    <ul style="margin-left:20px; margin-top:8px;">
+      <li>本次搜索排除Excel表55家现有客户 + 211家骨外科搜索客户 + 168家前期搜索客户（共约434家）</li>
+      <li>第一梯队7家公司为<strong>确认经营Diathermy/ESU电刀</strong>的经销商，通过网站产品页、B2B平台listing等渠道验证</li>
+      <li>第二梯队为明确经营外科器械/手术室设备的公司，高度可能经营电刀但需进一步确认</li>
+      <li>孟加拉ESU市场主流品牌：Zerone（韩国，被多家代理）、Topcare（国产）、Healforce、Enertech、ESS-TUR、Daiwha、Shalya</li>
+      <li>Topkhana Road / BMA Bhaban 仍是达卡最大医疗设备商圈，Pulse Technologies、Meditech、Moon-E-Meen等多家公司集中于此</li>
+      <li>政府招标线索可通过中标公告追踪中标供应商，作为潜在客户开发渠道</li>
+      <li>部分公司信息有限（待确认），建议通过电话或实地走访核实</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    生成时间：2026年7月9日 | 搜索渠道：Google + B2B平台 + 黄页目录 + 海关数据 + 招标平台 + LinkedIn + 展会<br>
+    排除客户总数：约434家 | 新发现经销商：57家 | 招标线索：6条
+  </div>
+</div>
+
+</body>
+</html>
