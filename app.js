@@ -333,50 +333,64 @@ window.addEventListener("unhandledrejection", function(e){
     // 支持多区域同时浮雕：_hoverRegion(瞬时悬停) + _embossRegions(选中持久，可多区域、可多点追踪累积)
     function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
     function wallColor(t){ const r = lerp(8,14,t), g = lerp(47,116,t), b = lerp(73,178,t); return `rgb(${r},${g},${b})`; }
-    // 绘制单个区域的浮雕三层（地面柔影 + 侧壁厚度 + 黄边高光顶面）
-    function embossOne(f, c, k){
-      const d = _path(f); if (!d) return;
-      const H = 9 / k;            // 浮雕高度恒定 ~9px 屏幕（随缩放反比）
-      const LAYERS = 10;
-      const sBase = 1.03, sTop = 1.04;
-      _gEmboss.append('path').attr('class','emboss-shadow').attr('d', d)
-        .attr('transform', `translate(${c[0]},${c[1]}) scale(${sBase}) translate(${-c[0]},${-c[1]})`);
-      for (let i = 0; i <= LAYERS; i++){
-        const t = i / LAYERS, y = -H * t;
-        _gEmboss.append('path').attr('class','emboss-side').attr('d', d)
-          .attr('transform', `translate(${c[0]},${c[1]+y}) scale(${sBase}) translate(${-c[0]},${-c[1]})`)
-          .style('fill', wallColor(t)).style('stroke','none');
-      }
-      _gEmboss.append('path').attr('class','emboss-top').attr('d', d)
-        .attr('transform', `translate(${c[0]},${c[1]-H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
-    }
-    // 统一渲染：所有需浮雕的区域（悬停 + 选中）一次性绘制；客户点落在任一浮雕多边形内即随该区域一起抬升
+    // 统一渲染所有需浮雕的区域（悬停 + 选中）。
+    // 关键：三个相位「跨全部区域」一次性绘制 —— 先所有地面柔影、再所有侧壁、最后所有顶面 ——
+    // 保证多区域选中时所有顶面处于同一高度平面、互不遮挡，绝不出现「一层叠一层」。
     function renderEmboss(){
       if (!_gEmboss || !_path) return;
       _gEmboss.selectAll('*').remove();
       const k = (_curK && _curK > 0) ? _curK : 1;
+      const H = 9 / k;            // 所有区域统一高度（屏幕 ~9px，随缩放反比）
+      const LAYERS = 10;
+      const sBase = 1.03, sTop = 1.04;
       const regions = [];
       if (_hoverRegion){
         const dup = [..._embossRegions.values()].some(r => r.type === _hoverRegion.type && r.name === _hoverRegion.name);
         if (!dup) regions.push(_hoverRegion);
       }
       _embossRegions.forEach(r => regions.push(r));
-      const lifts = [];
+      // 无区域：客点落回平面
+      if (!regions.length){
+        _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
+        if (_curT) updateMarkers(_curT);
+        return;
+      }
+      // 预计算每区域的路径与质心（feature 保留用于客户点 d3.geoContains 判定）
+      const items = [];
       regions.forEach(rg => {
+        const d = _path(rg.feature); if (!d) return;
         const c = _path.centroid(rg.feature);
-        embossOne(rg.feature, c, k);
-        lifts.push({ feature: rg.feature, c, H: 9 / k, sTop: 1.04 });
+        items.push({ feature: rg.feature, d, c });
       });
-      // 客户点：落在任一浮雕多边形内的点，其 content 坐标按与 emboss-top 完全相同的变换抬升，
+      // 相位1：所有区域的地面柔影（统一落在平面，互不叠压）
+      items.forEach(it => {
+        _gEmboss.append('path').attr('class','emboss-shadow').attr('d', it.d)
+          .attr('transform', `translate(${it.c[0]},${it.c[1]}) scale(${sBase}) translate(${-it.c[0]},${-it.c[1]})`);
+      });
+      // 相位2：所有区域的侧壁厚度（从平面逐层抬升到统一高度 H）
+      for (let i = 0; i <= LAYERS; i++){
+        const t = i / LAYERS, y = -H * t;
+        items.forEach(it => {
+          _gEmboss.append('path').attr('class','emboss-side').attr('d', it.d)
+            .attr('transform', `translate(${it.c[0]},${it.c[1]+y}) scale(${sBase}) translate(${-it.c[0]},${-it.c[1]})`)
+            .style('fill', wallColor(t)).style('stroke','none');
+        });
+      }
+      // 相位3：所有区域的顶面（黄边高光，最后绘制 → 全部共面、不被其它区域阴影遮挡）
+      items.forEach(it => {
+        _gEmboss.append('path').attr('class','emboss-top').attr('d', it.d)
+          .attr('transform', `translate(${it.c[0]},${it.c[1]-H}) scale(${sTop}) translate(${-it.c[0]},${-it.c[1]})`);
+      });
+      // 客户点：落在任一浮雕多边形内的点，按与 emboss-top 完全相同的变换抬升（统一高度 H、绕质心放大 sTop），
       // 由 updateMarkers 套用当前 zoom 落屏 → 精准贴合浮雕顶面、随区域一起 3D 探出
       _custEls.forEach(m => {
         const rec = m.rec;
         m.lifted = false; m.liftedBase = null;
         if (rec && rec.lng != null && rec.lat != null){
-          for (const L of lifts){
-            if (d3.geoContains(L.feature, [+rec.lng, +rec.lat])){
+          for (const it of items){
+            if (d3.geoContains(it.feature, [+rec.lng, +rec.lat])){
               m.lifted = true;
-              m.liftedBase = [ L.c[0] + L.sTop*(m.base[0]-L.c[0]), (L.c[1]-L.H) + L.sTop*(m.base[1]-L.c[1]) ];
+              m.liftedBase = [ it.c[0] + sTop*(m.base[0]-it.c[0]), (it.c[1]-H) + sTop*(m.base[1]-it.c[1]) ];
               break;
             }
           }
