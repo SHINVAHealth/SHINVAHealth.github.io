@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer-core');
     headless: false, args: ['--no-sandbox']
   });
   const page = await browser.newPage();
-  const BASE = 'https://a61085674b0a4c5e82ea5116f8aea9d1.app.codebuddy.work';
+  const BASE = 'https://SHINVAHealth.github.io/';
   let pass = true;
 
   // ========== 世界地图 ==========

@@ -83,14 +83,18 @@
     color:#fff; font-size:20px; font-weight:700; white-space:nowrap;
     font-variant-numeric:tabular-nums; letter-spacing:.5px;
   }
-  .layout{ display:flex; gap:16px; padding:16px; align-items:stretch; }
+  .layout{ display:flex; gap:16px; padding:16px; align-items:flex-start; }
   .infobar{ width:300px; flex:none; display:flex; flex-direction:column; gap:14px; }
-  .custbar{ width:372px; flex:none; }
+  .custbar{ width:372px; flex:none; align-self:flex-start; }
+  /* 国家地图窗口：固定像素高度，绝不随右侧客户检索栏伸长而变动（两者各自独立，底部不再对齐联动） */
   .mapwrap{
-    flex:1; position:relative; min-height:480px; border-radius:18px; overflow:hidden;
+    flex:1; position:relative; height:calc(100vh - 140px); min-height:480px; max-height:calc(100vh - 140px); border-radius:18px; overflow:hidden;
     background:radial-gradient(120% 120% at 50% 28%, #0e1a2e 0%, #0a1322 60%, #070d18 100%);
     border:1px solid var(--line);
   }
+  /* 右侧客户检索栏：自身内部滚动，高度受限，不撑高整页、不影响地图窗口 */
+  .custbar .card{ max-height:calc(100vh - 140px); display:flex; flex-direction:column; }
+  .custbar .cust-table-wrap{ flex:1 1 auto; }
   #map{ position:absolute; inset:0; }
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
@@ -197,7 +201,7 @@
   @media (max-width:980px){
     .layout{ flex-direction:column; }
     .infobar,.custbar{ width:auto; }
-    .mapwrap{ min-height:400px; }
+    .mapwrap{ height:70vh; min-height:360px; max-height:70vh; }
   }
 </style>
 </head>

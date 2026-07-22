@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer-core');
-const BASE = process.argv[2] || 'https://d413d9e806b44831b302566204ddda40.app.codebuddy.work';
+const BASE = process.argv[2] || 'https://SHINVAHealth.github.io/';
 
 (async () => {
   const browser = await puppeteer.launch({

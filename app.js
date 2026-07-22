@@ -530,10 +530,22 @@ window.addEventListener("unhandledrejection", function(e){
       tip.style.left = x + 'px'; tip.style.top = y + 'px';
     }
     function hideTip(){ $('mapTip').style.display = 'none'; }
+    // 仅在地图窗口的像素尺寸【真正变化】时才重绘（避免右侧检索栏内容增减引起的整页高度波动误触发重绘，
+    // 导致国家地图看似“随检索栏伸长而变动”）。尺寸锁定为视口固定高度，与右侧栏彻底解耦。
+    let _lastW = 0, _lastH = 0;
+    function _mapSizeChanged(){
+      const m = $('map'); if (!m) return false;
+      const w = m.clientWidth, h = m.clientHeight;
+      if (w !== _lastW || h !== _lastH){ _lastW = w; _lastH = h; return true; }
+      return false;
+    }
     let _rt; window.addEventListener('resize', () => { clearTimeout(_rt); _rt = setTimeout(() => {
+      if (!_mapSizeChanged()) return;   // 尺寸没变 → 不重绘（核心修复）
       if (_svg) _svg.remove();
       if (_topo){ renderProvinces(''); if (showAdm2 && _topo2) renderAdm2(); }
     }, 200); });
+    // 初次渲染后记录基准尺寸
+    setTimeout(() => { const m = $('map'); if (m){ _lastW = m.clientWidth; _lastH = m.clientHeight; } }, 0);
 
     // —— 5. 客户检索（customers.json）——
     function loadCustomers(){

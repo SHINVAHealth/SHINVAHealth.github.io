@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer-core');
 const path = require('path');
 
-const BASE = process.argv[2] || 'https://d413d9e806b44831b302566204ddda40.app.codebuddy.work';
+const BASE = process.argv[2] || 'https://SHINVAHealth.github.io/';
 const PAGE = process.argv[3] || 'worldmap.html';
 const OUT = 'c:/Users/Administrator/WorkBuddy/2026-07-14-09-19-47/webapp/assets/cursors/src';
 
