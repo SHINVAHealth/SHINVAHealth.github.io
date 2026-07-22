@@ -173,8 +173,10 @@
   .inset-shape:hover{ fill:rgba(56,189,248,.48); }
   .inset-label{ fill:#cfe3f5; font-size:8px; text-anchor:middle; font-weight:600; pointer-events:none; }
   /* 二级行政区域(ADM2)虚线：下层弱化纹理，dasharray + 更淡更细避免与省界重叠混乱 */
+  /* ADM2 fill 用 rgba(0,0,0,0) 而非 none：painted but invisible → fill area 在所有浏览器中可靠拦截指针事件，
+     杜绝点击 ADM2 透明内部时穿透到底层 ADM1 prov-fill 选中一级行政区域（根因：fill:none 的 fill area 不拦截事件） */
   .adm2{
-    fill:none; stroke:#67e8f9; stroke-width:.5; stroke-dasharray:3 2.6; opacity:.72;
+    fill:rgba(0,0,0,0); stroke:#67e8f9; stroke-width:.5; stroke-dasharray:3 2.6; opacity:.72;
     pointer-events:all; cursor:crosshair; transition:stroke .15s, stroke-width .15s, stroke-dasharray .15s, opacity .15s;
   }
   .adm2:hover{ stroke:#fbb923; stroke-width:1.1; stroke-dasharray:none; opacity:1; }
@@ -331,6 +333,6 @@
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
   <script src="country_meta.js"></script>
-  <script src="app.js?v=202607221336"></script>
+  <script src="app.js?v=202607221534"></script>
 </body>
 </html>

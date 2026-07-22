@@ -332,7 +332,8 @@ window.addEventListener("unhandledrejection", function(e){
       };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
       $('backSys').onclick = () => { window.location.href = 'index.html'; };
-      if (showAdm2 && _topo2) renderAdm2();
+      // ADM2 默认开启时，初次渲染也禁用 ADM1 prov-fill 交互（与 adm2toggle 一致）
+      if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); }
       if (insular.length) renderInsularInset(insular);
       if (window.__custList) drawCustomerPointsOnMap(window.__custList);  // 省份重绘后重挂客户点
     }
@@ -663,6 +664,8 @@ window.addEventListener("unhandledrejection", function(e){
       this.textContent = showAdm2 ? '隐藏二级行政区域' : '显示二级行政区域';
       if (!_gAdm2) return;
       if (showAdm2){
+        // ADM2 开启时：禁用 ADM1 prov-fill 的指针事件，杜绝 ADM2 透明内部点击穿透到 ADM1 选中一级行政区域
+        _provFill.forEach(n => n.style.pointerEvents = 'none');
         if (_topo2){ renderAdm2(); }
         else {
           setStatus('loading');
@@ -671,10 +674,13 @@ window.addEventListener("unhandledrejection", function(e){
           else {
             setStatus('暂无');
             showAdm2 = false; this.classList.remove('active'); this.textContent = '显示二级行政区域';
+            _provFill.forEach(n => n.style.pointerEvents = '');   // ADM2 失败 → 恢复 ADM1 交互
           }
         }
       } else {
         _gAdm2.selectAll('*').remove();   // 仅隐藏二级行政区域图层，地图说明保持不变
+        // ADM2 关闭时：恢复 ADM1 prov-fill 的指针事件
+        _provFill.forEach(n => n.style.pointerEvents = '');
       }
     };
     function showTip(e, name){
@@ -698,7 +704,7 @@ window.addEventListener("unhandledrejection", function(e){
     let _rt; window.addEventListener('resize', () => { clearTimeout(_rt); _rt = setTimeout(() => {
       if (!_mapSizeChanged()) return;   // 尺寸没变 → 不重绘（核心修复）
       if (_svg) _svg.remove();
-      if (_topo){ renderProvinces(''); if (showAdm2 && _topo2) renderAdm2(); }
+      if (_topo){ renderProvinces(''); if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); } }
     }, 200); });
     // 初次渲染后记录基准尺寸
     setTimeout(() => { const m = $('map'); if (m){ _lastW = m.clientWidth; _lastH = m.clientHeight; } }, 0);
@@ -918,7 +924,7 @@ window.addEventListener("unhandledrejection", function(e){
     (function wd(){
       const m = document.getElementById('map');
       if (m && (!_svg || !_svg.node().isConnected) && _topo){
-        try { renderProvinces(''); if (showAdm2 && _topo2) renderAdm2(); } catch(e){}
+        try { renderProvinces(''); if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); } } catch(e){}
         if (window.__custList) drawCustomerPointsOnMap(window.__custList);
       }
       setTimeout(wd, 1500);
