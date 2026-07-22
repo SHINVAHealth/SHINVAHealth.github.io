@@ -255,8 +255,6 @@ window.addEventListener("error", function(e){
   const oceanSphere = svg.append('path').attr('class','sphere-ocean');   // 海洋底（内容之下）
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
-  const gGrid = svg.append('g').attr('class','graticule').attr('clip-path','url(#globeClip)'); // 参考线：固定层 + 裁切在地球内
-  const gLabels = svg.append('g').attr('class','grid-labels');        // 经纬度小字标注（固定层，地球框外）
   const frameSphere = svg.append('path').attr('class','sphere-frame'); // 边界描边（内容之上，固定）
 
   // 内容层：3 份平铺世界，用于水平无缝循环滚动（拖到边缘自动衔接）
@@ -272,6 +270,9 @@ window.addEventListener("error", function(e){
       .on('mouseleave', onLeave)
       .on('click', onClick);
   });
+  // 经纬度参考线 + 小字标注：挂在 gZoom 内、tiles 之上，随拖拽/缩放一起平移缩放
+  const gGrid = gZoom.append('g').attr('class','graticule');
+  const gLabels = gZoom.append('g').attr('class','grid-labels');
   const allPaths = gZoom.selectAll('path.country');
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
@@ -283,17 +284,20 @@ window.addEventListener("error", function(e){
   const path = d3.geoPath(projection);
 
   let TILE = 0;  // 一份世界的宽度（base 坐标），用于水平循环取模
+  // 地球（fitExtent）四周留白，用于给经纬度标注让出空间；drawGraticule 同步使用
+  const GM = { t: 44, r: 22, b: 22, l: 22 };
   // 尼日利亚客户绿色分布点（来自 customers.json，按经纬度落点）
   let NG_PTS = [];
   function resize(){
     const w = width(), h = height();
     svg.attr('viewBox', `0 0 ${w} ${h}`);
-    projection.fitExtent([[8,8],[w-8,h-8]], {type:'Sphere'});
+    // 地球轻微缩小：上/左/下/右各留白，给经纬度标注让出空间（上方让更多，避开侧边面板/顶栏）
+    projection.fitExtent([[GM.l, GM.t],[w - GM.r, h - GM.b]], {type:'Sphere'});
     const dSphere = path({type:'Sphere'});
     oceanSphere.attr('d', dSphere);
     frameSphere.attr('d', dSphere);
     clipSphere.attr('d', dSphere);
-    TILE = w - 16;                       // 平铺周期 = 世界内容宽（含两侧 8px 留白）
+    TILE = (w - GM.l - GM.r);              // 平铺周期 = 世界内容宽（含两侧留白）
     allPaths.attr('d', path);
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
     if (NG_PTS.length) drawNigeriaPoints();
@@ -306,9 +310,8 @@ window.addEventListener("error", function(e){
   // 上边缘小字标经度，左边缘小字标纬度，对齐 globeClip 裁切窗口内的参考线端点。
   function drawGraticule(){
     const w = width(), h = height();
-    // 取地球轮廓在屏幕上的包围盒（fitExtent 已含 8px 留白），标注贴着这个框上方/左侧
-    const m = { t: 8, r: 8, b: 8, l: 8 };
-    const boxL = m.l, boxR = w - m.r, boxT = m.t, boxB = h - m.b;
+    // 地球轮廓在内容坐标里的包围盒（fitExtent 留白 GM），标注贴着框上/左的留白区（gZoom 内随拖拽缩放）
+    const boxL = GM.l, boxR = w - GM.r, boxT = GM.t, boxB = h - GM.b;
 
     // 经线（meridians）：沿经线插值取点连线；NaturalEarth1 经线为曲线，按纬度采样
     const meridians = d3.range(-180, 181, 30);   // -180,-150,...,180
