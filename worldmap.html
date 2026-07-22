@@ -119,16 +119,20 @@
     fill:none; stroke:rgba(150,200,255,.32); stroke-width:1.4;
     filter:drop-shadow(0 0 7px rgba(14,165,233,.28));
   }
-  /* 经纬度参考线（地球内容层，随拖拽缩放平移）— 粗细分级 */
+  /* 经纬网（复刻专业世界地图，1:1 真实地理弧线，粗细分级，拖拽/缩放始终贯通不消失） */
   .graticule{ pointer-events:none; }
-  /* 经线：细线 */
-  .graticule .mer{ fill:none; stroke:rgba(255,255,255,.13); stroke-width:.6; }
-  /* 其余纬线：细线 */
-  .graticule .par{ fill:none; stroke:rgba(255,255,255,.16); stroke-width:.7; }
+  /* 纬线：细线（基础层） */
+  .graticule .par{ fill:none; stroke:rgba(148,197,255,.22); stroke-width:.7; }
+  /* 经线：细线（基础层） */
+  .graticule .mer{ fill:none; stroke:rgba(148,197,255,.20); stroke-width:.6; }
+  /* 赤道 / 本初子午线：最粗主轴（加亮） */
+  .graticule .par-eq{ stroke:rgba(146,197,255,.62); stroke-width:1.7; }
+  .graticule .mer-eq{ stroke:rgba(146,197,255,.55); stroke-width:1.3; }
   /* 回归线 / 极圈：中粗 */
-  .graticule .par-mid{ stroke:rgba(125,211,252,.42); stroke-width:1.1; }
-  /* 赤道：最粗主轴（加亮） */
-  .graticule .par-eq{ stroke:rgba(125,211,252,.6); stroke-width:1.8; stroke-dasharray:none; }
+  .graticule .par-mid{ stroke:rgba(125,211,252,.45); stroke-width:1.1; }
+  /* 固定层（地球轮廓外）网格略增强对比，保证贯通可见 */
+  .graticule-out .par{ stroke:rgba(170,210,255,.32); }
+  .graticule-out .mer{ stroke:rgba(170,210,255,.30); }
   /* 经纬度仪表尺（固定层，地球轮廓外、界面内侧，不被裁切遮挡；数值随拖拽实时变化） */
   .ruler{ pointer-events:none; }
   .ruler .ruler-axis{ stroke:rgba(125,211,252,.45); stroke-width:1; }
@@ -294,6 +298,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607220900"></script>
+  <script src="worldmap_app.js?v=202607220930"></script>
 </body>
 </html>

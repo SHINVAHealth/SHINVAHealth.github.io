@@ -273,8 +273,14 @@ window.addEventListener("error", function(e){
       .on('mouseleave', onLeave)
       .on('click', onClick);
   });
-  // 地球内参考线（网格）：挂在 gZoom 内、tiles 之上，随拖拽/缩放一起平移缩放
-  const gGrid = gZoom.append('g').attr('class','graticule');
+  // 经纬度网格（graticule）：1:1 复刻专业世界地图（National Geographic / Google 风格）的经纬网。
+  // 设计要点（解决"线太差 + 拖拽消失"）：
+  //  1) 用 d3.geoGraticule 生成真实地理弧线（高纬纬线为自然弯曲，非直线段），每 30° 一格，
+  //     关键纬线细化：赤道 / 南北回归线 ±23.5° / 南北极圈 ±66.5°。
+  //  2) 网格挂在【内容层 gZoom 内】，且【每个 tile 都铺一份】——拖拽时随 gZoom 平移、3 份平铺保证
+  //     水平无缝循环，经线/纬线永不"断开消失"；globeClip 正向遮罩保证线只在地球轮廓内显示（不溢到 UI）。
+  //  3) 粗细分级：赤道/本初子午线最粗、回归线/极圈中粗、其余细，复刻专业地图观感。
+  const gGrids = tiles.map(tg => tg.append('g').attr('class','graticule graticule-in'));
   const allPaths = gZoom.selectAll('path.country');
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
@@ -309,34 +315,37 @@ window.addEventListener("error", function(e){
     updateRuler();
   }
 
-  // —— 地球内参考线（随缩放拖拽，gZoom 内）——
-  // 粗细分级：经线(mer)细；纬线分三档——赤道(par-eq)最粗、回归线/极圈(par-mid)中粗、其余细。
+  // —— 经纬网（复刻专业世界地图，d3.geoGraticule 生成真实地理弧线）——
+  // 经线每 30°（含 0/±180），纬线每 30°（含赤道），关键纬线细化：±23.5°（回归线）、±66.5°（极圈）。
+  // 粗细分级（1:1 复刻主流品牌地图观感）：
+  //   赤道 / 本初子午线 最粗主轴；回归线 / 极圈 中粗；其余经线纬线 细。
+  const graticule = d3.geoGraticule()
+    .step([30, 30])
+    .extentMinor([[-180,-90],[180,90]])
+    .precision(0.5);
   function drawGraticule(){
-    const meridians = d3.range(-180, 181, 30);   // -180,-150,...,180
-    gGrid.selectAll('path.mer').remove();
-    gGrid.selectAll('path.mer').data(meridians).enter().append('path')
-      .attr('class', 'mer')
-      .attr('d', lon => {
-        const pts = d3.range(-90, 91, 3).map(lat => projection([lon, lat]));
-        return 'M' + pts.map(p => p ? (p[0].toFixed(1) + ',' + p[1].toFixed(1)) : null).filter(Boolean).join('L');
-      });
+    const gp = d3.geoPath(projection);
+    // 关键纬线集合（用于粗细分级）
+    const keyLats = { 0:'par-eq', 23.5:'par-mid', '-23.5':'par-mid', 66.5:'par-mid', '-66.5':'par-mid' };
+    const keyLons = { 0:'mer-eq' };   // 本初子午线加粗
+    // 纬线（含关键纬线细化）
+    const lats = d3.range(-60, 61, 30).concat([23.5, -23.5, 66.5, -66.5, 0]);
+    // 经线
+    const lons = d3.range(-180, 181, 30);
 
-    // 纬线分档：赤道最粗、南北回归线+南北极圈中粗、其余细（本图仅画关键纬线，均中粗以上）
-    const parallels = [
-      { lat: 0,     cls: 'par-eq'  },   // 赤道：最粗主轴
-      { lat: 23.5,  cls: 'par-mid' },   // 北回归线：中粗
-      { lat: -23.5, cls: 'par-mid' },   // 南回归线：中粗
-      { lat: 66.5,  cls: 'par-mid' },   // 北极圈：中粗
-      { lat: -66.5, cls: 'par-mid' }    // 南极圈：中粗
-    ];
-    gGrid.selectAll('path.par').remove();
-    gGrid.selectAll('path.par').data(parallels).enter().append('path')
-      .attr('class', d => 'par ' + d.cls)
-      .attr('d', d => {
-        const a = projection([0, d.lat]), b = projection([180, d.lat]);
-        if (!a || !b) return '';
-        return 'M' + a[0].toFixed(1) + ',' + a[1].toFixed(1) + 'L' + b[0].toFixed(1) + ',' + b[1].toFixed(1);
+    // 每个 tile 都铺一份网格（3 份平铺），拖拽时随 gZoom 平移、水平无缝循环，线永不消失
+    gGrids.forEach(g => {
+      g.selectAll('path.par').remove();
+      g.selectAll('path.mer').remove();
+      lats.forEach(lat => {
+        const geo = { type:'LineString', coordinates: d3.range(-180, 181, 2).map(lon => [lon, lat]) };
+        g.append('path').attr('class', 'par ' + (keyLats[String(lat)] || '')).attr('d', gp(geo));
       });
+      lons.forEach(lon => {
+        const geo = { type:'LineString', coordinates: d3.range(-85, 86, 2).map(lat => [lon, lat]) };
+        g.append('path').attr('class', 'mer ' + (keyLons[String(lon)] || '')).attr('d', gp(geo));
+      });
+    });
   }
 
   // —— 经纬度仪表尺（固定层 gRuler，地球轮廓外，不被裁切遮挡）——
