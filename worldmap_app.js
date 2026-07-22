@@ -660,12 +660,20 @@ window.addEventListener("error", function(e){
         if (TILE > 0) tx = ((tx % TILE) + TILE) % TILE - TILE;   // tx ∈ [-TILE, 0)
         return d3.zoomIdentity.translate(tx, 0).scale(1);          // 禁用垂直
       }
-      // 放大状态：水平 tx 不再取模（保持 d3 内部连续累积），保证“以光标为中心缩放”
-      // 精确成立——鼠标悬停的国家在放大/缩小全程停在原位，无漂移。垂直限幅防露白。
+      // 放大状态：水平 tx 不再取模（保持 d3 内部连续累积），保证“以光标为中心缩放”精确成立、
+      // 鼠标悬停国全程停在原位无漂移。但需对水平/垂直都做限幅，否则放大后朝单一方向拖拽会
+      // 拖出 3 份平铺世界 [0, 3*TILE]（横向）或地球 sphere 范围（纵向）→ 露出无内容空白区。
+      // 横向：可见 content 区间 [-tx/k, (w-tx)/k] 必须落在 [0, 3*TILE]
+      let tx = transform.x;
+      if (tx > 0) tx = 0;                       // 不能超过左缘
+      const txMin = w - 3 * TILE * k;           // 拖到最右时右缘不超出第 3 份 tile
+      if (tx < txMin) tx = txMin;
+      // 纵向：可见 content 区间 y [-ty/k, (h-ty)/k] 必须落在地球 sphere [GM.t, h-GM.b]
       let ty = transform.y;
-      if (ty > 0) ty = 0;
-      if (ty < h - h * k) ty = h - h * k;
-      return d3.zoomIdentity.translate(transform.x, ty).scale(k);
+      if (ty > -GM.t * k) ty = -GM.t * k;       // 顶不外移
+      const tyMin = h - (h - GM.b) * k;         // 底不外移
+      if (ty < tyMin) ty = tyMin;
+      return d3.zoomIdentity.translate(tx, ty).scale(k);
     })
     .on('zoom', (event) => {
       // 直接使用 d3 的 transform（k>1 为原始连续值，k<=1 已被 constrain 取模到 [-TILE,0)）。
