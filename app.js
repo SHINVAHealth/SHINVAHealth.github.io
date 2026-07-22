@@ -147,7 +147,7 @@ window.addEventListener("unhandledrejection", function(e){
     function fmt(n){ return (n==null || isNaN(n)) ? '—' : Number(n).toLocaleString('zh-CN', {maximumFractionDigits:4}); }
 
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
-    let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, _regionFilter=null, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
+    let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
@@ -306,7 +306,7 @@ window.addEventListener("unhandledrejection", function(e){
         svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
         clearCustomerHighlight();                                       // 重置所有客户黄点 + 行选中
         _embossRegions.clear(); _hoverRegion = null; renderEmboss();    // 清空选中的行政区域 3D 浮雕
-        _regionFilter = null; reapplyRegionSel(); applyRegionFilter();  // 清空区域筛选 → 右侧客户检索行同步重置为全部
+        reapplyRegionSel(); applyRegionFilter();                        // 区域筛选随之清空 → 右侧客户检索行同步重置为全部
       };
       $('custtoggle').onclick = function(){
         _custVisible = !_custVisible;
@@ -325,6 +325,7 @@ window.addEventListener("unhandledrejection", function(e){
           if (svg && zoom) svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
           clearCustomerHighlight();
           _embossRegions.clear(); _hoverRegion = null; renderEmboss();
+          reapplyRegionSel(); applyRegionFilter();
         }
       };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
@@ -440,6 +441,8 @@ window.addEventListener("unhandledrejection", function(e){
       for (const [k, v] of [..._embossRegions]){ if (v.source === source){ _embossRegions.delete(k); removed = true; } }
       if (removed) renderEmboss();
     }
+    // 当前选中的「行政区域」集合（source==='region'），单点为一个、多点追踪为多个 —— 客户表筛选/描边/标签统一由此派生
+    function _selectedRegions(){ return [..._embossRegions.values()].filter(v => v.source === 'region'); }
     // 由当前黄色客户集合(_hlIds)重建 'customer' 来源的浮雕区域（单点至多一个、多点多个），保持与黄点同步
     function _syncCustomerEmboss(){
       for (const [k, v] of [..._embossRegions]){ if (v.source === 'customer') _embossRegions.delete(k); }
@@ -715,8 +718,10 @@ window.addEventListener("unhandledrejection", function(e){
       }).catch(() => { $('custEmpty').textContent = '客户数据加载失败'; $('custEmpty').style.display = 'block'; });
     }
     function renderCustomers(list){
-      $('custCount').textContent = `共 ${list.length} 条` + (_regionFilter ? ` · 📍 ${_regionFilter.label}` : '');
-      if (!list.length){ $('custBody').innerHTML = ''; $('custEmpty').style.display = 'block'; $('custEmpty').textContent = _regionFilter ? '该地区暂无落点客户（无地址者不计入）' : '尚未导入客户数据 — 将客户清单发我转成 customers.json 重新部署即可在此检索。'; return; }
+      const regions = _selectedRegions();
+      const tag = regions.length ? ` · 📍 ${regions.map(r => r.label || r.name).join(' / ')}` : '';
+      $('custCount').textContent = `共 ${list.length} 条` + tag;
+      if (!list.length){ $('custBody').innerHTML = ''; $('custEmpty').style.display = 'block'; $('custEmpty').textContent = regions.length ? '所选区域暂无落点客户（无地址者不计入）' : '尚未导入客户数据 — 将客户清单发我转成 customers.json 重新部署即可在此检索。'; return; }
       $('custEmpty').style.display = 'none';
       $('custBody').innerHTML = list.map(r =>
         `<tr data-id="${r.__id}"><td>${esc(r.company)}</td><td>${esc(r.phone)}</td><td>${esc(r.name)}</td><td>${esc(r.address)}</td></tr>`
@@ -794,35 +799,33 @@ window.addEventListener("unhandledrejection", function(e){
       assignRegions();
       const list = window.__custList || [];
       let flt = list;
-      if (_regionFilter){
-        if (_regionFilter.type === 'adm1') flt = list.filter(r => r.__adm1 === _regionFilter.name);
-        else flt = list.filter(r => r.__adm2 === _regionFilter.name);
+      const regions = _selectedRegions();   // 已选中的全部行政区域（单点 1 个 / 多点追踪多个）
+      if (regions.length){
+        flt = list.filter(r => regions.some(rg => (rg.type === 'adm1' ? r.__adm1 : r.__adm2) === rg.name));
       }
       const q = ($('custSearch').value || '').trim().toLowerCase();
       if (q) flt = flt.filter(r => [r.company, r.phone, r.name, r.address].some(v => (v||'').toLowerCase().includes(q)));
       renderCustomers(flt);
     }
     function setRegionFilter(type, name, label, el, feature){
-      if (_regionFilter && _regionFilter.type === type && _regionFilter.name === name){ _regionFilter = null; }   // 同区域再点 → 取消筛选
-      else { _regionFilter = { type, name, label: label || name }; }
-      // 单点模式：区域点击清掉客户黄点 + 客户联动浮雕，保持“选中即清空其它”的秩序；多点追踪则保留累积
+      // 单点模式：区域点击前清掉客户黄点 + 客户联动浮雕，保持“选中即清空其它”的秩序；多点追踪则保留累积
       if (!_multiTrack){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
-      reapplyRegionSel(el);
-      applyRegionFilter();
-      // 该区域 3D 浮雕显示（与筛选一并发起；单点替换、多点追踪累积）
+      // 该区域 3D 浮雕显示（增/删切换；单点替换、多点追踪累积）—— 客户表筛选与描边均由 _embossRegions 派生，自动同步多区域
       if (feature) _embossAddOrToggle(type, name, feature, 'region');
+      reapplyRegionSel();
+      applyRegionFilter();
     }
-    function reapplyRegionSel(forceEl){
+    function reapplyRegionSel(){
       _provFill.forEach(n => n.classList.remove('prov-sel'));
       _provLine.forEach(n => n.classList.remove('prov-sel'));
       if (_gAdm2) _gAdm2.selectAll('path.adm2').classed('adm2-sel', false);
-      if (!_regionFilter) return;
-      if (forceEl){ forceEl.classList.add(_regionFilter.type === 'adm1' ? 'prov-sel' : 'adm2-sel'); return; }
-      if (_regionFilter.type === 'adm1'){
-        _features && _features.forEach((f, i) => { if ((f.properties.shapeName || f.properties.name) === _regionFilter.name){ const nf = _provFill[i], nl = _provLine[i]; if (nf) nf.classList.add('prov-sel'); if (nl) nl.classList.add('prov-sel'); } });
-      } else if (_gAdm2){
-        _gAdm2.selectAll('path.adm2').each(function(){ const d = this.__data__; const n = d ? (d.properties.shapeName || d.properties.name) : ''; if (n === _regionFilter.name) this.classList.add('adm2-sel'); });
-      }
+      _selectedRegions().forEach(rg => {
+        if (rg.type === 'adm1'){
+          _features && _features.forEach((f, i) => { if ((f.properties.shapeName || f.properties.name) === rg.name){ const nf = _provFill[i], nl = _provLine[i]; if (nf) nf.classList.add('prov-sel'); if (nl) nl.classList.add('prov-sel'); } });
+        } else if (_gAdm2){
+          _gAdm2.selectAll('path.adm2').each(function(){ const d = this.__data__; const n = d ? (d.properties.shapeName || d.properties.name) : ''; if (n === rg.name) this.classList.add('adm2-sel'); });
+        }
+      });
     }
     function clearCustomerHighlight(){
       if (_gCust) _gCust.selectAll('g.cust-pt-g.cust-hl').classed('cust-hl', false);
