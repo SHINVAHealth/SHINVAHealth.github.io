@@ -150,6 +150,11 @@ window.addEventListener("unhandledrejection", function(e){
     let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
+  let _gEmbossDyn = null;     // 动态浮雕层（ADM2 等未缓存区域按需临时构建）
+  let _embossCache = null;    // 一级区域(ADM1)预建浮雕缓存：key='adm1:'+name -> {g, feature, c}
+  // 浮雕几何常量：固定屏幕高 ~9px（烘焙于 k=1；放大时随缩放自然增高，视觉一致）。
+  // 关键优化：ADM1 浮雕在 renderProvinces 时一次性预建并隐藏缓存，悬停时仅切 display，绝不再逐帧重建几十~上百 KB 路径串（美/墨卡顿根因）。
+  const EMBOSS_LAYERS = 10, EMBOSS_SBASE = 1.03, EMBOSS_STOP = 1.04, EMBOSS_H = 9;
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
     const CAP = facts ? {lat:facts.lat, lng:facts.lng, name:facts.capital} : null;
@@ -251,6 +256,27 @@ window.addEventListener("unhandledrejection", function(e){
       // 3D 浮雕突出层：悬停一级/二级行政区域时整块「从平面探出」，置于 g 内最上（随缩放同步），在 _gMark/_gCust 之下（客户点仍可见）
       const gEmboss = g.append('g').attr('class','emboss-layer');
       _gEmboss = gEmboss;
+      _gEmbossDyn = _gEmboss.append('g');   // 动态层：ADM2 等未缓存区域临时构建（与缓存组互不影响）
+      // 预建所有一级区域(ADM1)的 3D 浮雕并隐藏缓存：悬停/选中时只切 display，零路径串重建（根治美/墨跨州悬停卡顿）
+      _embossCache = new Map();
+      features.forEach(f => {
+        const name = (f.properties && (f.properties.shapeName || f.properties.name)) || '';
+        const c = f.__c || [0,0];
+        const d = f.__d || '';
+        if (!d || !name) return;
+        const gE = _gEmboss.append('g').attr('class','emboss-cached').style('display','none');
+        gE.append('path').attr('class','emboss-shadow').attr('d', d)
+          .attr('transform', `translate(${c[0]},${c[1]}) scale(${EMBOSS_SBASE}) translate(${-c[0]},${-c[1]})`);
+        for (let i = 0; i <= EMBOSS_LAYERS; i++){
+          const t = i / EMBOSS_LAYERS, y = -EMBOSS_H * t;
+          gE.append('path').attr('class','emboss-side').attr('d', d)
+            .attr('transform', `translate(${c[0]},${c[1]+y}) scale(${EMBOSS_SBASE}) translate(${-c[0]},${-c[1]})`)
+            .style('fill', wallColor(t)).style('stroke','none');
+        }
+        gE.append('path').attr('class','emboss-top').attr('d', d)
+          .attr('transform', `translate(${c[0]},${c[1]-EMBOSS_H}) scale(${EMBOSS_STOP}) translate(${-c[0]},${-c[1]})`);
+        _embossCache.set('adm1:' + name, { g: gE, feature: f, c });
+      });
       _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
       _gCust = svg.append('g').attr('class','cust-layer');  // 客户绿色像素点独立图层（避免被 drawMarkers 清空）
       reapplyRegionSel();
@@ -346,13 +372,14 @@ window.addEventListener("unhandledrejection", function(e){
     // 统一渲染所有需浮雕的区域（悬停 + 选中）。
     // 关键：三个相位「跨全部区域」一次性绘制 —— 先所有地面柔影、再所有侧壁、最后所有顶面 ——
     // 保证多区域选中时所有顶面处于同一高度平面、互不遮挡，绝不出现「一层叠一层」。
+    // 性能：ADM1 浮雕已预建缓存，悬停/选中时仅切 display（O(1)，零路径串重建）；ADM2 等未缓存区域才动态构建。
     function renderEmboss(){
       if (!_gEmboss || !_path) return;
-      _gEmboss.selectAll('*').remove();
-      const k = (_curK && _curK > 0) ? _curK : 1;
-      const H = 9 / k;            // 所有区域统一高度（屏幕 ~9px，随缩放反比）
-      const LAYERS = 10;
-      const sBase = 1.03, sTop = 1.04;
+      // 先隐藏全部缓存组、清空动态层（不再整层 remove，避免破坏已缓存的 ADM1 浮雕）
+      if (_embossCache) _embossCache.forEach(v => v.g.style('display','none'));
+      if (_gEmbossDyn) _gEmbossDyn.selectAll('*').remove();
+      const H = EMBOSS_H;            // 与缓存一致：固定屏幕 ~9px（放大时随缩放自然增高，视觉一致）
+      const sBase = EMBOSS_SBASE, sTop = EMBOSS_STOP;
       const regions = [];
       if (_hoverRegion){
         const dup = [..._embossRegions.values()].some(r => r.type === _hoverRegion.type && r.name === _hoverRegion.name);
@@ -365,33 +392,33 @@ window.addEventListener("unhandledrejection", function(e){
         if (_curT) updateMarkers(_curT);
         return;
       }
-      // 预计算每区域的路径与质心（优先复用 _features/_gAdm2 上已缓存的 __d/__c，避免悬停时反复重算几十~上百 KB 路径字符串）
+      // 收集需显示的浮雕区域：ADM1 用缓存组（仅切 display）；ADM2 / 未缓存区域动态构建
       const items = [];
       regions.forEach(rg => {
-        const f = rg.feature;
-        let d = f.__d; if (!d){ d = _path(f); f.__d = d; }
-        let c = f.__c; if (!c){ try { c = _path.centroid(f); } catch(e){ c = [0,0]; } f.__c = c; }
-        if (!d) return;
-        items.push({ feature: f, d, c });
-      });
-      // 相位1：所有区域的地面柔影（统一落在平面，互不叠压）
-      items.forEach(it => {
-        _gEmboss.append('path').attr('class','emboss-shadow').attr('d', it.d)
-          .attr('transform', `translate(${it.c[0]},${it.c[1]}) scale(${sBase}) translate(${-it.c[0]},${-it.c[1]})`);
-      });
-      // 相位2：所有区域的侧壁厚度（从平面逐层抬升到统一高度 H）
-      for (let i = 0; i <= LAYERS; i++){
-        const t = i / LAYERS, y = -H * t;
-        items.forEach(it => {
-          _gEmboss.append('path').attr('class','emboss-side').attr('d', it.d)
-            .attr('transform', `translate(${it.c[0]},${it.c[1]+y}) scale(${sBase}) translate(${-it.c[0]},${-it.c[1]})`)
-            .style('fill', wallColor(t)).style('stroke','none');
-        });
-      }
-      // 相位3：所有区域的顶面（黄边高光，最后绘制 → 全部共面、不被其它区域阴影遮挡）
-      items.forEach(it => {
-        _gEmboss.append('path').attr('class','emboss-top').attr('d', it.d)
-          .attr('transform', `translate(${it.c[0]},${it.c[1]-H}) scale(${sTop}) translate(${-it.c[0]},${-it.c[1]})`);
+        const key = rg.type + ':' + rg.name;
+        if (rg.type === 'adm1' && _embossCache && _embossCache.has(key)){
+          const v = _embossCache.get(key);
+          v.g.style('display', null);                 // 仅切显示，零路径重建 → 跨州悬停丝滑
+          items.push({ feature: v.feature, d: v.feature.__d, c: v.c });
+        } else {
+          // 动态构建（ADM2 或未缓存的 ADM1）：几何较小时开销可接受
+          const f = rg.feature;
+          let d = f.__d; if (!d){ d = _path(f); f.__d = d; }
+          let c = f.__c; if (!c){ try { c = _path.centroid(f); } catch(e){ c = [0,0]; } f.__c = c; }
+          if (!d) return;
+          const gD = _gEmbossDyn.append('g');
+          gD.append('path').attr('class','emboss-shadow').attr('d', d)
+            .attr('transform', `translate(${c[0]},${c[1]}) scale(${sBase}) translate(${-c[0]},${-c[1]})`);
+          for (let i = 0; i <= EMBOSS_LAYERS; i++){
+            const t = i / EMBOSS_LAYERS, y = -H * t;
+            gD.append('path').attr('class','emboss-side').attr('d', d)
+              .attr('transform', `translate(${c[0]},${c[1]+y}) scale(${sBase}) translate(${-c[0]},${-c[1]})`)
+              .style('fill', wallColor(t)).style('stroke','none');
+          }
+          gD.append('path').attr('class','emboss-top').attr('d', d)
+            .attr('transform', `translate(${c[0]},${c[1]-H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
+          items.push({ feature: f, d, c });
+        }
       });
       // 客户点：落在任一浮雕多边形内的点，按与 emboss-top 完全相同的变换抬升（统一高度 H、绕质心放大 sTop），
       // 由 updateMarkers 套用当前 zoom 落屏 → 精准贴合浮雕顶面、随区域一起 3D 探出
