@@ -210,32 +210,180 @@ window.addEventListener("error", function(e){
   };
   // 全量国家拼音表（iso2 -> 全拼/常用别名，小写无空格），覆盖 COUNTRY 全部 175 国，用于拼音检索（如 meiguo→美国 / moxige→墨西哥）。
   const PINYIN = {
-    ae:'alabolianheqiuzhangguo', af:'afuhan', al:'aerbaniya', am:'yameiniya', ao:'anguola', aq:'nanjizhou',
-    ar:'agenting', at:'aodili', au:'aodaliya', az:'asaiqiyu', ba:'bosiniyaheiheigeweina', bd:'mengjialaguo mengjia',
-    be:'bilishi', bf:'bujinafasu', bg:'baogaliya', bi:'bulongdi', bj:'beining', bn:'wenlai', bo:'boliviya',
-    br:'baxi', bs:'bahama', bt:'budan', bw:'botuwanfa', by:'bailieeluosi', bz:'bolilizi', ca:'jianada',
-    cd:'gangguojin', cf:'zhongfeigongheguo', cg:'gangguobu', ch:'ruishi', ci:'ketediva xiangyabin xiangya',
-    cl:'zhili', cm:'kamailong', cn:'zhongguo', co:'gelunbiya', cr:'gesidalajia', cu:'guba', cy:'saipulusi',
-    cz:'jieke', de:'deguo', dj:'jibuti', dk:'danmai', do:'duominijia', dz:'aerjiliya', ec:'eguaduoer',
-    ee:'aishaniya', eg:'aiji', eh:'xisaohala', er:'eliiteliyali', es:'xibanya', et:'aisesaibiya', fi:'fenlan',
-    fj:'feiji', fk:'fukelanqundao', fr:'faguo', ga:'jiapeng', gb:'yingguo', ge:'gelujiya', gh:'jianna',
-    gl:'gelanland', gm:'gangbiya', gn:'jineiya', gq:'chidaolijineiya', gr:'xila', gt:'weidimala', gw:'jineiyabishao',
-    gy:'guiyana', hn:'hongdulasi', hr:'keluodiyya', ht:'haidi', hu:'xiongyali', id:'yindunixiya', ie:'aierlan',
-    il:'yiselie', in:'yindu', iq:'yilake', ir:'yilang', is:'bingdao', it:'yidali', jm:'yamaijia', jo:'yuedan',
-    jp:'riben', ke:'kenniya', kg:'jierjisishitan', kh:'jianpuzhai', kp:'chaoxian', kr:'hanguo', kw:'keweite',
-    kz:'hasakesitan', la:'laowo', lb:'lubannen', lk:'sililanka', lr:'libiliya', ls:'laisuotuo', lt:'litiawan',
-    lu:'luisenbao', lv:'latuiya', ly:'libiya', ma:'moluoge', md:'moerduowa', me:'heimshan', mg:'madajiasijia',
-    mk:'beimagedun', ml:'mali', mm:'mianandian', mn:'menggu', mr:'maolitaniya', mw:'malawi', mx:'moxige',
-    my:'malaixiya', mz:'mozambike', na:'namibiya', nc:'xinkalediniya', ne:'nirier', ng:'niriliya', ni:'nijialagua',
-    nl:'helan', no:'nuowei', np:'niboer', nz:'xinxilan', om:'aman', pa:'bamana', pe:'bilu', pg:'babuyaxinjineiya',
-    ph:'feilvbin', pk:'bajisitan', pl:'bolan', pr:'boluodeluo', ps:'basitan', pt:'putaoya', py:'balagui',
-    qa:'kataer', ro:'luomaniya', rs:'saierweiya', ru:'eluosi', rw:'luwangda', sa:'shutealabo', sb:'suoluomenqundao',
-    sd:'sudan', se:'ruidian', si:'siluowenniya', sk:'siluofake', sl:'sailajionglai', sn:'senenagel', so:'suomali',
-    sr:'sulinan', ss:'nansudan', sv:'saerwaduo', sy:'xuliya', sz:'siweishilan', td:'zhade', tf:'faxingnanfanglingdi',
-    tg:'duoge', th:'taiguo', tj:'tajikesitan', tl:'dongdimen', tm:'tukumensitan', tn:'tunisi', tr:'tuerqi',
-    tt:'teliniwengdhebag', tz:'tansangniya', ua:'wukelan', ug:'wuganda', us:'meiguo meilijian',
-    uy:'wulaguai', uz:'wuzibiekesitan', ve:'weineiruila', vn:'yuenan', vu:'wanuatu', xk:'kesuowo', ye:'yemen',
-    za:'nifei nanfei', zm:'zanbiya', zw:'jinbabwe'
+    ae:'alabolianheqiuzhangguo a_la_bo alabo alalianhe alianheqiuguo',
+    af:'afuhan',
+    al:'aerbaniya aerbanniya',
+    am:'yameiniya',
+    ao:'anguola',
+    aq:'nanjizhou',
+    ar:'agenting',
+    at:'aodili',
+    au:'aodaliya aozhou',
+    az:'azhaibaijiang',
+    ba:'bosiniyaheheisaigeweiya boshihei',
+    bd:'mengjialaguo mengjia',
+    be:'bilishi',
+    bf:'bujinafaso',
+    bg:'baolijiya',
+    bi:'bujidi',
+    bj:'benin',
+    bn:'wenlai',
+    bo:'bolivia boliyaya',
+    br:'baxi',
+    bs:'bahama',
+    bt:'butan',
+    bw:'bociwana',
+    by:'baieluosi',
+    bz:'bolizi',
+    ca:'jianada',
+    cd:'gangguojin jinqangguo',
+    cf:'zhongfeigongheguo',
+    cg:'gangguobu bucangguo',
+    ch:'ruishi',
+    ci:'ketediva xiangyabin',
+    cl:'zhili',
+    cm:'kameilong',
+    cn:'zhongguo',
+    co:'gelunbiya',
+    cr:'geluosidalika',
+    cu:'guba',
+    cy:'saipulusi',
+    cz:'jieke',
+    de:'deguo',
+    dj:'jibuti',
+    dk:'danmai',
+    do:'duominijia',
+    dz:'alijiliya',
+    ec:'eguaduoer',
+    ee:'aishaniya',
+    eg:'aiji',
+    eh:'xisahala',
+    er:'ejiaotiya',
+    es:'xibanya',
+    et:'aisesaibiya',
+    fi:'fenlan',
+    fj:'feiji',
+    fk:'fukelanqundao',
+    fr:'faguo',
+    ga:'jiapeng',
+    gb:'yingguo yinguo',
+    ge:'gelujiya',
+    gh:'jianna',
+    gl:'gelinglan',
+    gm:'gambiya',
+    gn:'jianiya',
+    gq:'chidaojineiya',
+    gr:'xila',
+    gt:'weidimala',
+    gw:'jianiyabishao',
+    gy:'guiyana',
+    hn:'hongdulasi',
+    hr:'keluodiyayu',
+    ht:'haidi',
+    hu:'xiongyali',
+    id:'yinnidu',
+    ie:'aierlan',
+    il:'yiselie',
+    in:'yindu',
+    iq:'yilake',
+    ir:'yilang',
+    is:'bingdao',
+    it:'yidali',
+    jm:'jiamaica',
+    jo:'yuehan',
+    jp:'riben',
+    ke:'jianniya',
+    kg:'jierjisi',
+    kh:'jianpuzhai',
+    kp:'chaoxian beichaoxian',
+    kr:'hanguo nanchaoxian',
+    kw:'keweite',
+    kz:'hasakesitan',
+    la:'laowo',
+    lb:'lubannen',
+    lk:'sililanka',
+    lr:'libiliya',
+    ls:'laisuotuo',
+    lt:'libiaowan',
+    lu:'lusenbao',
+    lv:'latuiya',
+    ly:'libiya',
+    ma:'moluoge',
+    md:'moldowa',
+    me:'heishan',
+    mg:'madajiasijia',
+    mk:'maiqidong',
+    ml:'mali',
+    mm:'miandian burma',
+    mn:'waibizu',
+    mr:'maolitaniya',
+    mw:'malawi',
+    mx:'moxige',
+    my:'malaixiya',
+    mz:'monzanbike',
+    na:'namibiya',
+    nc:'xinakaleduoniya',
+    ne:'nirier',
+    ng:'niriliya',
+    ni:'nijialagua',
+    nl:'helan',
+    no:'nuowei',
+    np:'niboer',
+    nz:'xinxilan',
+    om:'aman',
+    pa:'banna',
+    pe:'bilu',
+    pg:'babuyaxinji',
+    ph:'feilübin feilubin',
+    pk:'bajisitan',
+    pl:'bolan',
+    pr:'boduolige',
+    ps:'basitan',
+    pt:'putaoya',
+    py:'balagui',
+    qa:'kataer',
+    ro:'luomaniya',
+    rs:'saierweiya',
+    ru:'eluosi',
+    rw:'luwangda',
+    sa:'shutealabo shatealabo shatelabo',
+    sb:'suoluomenqundao',
+    sd:'sudan',
+    se:'ruidian',
+    si:'siluowenniya',
+    sk:'siluofake',
+    sl:'sailaliong',
+    sn:'senneijiaer',
+    so:'suomaliya',
+    sr:'suilinan',
+    ss:'nansudan',
+    sv:'salvador',
+    sy:'xuliya',
+    sz:'swazilan',
+    td:'zhade',
+    tf:'fashunfangliedi',
+    tg:'duogeyu',
+    th:'taiguo',
+    tj:'tajikesitan',
+    tl:'dongdiwen',
+    tm:'tukumensitan',
+    tn:'tunisiya',
+    tr:'tuerqi',
+    tt:'teliniwengdhebag',
+    tz:'tansangniya',
+    ua:'wukelan',
+    ug:'wuganda',
+    us:'meiguo meilijian',
+    uy:'wuliguai',
+    uz:'wuzibieke',
+    ve:'weineiruila',
+    vn:'yuenan',
+    vu:'wanuatu',
+    xk:'kesuowo',
+    ye:'yemen',
+    za:'nafei nanfei',
+    zm:'zhanbiya',
+    zw:'xinbawei'
   };
   function pinyinOf(code){ return PINYIN[code] || ''; }
 
@@ -282,12 +430,15 @@ window.addEventListener("error", function(e){
   const defs = svg.append('defs');
   const clip = defs.append('clipPath').attr('id','globeClip');
   const clipSphere = clip.append('path');                 // 仅用几何裁切内容
-  // 3D 浮雕阴影滤镜：仅对图形投出偏移阴影制造「探出平面」的立体感，源图形（含黄边）保持清晰不模糊
+  // 3D 浮雕：地面投影滤镜——仅对「独立阴影形状」做柔和偏移模糊，不再对国形本身投自带阴影
+  // （feDropShadow 会同时渲染源图 + 偏移副本，是重影根因；改为专用阴影层可彻底消除重影）
   const embossShadow = defs.append('filter').attr('id','embossShadow')
-    .attr('x','-40%').attr('y','-40%').attr('width','180%').attr('height','180%');
-  embossShadow.append('feDropShadow')
-    .attr('dx', 0).attr('dy', 4).attr('stdDeviation', 3)
-    .attr('flood-color', '#000').attr('flood-opacity', 0.55);
+    .attr('x','-60%').attr('y','-60%').attr('width','220%').attr('height','220%');
+  embossShadow.append('feGaussianBlur').attr('in','SourceAlpha').attr('stdDeviation', 4).attr('result','b');
+  embossShadow.append('feOffset').attr('in','b').attr('dx', 0).attr('dy', 6).attr('result','o');
+  const ec = embossShadow.append('feComponentTransfer').attr('in','o');
+  ec.append('feFuncA').attr('type','linear').attr('slope', 0.5);
+  embossShadow.append('feMerge').append('feMergeNode').attr('in','o');
   const oceanSphere = svg.append('path').attr('class','sphere-ocean');   // 海洋底（内容之下）
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
@@ -609,20 +760,26 @@ window.addEventListener("error", function(e){
       const d = path(f);
       if (!d) return;
       const c = path.centroid(f);                 // 内容坐标质心，用于围绕自身放大
-      const clone = gEmboss.append('path')
+      const tf = `translate(${c[0]},${c[1]}) scale(1.06) translate(${-c[0]},${-c[1]})`;
+      // 1) 地面投影：独立阴影形状（仅模糊偏移，不产生重影），置于国形之下
+      gEmboss.append('path')
+        .attr('class', 'emboss-shadow')
+        .attr('d', d)
+        .attr('transform', tf);
+      // 2) 抬起国形：唯一清晰实体（黄边 + 亮填充），不自带阴影滤镜
+      gEmboss.append('path')
         .attr('class', 'emboss')
         .attr('d', d)
-        .attr('transform', `translate(${c[0]},${c[1]}) scale(1.055) translate(${-c[0]},${-c[1]})`);
+        .attr('transform', tf);
     });
   }
   function hideEmboss(){ gEmboss.selectAll('*').remove(); }
   function onClick(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     if (!iso2){ return; }
-    // 台湾是中国不可分割的一部分：点击台湾同样进入中国详情页（不单独展示首都）
-    const target = (iso2 === 'tw') ? 'cn' : iso2;
     // 点进国家 → 打开国家详情页（省份地图 / 公休日 / 汇率 / 人口 / 客户检索）
-    window.location.href = 'country.html?c=' + target;
+    // 台湾作为中国领土，infoOf 已返回 cn，点击进入中国详情页
+    window.location.href = 'country.html?c=' + iso2;
   }
 
   // 进入时若带 ?c=ISO2 / #country=ISO2 高亮并提示
@@ -635,8 +792,8 @@ window.addEventListener("error", function(e){
     const cn = entry ? entry[1][0] : iso2;
     banner.innerHTML = '正在建设：<b>'+cn+'</b> 国家专属板块（即将上线）';
     banner.style.display = 'block';
-    // 中国与台湾联动高亮（互为一部分）
-    const show = (iso2 === 'cn' || iso2 === 'tw') ? ['cn','tw'] : [iso2];
+    // 高亮指定国家（台湾不作为独立国家，infoOf 已并入中国）
+    const show = [iso2];
     allPaths.classed('active', d => { const v = COUNTRY[(d.properties&&d.properties.name)]; return v && show.includes(v[3]); });
   }
   readParam();
