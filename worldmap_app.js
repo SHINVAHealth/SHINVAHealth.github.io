@@ -630,7 +630,6 @@ window.addEventListener("error", function(e){
     panelWired = true;
     const trackBtn = document.getElementById('wmTrackBtn');
     const trackList = document.getElementById('wmTrackList');
-    const trackSearch = document.getElementById('wmTrackSearch');
 
     // 渲染：传入国家项数组（{code, cn, isTrack}），空数组显示未找到
     function renderTrack(items){
@@ -650,35 +649,16 @@ window.addEventListener("error", function(e){
       });
       renderTrack(items);
     }
-    // 拼音/中文/英文检索（全量国家）
-    function searchTrack(q){
-      q = q.trim().toLowerCase();
-      if (!q){ defaultTrack(); return; }
-      const hits = Object.entries(COUNTRY).map(([en, v]) => {
-        const cn = v[0], code = v[3];
-        const ci = cn.toLowerCase().indexOf(q);
-        const ei = en.toLowerCase().indexOf(q);
-        const pi = pinyinOf(code).split(/\s+/).some(p => p.indexOf(q) >= 0) ? 0 : 999;
-        const tracked = TRACKED.indexOf(code) >= 0;
-        const pos = ci >= 0 ? ci : (ei >= 0 ? ei + 0.5 : (pi < 900 ? pi : 999));
-        return { code, cn: cn + (DIAL[code] ? '(+' + DIAL[code] + ')' : ''), isTrack: tracked, score: pos + (tracked ? -0.05 : 0) };
-      }).filter(x => x.score < 998.95).sort((a, b) => a.score - b.score).slice(0, 12);
-      renderTrack(hits);
-    }
 
     defaultTrack();
     trackList.addEventListener('click', (e) => {
       const a = e.target.closest('a'); if (!a) return;
       const href = a.getAttribute('data-href'); if (href) location.href = href;
     });
-    trackSearch.addEventListener('input', () => searchTrack(trackSearch.value));
-    trackSearch.addEventListener('keydown', (e) => { if (e.key === 'Escape'){ trackSearch.value=''; defaultTrack(); } });
     trackBtn.addEventListener('click', () => {
       const open = trackList.hidden;
       trackList.hidden = !open;
-      trackSearch.hidden = !open;
       trackBtn.classList.toggle('open', open);
-      if (open){ trackSearch.value=''; defaultTrack(); trackSearch.focus(); }
     });
   }
   }
