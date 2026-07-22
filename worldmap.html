@@ -121,16 +121,18 @@
   }
   /* 经纬网（复刻 National Geographic / Times Atlas 实物图式：白单色，实线/虚线统一 0.6px 宽度，全部高亮，不加宽不模糊） */
   .graticule{ pointer-events:none; }
+  /* 矢量缩放锁定：拖拽/放大/缩小时经纬线描边像素尺寸恒定不变（不经 transform 缩放） */
+  .graticule path{ vector-effect:non-scaling-stroke; }
   /* 基础层：其余 30° 间隔经线/纬线 —— 白【虚线】，与实线同宽 0.6px，高亮（提高不透明度） */
   .graticule .par-thin{ fill:none; stroke:rgba(255,255,255,.55); stroke-width:.6; stroke-dasharray:3 3; }
   .graticule .mer-thin{ fill:none; stroke:rgba(255,255,255,.5); stroke-width:.6; stroke-dasharray:3 3; }
   .graticule .par{ fill:none; stroke:rgba(255,255,255,.55); stroke-width:.6; stroke-dasharray:3 3; }
   .graticule .mer{ fill:none; stroke:rgba(255,255,255,.5); stroke-width:.6; stroke-dasharray:3 3; }
-  /* 关键参考圈：南北回归线 ±23.5° / 南北极圈 ±66.5° —— 与虚线同宽(0.6)【实线】，更高不透明度高亮 */
-  .graticule .par-mid{ stroke:rgba(255,255,255,.78); stroke-width:.6; stroke-dasharray:none; }
-  /* 最粗主轴：赤道 / 本初子午线 —— 与虚线同宽(0.6)【实线】最亮白高亮（仍 0.6px，不加宽不模糊） */
-  .graticule .par-eq{ stroke:rgba(255,255,255,.98); stroke-width:.6; stroke-dasharray:none; }
-  .graticule .mer-eq{ stroke:rgba(255,255,255,.92); stroke-width:.6; stroke-dasharray:none; }
+  /* 关键参考圈 + 主轴：南北回归线 ±23.5° / 南北极圈 ±66.5° / 赤道 / 本初子午线
+     —— 全部【实线】，统一尺寸 0.6px、统一白色高亮 rgba(255,255,255,.9)，尺寸与颜色完全一致 */
+  .graticule .par-mid{ stroke:rgba(255,255,255,.9); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .par-eq{ stroke:rgba(255,255,255,.9); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .mer-eq{ stroke:rgba(255,255,255,.9); stroke-width:.6; stroke-dasharray:none; }
   /* 经纬度仪表尺（固定层，地球轮廓外、界面内侧，不被裁切遮挡；数值随拖拽实时变化） */
   .ruler{ pointer-events:none; }
   .ruler .ruler-axis{ stroke:rgba(125,211,252,.45); stroke-width:1; }
@@ -317,6 +319,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221045"></script>
+  <script src="worldmap_app.js?v=202607221042"></script>
 </body>
 </html>
