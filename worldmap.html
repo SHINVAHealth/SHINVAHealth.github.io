@@ -116,18 +116,21 @@
     /* 仅作底层描边强调；填充交给定制浮雕克隆（.emboss），避免与抬起国形重叠造成重影 */
     fill:transparent; stroke:rgba(255,255,255,.5); stroke-width:1;
   }
-  /* 3D 浮雕突出层：悬停国家「从平面探出」+ 清晰黄色边框高亮 */
+  /* 3D 浮雕突出层：悬停国家整块区域「从平面探出」的实体浮雕（地面阴影 + 侧壁厚度 + 高光顶面） */
   .emboss-layer{ pointer-events:none; }
-  /* 地面投影：独立阴影形状（由 #embossShadow 滤镜做柔和偏移模糊），置于抬起国形之下，
-     单一柔影、不含国形副本 → 从源头消除重影 */
+  /* 地面投影：落在平面上的柔影（#embossShadow 滤镜），置于最底，不含国形副本 → 无重影 */
   .emboss-layer path.emboss-shadow{
-    fill:#000; opacity:.45;
+    fill:#000; opacity:.4;
     filter:url(#embossShadow);
   }
-  /* 抬起国形：围绕质心略微放大（JS transform scale 1.06）的【唯一清晰实体】，
-     不自带阴影滤镜，黄色边框 vector-effect 锁定 1:1 屏幕像素线宽 → 清晰锐利、不模糊、不加粗边界 */
-  .emboss-layer path.emboss{
-    fill:rgba(56,189,248,.62);
+  /* 侧壁：JS 逐层抬升堆叠成的体积厚度（颜色由 wallColor 控制），无描边 */
+  .emboss-layer path.emboss-side{
+    stroke:none;
+  }
+  /* 顶面：清晰黄边 + 高光渐变（#embossTopGrad）的隆起表面，置于最上；
+     黄色边框 vector-effect 锁定 1:1 屏幕像素线宽 → 清晰锐利、不模糊、不加粗边界 */
+  .emboss-layer path.emboss-top{
+    fill:url(#embossTopGrad);
     stroke:#ffd400; stroke-width:1.4;
     vector-effect:non-scaling-stroke;
     paint-order:stroke fill;
@@ -355,6 +358,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221204"></script>
+  <script src="worldmap_app.js?v=202607221238"></script>
 </body>
 </html>

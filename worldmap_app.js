@@ -439,6 +439,11 @@ window.addEventListener("error", function(e){
   const ec = embossShadow.append('feComponentTransfer').attr('in','o');
   ec.append('feFuncA').attr('type','linear').attr('slope', 0.5);
   embossShadow.append('feMerge').append('feMergeNode').attr('in','o');
+  // 顶面高光渐变：上亮下略暗，制造"被光照射的顶面"立体感
+  const embossTopGrad = defs.append('linearGradient').attr('id','embossTopGrad')
+    .attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
+  embossTopGrad.append('stop').attr('offset','0%').attr('stop-color','#7dd3fc');
+  embossTopGrad.append('stop').attr('offset','100%').attr('stop-color','#38bdf8');
   const oceanSphere = svg.append('path').attr('class','sphere-ocean');   // 海洋底（内容之下）
   const gClip = svg.append('g').attr('clip-path','url(#globeClip)');     // 固定裁切窗口
   const gZoom = gClip.append('g');                                     // 内容层（受 zoom transform）
@@ -735,7 +740,10 @@ window.addEventListener("error", function(e){
     allPaths.classed('active', p => { const v = COUNTRY[(p.properties&&p.properties.name)]; return v && partner.includes(v[3]); });
     // 3D 浮雕突出 + 清晰黄边高亮：悬停国 + 联动国（cn/tw）一起探出
     const embossIso2 = [iso2].concat(partner);
-    showEmboss(embossIso2);
+    // 关键：悬停国所在的 tile（3 份平铺中）有水平偏移 translate(i*TILE,0)，
+    // 浮雕克隆必须用同一偏移才能与可见国形对齐（否则拖拽后落在错误 tile → 看似"无浮雕"）
+    const tileX = tileOffsetOf(e.currentTarget);
+    showEmboss(embossIso2, tileX);
     curTz = tz;
     tipCn.textContent = cn; tipEn.textContent = (d.properties&&d.properties.name)||'';
     tipCn2.textContent = cn;
@@ -752,25 +760,52 @@ window.addEventListener("error", function(e){
   function onLeave(){ tip.classList.remove('show'); curTz = null; allPaths.classed('active', false); hideEmboss(); }
   // —— 3D 浮雕突出：克隆悬停国（及其联动国）路径，围绕自身质心略微放大并投偏移阴影，
   //    加清晰黄色边框（vector-effect 锁定 1:1 线宽，不模糊、不加粗边界）。克隆置于 gZoom 内，随拖拽/缩放同步。
-  function showEmboss(iso2List){
+  // 取悬停 path 所属 tile 的水平偏移（content 坐标；gZoom 之上叠加，故与国形共享同一坐标系）
+  function tileOffsetOf(el){
+    let n = el;
+    while (n && n !== gZoom.node && !(n.getAttribute && (n.getAttribute('class')||'').split(/\s+/).indexOf('tile') >= 0)){
+      n = n.parentNode;
+    }
+    if (!n || n === gZoom.node) return 0;
+    const bv = n.transform && n.transform.baseVal && n.transform.baseVal.consolidate();
+    return bv ? bv.matrix.e : 0;   // matrix.e = translateX（content 单位）
+  }
+  // 颜色插值（侧壁由深到浅，制造体积厚度）
+  function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
+  function wallColor(t){ // t:0=底面(暗) → 1=顶面(亮)
+    const r = lerp(8, 14, t), g = lerp(47, 116, t), b = lerp(73, 178, t);
+    return `rgb(${r},${g},${b})`;
+  }
+  function showEmboss(iso2List, tileX){
     gEmboss.selectAll('*').remove();
+    const tx = tileX || 0;
+    const k = (_curTransform && _curTransform.k) ? _curTransform.k : 1;
+    const H = 9 / k;          // 浮雕高度（屏幕空间恒定 ~9px，随缩放反比，保持观感一致）
+    const LAYERS = 10;        // 侧壁层数（越多越平滑）
     (iso2List || []).forEach(code => {
       const f = iso2ToFeature[code];
       if (!f) return;
       const d = path(f);
       if (!d) return;
-      const c = path.centroid(f);                 // 内容坐标质心，用于围绕自身放大
-      const tf = `translate(${c[0]},${c[1]}) scale(1.06) translate(${-c[0]},${-c[1]})`;
-      // 1) 地面投影：独立阴影形状（仅模糊偏移，不产生重影），置于国形之下
-      gEmboss.append('path')
-        .attr('class', 'emboss-shadow')
+      const c = path.centroid(f);                 // 内容坐标质心
+      const base = `translate(${c[0] + tx},${c[1]}) scale(1.03) translate(${-c[0]},${-c[1]})`;
+      // 1) 地面投影：落在平面（base）上的柔和阴影，置于最底
+      gEmboss.append('path').attr('class','emboss-shadow')
+        .attr('d', d).attr('transform', base);
+      // 2) 侧壁（厚度）：从平面 base(y=0) 逐层抬升到顶面(y=-H)，越上越亮 → 整块区域"探出平面"的实体体积
+      for (let i = 0; i <= LAYERS; i++){
+        const t = i / LAYERS;            // 0=底 1=顶
+        const y = -H * t;
+        gEmboss.append('path').attr('class','emboss-side')
+          .attr('d', d)
+          .attr('transform', `translate(${c[0] + tx},${c[1] + y}) scale(1.03) translate(${-c[0]},${-c[1]})`)
+          .style('fill', wallColor(t))
+          .style('stroke', 'none');
+      }
+      // 3) 顶面：清晰黄边 + 高光渐变，最为"被光照射的隆起表面"，置于最上
+      gEmboss.append('path').attr('class','emboss-top')
         .attr('d', d)
-        .attr('transform', tf);
-      // 2) 抬起国形：唯一清晰实体（黄边 + 亮填充），不自带阴影滤镜
-      gEmboss.append('path')
-        .attr('class', 'emboss')
-        .attr('d', d)
-        .attr('transform', tf);
+        .attr('transform', `translate(${c[0] + tx},${c[1] - H}) scale(1.04) translate(${-c[0]},${-c[1]})`);
     });
   }
   function hideEmboss(){ gEmboss.selectAll('*').remove(); }
