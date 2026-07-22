@@ -44,7 +44,7 @@
 })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>世界地图 · 客户分布 | 新华健康外贸客户管理系统</title>
+<title>世界地图 | 新华健康外贸客户管理系统</title>
 <style>
   :root{
     --bg1:#0b1220; --bg2:#0f1c33; --brand:#0ea5e9; --brand2:#0d9488;
@@ -203,10 +203,10 @@
   header.top .brand{ display:flex; align-items:center; gap:14px; }
   header.top .brand-col{ display:flex; flex-direction:column; line-height:1.25; }
   header.top .chinaclock{
-    font-size:12px; color:var(--muted); margin-top:3px;
+    font-size:12px; color:#fff; font-weight:700; margin-top:3px;
     font-variant-numeric:tabular-nums; letter-spacing:.3px;
   }
-  header.top .chinaclock b{ color:#fbbf24; font-weight:700; }
+  header.top .chinaclock b{ color:#fff; font-weight:700; }
 
   /* 左侧检索面板（玻璃质感），位于地球让出的左侧空白区 */
   .sidepanel{
@@ -302,7 +302,7 @@
     <div class="brand">
       <img src="shinva_logo.png" alt="SHINVA Health" class="logo">
       <div class="brand-col">
-        <h1>世界地图<span class="sub">· 客户分布</span></h1>
+        <h1>世界地图</h1>
         <div class="chinaclock" id="chinaclock">中国时间 --:--:--</div>
       </div>
     </div>
@@ -338,6 +338,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221140"></script>
+  <script src="worldmap_app.js?v=202607221146"></script>
 </body>
 </html>
