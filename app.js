@@ -149,17 +149,9 @@ window.addEventListener("unhandledrejection", function(e){
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
     let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
-  let _curK = 1;  // 当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
-  // 3D 浮雕三层相位容器：shadow < wall < top，保证多区域选中时所有顶面共面、互不遮挡（绝不一层叠一层）
-  let _gEmbossShadow = null, _gEmbossWall = null, _gEmbossTop = null;
-  // 动态(ADM2)浮雕层也分三层，插入缓存三层之间，保持全局相位顺序（动态区在缓存区对应相位之上，互不影响共面）
-  let _gEmbossDynShadow = null, _gEmbossDynWall = null, _gEmbossDynTop = null;
-  let _embossCache = null;    // 一级区域(ADM1)预建浮雕缓存：key='adm1:'+name -> {shadow, wall, top, feature, c}
-  let _saveT = null;          // 单点模式：客户行点击前地图 transform（取消选中时恢复“返回”）
-  // 浮雕几何常量：固定屏幕高 ~9px（烘焙于 k=1；放大时随缩放自然增高，视觉一致）。
-  // 关键优化：ADM1 浮雕在 renderProvinces 时一次性预建并隐藏缓存，悬停时仅切 display，绝不再逐帧重建几十~上百 KB 路径串（美/墨卡顿根因）。
-  const EMBOSS_LAYERS = 10, EMBOSS_SBASE = 1.03, EMBOSS_STOP = 1.04, EMBOSS_H = 9;
+  let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
+  let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
   let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
     const CAP = facts ? {lat:facts.lat, lng:facts.lng, name:facts.capital} : null;
     const AIR = META.AIRPORTS[iso2] || null;
@@ -222,15 +214,11 @@ window.addEventListener("unhandledrejection", function(e){
       PROJ = d3.geoMercator().fitExtent([[14,14],[W-14,H-14]], {type:'FeatureCollection', features: mainFeatures});
       const path = d3.geoPath(PROJ);
       _path = path;
-      // 预计算并缓存每个一级区域的投影路径 d 与质心 c（renderEmboss 复用，避免悬停时反复重算几十 KB 路径字符串 —— 美/墨几何极精细时是卡顿主因）
-      // 必须放在 path 定义之后（const 暂时性死区，提前引用会抛 ReferenceError 使整个渲染失败）
-      features.forEach(f => { try { f.__d = path(f); f.__c = path.centroid(f); } catch(e){ f.__d = ''; f.__c = [0,0]; } });
       // 兜底裁剪区：国家（省并集），供未匹配到所属省的市区回退使用
       features.forEach((ft) => {
         defs.select('#admClip').append('path').attr('d', path(ft));
       });
       const g = svg.append('g');   // 统一图层：省填充 + 二级行政区域 + 省轮廓 同属一层
-      g.style('will-change', 'transform');   // 提示浏览器对该层做合成层优化，缩放/拖拽更顺滑
       _gProv = g;
       // 1) 省填充（底层，承载 hover 提示）
       const pf = g.selectAll('path.prov-fill').data(features).enter().append('path')
@@ -257,35 +245,9 @@ window.addEventListener("unhandledrejection", function(e){
       if (_countryOutlineD){
         g.append('path').attr('d', _countryOutlineD).attr('class','country-outline');
       }
-      // 3D 浮雕突出层：悬停/选中一级或二级行政区域时整块「从平面探出」，在 _gMark/_gCust 之下（客户点仍可见）。
-      // 关键：拆成 shadow / wall / top 三个相位层（顺序即 z 序），保证多区域选中时所有顶面共面、互不遮挡、绝不一层叠一层。
-      // 动态(ADM2)三层插入缓存三层之间，保持全局相位顺序（动态区在缓存对应相位之上，互不影响共面）。
-      _gEmbossShadow = g.append('g').attr('class','emboss-shadow-layer');
-      _gEmbossDynShadow = g.append('g').attr('class','emboss-dyn-shadow');
-      _gEmbossWall = g.append('g').attr('class','emboss-wall-layer');
-      _gEmbossDynWall = g.append('g').attr('class','emboss-dyn-wall');
-      _gEmbossTop = g.append('g').attr('class','emboss-top-layer');
-      _gEmbossDynTop = g.append('g').attr('class','emboss-dyn-top');
-      // 预建所有一级区域(ADM1)的 3D 浮雕，分别存入三层相位容器并隐藏：悬停/选中时只切 display，零路径串重建（根治美/墨跨州悬停卡顿）
-      _embossCache = new Map();
-      features.forEach(f => {
-        const name = (f.properties && (f.properties.shapeName || f.properties.name)) || '';
-        const c = f.__c || [0,0];
-        const d = f.__d || '';
-        if (!d || !name) return;
-        const sh = _gEmbossShadow.append('path').attr('class','emboss-shadow').attr('d', d)
-          .attr('transform', `translate(${c[0]},${c[1]}) scale(${EMBOSS_SBASE}) translate(${-c[0]},${-c[1]})`).style('display','none');
-        const wg = _gEmbossWall.append('g').style('display','none');
-        for (let i = 0; i <= EMBOSS_LAYERS; i++){
-          const t = i / EMBOSS_LAYERS, y = -EMBOSS_H * t;
-          wg.append('path').attr('class','emboss-side').attr('d', d)
-            .attr('transform', `translate(${c[0]},${c[1]+y}) scale(${EMBOSS_SBASE}) translate(${-c[0]},${-c[1]})`)
-            .style('fill', wallColor(t)).style('stroke','none');
-        }
-        const tp = _gEmbossTop.append('path').attr('class','emboss-top').attr('d', d)
-          .attr('transform', `translate(${c[0]},${c[1]-EMBOSS_H}) scale(${EMBOSS_STOP}) translate(${-c[0]},${-c[1]})`).style('display','none');
-        _embossCache.set('adm1:' + name, { shadow: sh, wall: wg, top: tp, feature: f, c });
-      });
+      // 3D 浮雕突出层：悬停一级/二级行政区域时整块「从平面探出」，置于 g 内最上（随缩放同步），在 _gMark/_gCust 之下（客户点仍可见）
+      const gEmboss = g.append('g').attr('class','emboss-layer');
+      _gEmboss = gEmboss;
       _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
       _gCust = svg.append('g').attr('class','cust-layer');  // 客户绿色像素点独立图层（避免被 drawMarkers 清空）
       reapplyRegionSel();
@@ -344,9 +306,9 @@ window.addEventListener("unhandledrejection", function(e){
       $('zreset').onclick = () => {
         svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
         clearCustomerHighlight();                                       // 重置所有客户黄点 + 行选中
-        _saveT = null;                                                  // 清空“点击前地图状态”返回记忆
         _embossRegions.clear(); _hoverRegion = null; renderEmboss();    // 清空选中的行政区域 3D 浮雕
         reapplyRegionSel(); applyRegionFilter();                        // 区域筛选随之清空 → 右侧客户检索行同步重置为全部
+        _saveT = null;                                                  // 重置地图返回记忆
       };
       $('custtoggle').onclick = function(){
         _custVisible = !_custVisible;
@@ -382,16 +344,13 @@ window.addEventListener("unhandledrejection", function(e){
     // 统一渲染所有需浮雕的区域（悬停 + 选中）。
     // 关键：三个相位「跨全部区域」一次性绘制 —— 先所有地面柔影、再所有侧壁、最后所有顶面 ——
     // 保证多区域选中时所有顶面处于同一高度平面、互不遮挡，绝不出现「一层叠一层」。
-    // 性能：ADM1 浮雕已预建缓存，悬停/选中时仅切 display（O(1)，零路径串重建）；ADM2 等未缓存区域才动态构建。
     function renderEmboss(){
-      if (!_gEmbossShadow || !_path) return;
-      // 先隐藏全部缓存组、清空动态三层（不再整层 remove，避免破坏已缓存的 ADM1 浮雕）
-      if (_embossCache) _embossCache.forEach(v => { v.shadow.style('display','none'); v.wall.style('display','none'); v.top.style('display','none'); });
-      if (_gEmbossDynShadow) _gEmbossDynShadow.selectAll('*').remove();
-      if (_gEmbossDynWall)   _gEmbossDynWall.selectAll('*').remove();
-      if (_gEmbossDynTop)    _gEmbossDynTop.selectAll('*').remove();
-      const H = EMBOSS_H;            // 与缓存一致：固定屏幕 ~9px（放大时随缩放自然增高，视觉一致）
-      const sBase = EMBOSS_SBASE, sTop = EMBOSS_STOP;
+      if (!_gEmboss || !_path) return;
+      _gEmboss.selectAll('*').remove();
+      const k = (_curK && _curK > 0) ? _curK : 1;
+      const H = 9 / k;            // 所有区域统一高度（屏幕 ~9px，随缩放反比）
+      const LAYERS = 10;
+      const sBase = 1.03, sTop = 1.04;
       const regions = [];
       if (_hoverRegion){
         const dup = [..._embossRegions.values()].some(r => r.type === _hoverRegion.type && r.name === _hoverRegion.name);
@@ -404,33 +363,31 @@ window.addEventListener("unhandledrejection", function(e){
         if (_curT) updateMarkers(_curT);
         return;
       }
-      // 收集需显示的浮雕区域：ADM1 用缓存组（仅切 display）；ADM2 / 未缓存区域动态构建（分别投入 shadow/wall/top 三层，保持全局相位顺序）
+      // 预计算每区域的路径与质心（feature 保留用于客户点 d3.geoContains 判定）
       const items = [];
       regions.forEach(rg => {
-        const key = rg.type + ':' + rg.name;
-        if (rg.type === 'adm1' && _embossCache && _embossCache.has(key)){
-          const v = _embossCache.get(key);
-          v.shadow.style('display', null); v.wall.style('display', null); v.top.style('display', null);  // 仅切显示，零路径重建 → 跨州悬停丝滑
-          items.push({ feature: v.feature, d: v.feature.__d, c: v.c });
-        } else {
-          // 动态构建（ADM2 或未缓存的 ADM1）：几何较小时开销可接受，分三层绘制保证相位正确
-          const f = rg.feature;
-          let d = f.__d; if (!d){ d = _path(f); f.__d = d; }
-          let c = f.__c; if (!c){ try { c = _path.centroid(f); } catch(e){ c = [0,0]; } f.__c = c; }
-          if (!d) return;
-          _gEmbossDynShadow.append('path').attr('class','emboss-shadow').attr('d', d)
-            .attr('transform', `translate(${c[0]},${c[1]}) scale(${sBase}) translate(${-c[0]},${-c[1]})`);
-          const wg = _gEmbossDynWall.append('g');
-          for (let i = 0; i <= EMBOSS_LAYERS; i++){
-            const t = i / EMBOSS_LAYERS, y = -H * t;
-            wg.append('path').attr('class','emboss-side').attr('d', d)
-              .attr('transform', `translate(${c[0]},${c[1]+y}) scale(${sBase}) translate(${-c[0]},${-c[1]})`)
-              .style('fill', wallColor(t)).style('stroke','none');
-          }
-          _gEmbossDynTop.append('path').attr('class','emboss-top').attr('d', d)
-            .attr('transform', `translate(${c[0]},${c[1]-H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
-          items.push({ feature: f, d, c });
-        }
+        const d = _path(rg.feature); if (!d) return;
+        const c = _path.centroid(rg.feature);
+        items.push({ feature: rg.feature, d, c });
+      });
+      // 相位1：所有区域的地面柔影（统一落在平面，互不叠压）
+      items.forEach(it => {
+        _gEmboss.append('path').attr('class','emboss-shadow').attr('d', it.d)
+          .attr('transform', `translate(${it.c[0]},${it.c[1]}) scale(${sBase}) translate(${-it.c[0]},${-it.c[1]})`);
+      });
+      // 相位2：所有区域的侧壁厚度（从平面逐层抬升到统一高度 H）
+      for (let i = 0; i <= LAYERS; i++){
+        const t = i / LAYERS, y = -H * t;
+        items.forEach(it => {
+          _gEmboss.append('path').attr('class','emboss-side').attr('d', it.d)
+            .attr('transform', `translate(${it.c[0]},${it.c[1]+y}) scale(${sBase}) translate(${-it.c[0]},${-it.c[1]})`)
+            .style('fill', wallColor(t)).style('stroke','none');
+        });
+      }
+      // 相位3：所有区域的顶面（黄边高光，最后绘制 → 全部共面、不被其它区域阴影遮挡）
+      items.forEach(it => {
+        _gEmboss.append('path').attr('class','emboss-top').attr('d', it.d)
+          .attr('transform', `translate(${it.c[0]},${it.c[1]-H}) scale(${sTop}) translate(${-it.c[0]},${-it.c[1]})`);
       });
       // 客户点：落在任一浮雕多边形内的点，按与 emboss-top 完全相同的变换抬升（统一高度 H、绕质心放大 sTop），
       // 由 updateMarkers 套用当前 zoom 落屏 → 精准贴合浮雕顶面、随区域一起 3D 探出
@@ -450,11 +407,8 @@ window.addEventListener("unhandledrejection", function(e){
       if (_curT) updateMarkers(_curT);
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
-    // 优化：若新悬停区域与当前完全一致（同一州/市区、同级别），直接跳过重建 —— 避免鼠标在同区域内移动时每帧重复重建浮雕（美/墨精细几何下是卡顿主因）
     function hoverRegion(d, type){
-      const name = (d.properties && (d.properties.shapeName || d.properties.name)) || '';
-      if (_hoverRegion && _hoverRegion.type === type && _hoverRegion.name === name) return;
-      _hoverRegion = { feature: d, type, name };
+      _hoverRegion = { feature: d, type, name: (d.properties && (d.properties.shapeName || d.properties.name)) || '' };
       renderEmboss();
     }
     function unhoverRegion(){ _hoverRegion = null; renderEmboss(); }
@@ -627,8 +581,6 @@ window.addEventListener("unhandledrejection", function(e){
       //    二级行政区域严格裁剪到所属一级区域真实边界内 → 绝不会超出一级轮廓（先画二级，后画一级轮廓压边）
       const byProv = {};
       items.forEach(it => { if (it.pi >= 0){ (byProv[it.pi] = byProv[it.pi] || []).push(it); } });
-      // 缓存每个二级区域的投影路径与质心（供 renderEmboss 复用，避免悬停时反复重算大体积路径字符串）
-      items.forEach(it => { it.feat.__d = it.d; try { it.feat.__c = _path.centroid(it.feat); } catch(e){ it.feat.__c = [0,0]; } });
       const defs = _svg.select('defs');
       defs.selectAll('[id^="clip-"]').remove();   // 清旧的对省裁剪区，避免重复 ID
       _features.forEach((ft, pi) => {
@@ -670,7 +622,7 @@ window.addEventListener("unhandledrejection", function(e){
         // ADM2：默认隐藏，加载完成预载数据（点击按钮即时显示）；无数据则回退按钮
         ensureAdm2().then(() => {
           if (_topo2){
-            assignRegions(true);   // ADM2 就绪后强制补全客户的 __adm2 归属（之前可能仅算了 ADM1），供二级行政区点击筛选
+            assignRegions();   // ADM2 就绪后补全客户的 __adm2 归属，供二级行政区点击筛选
             setStatus(_topo2.features.length);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
             if (showAdm2) renderAdm2();
             else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; }
@@ -833,44 +785,20 @@ window.addEventListener("unhandledrejection", function(e){
       if (dups.length) console.warn('[客户定位自检] 以下客户经纬度完全重合，圆点会叠在一起看不见，请重新精确地理编码：\n' + dups.map(([k, v]) => '  ' + k + ' => ' + v.join(' , ')).join('\n'));
     }
     // —— 区域筛选：把每个客户关联到所属一级(ADM1)/二级(ADM2)行政区域（按经纬度 geoContains）——
-    // 性能优化（针对墨西哥 2457 个二级行政区等大体量国家）：
-    //  1) 一次性计算：用 _regionsAssigned 标志，只在首次/强制时全量跑，避免每次搜索按键、每次点客户都重算；
-    //  2) ADM2 索引：把二级要素按所属一级区域分组(_adm2ByProv)，geoContains 只需在该客户所在 ADM1 的子要素里做，
-    //     把「客户 × 全量 ADM2」的 O(N×M) 降到「客户 × ADM1(≈32) + 客户 × 该州 ADM2(≈数十)」，量级提速。
-    let _regionsAssigned = false, _adm2ByProv = null;
-    function buildAdm2Index(){
-      if (_adm2ByProv) return;
-      const fc2 = (_topo2 && _topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : (_topo2 || null);
-      _adm2ByProv = {};
-      if (fc2 && fc2.features){
-        fc2.features.forEach(f => {
-          const grp = f.properties.shapeGroup || f.properties.parent || null;
-          if (grp) (_adm2ByProv[grp] = _adm2ByProv[grp] || []).push(f);
-        });
-      }
-    }
-    function assignRegions(force){
-      if (_regionsAssigned && !force) return;
+    function assignRegions(){
       const list = window.__custList || [];
-      if (!list.length){ _regionsAssigned = true; return; }
-      buildAdm2Index();
+      if (!list.length) return;
+      const fc2 = (_topo2 && _topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : (_topo2 || null);
       list.forEach(r => {
         if (r.lat != null && r.lng != null){
           const ll = [+r.lng, +r.lat];
           if (_features){ for (const f of _features){ try { if (d3.geoContains(f, ll)){ r.__adm1 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
-          // 优先只在所属一级区域内的二级子要素中做 geoContains（墨西哥 2457 市区 → 从全量扫描降到该州数量级）
-          if (_adm2ByProv && r.__adm1 && _adm2ByProv[r.__adm1]){
-            for (const f of _adm2ByProv[r.__adm1]){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} }
-          } else if (_topo2){
-            const fc2 = (_topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : _topo2;
-            for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} }
-          }
+          if (fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
         }
       });
-      _regionsAssigned = true;
     }
     function applyRegionFilter(){
-      if (!_regionsAssigned) assignRegions();   // 区域归属已一次性算好即跳过，避免搜索时反复重算（墨西哥 2457 市区场景）
+      assignRegions();
       const list = window.__custList || [];
       let flt = list;
       const regions = _selectedRegions();   // 已选中的全部行政区域（单点 1 个 / 多点追踪多个）
@@ -949,19 +877,17 @@ window.addEventListener("unhandledrejection", function(e){
       if (!nowHl){
         // 即将点亮成黄点：单点模式（默认）先清掉其它所有高亮，保证地图上始终只有当前这一个黄点
         if (!_multiTrack) clearCustomerHighlight();
-        if (!_regionsAssigned) assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
+        // 单点模式：记录点击前的地图 transform，取消选中同一行时恢复（"返回"功能）
+        if (!_multiTrack) _saveT = d3.zoomTransform(_svg.node());
+        assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
         const rec = (window.__custList || []).find(x => x.__id === id);
-        // 单点模式：记录“点击前的地图状态”，取消选中时恢复（相当于返回）。多点追踪不做（多点并存，无单一返回态）
-        if (!_multiTrack && _svg && _zoom) _saveT = d3.zoomTransform(_svg.node());
-        // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝“只选中不放大”）
+        // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝"只选中不放大"）
         if (rec && rec.__adm1) zoomToAdm1(rec.__adm1);
         else if (rec && rec.lat != null && rec.lng != null) zoomToPoint(rec.lat, rec.lng);
-      } else {
-        // 取消选中（黄点恢复绿）：单点模式恢复点击前的地图大小与位置（返回）
-        if (!_multiTrack && _svg && _zoom && _saveT){
-          _svg.transition().duration(620).call(_zoom.transform, _saveT);
-          _saveT = null;
-        }
+      } else if (!_multiTrack && _saveT) {
+        // 单点模式取消选中同一行 → 恢复点击前的地图 transform（"返回"功能）
+        _svg.transition().duration(620).call(_zoom.transform, _saveT);
+        _saveT = null;
       }
       if (node) sel.classed('cust-hl', !nowHl);   // 仅在 绿↔黄 之间切换；半径/位置始终不变
       if (!nowHl) _hlIds.add(id); else _hlIds.delete(id);
