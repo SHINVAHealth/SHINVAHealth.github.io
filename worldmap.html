@@ -84,11 +84,16 @@
   header.top a.back:hover{ background:rgba(56,189,248,.18); border-color:var(--accent); }
 
   .layout{ flex:1; position:relative; }
+  /* 地图容器：桌面端占让出左侧搜索栏后的右侧区域；移动端改为纵向流的上部区块 */
+  .mapbox{
+    position:absolute; top:0; bottom:0; left:300px; right:0;
+    width:auto; height:auto;
+  }
   /* 整体轻微透明度 + 层次感 */
   .globe{
-    position:absolute; top:0; bottom:0; left:300px; right:0;
+    position:absolute; top:0; bottom:0; left:0; right:0;
     width:auto; height:auto; opacity:.94;
-    /* 固定地图窗口：尺寸与位置完全由 .layout 决定，不受左侧搜索栏内容长短影响 */
+    /* 固定地图窗口：尺寸与位置完全由 .mapbox 决定，不受左侧搜索栏内容长短影响 */
     contain: layout paint;
   }
   .globe svg{ width:100%; height:100%; display:block; cursor:none !important; touch-action:none; }
@@ -294,21 +299,28 @@
   .wm-track-list a .dot.off{ background:#64748b; box-shadow:0 0 0 1px rgba(148,163,184,.4) inset; }
   .wm-track-search{ margin:8px 0 2px; }
   .wm-track-list .wm-track-empty{ padding:10px 12px; color:var(--muted); font-size:12px; }
+  /* 移动端：纵向流 —— 页头 → 地图(上部固定) → 检索面板(地图下方中部，内部可滚动) */
   @media (max-width:900px){
-    /* 地图占满全宽 */
-    .globe{ left:0; }
-    /* 检索面板改为顶部全宽工具条：保证移动端可搜索 / 访问跟踪列表（不再整块隐藏） */
-    .sidepanel{
-      top:64px; left:8px; right:8px; width:auto;
-      flex-direction:row; flex-wrap:wrap; align-items:center;
-      gap:8px; padding:10px; max-height:52vh; overflow:auto;
+    body{ overflow:hidden; }
+    .layout{
+      display:flex; flex-direction:column; height:100%; overflow:hidden;
     }
-    .sidepanel .sp-search{ flex:1 1 100%; }
-    .sidepanel .wm-track-btn{ flex:1 1 100%; }
-    .sidepanel .wm-track-list{ flex:1 1 100%; }
+    .mapbox{
+      position:relative; left:0; right:0; top:0; bottom:auto;
+      width:100%; height:44vh; flex:0 0 44vh;
+    }
+    .globe{ position:absolute; top:0; bottom:0; left:0; right:0; }
+    .sidepanel{
+      position:relative; left:auto; right:auto; top:auto;
+      width:auto; margin:10px 10px 14px; flex:1 1 auto; overflow:auto;
+      flex-direction:column; gap:8px; padding:12px; max-height:none;
+    }
+    .sidepanel .sp-search,
+    .sidepanel .wm-track-btn,
+    .sidepanel .wm-track-list{ flex:1 1 auto; }
     /* 检索结果在面板内展开（不再绝对浮层遮挡） */
-    .wm-results{ position:static; margin-top:6px; max-height:200px; }
-    /* 缩放按钮缩小并靠右下 */
+    .wm-results{ position:static; margin-top:6px; max-height:40vh; }
+    /* 缩放按钮：落在地图右下角（mapbox 内，随地图定位，不再飘到页面底部） */
     .mapctrl{ right:12px; bottom:12px; gap:6px; }
     .mapctrl button{ width:38px; height:38px; font-size:18px; }
     /* 顶部提示让出空间 */
@@ -351,7 +363,15 @@
     <a class="back" href="index.html">← 返回系统</a>
   </header>
   <div class="layout">
-    <div class="banner" id="banner"></div>
+    <div class="mapbox" id="mapbox">
+      <div class="banner" id="banner"></div>
+      <div class="globe" id="globe"></div>
+      <div class="mapctrl">
+        <button id="zin" title="放大">＋</button>
+        <button id="zout" title="缩小">－</button>
+        <button id="zreset" title="重置视图">⟲</button>
+      </div>
+    </div>
     <aside class="sidepanel" id="sidepanel">
       <div class="sp-search">
         <input id="wmSearch" class="wm-input" placeholder="查找国家 / 客户信息" autocomplete="off">
@@ -361,12 +381,6 @@
       <button id="wmTrackBtn" class="wm-track-btn">外贸跟踪国家名单 <span class="arrow">▾</span></button>
       <div id="wmTrackList" class="wm-track-list" hidden></div>
     </aside>
-    <div class="globe" id="globe"></div>
-    <div class="mapctrl">
-      <button id="zin" title="放大">＋</button>
-      <button id="zout" title="缩小">－</button>
-      <button id="zreset" title="重置视图">⟲</button>
-    </div>
   </div>
   <div class="tip" id="tip">
     <div class="cn" id="tipCn"></div>
