@@ -13,10 +13,9 @@ wb_pop.json
 rc_all.json
 ne_countries.txt
 
-# === 省份边界: 当前网页只用尼日利亚(ng); 其余国家文件过大(>100MB 上限)且不使用, 排除 ===
-provinces/*.json
-!provinces/ng.json
-!provinces/ng_adm2.min.json
+# === 省份边界: 全部纳入（ng/bd/ci/gt/mx/tz/ve 等 7 国 ADM1+ADM2 均需线上渲染）===
+# 注：早年曾仅保留 ng、忽略其余国（当时误以为其余国文件 >100MB）。实际 provinces/ 内各文件均 <1MB，
+# 可直接随仓库推送。如需排除某超大未使用国，按需在此单加 `provinces/xx.json` 即可。
 
 # === 通用忽略 ===
 node_modules/
