@@ -718,7 +718,8 @@ window.addEventListener("error", function(e){
           .map(([en, v]) => {
             const ci = v[0].toLowerCase().indexOf(q);
             const ei = en.toLowerCase().indexOf(q);
-            const pos = ci >= 0 ? ci : (ei >= 0 ? ei + 0.5 : 999);
+            const pi = pinyinOf(v[3]).split(/\s+/).some(p => p.indexOf(q) >= 0) ? 0 : 999;
+            const pos = ci >= 0 ? ci : (ei >= 0 ? ei + 0.5 : (pi < 900 ? pi : 999));
             const tracked = TRACKED.indexOf(v[3]) >= 0;   // 外贸跟踪国家在并列时优先
             return { en, v, score: pos + (tracked ? -0.05 : 0) };
           })

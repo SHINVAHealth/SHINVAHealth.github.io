@@ -56,8 +56,8 @@
   input, textarea, select{ cursor:text; }
   .mapwrap svg{cursor:none!important}
   .mapwrap svg *{cursor:none!important}
-  /* 地图浮层按钮：隐藏系统指针，只显示跟随的 LOL 小手（避免小手与箭头重叠） */
-  .mapwrap button{cursor:none!important}
+  /* 仅屏蔽地图 svg 区域内部的按钮光标（跟随 LOL 小手）；顶部工具条的按钮不在此列，保留 LOL 悬停光标 */
+  .mapwrap #map button{cursor:none!important}
   .country-cursor{ position:fixed; left:0; top:0; width:26px; height:24px; pointer-events:none; z-index:99999; display:none; will-change:transform; user-select:none; -webkit-user-drag:none; }
   /* 进入国家地图区域时全局屏蔽所有系统/CSS光标，只保留 DOM 跟随的 LOL 小手（消除拖拽时 body 光标穿透叠加的"双重手"） */
   body.over-map, body.over-map *{ cursor:none !important; }
