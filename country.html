@@ -83,15 +83,28 @@
     color:#fff; font-size:20px; font-weight:700; white-space:nowrap;
     font-variant-numeric:tabular-nums; letter-spacing:.5px;
   }
-  .layout{ display:flex; gap:16px; padding:16px; align-items:stretch; }
+  .layout{ display:flex; gap:16px; padding:16px; align-items:flex-start; }
   .infobar{ width:300px; flex:none; display:flex; flex-direction:column; gap:14px; }
   .custbar{ width:372px; flex:none; }
+  /* 地图窗口固定尺寸：与左右栏彻底解耦，所有国家地图尺寸一致、底部按钮位置恒定 */
   .mapwrap{
-    flex:1; position:relative; min-height:480px; border-radius:18px; overflow:hidden;
+    flex:none; width:calc(100% - 300px - 372px - 32px); height:calc(100vh - 92px);
+    position:relative; border-radius:18px; overflow:hidden; display:flex; flex-direction:column;
     background:radial-gradient(120% 120% at 50% 28%, #0e1a2e 0%, #0a1322 60%, #070d18 100%);
     border:1px solid var(--line);
   }
-  #map{ position:absolute; inset:0; }
+  /* 功能按钮条：地图窗口顶部独立区域，普通流布局，不覆盖地图 */
+  .map-toolbar{
+    flex:none; height:46px; display:flex; align-items:center; gap:8px; padding:0 12px;
+    border-bottom:1px solid var(--line); background:rgba(10,18,32,.55);
+  }
+  .map-toolbar button{
+    padding:7px 12px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(10,18,32,.8); color:var(--txt); font-size:12px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:.2s; white-space:nowrap;
+  }
+  .map-toolbar button:hover{ border-color:var(--accent); }
+  .map-toolbar button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  #map{ flex:1; position:relative; min-height:0; }
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
     backdrop-filter:blur(10px);
@@ -119,13 +132,7 @@
   }
   .map-ctrl button:hover{ background:rgba(56,189,248,.2); border-color:var(--accent); }
   .map-ctrl button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
-  .map-toggle{ position:absolute; left:14px; top:14px; z-index:5; display:flex; gap:8px; }
-  .map-toggle button{
-    padding:7px 12px; border-radius:10px; border:1px solid var(--line);
-    background:rgba(10,18,32,.8); color:var(--txt); font-size:12px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:.2s;
-  }
-  .map-toggle button:hover{ border-color:var(--accent); }
-  .map-toggle button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  .map-toggle{ display:none; }
   /* 整页头部右侧「返回系统」按钮：与「返回世界地图」同款样式，靠右对齐 */
   .sys-btn{
     margin-left:auto;
@@ -197,7 +204,7 @@
   @media (max-width:980px){
     .layout{ flex-direction:column; }
     .infobar,.custbar{ width:auto; }
-    .mapwrap{ min-height:400px; }
+    .mapwrap{ width:auto; height:70vh; }
   }
 </style>
 <script src="https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js"></script>
@@ -255,13 +262,13 @@
     </aside>
 
     <section class="mapwrap">
-      <div id="map"></div>
-      <div id="inset" class="map-inset" style="display:none;"></div>
-      <div class="map-toggle">
+      <div class="map-toolbar">
         <button id="adm2toggle">显示二级行政区域</button>
         <button id="custtoggle" class="active">隐藏客户位点</button>
         <button id="multitrack">开启多点追踪</button>
       </div>
+      <div id="map"></div>
+      <div id="inset" class="map-inset" style="display:none;"></div>
       <div class="map-ctrl">
         <button id="zin" title="放大">＋</button>
         <button id="zout" title="缩小">－</button>
@@ -293,6 +300,6 @@
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
   <script src="country_meta.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=202607221100"></script>
 </body>
 </html>
