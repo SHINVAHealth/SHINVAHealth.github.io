@@ -302,24 +302,36 @@
   /* 移动端：纵向流 —— 页头 → 地图(上部固定) → 检索面板(地图下方中部，内部可滚动) */
   @media (max-width:900px){
     body{ overflow:hidden; }
+    /* 顶部页头：压缩间距、禁止收缩换行，确保「世界地图」标题与「返回系统」不被挤压变形 */
+    header.top{
+      height:auto; min-height:52px; padding:8px 12px; gap:10px; flex-wrap:wrap;
+    }
+    header.top .logo{ height:28px; flex:none; }
+    header.top .brand{ gap:10px; min-width:0; }
+    header.top h1{ font-size:16px; white-space:nowrap; flex:none; }
+    header.top .brand-col{ line-height:1.2; min-width:0; }
+    header.top .chinaclock{ font-size:10px; margin-top:2px; white-space:nowrap; }
+    header.top .spacer{ flex:1 1 auto; }
+    header.top a.back{ flex:none; padding:6px 10px; font-size:12px; white-space:nowrap; }
     .layout{
       display:flex; flex-direction:column; height:100%; overflow:hidden;
     }
     .mapbox{
       position:relative; left:0; right:0; top:0; bottom:auto;
-      width:100%; height:44vh; flex:0 0 44vh;
+      width:100%; height:42vh; flex:0 0 42vh;
     }
     .globe{ position:absolute; top:0; bottom:0; left:0; right:0; }
     .sidepanel{
       position:relative; left:auto; right:auto; top:auto;
       width:auto; margin:10px 10px 14px; flex:1 1 auto; overflow:auto;
-      flex-direction:column; gap:8px; padding:12px; max-height:none;
+      flex-direction:column; gap:10px; padding:12px; max-height:none;
     }
-    .sidepanel .sp-search,
-    .sidepanel .wm-track-btn,
-    .sidepanel .wm-track-list{ flex:1 1 auto; }
+    /* 检索栏 / 跟踪名单：内容自适应高度，不再拉伸占满整屏；跟踪名单限定最大高度、置于搜索栏下方 */
+    .sidepanel .sp-search{ flex:0 0 auto; }
+    .sidepanel .wm-track-btn{ flex:0 0 auto; }
+    .sidepanel .wm-track-list{ flex:0 0 auto; max-height:44vh; overflow:auto; }
     /* 检索结果在面板内展开（不再绝对浮层遮挡） */
-    .wm-results{ position:static; margin-top:6px; max-height:40vh; }
+    .wm-results{ position:static; margin-top:6px; max-height:38vh; }
     /* 缩放按钮：落在地图右下角（mapbox 内，随地图定位，不再飘到页面底部） */
     .mapctrl{ right:12px; bottom:12px; gap:6px; }
     .mapctrl button{ width:38px; height:38px; font-size:18px; }
