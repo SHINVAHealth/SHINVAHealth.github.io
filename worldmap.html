@@ -252,6 +252,10 @@
     display:inline-block; width:7px; height:7px; border-radius:50%; background:#fbbf24;
     margin-right:9px; box-shadow:0 0 0 1px rgba(255,237,160,.5) inset;
   }
+  /* 非跟踪国（拼音检索命中但不在 7 跟踪国）用灰点区分 */
+  .wm-track-list a .dot.off{ background:#64748b; box-shadow:0 0 0 1px rgba(148,163,184,.4) inset; }
+  .wm-track-search{ margin:8px 0 2px; }
+  .wm-track-list .wm-track-empty{ padding:10px 12px; color:var(--muted); font-size:12px; }
   @media (max-width:900px){
     .globe{ left:0; }
     .sidepanel{ display:none; }
@@ -299,6 +303,7 @@
         <div id="wmResults" class="wm-results" hidden></div>
       </div>
       <button id="wmTrackBtn" class="wm-track-btn">外贸跟踪国家名单 <span class="arrow">▾</span></button>
+      <input id="wmTrackSearch" class="wm-input wm-track-search" placeholder="拼音/中文/英文检索国家（如 meiguo）" autocomplete="off" hidden>
       <div id="wmTrackList" class="wm-track-list" hidden></div>
     </aside>
     <div class="globe" id="globe"></div>
@@ -319,6 +324,6 @@
 
   <script src="d3.v7.min.js"></script>
   <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221042"></script>
+  <script src="worldmap_app.js?v=202607221052"></script>
 </body>
 </html>
