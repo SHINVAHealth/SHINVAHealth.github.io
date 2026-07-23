@@ -623,8 +623,10 @@ window.addEventListener("unhandledrejection", function(e){
         // ADM2：默认隐藏，加载完成预载数据（点击按钮即时显示）；无数据则回退按钮
         ensureAdm2().then(() => {
           if (_topo2){
-            assignRegions();   // ADM2 就绪后补全客户的 __adm2 归属，供二级行政区点击筛选
-            setStatus(_topo2.features.length);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
+          assignRegions();   // ADM2 就绪后补全客户的 __adm2 归属，供二级行政区点击筛选
+          // 兼容 TopoJSON/GeoJSON 两种格式（GRID3 同源 ADM2 为 TopoJSON，无 .features 属性）
+          const _fc2cnt = (_topo2.type === 'Topology') ? _topo2.objects[Object.keys(_topo2.objects)[0]].geometries.length : _topo2.features.length;
+          setStatus(_fc2cnt);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
             if (showAdm2) renderAdm2();
             else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; }
           } else {
@@ -643,7 +645,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2Promise = (async () => {
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB）
-        try { const r2 = await fetch(`provinces/${iso2}_adm2.min.json?v=202607230854`); if (r2.ok){ fc = await r2.json(); } } catch(e){}
+        try { const r2 = await fetch(`provinces/${iso2}_adm2.min.json?v=202607230920`); if (r2.ok){ fc = await r2.json(); } } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
