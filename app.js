@@ -642,8 +642,8 @@ window.addEventListener("unhandledrejection", function(e){
       if (showAdm2) $('mapStatus').textContent = '二级行政区域边界加载中…';
       _adm2Promise = (async () => {
         let fc = null;
-        // 1) 优先本地精简 geojson（143KB，加载快）
-        try { const r2 = await fetch(`provinces/${iso2}_adm2.min.json`); if (r2.ok){ fc = await r2.json(); } } catch(e){}
+        // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB）
+        try { const r2 = await fetch(`provinces/${iso2}_adm2.min.json?v=202607230854`); if (r2.ok){ fc = await r2.json(); } } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
