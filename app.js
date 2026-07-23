@@ -40,6 +40,55 @@ window.addEventListener("unhandledrejection", function(e){
 
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+    // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
+    const APP_CACHE_VER = '202607231500';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
+    function _openIDB(){
+      return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window)) { reject(new Error('no-idb')); return; }
+        let req;
+        try { req = indexedDB.open(_IDB_NAME, 1); } catch(e){ reject(e); return; }
+        req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains(_IDB_STORE)) db.createObjectStore(_IDB_STORE); };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    async function _idbGet(key){
+      const db = await _openIDB();
+      return await new Promise((resolve, reject) => {
+        try {
+          const tx = db.transaction(_IDB_STORE, 'readonly');
+          const rq = tx.objectStore(_IDB_STORE).get(key);
+          rq.onsuccess = () => resolve(rq.result);
+          rq.onerror = () => reject(rq.error);
+        } catch(e){ reject(e); }
+      });
+    }
+    async function _idbPut(key, val){
+      const db = await _openIDB();
+      return await new Promise((resolve, reject) => {
+        try {
+          const tx = db.transaction(_IDB_STORE, 'readwrite');
+          tx.objectStore(_IDB_STORE).put(val, key);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => reject(tx.error);
+        } catch(e){ reject(e); }
+      });
+    }
+    // 带 IndexedDB 缓存的 fetch：version 变化时自动失效旧条目；网络/缓存任意一方可用即返回
+    async function fetchCached(url){
+      const key = url + '::' + APP_CACHE_VER;
+      try {
+        const cached = await _idbGet(key);
+        if (cached !== undefined) return cached;
+      } catch(e){ /* 缓存不可用 → 走网络 */ }
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      _idbPut(key, data).catch(()=>{});   // 异步写回，不阻塞
+      return data;
+    }
+
     // —— 1. 国家概况（静态权威数据，永远显示，不依赖外部 API）——
     (function loadFacts(){
       if (!facts){ $('pop').textContent='—'; }
@@ -126,22 +175,34 @@ window.addEventListener("unhandledrejection", function(e){
     }
 
     // —— 3. 汇率（er-api，CNY 基准；顺序：人民币→该国 / 当地→人民币 / 人民币→美元 / 美元→该国）——
+    function renderFX(j, code){
+      if (!code || !j.rates || j.rates[code] == null){ $('fxBody').innerHTML = '<span class="err">该国货币暂无汇率</span>'; return; }
+      const cnyToCur = j.rates[code];          // 1 人民币 = ? 该国货币
+      const cnyToUsd = j.rates.USD;            // 1 人民币 = ? 美元
+      const usdToCur = cnyToCur / cnyToUsd;     // 1 美元 = ? 该国货币
+      const curToCny = 1 / cnyToCur;           // 1 该国货币 = ? 人民币
+      const usdToCny = 1 / cnyToUsd;           // 1 美元 = ? 人民币
+      $('fxBody').innerHTML =
+        `<div class="row top"><span>1 元(人民币) ≈</span><b>${fmt(cnyToCur)} ${code}</b></div>` +
+        `<div class="row"><span>1 ${code} ≈</span><b>${fmt(curToCny)} 元(人民币)</b></div>` +
+        `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCny)} 元(人民币)</b></div>` +
+        `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCur)} ${code}</b></div>` +
+        `<span class="fx-update">更新：${j.time_last_update_utc}</span>`;
+    }
     function loadFX(){
       const code = cur ? cur.code : null;
+      if (!code){ $('fxBody').innerHTML = '<span class="err">该国货币暂无汇率</span>'; return; }
+      // 当日汇率缓存（localStorage），重复访问秒开、同日内离线可用
+      const dayKey = 'fx_' + code;
+      try {
+        const cached = JSON.parse(localStorage.getItem(dayKey) || 'null');
+        const today = new Date().toISOString().slice(0,10);
+        if (cached && cached.date === today && cached.j && cached.j.rates){ renderFX(cached.j, code); return; }
+      } catch(e){}
       fetch('https://open.er-api.com/v6/latest/CNY')
         .then(r => r.json()).then(j => {
-          if (!code || !j.rates || j.rates[code] == null){ $('fxBody').innerHTML = '<span class="err">该国货币暂无汇率</span>'; return; }
-          const cnyToCur = j.rates[code];          // 1 人民币 = ? 该国货币
-          const cnyToUsd = j.rates.USD;            // 1 人民币 = ? 美元
-          const usdToCur = cnyToCur / cnyToUsd;     // 1 美元 = ? 该国货币
-          const curToCny = 1 / cnyToCur;           // 1 该国货币 = ? 人民币
-          const usdToCny = 1 / cnyToUsd;           // 1 美元 = ? 人民币
-          $('fxBody').innerHTML =
-            `<div class="row top"><span>1 元(人民币) ≈</span><b>${fmt(cnyToCur)} ${code}</b></div>` +
-            `<div class="row"><span>1 ${code} ≈</span><b>${fmt(curToCny)} 元(人民币)</b></div>` +
-            `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCny)} 元(人民币)</b></div>` +
-            `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCur)} ${code}</b></div>` +
-            `<span class="fx-update">更新：${j.time_last_update_utc}</span>`;
+          try { localStorage.setItem(dayKey, JSON.stringify({ date: new Date().toISOString().slice(0,10), j })); } catch(e){}
+          renderFX(j, code);
         }).catch(() => { $('fxBody').innerHTML = '<span class="err">汇率加载失败（网络受限）</span>'; });
     }
     function fmt(n){ return (n==null || isNaN(n)) ? '—' : Number(n).toLocaleString('zh-CN', {maximumFractionDigits:4}); }
@@ -611,7 +672,7 @@ window.addEventListener("unhandledrejection", function(e){
     function loadProvinces(){
       (async () => {
         let topo=null, src='';
-        try { const r = await fetch(`provinces/${iso2}.json`); if (r.ok){ topo = await r.json(); src='本地缓存'; } } catch(e){}
+        try { topo = await fetchCached(`provinces/${iso2}.json`); src='本地缓存'; } catch(e){}
         if (!topo && iso3){
           try {
             const url = `https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/${iso3}/ADM1/geoBoundaries-${iso3}-ADM1.topojson`;
@@ -644,8 +705,8 @@ window.addEventListener("unhandledrejection", function(e){
       if (showAdm2) $('mapStatus').textContent = '二级行政区域边界加载中…';
       _adm2Promise = (async () => {
         let fc = null;
-        // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB）
-        try { const r2 = await fetch(`provinces/${iso2}_adm2.min.json?v=202607230945`); if (r2.ok){ fc = await r2.json(); } } catch(e){}
+        // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607231500`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底

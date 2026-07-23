@@ -340,26 +340,40 @@
     .legend{ left:12px; bottom:12px; font-size:11px; padding:6px 10px; }
   }
 </style>
-<script src="https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js"></script>
+<link rel="preconnect" href="https://beacon.cdn.qq.com" crossorigin>
 <script>
+/* 腾讯灯塔统计：非阻塞异步加载，避免阻塞首屏渲染（遥测逻辑不变） */
 (function(){
-  try{
-    var beacon=new BeaconAction({
-      appkey:'0WEB06U85YBSLJNL',
-      versionCode:'1.0.0',
-      channelID:'share',
-      delay:1000,
-      sessionDuration:30*60*1000,
-      isOversea:false,
-      needReportRqdEvent:false
-    });
-    beacon.onDirectUserAction('preview_page_view',{
-      'url':location.href,
-      'referrer':document.referrer,
-      'title':document.title,
-      'sandbox_id':'eb78d6a12e694d958a1cb0dc620d4bcd'
-    });
-  }catch(e){}
+  function loadBeacon(){
+    try{
+      var s=document.createElement('script');
+      s.src='https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js';
+      s.async=true;
+      s.onload=function(){
+        try{
+          var beacon=new BeaconAction({
+            appkey:'0WEB06U85YBSLJNL',
+            versionCode:'1.0.0',
+            channelID:'share',
+            delay:1000,
+            sessionDuration:30*60*1000,
+            isOversea:false,
+            needReportRqdEvent:false
+          });
+          beacon.onDirectUserAction('preview_page_view',{
+            'url':location.href,
+            'referrer':document.referrer,
+            'title':document.title,
+            'sandbox_id':'eb78d6a12e694d958a1cb0dc620d4bcd'
+          });
+        }catch(e){}
+      };
+      s.onerror=function(){};
+      document.head.appendChild(s);
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadBeacon);
+  else loadBeacon();
 })();
 </script></head>
 <body>
@@ -403,8 +417,8 @@
     <div class="row"><span class="k">当地时间</span><span class="v" id="tipTime"></span></div>
   </div>
 
-  <script src="d3.v7.min.js"></script>
-  <script src="topojson-client.min.js"></script>
-  <script src="worldmap_app.js?v=202607221311"></script>
+  <script defer src="d3.v7.min.js"></script>
+  <script defer src="topojson-client.min.js"></script>
+  <script defer src="worldmap_app.js?v=202607221311"></script>
 </body>
 </html>
