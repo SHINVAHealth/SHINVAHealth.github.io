@@ -30,6 +30,8 @@ window.addEventListener("error", function(e){
   "Greenland":["格陵兰","北美洲","America/Nuuk","gl"],
   "Fr. S. Antarctic Lands":["法属南方领地","南极洲","Indian/Kerguelen","tf"],
   "Timor-Leste":["东帝汶","亚洲","Asia/Dili","tl"],
+  "Bahrain":["巴林","亚洲","Asia/Bahrain","bh"],
+  "Singapore":["新加坡","亚洲","Asia/Singapore","sg"],
   "South Africa":["南非","非洲","Africa/Johannesburg","za"],
   "Lesotho":["莱索托","非洲","Africa/Maseru","ls"],
   "Mexico":["墨西哥","北美洲","America/Mexico_City","mx"],
@@ -190,7 +192,7 @@ window.addEventListener("error", function(e){
   // 各国国际区号（ITU-T E.164，key=iso2），用于检索栏显示 “中文(+区号)” 并支持按区号反查国家
   const DIAL = {
     ae:971, af:93, al:355, am:374, ao:244, aq:672, ar:54, at:43, au:61, az:994,
-    ba:387, bd:880, be:32, bf:226, bg:359, bi:257, bj:229, bn:673, bo:591, br:55,
+    ba:387, bd:880, be:32, bf:226, bg:359, bi:257, bh:973, bj:229, bn:673, bo:591, br:55,
     bs:1242, bt:975, bw:267, by:375, bz:501, ca:1, cd:243, cf:236, cg:242, ch:41,
     ci:225, cl:56, cm:237, cn:86, co:57, cr:506, cu:53, cy:357, cz:420, de:49,
     dj:253, dk:45, do:1809, dz:213, ec:593, ee:372, eg:20, eh:212, er:291, es:34,
@@ -203,7 +205,7 @@ window.addEventListener("error", function(e){
     mz:258, na:264, nc:687, ne:227, ng:234, ni:505, nl:31, no:47, np:977, nz:64,
     om:968, pa:507, pe:51, pg:675, ph:63, pk:92, pl:48, pr:1, ps:970, pt:351,
     py:595, qa:974, ro:40, rs:381, ru:7, rw:250, sa:966, sb:677, sd:249, se:46,
-    si:386, sk:421, sl:232, sn:221, so:252, sr:597, ss:211, sv:503, sy:963, sz:268,
+    si:386, sk:421, sl:232, sn:221, sg:65, so:252, sr:597, ss:211, sv:503, sy:963, sz:268,
     td:235, tf:262, tg:228, th:66, tj:992, tl:670, tm:993, tn:216, tr:90, tt:1868,
     tw:886, tz:255, ua:380, ug:256, us:1, uy:598, uz:998, ve:58, vn:84, vu:678,
     xk:383, ye:967, za:27, zm:260, zw:263
@@ -227,6 +229,7 @@ window.addEventListener("error", function(e){
     be:'bilishi',
     bf:'bujinafaso',
     bg:'baolijiya',
+    bh:'balin',
     bi:'bujidi',
     bj:'benin',
     bn:'wenlai',
@@ -352,6 +355,7 @@ window.addEventListener("error", function(e){
     sb:'suoluomenqundao',
     sd:'sudan',
     se:'ruidian',
+    sg:'xinjiapo',
     si:'siluowenniya',
     sk:'siluofake',
     sl:'sailaliong',
