@@ -41,7 +41,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202607241640';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202607241650';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -208,7 +208,7 @@ window.addEventListener("unhandledrejection", function(e){
     function fmt(n){ return (n==null || isNaN(n)) ? '—' : Number(n).toLocaleString('zh-CN', {maximumFractionDigits:4}); }
 
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
-    let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
+    let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _adm2Paths=[], _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     // 懒加载名单（方案 A）：这些大国 ADM2 体量大，进图不预载，点击"显示二级行政区域"时才拉（IndexedDB 缓存，二次秒开）
     const LAZY_ADM2 = new Set(['ru', 'au']);
     let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
@@ -303,6 +303,20 @@ window.addEventListener("unhandledrejection", function(e){
         if (!showAdm2) return;
         const el = nearestAdm2At(e.clientX, e.clientY);
         if (el){ e.stopPropagation(); const d = el.__data__; setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, el, d); }
+      });
+      // 悬停兜底：鼠标落在客户绿点(显示客户信息，优先保留)、海岸线/州界(pointer-events:none 不产生事件)、
+      // 或相邻 LGA 几何缝隙(无直接命中的 adm2 path)时，各自 mousemove 不触发 → 这里用几何判定补上最近区域信息。
+      svg.on('mousemove', (e) => {
+        if (!showAdm2) return;
+        const t = e.target;
+        // 鼠标已在 adm2 path 上 → 交各自 mousemove handler 处理（已显示区域信息）
+        if (t && t.matches && t.matches('path.adm2')) return;
+        // 鼠标在客户绿点上 → 绿点 handler 显示客户信息，优先保留，不覆盖
+        if (t && t.closest && t.closest('g.cust-pt-g')) return;
+        // 缝隙/海洋/边界线等无直接命中的位置 → 几何兜底显示最近 adm2 区域信息
+        const el = nearestAdm2At(e.clientX, e.clientY);
+        if (el){ const d = el.__data__; showTip(e, d.properties.shapeName || d.properties.name || ''); hoverRegion(d, 'adm2'); }
+        else { hideTip(e); unhoverRegion(); }
       });
       // 3) 省轮廓（最上层，描边清晰，市区线不压过省界）
       const pl = g.selectAll('path.prov-line').data(features).enter().append('path')
@@ -687,6 +701,7 @@ window.addEventListener("unhandledrejection", function(e){
     });
       const n = fc.features.length;
       setStatus(n);
+      if (_gAdm2) _adm2Paths = _gAdm2.selectAll('path.adm2').nodes();  // 缓存用于悬停/点击兜底，免每次遍历 querySelectorAll
       reapplyRegionSel();
     }
     function loadProvinces(){
@@ -732,7 +747,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2Promise = (async () => {
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
-        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241640`); } catch(e){}
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241650`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
@@ -921,7 +936,7 @@ window.addEventListener("unhandledrejection", function(e){
     function nearestAdm2At(px, py){
       const R = 26; // 半径采样最大范围(px)
       // 1) 候选预筛：仅取包围盒覆盖点击点附近(R 内)的 adm2 path，避免遍历全部 774 个，保证点击不卡
-      const all = document.querySelectorAll('path.adm2');
+      const all = (_adm2Paths && _adm2Paths.length) ? _adm2Paths : document.querySelectorAll('path.adm2');
       const near = [];
       for (const el of all){
         const b = el.getBoundingClientRect();
