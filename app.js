@@ -294,6 +294,16 @@ window.addEventListener("unhandledrejection", function(e){
       _provFill = pf.nodes();
       // 2) 二级行政区域（中间层，按所属一级区域单独裁剪，避免跨区域交叉）
       _gAdm2 = g.append('g');
+      // ADM2 点击容差：小行政区（如 Lagos 州各 LGA 在国家视图下仅数像素）被客户绿点/海洋空隙/邻县局部覆盖时，
+      // 点其附近也能精准选中；直接命中行政区仍走各自 handler，hover 客户信息不受影响
+      // 统一在 svg 层做二级行政区点击判定：用几何包含(isPointInFill)优先选“点击点真实落入的 LGA”，
+      // 相邻/重叠区取面积最小者（最具体的小 LGA，更符合用户意图）；直接命中的 adm2 也走此判定以修正 z 序覆盖。
+      // 命中 adm2 时 stopPropagation，避免冒泡干扰 ADM1 省面 handler；未命中则放行由 ADM1 处理。
+      svg.on('click', (e) => {
+        if (!showAdm2) return;
+        const el = nearestAdm2At(e.clientX, e.clientY);
+        if (el){ e.stopPropagation(); const d = el.__data__; setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, el, d); }
+      });
       // 3) 省轮廓（最上层，描边清晰，市区线不压过省界）
       const pl = g.selectAll('path.prov-line').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-line')
@@ -673,13 +683,11 @@ window.addEventListener("unhandledrejection", function(e){
             showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
             hoverRegion(d, 'adm2');
           })
-          .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); })
-          .on('click', (e,d) => setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget, d));
-      });
+      .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); });
+    });
       const n = fc.features.length;
       setStatus(n);
       reapplyRegionSel();
-      if (_gCust) _gCust.style('pointer-events', 'none');   // ADM2 开启时客户点不拦截点击，避免遮挡二级区域选择
     }
     function loadProvinces(){
       (async () => {
@@ -761,13 +769,13 @@ window.addEventListener("unhandledrejection", function(e){
           else {
             setStatus('暂无');
             showAdm2 = false; this.classList.remove('active'); this.textContent = '显示二级行政区域';
-            _provFill.forEach(n => n.style.pointerEvents = ''); if(_gCust) _gCust.style('pointer-events', null);   // ADM2 失败 → 恢复 ADM1 交互
+            _provFill.forEach(n => n.style.pointerEvents = '');
           }
         }
       } else {
         _gAdm2.selectAll('*').remove();   // 仅隐藏二级行政区域图层，地图说明保持不变
         // ADM2 关闭时：恢复 ADM1 prov-fill 的指针事件
-        _provFill.forEach(n => n.style.pointerEvents = ''); if(_gCust) _gCust.style('pointer-events', null);
+        _provFill.forEach(n => n.style.pointerEvents = '');
       }
     };
     let _tipTxt = '', _tipW = 0, _tipH = 0;
@@ -864,7 +872,6 @@ window.addEventListener("unhandledrejection", function(e){
         });
       }
       _gCust.style('display', _custVisible ? null : 'none');
-      if(_gCust) _gCust.style('pointer-events', showAdm2 ? 'none' : null);   // ADM2 开启时客户点不拦截点击，避免遮挡二级区域选择
       updateCustStat();   // 点位重绘后刷新右下角统计
     }
     // —— 右下角统计：信息总计(录入客户总数) / 位置统计(地图绿色圆点数量)，用于对比计算空白地址个数 ——
@@ -906,6 +913,31 @@ window.addEventListener("unhandledrejection", function(e){
       const q = ($('custSearch').value || '').trim().toLowerCase();
       if (q) flt = flt.filter(r => [r.company, r.phone, r.name, r.address].some(v => (v||'').toLowerCase().includes(q)));
       renderCustomers(flt);
+    }
+    // 在点击点附近（含堆叠层与半径采样）查找最近的二级行政区 path，解决“区域太小/被局部覆盖导致点不中”
+    function nearestAdm2At(px, py){
+      const isAdm2 = el => el && el.matches && el.matches('path.adm2');
+      let arr = document.elementsFromPoint(px, py).filter(isAdm2);
+      if (!arr.length){
+        for (let r = 3; r <= 16 && !arr.length; r += 3){
+          for (let a = 0; a < 360; a += 30){
+            const x = px + r*Math.cos(a*Math.PI/180), y = py + r*Math.sin(a*Math.PI/180);
+            arr = arr.concat(document.elementsFromPoint(x, y).filter(isAdm2));
+          }
+        }
+      }
+      if (!arr.length) return null;
+      // 优先选“点击点真实落入其几何内”的 path（正确处理相邻/重叠区被上层 path 覆盖的情形）
+      const pt = new DOMPoint(px, py);
+      const inside = [];
+      arr.forEach(el => {
+        try { const m = el.getScreenCTM(); if (!m) return; const local = pt.matrixTransform(m.inverse()); if (el.isPointInFill(local)) inside.push(el); } catch(e){}
+      });
+      const cand = inside.length ? inside : arr;
+      // 多个候选时优先面积最小者（最具体的细小 LGA 更可能是用户意图）
+      let best = null, bestArea = Infinity;
+      cand.forEach(el => { const b = el.getBoundingClientRect(); const area = b.width * b.height; if (area < bestArea){ bestArea = area; best = el; } });
+      return best;
     }
     function setRegionFilter(type, name, label, el, feature){
       // 单点模式：区域点击前清掉客户黄点 + 客户联动浮雕，保持“选中即清空其它”的秩序；多点追踪则保留累积
