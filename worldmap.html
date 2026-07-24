@@ -125,6 +125,11 @@
     /* 仅作底层描边强调；填充交给定制浮雕克隆（.emboss），避免与抬起国形重叠造成重影 */
     fill:transparent; stroke:rgba(255,255,255,.5); stroke-width:1;
   }
+  /* 微国（新加坡/巴林/东帝汶等，真实几何 <1px）：加粗描边 + 不透明填充，保证底图可见 */
+  .country.micro{
+    fill:rgba(56,189,248,.5);
+    stroke:rgba(8,15,30,.95); stroke-width:1.6;
+  }
   /* 3D 浮雕突出层：悬停国家整块区域「从平面探出」的实体浮雕（地面阴影 + 侧壁厚度 + 高光顶面） */
   .emboss-layer{ pointer-events:none; }
   /* 地面投影：落在平面上的柔影（#embossShadow 滤镜），置于最底，不含国形副本 → 无重影 */
@@ -420,6 +425,6 @@
 
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
-  <script defer src="worldmap_app.js?v=202607241010"></script>
+  <script defer src="worldmap_app.js?v=202607241020"></script>
 </body>
 </html>

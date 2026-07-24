@@ -507,26 +507,19 @@ window.addEventListener("error", function(e){
   const gGrids = tiles.map(tg => tg.append('g').attr('class','graticule graticule-in'));
   const allPaths = gZoom.selectAll('path.country');
 
-  // 微国最小可见尺寸兜底（2026-07-24 修复：坐标对但屏幕上"看不到"的根因）
-  // Natural Earth 110m 里新加坡/巴林等是"点级"几何，geoNaturalEarth1 + fitExtent 缩放下
-  // 屏幕面积 < 1px²，描边 0.5px 直接让其消失。解决：投影后包围盒过小的国，
-  // 用其质心在内容坐标画一个固定半径（MIN_R）的小圆 path 覆盖，保证可见且交互/浮雕兼容。
-  const MICRO_MIN_R = 3.2;     // 微国兜底圆半径（内容坐标 px）
-  const MICRO_BOX = 5;         // 投影后屏幕包围盒边长阈值（px），小于则视为微国
-  const MICRO_EXTRA = ['tl'];  // 显式补充：紧贴邻国易被遮挡的微国（如东帝汶挨着印尼）
+  // 微国放大浮雕参数（2026-07-24 修正：弃用圆点兜底，改为放大真实轮廓浮雕）
+  // 用户明确要求：不要圆点、要真实轮廓 + 放大浮雕突出。
+  // 新加坡/巴林等 110m 几何本身仅 ~1px，悬停/搜索时用【放大版真实 path】做 3D 浮雕，
+  // 既不丢真实形状又能"撑大"引起注意；底图始终画真实 path（描边加粗保证可见，不再渲染圆点）。
+  const EMBOSS_MICRO_SCALE = 1.15;   // 微国浮雕放大倍数（相对自身质心）
+  const MICRO_BOX = 5;               // 投影后屏幕包围盒阈值（px），仅用于判断"是否需放大浮雕"
   function iso2Of(d){ const v = COUNTRY[(d.properties && d.properties.name)]; return v && v[3]; }
   function screenBox(d){
     try { const b = path.bounds(d); return Math.max(b[1][0]-b[0][0], b[1][1]-b[0][1]); }
     catch(e){ return 999; }
   }
-  function isMicro(d){ return screenBox(d) < MICRO_BOX || MICRO_EXTRA.includes(iso2Of(d)); }
-  function microCirclePath(d){
-    const c = path.centroid(d);
-    if (!c || isNaN(c[0]) || isNaN(c[1])) return '';
-    const r = MICRO_MIN_R;
-    return `M${c[0]-r},${c[1]}a${r},${r} 0 1,0 ${2*r},0a${r},${r} 0 1,0 ${-2*r},0Z`;
-  }
-  // 计算每个 feature 是否微国（投影相关，resize 时重算更准；这里预标记供交互判断）
+  function isMicro(d){ return screenBox(d) < MICRO_BOX; }
+  // 仅用于浮雕放大判断：投影相关，resize 时重算
   let MICRO_SET = new Set();
   function recomputeMicro(){
     MICRO_SET = new Set();
@@ -579,8 +572,9 @@ window.addEventListener("error", function(e){
     frameSphere.attr('d', dSphere);
     clipSphere.attr('d', dSphere);
     TILE = (w - GM.l - GM.r);              // 平铺周期 = 世界内容宽（含两侧留白）
-    recomputeMicro();                      // 投影变了，重算微国集合
-    allPaths.attr('d', d => MICRO_SET.has(d) ? microCirclePath(d) : path(d));
+    recomputeMicro();                      // 投影变了，重算微国集合（仅用于浮雕放大判断）
+    allPaths.attr('d', d => path(d))        // 底图始终画真实轮廓（微国不再圆点兜底）
+           .classed('micro', d => MICRO_SET.has(d));   // 微国加粗描边，保证底图可见
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
     if (NG_PTS.length) drawNigeriaPoints();
     drawGraticule();
@@ -887,10 +881,13 @@ window.addEventListener("error", function(e){
     fullList.forEach(f => {
       if (!f || typeof f !== 'object') return;
       const isMicroF = MICRO_SET.has(f);
-      const d = isMicroF ? microCirclePath(f) : path(f);
+      const d = path(f);                         // 始终用真实轮廓（不再圆点兜底）
       if (!d) return;
       const c = path.centroid(f);                 // 内容坐标质心
-      const base = `translate(${c[0] + tx},${c[1]}) scale(1.03) translate(${-c[0]},${-c[1]})`;
+      // 微国浮雕：放大自身真实轮廓，让"撑大"的 3D 隆起清晰可见；普通国维持原比例
+      const sBase = isMicroF ? EMBOSS_MICRO_SCALE : 1.03;   // 阴影/侧壁基准缩放
+      const sTop  = isMicroF ? (EMBOSS_MICRO_SCALE + 0.01) : 1.04;  // 顶面缩放
+      const base = `translate(${c[0] + tx},${c[1]}) scale(${sBase}) translate(${-c[0]},${-c[1]})`;
       // 1) 地面投影：落在平面（base）上的柔和阴影，置于最底
       gEmboss.append('path').attr('class','emboss-shadow')
         .attr('d', d).attr('transform', base);
@@ -900,14 +897,14 @@ window.addEventListener("error", function(e){
         const y = -H * t;
         gEmboss.append('path').attr('class','emboss-side')
           .attr('d', d)
-          .attr('transform', `translate(${c[0] + tx},${c[1] + y}) scale(1.03) translate(${-c[0]},${-c[1]})`)
+          .attr('transform', `translate(${c[0] + tx},${c[1] + y}) scale(${sBase}) translate(${-c[0]},${-c[1]})`)
           .style('fill', wallColor(t))
           .style('stroke', 'none');
       }
       // 3) 顶面：清晰黄边 + 高光渐变，最为"被光照射的隆起表面"，置于最上
       gEmboss.append('path').attr('class','emboss-top')
         .attr('d', d)
-        .attr('transform', `translate(${c[0] + tx},${c[1] - H}) scale(1.04) translate(${-c[0]},${-c[1]})`);
+        .attr('transform', `translate(${c[0] + tx},${c[1] - H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
       liftCustomerPoints(f, c, H, tx);    // 该国内客户绿点随浮雕一起探出
     });
   }
