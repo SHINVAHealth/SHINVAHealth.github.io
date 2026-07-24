@@ -209,26 +209,28 @@ window.addEventListener("error", function(e){
     xk:383, ye:967, za:27, zm:260, zw:263
   };
   // 全量国家拼音表（iso2 -> 全拼/常用别名，小写无空格），覆盖 COUNTRY 全部 175 国，用于拼音检索（如 meiguo→美国 / moxige→墨西哥）。
+  // 拼音数据源（按中国人的标注与习惯，纯中文名直拼；每国仅一个标准拼音，不收录别名/标准注音变体）
+  // 例：哥斯达黎加=gesidalijia、美国=meiguo、印度=yindu、印度尼西亚=yinniduiya、厄瓜多尔=eguaduoer
   const PINYIN = {
-    ae:'alabolianheqiuzhangguo a_la_bo alabo alalianhe alianheqiuguo',
+    ae:'alabolianheqiuzhangguo',
     af:'afuhan',
-    al:'aerbaniya aerbanniya',
+    al:'aerbaniya',
     am:'yameiniya',
     ao:'anguola',
     aq:'nanjizhou',
     ar:'agenting',
     at:'aodili',
-    au:'aodaliya aozhou',
+    au:'aodaliya',
     az:'azhaibaijiang',
-    ba:'bosiniyaheheisaigeweiya boshihei',
-    bd:'mengjialaguo mengjia',
+    ba:'bosiniyaheheisaigeweiya',
+    bd:'mengjialaguo',
     be:'bilishi',
     bf:'bujinafaso',
     bg:'baolijiya',
     bi:'bujidi',
     bj:'benin',
     bn:'wenlai',
-    bo:'bolivia boliyaya',
+    bo:'boliya',
     br:'baxi',
     bs:'bahama',
     bt:'butan',
@@ -236,16 +238,16 @@ window.addEventListener("error", function(e){
     by:'baieluosi',
     bz:'bolizi',
     ca:'jianada',
-    cd:'gangguojin jinqangguo',
+    cd:'gangguojin',
     cf:'zhongfeigongheguo',
-    cg:'gangguobu bucangguo',
+    cg:'gangguobu',
     ch:'ruishi',
-    ci:'ketediva xiangyabin',
+    ci:'ketediewa',
     cl:'zhili',
     cm:'kameilong',
     cn:'zhongguo',
     co:'gelunbiya',
-    cr:'geluosidalika',
+    cr:'gesidalijia',
     cu:'guba',
     cy:'saipulusi',
     cz:'jieke',
@@ -266,22 +268,22 @@ window.addEventListener("error", function(e){
     fk:'fukelanqundao',
     fr:'faguo',
     ga:'jiapeng',
-    gb:'yingguo yinguo',
+    gb:'yingguo',
     ge:'gelujiya',
     gh:'jianna',
     gl:'gelinglan',
     gm:'gambiya',
-    gn:'jianiya',
+    gn:'jiniya',
     gq:'chidaojineiya',
     gr:'xila',
     gt:'weidimala',
-    gw:'jianiyabishao',
+    gw:'jiniyabishao',
     gy:'guiyana',
     hn:'hongdulasi',
-    hr:'keluodiyayu',
+    hr:'keluodiya',
     ht:'haidi',
     hu:'xiongyali',
-    id:'yinnidu',
+    id:'yinniduiya',
     ie:'aierlan',
     il:'yiselie',
     in:'yindu',
@@ -295,8 +297,8 @@ window.addEventListener("error", function(e){
     ke:'jianniya',
     kg:'jierjisi',
     kh:'jianpuzhai',
-    kp:'chaoxian beichaoxian',
-    kr:'hanguo nanchaoxian',
+    kp:'chaoxian',
+    kr:'hanguo',
     kw:'keweite',
     kz:'hasakesitan',
     la:'laowo',
@@ -314,7 +316,7 @@ window.addEventListener("error", function(e){
     mg:'madajiasijia',
     mk:'maiqidong',
     ml:'mali',
-    mm:'miandian burma',
+    mm:'miandian',
     mn:'waibizu',
     mr:'maolitaniya',
     mw:'malawi',
@@ -334,7 +336,7 @@ window.addEventListener("error", function(e){
     pa:'banna',
     pe:'bilu',
     pg:'babuyaxinji',
-    ph:'feilübin feilubin',
+    ph:'feilübin',
     pk:'bajisitan',
     pl:'bolan',
     pr:'boduolige',
@@ -346,7 +348,7 @@ window.addEventListener("error", function(e){
     rs:'saierweiya',
     ru:'eluosi',
     rw:'luwangda',
-    sa:'shutealabo shatealabo shatelabo',
+    sa:'shutealabo',
     sb:'suoluomenqundao',
     sd:'sudan',
     se:'ruidian',
@@ -359,7 +361,7 @@ window.addEventListener("error", function(e){
     ss:'nansudan',
     sv:'salvador',
     sy:'xuliya',
-    sz:'swazilan',
+    sz:'siweishilan',
     td:'zhade',
     tf:'fashunfangliedi',
     tg:'duogeyu',
@@ -369,11 +371,11 @@ window.addEventListener("error", function(e){
     tm:'tukumensitan',
     tn:'tunisiya',
     tr:'tuerqi',
-    tt:'teliniwengdhebag',
+    tt:'teliniwenghebaduo',
     tz:'tansangniya',
     ua:'wukelan',
     ug:'wuganda',
-    us:'meiguo meilijian',
+    us:'meiguo',
     uy:'wuliguai',
     uz:'wuzibieke',
     ve:'weineiruila',
@@ -381,7 +383,7 @@ window.addEventListener("error", function(e){
     vu:'wanuatu',
     xk:'kesuowo',
     ye:'yemen',
-    za:'nafei nanfei',
+    za:'nanfei',
     zm:'zhanbiya',
     zw:'xinbawei'
   };
@@ -1018,34 +1020,8 @@ window.addEventListener("error", function(e){
     function syncClear(){
       if (clearBtn) clearBtn.hidden = !input.value;
     }
-    // —— 拼音音节级模糊匹配（容错用户拼写偏差，如 gesidalijia ↔ geluosidalika）——
-    const SHENG = ['zh','ch','sh','b','p','m','f','d','t','n','l','g','k','h','j','q','x','r','z','c','s','y','w'];
-    function splitSyllables(p){
-      p = (p || '').toLowerCase().replace(/\s+/g, '');
-      const out = []; let i = 0;
-      while (i < p.length){
-        let m = null;
-        for (const s of SHENG){ if (p.startsWith(s, i)){ m = s; break; } }
-        if (m){
-          let j = i + m.length;
-          while (j < p.length){ let nx = false; for (const s of SHENG){ if (p.startsWith(s, j)){ nx = true; break; } } if (nx) break; j++; }
-          out.push(p.slice(i, j)); i = j;
-        } else {
-          let j = i + 1;
-          while (j < p.length){ let nx = false; for (const s of SHENG){ if (p.startsWith(s, j)){ nx = true; break; } } if (nx) break; j++; }
-          out.push(p.slice(i, j)); i = j;
-        }
-      }
-      return out;
-    }
-    // 双向音节相似度（取较小比，避免短输入高比例命中长国拼音）
-    function pinyinSim(a, b){
-      const sa = splitSyllables(a), sb = splitSyllables(b);
-      if (!sa.length || !sb.length) return 0;
-      const setB = new Set(sb); let hit = 0;
-      for (const s of sa){ if (setB.has(s)) hit++; }
-      return Math.min(hit / sa.length, hit / sb.length);
-    }
+    // 拼音数据源已是"每国单一标准拼音（纯中文名直拼，按中国人习惯）"，故搜索只需精确全等即可，
+    // 无需模糊层：yindu→印度、gesidalijia→哥斯达黎加、yinniduiya→印度尼西亚，输入即命中。
     // 清空搜索：清除文本 + 收起结果 + 隐藏"×" + 清除搜索触发的浮雕
     function clearSearch(){
       input.value = '';
@@ -1087,31 +1063,19 @@ window.addEventListener("error", function(e){
           .slice(0, 8)
           .map(x => [x.en, x.v]);
       }
-      // 完整名称精确匹配（中文/英文/拼音完全相等）→ 自动识别并让该国 3D 浮雕显示
-      // 仅当输入完全等于某国中文名 / 英文名 / 全拼（拼音可含空格或连写，统一去空格比对）时触发，避免部分输入误触发
+      // 完整名称精确匹配（中文名 / 英文名 / 标准拼音连写，三者全等）→ 自动识别并让该国 3D 浮雕显示
+      // 数据源已按"中国人习惯单一拼音"，故全等即命中，无需模糊层（避免短国误触发）
       let exactIso2 = null;
-      let fuzzyIso2 = null, fuzzyBest = 0;
-      const FUZZY_TH = 0.6;   // 音节相似度阈值（≥0.6 视为"完整拼音的近似拼写"）
       if (q){
-        const pySegs = (v3) => pinyinOf(v3).toLowerCase().split(/\s+/).filter(Boolean);  // 多段拼音，如 ["meiguo","meilijian"]
         for (const [en, v] of cMs){
           const cnFull = v[0].toLowerCase();
           const enFull = en.toLowerCase();
-          const segs = pySegs(v[3]);
-          const pyFull = segs.join('');                            // 连写整串
-          const pyHit = segs.some(s => s === q) || pyFull === q;   // 任一段全拼相等，或整串连写相等
-          if (cnFull === q || enFull === q || pyHit){
+          const pyFull = pinyinOf(v[3]).toLowerCase();   // 每国仅一个标准拼音（连写）
+          if (cnFull === q || enFull === q || pyFull === q){
             exactIso2 = v[3]; break;
-          }
-          // 精确未中 → 收集最佳拼音模糊候选（仅当输入≥4字符，避免短片段误触发）
-          if (q.length >= 4){
-            const sim = pinyinSim(q, pyFull);
-            if (sim > fuzzyBest){ fuzzyBest = sim; fuzzyIso2 = v[3]; }
           }
         }
       }
-      // 精确未命中时，若模糊候选达阈值则采用（容错拼音拼写偏差）
-      if (!exactIso2 && fuzzyIso2 && fuzzyBest >= FUZZY_TH) exactIso2 = fuzzyIso2;
       if (exactIso2 && _searchEmboss){ _searchEmboss(exactIso2); }
       const custMs = ALL_CUSTOMERS.filter(r =>
         [r.company, r.phone, r.contact, r.address, r.city].some(x => (x || '').toLowerCase().includes(q))
