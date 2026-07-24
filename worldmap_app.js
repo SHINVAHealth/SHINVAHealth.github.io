@@ -1039,7 +1039,8 @@ window.addEventListener("error", function(e){
       const raw = input.value;
       const q = raw.toLowerCase().trim();
       syncClear();
-      if (!q){ results.hidden = true; results.innerHTML = ''; return; }
+      // 搜索栏清空（手动删字 / 拼音被删空）时，自动取消浮雕并还原视图到浮雕前状态
+      if (!q){ clearSearch(); return; }
       // 区号反查：输入为纯数字或 +数字（如 +86 / 86）时，按国际区号匹配国家
       const digits = q.replace(/[^\d]/g, '');
       const isDial = /^[\d+\s]+$/.test(raw.trim()) && digits.length >= 1 && digits.length <= 4;
