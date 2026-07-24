@@ -844,6 +844,42 @@ window.addEventListener("error", function(e){
     });
   }
   function hideEmboss(){ gEmboss.selectAll('*').remove(); dropCustomerPoints(); }
+  // 搜索栏精确匹配国家 → 自动识别并让该国 3D 浮雕显示（同时平移聚焦 + 弹 tooltip）
+  function searchEmboss(iso2){
+    const f = iso2ToFeature[iso2];
+    if (!f) return false;
+    // 世界平铺 3 份（TILES），需找到当前视野中"可见"的那一份的 translateX 偏移，
+    // 使浮雕克隆与可见国形对齐（否则拖拽后落在错误 tile → 看似无浮雕）
+    const c0 = path.centroid(f);            // 内容坐标质心
+    const base = projection.invert ? projection.invert(c0) : null;
+    let tx = 0;
+    if (base){
+      const cx = base[0];                    // 经度（-180~180）
+      // 当前 translate 后，可见经度 = cx + (translateX / TILE) * 360，取模到 [-180,180]
+      const shift = (_curTransform && _curTransform.x) ? _curTransform.x / TILE : 0;
+      let visLon = ((cx + shift * 360) % 360 + 360) % 360; if (visLon > 180) visLon -= 360;
+      // 可见国形所在的 tile 偏移 = 让其经度对齐到 visLon 的那一份
+      tx = -((visLon - cx) / 360) * TILE;
+      // 归一化到 [-TILE, TILE) 的整数倍，取最接近 0 的一份
+      tx = Math.round(tx / TILE) * TILE;
+    }
+    showEmboss([iso2], tx);
+    // 平移聚焦：把该国质心移到视野中心并适度放大
+    const k = Math.max((_curTransform && _curTransform.k) || 1, 2.2);
+    const W = width(), H = height();
+    const target = d3.zoomIdentity
+      .translate(W / 2 - c0[0] * k, H / 2 - c0[1] * k)
+      .scale(k);
+    svg.transition().duration(500).call(zoom.transform, target);
+    // 弹 tooltip 显示国名
+    const [cn, cont, tz, _] = infoOf(f);
+    tipCn.textContent = cn; tipEn.textContent = (f.properties && f.properties.name) || '';
+    tipCn2.textContent = cn; tipEn2.textContent = (f.properties && f.properties.name) || '';
+    tipCont.textContent = cont; tipTime.textContent = tz ? fmtTime(tz) : '—';
+    tip.classList.add('show');
+    tip.style.left = (window.innerWidth / 2) + 'px'; tip.style.top = (H / 2 - 60) + 'px';
+    return true;
+  }
   function onClick(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     if (!iso2){ return; }
@@ -972,11 +1008,12 @@ window.addEventListener("error", function(e){
     function syncClear(){
       if (clearBtn) clearBtn.hidden = !input.value;
     }
-    // 清空搜索：清除文本 + 收起结果 + 隐藏"×"
+    // 清空搜索：清除文本 + 收起结果 + 隐藏"×" + 清除搜索触发的浮雕
     function clearSearch(){
       input.value = '';
       results.hidden = true; results.innerHTML = '';
       syncClear();
+      hideEmboss();
       input.focus();
     }
     function run(){
@@ -1007,6 +1044,21 @@ window.addEventListener("error", function(e){
           .slice(0, 8)
           .map(x => [x.en, x.v]);
       }
+      // 完整名称精确匹配（中文/英文/拼音完全相等）→ 自动识别并让该国 3D 浮雕显示
+      // 仅当输入完全等于某国中文名 / 英文名 / 全拼（拼音可含空格或连写，统一去空格比对）时触发，避免部分输入误触发
+      let exactIso2 = null;
+      if (q){
+        const pyNorm = (v3) => pinyinOf(v3).toLowerCase().replace(/\s+/g, '');
+        for (const [en, v] of cMs){
+          const cnFull = v[0].toLowerCase();
+          const enFull = en.toLowerCase();
+          const pyFull = pyNorm(v[3]);
+          if (cnFull === q || enFull === q || (pyFull && pyFull === q)){
+            exactIso2 = v[3]; break;
+          }
+        }
+      }
+      if (exactIso2){ searchEmboss(exactIso2); }
       const custMs = ALL_CUSTOMERS.filter(r =>
         [r.company, r.phone, r.contact, r.address, r.city].some(x => (x || '').toLowerCase().includes(q))
       ).slice(0, 12);
@@ -1015,7 +1067,8 @@ window.addEventListener("error", function(e){
         html += '<div class="grp">国家</div>';
         cMs.forEach(([en, v]) => {
           const code = DIAL[v[3]] ? '(+' + DIAL[v[3]] + ')' : '';
-          html += '<div class="item" data-href="country.html?c=' + v[3] + '"><span>' + v[0] + code + '</span><span class="tag">' + en + '</span></div>';
+          const hlMark = (exactIso2 && v[3] === exactIso2) ? ' <em class="emboss-on">● 已浮雕</em>' : '';
+          html += '<div class="item" data-href="country.html?c=' + v[3] + '"><span>' + v[0] + code + hlMark + '</span><span class="tag">' + en + '</span></div>';
         });
       }
       if (custMs.length){
