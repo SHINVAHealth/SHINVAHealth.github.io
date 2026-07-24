@@ -41,7 +41,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202607241610';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202607241640';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -732,7 +732,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2Promise = (async () => {
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
-        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241610`); } catch(e){}
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241640`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
@@ -943,13 +943,15 @@ window.addEventListener("unhandledrejection", function(e){
       };
       // 3) 先判定点击点本身
       let inside = containsAt(px, py);
-      // 4) 缝隙兜底：点击点落在 LGA 几何之外(相邻 LGA 之间空隙)时，半径采样找最近含该点的 adm2
+      // 4) 缝隙兜底：点击点落在 LGA 几何之外(相邻 LGA 之间空隙)时，周围做密集网格采样找最近含该点的 adm2。
+      //    用网格而非角向圆环采样——角向步长会在极窄缝隙处留下“死区”导致漏选。
       if (!inside.length){
-        for (let r = 2; r <= R && !inside.length; r += 2){
-          for (let a = 0; a < 360; a += 15){
-            const x = px + r*Math.cos(a*Math.PI/180), y = py + r*Math.sin(a*Math.PI/180);
-            const h = containsAt(x, y);
-            if (h.length){ inside = h; break; }
+        const STEP = 3, R2 = 28;
+        outer:
+        for (let dy = -R2; dy <= R2; dy += STEP){
+          for (let dx = -R2; dx <= R2; dx += STEP){
+            const h = containsAt(px + dx, py + dy);
+            if (h.length){ inside = h; break outer; }
           }
         }
       }
