@@ -286,7 +286,7 @@ window.addEventListener("error", function(e){
     hr:'keluodiya',
     ht:'haidi',
     hu:'xiongyali',
-    id:'yinniduiya',
+    id:'yinniduiya yindunixiya yinni',
     ie:'aierlan',
     il:'yiselie',
     in:'yindu',
@@ -390,6 +390,26 @@ window.addEventListener("error", function(e){
     za:'nanfei',
     zm:'zhanbiya',
     zw:'xinbawei'
+  };
+  // 中文别名（口语/缩写），仅收录"该国正式中文名的前缀性缩写"或"公认口语词"，
+  // 以免前缀匹配误伤他国。例：印尼→印度尼西亚、英→英国。
+  const CN_ALIAS = {
+    id:'印尼', cn:'中国', us:'美国 美', gb:'英国 英', fr:'法国 法', de:'德国 德',
+    jp:'日本 日', ru:'俄罗斯 俄', kr:'韩国 韩', kp:'朝鲜 朝', in:'印度 印',
+    ca:'加拿大', au:'澳大利亚 澳洲', br:'巴西', it:'意大利', es:'西班牙',
+    pt:'葡萄牙', nl:'荷兰', be:'比利时', ch:'瑞士', at:'奥地利',
+    se:'瑞典', no:'挪威', dk:'丹麦', fi:'芬兰', pl:'波兰', cz:'捷克',
+    ie:'爱尔兰', is:'冰岛', gr:'希腊', tr:'土耳其', eg:'埃及', za:'南非',
+    mx:'墨西哥', ar:'阿根廷', cl:'智利', co:'哥伦比亚', pe:'秘鲁', ve:'委内瑞拉',
+    cu:'古巴', do:'多米尼加', ec:'厄瓜多尔', uy:'乌拉圭', bo:'玻利维亚', py:'巴拉圭',
+    gt:'危地马拉', hn:'洪都拉斯', ni:'尼加拉瓜', cr:'哥斯达黎加', pa:'巴拿马', sv:'萨尔瓦多',
+    th:'泰国', vn:'越南', ph:'菲律宾 菲', my:'马来西亚', sg:'新加坡',
+    mm:'缅甸', la:'老挝', kh:'柬埔寨', mn:'蒙古', np:'尼泊尔', bt:'不丹', lk:'斯里兰卡',
+    bd:'孟加拉国', pk:'巴基斯坦', af:'阿富汗', ir:'伊朗', iq:'伊拉克', sy:'叙利亚',
+    jo:'约旦', lb:'黎巴嫩', il:'以色列', sa:'沙特阿拉伯 沙特', ae:'阿联酋 阿酋', qa:'卡塔尔',
+    kw:'科威特', om:'阿曼', ye:'也门',
+    ng:'尼日利亚', ke:'肯尼亚', et:'埃塞俄比亚', tz:'坦桑尼亚',
+    ug:'乌干达', gh:'加纳', sn:'塞内加尔', ci:'科特迪瓦', cm:'喀麦隆', zm:'赞比亚', zw:'津巴布韦'
   };
   function pinyinOf(code){ return PINYIN[code] || ''; }
 
@@ -1056,7 +1076,9 @@ window.addEventListener("error", function(e){
       } else {
         cMs = Object.entries(COUNTRY)
           .map(([en, v]) => {
-            const ci = v[0].toLowerCase().indexOf(q);
+            const alias = (CN_ALIAS[v[3]] || '').toLowerCase();
+            const cnSearch = (v[0] + ' ' + alias).toLowerCase();
+            const ci = cnSearch.indexOf(q);                 // 中文名 + 中文别名 都参与模糊匹配
             const ei = en.toLowerCase().indexOf(q);
             const pi = pinyinOf(v[3]).split(/\s+/).some(p => p.indexOf(q) >= 0) ? 0 : 999;
             const pos = ci >= 0 ? ci : (ei >= 0 ? ei + 0.5 : (pi < 900 ? pi : 999));
@@ -1068,17 +1090,30 @@ window.addEventListener("error", function(e){
           .slice(0, 8)
           .map(x => [x.en, x.v]);
       }
-      // 完整名称精确匹配（中文名 / 英文名 / 标准拼音连写，三者全等）→ 自动识别并让该国 3D 浮雕显示
-      // 数据源已按"中国人习惯单一拼音"，故全等即命中，无需模糊层（避免短国误触发）
+      // 浮雕判定（2026-07-24 修正，根治拼音检索痛点）：
+      //   A) 中文全称 或 中文别名 → 全等即浮雕（覆盖"印尼""澳洲"等掐头去尾口语词，不走前缀）
+      //   B) 英文名 / 拼音（含多写法别名）→ 全等或前缀即浮雕，要求 q.length>=2（挡单字母乱命）
+      //   C) 唯一命中 → 浮雕；若拼音/英文前缀展开命中多国（如"ba"命中9国）→ 不自动浮雕，
+      //      仅列候选，由用户点选，避免一堆无关国一起浮雕的脏视觉。
       let exactIso2 = null;
+      const exactHits = [];
       if (q){
         for (const [en, v] of cMs){
           const cnFull = v[0].toLowerCase();
+          const cnAlias = (CN_ALIAS[v[3]] || '').toLowerCase().split(/\s+/).filter(Boolean);
           const enFull = en.toLowerCase();
-          const pyFull = pinyinOf(v[3]).toLowerCase();   // 每国仅一个标准拼音（连写）
-          if (cnFull === q || enFull === q || pyFull === q){
-            exactIso2 = v[3]; break;
-          }
+          const pyList = pinyinOf(v[3]).toLowerCase().split(/\s+/).filter(Boolean);
+          const cnHit = (cnFull === q) || cnAlias.includes(q);   // 中文：全等（含别名）
+          const enHit = enFull === q || (q.length >= 2 && enFull.startsWith(q));
+          const pyHit = pyList.some(p => p === q || (q.length >= 2 && p.startsWith(q)));
+          const via = cnHit ? 'cn' : (enHit ? 'en' : (pyHit ? 'py' : null));
+          if (cnHit || enHit || pyHit){ exactHits.push({ iso: v[3], via }); }
+        }
+        // 唯一命中 → 浮雕；多命中且含"拼音/英文前缀展开" → 不自动浮雕（让用户点选）
+        if (exactHits.length === 1){ exactIso2 = exactHits[0].iso; }
+        else if (exactHits.length > 1){
+          const allCn = exactHits.every(h => h.via === 'cn');
+          if (allCn) exactIso2 = exactHits[0].iso;   // 极端情况：多个中文全等（理论无）
         }
       }
       if (exactIso2 && _searchEmboss){ _searchEmboss(exactIso2); }
