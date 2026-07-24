@@ -513,8 +513,9 @@ window.addEventListener("error", function(e){
   // 用户明确要求：不要圆点、要真实轮廓 + 放大浮雕突出。
   // 新加坡/巴林等 110m 几何本身仅 ~1px，悬停/搜索时用【放大版真实 path】做 3D 浮雕，
   // 既不丢真实形状又能"撑大"引起注意；底图始终画真实 path（描边加粗保证可见，不再渲染圆点）。
-  const EMBOSS_MICRO_SCALE = 1.15;   // 微国浮雕放大倍数（相对自身质心）
-  const MICRO_BOX = 5;               // 投影后屏幕包围盒阈值（px），仅用于判断"是否需放大浮雕"
+  const EMBOSS_MICRO_SCALE = 5.0;   // 微国浮雕放大倍数（相对原始轮廓，须 > 底图 MICRO_LIFT 才能探出）
+  const MICRO_LIFT = 4.0;           // 微国底图轮廓放大倍数（绕质心，使其在世界地图即可见，不依赖 hover）
+  const MICRO_BOX = 5;               // 投影后屏幕包围盒阈值（px），仅用于判断"是否微国"
   function iso2Of(d){ const v = COUNTRY[(d.properties && d.properties.name)]; return v && v[3]; }
   function screenBox(d){
     try { const b = path.bounds(d); return Math.max(b[1][0]-b[0][0], b[1][1]-b[0][1]); }
@@ -575,8 +576,19 @@ window.addEventListener("error", function(e){
     clipSphere.attr('d', dSphere);
     TILE = (w - GM.l - GM.r);              // 平铺周期 = 世界内容宽（含两侧留白）
     recomputeMicro();                      // 投影变了，重算微国集合（仅用于浮雕放大判断）
-    allPaths.attr('d', d => path(d))        // 底图始终画真实轮廓（微国不再圆点兜底）
-           .classed('micro', d => MICRO_SET.has(d));   // 微国加粗描边，保证底图可见
+    allPaths.each(function(d){
+      const isM = MICRO_SET.has(d);
+      const sel = d3.select(this);
+      sel.attr('d', path(d)).classed('micro', isM);
+      // 微国绕质心放大真实轮廓：世界地图按真实比例仅~1px 不可见，放大使其在底图即可见；
+      // 与 hover 浮雕共用同一质心(c)，自然对齐（浮雕放大 EMBOSS_MICRO_SCALE>MICRO_LIFT 故探出）
+      if (isM){
+        const c = path.centroid(d);
+        sel.attr('transform', `translate(${c[0]},${c[1]}) scale(${MICRO_LIFT}) translate(${-c[0]},${-c[1]})`);
+      } else {
+        sel.attr('transform', null);
+      }
+    });
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
     if (NG_PTS.length) drawNigeriaPoints();
     drawGraticule();
@@ -878,8 +890,16 @@ window.addEventListener("error", function(e){
     const H = 9 / k;          // 浮雕高度（屏幕空间恒定 ~9px，随缩放反比，保持观感一致）
     const LAYERS = 10;        // 侧壁层数（越多越平滑）
     // 展开附庸 feature（一个中国：cn 含台湾），保证台湾随中国一并浮雕
-    const fullList = (iso2List || []).slice();
-    (iso2List || []).forEach(code => partnerFeatures(code).forEach(pf => { if (!fullList.includes(pf)) fullList.push(pf); }));
+    // iso2 字符串 → feature 对象：showEmboss 内部统一以 feature 绘制。
+    // 修复回归：此前直接拿 iso2 字符串当 feature 用，被下方 typeof 检查全部 skip，
+    // 导致【除台湾(中国的 partner)外所有国家 hover/搜索浮雕失效】。
+    const fullList = [];
+    (iso2List || []).forEach(code => {
+      const codeStr = (code && typeof code === 'object') ? (iso2Of(code) || '') : code;
+      const f = (code && typeof code === 'object') ? code : (iso2ToFeature[code] || null);
+      if (f && !fullList.includes(f)) fullList.push(f);
+      partnerFeatures(codeStr).forEach(pf => { if (pf && !fullList.includes(pf)) fullList.push(pf); });
+    });
     fullList.forEach(f => {
       if (!f || typeof f !== 'object') return;
       const isMicroF = MICRO_SET.has(f);
