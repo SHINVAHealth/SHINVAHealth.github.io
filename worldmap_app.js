@@ -214,7 +214,7 @@ window.addEventListener("error", function(e){
   // 拼音数据源（按中国人的标注与习惯，纯中文名直拼；每国仅一个标准拼音，不收录别名/标准注音变体）
   // 例：哥斯达黎加=gesidalijia、美国=meiguo、印度=yindu、印度尼西亚=yinniduiya、厄瓜多尔=eguaduoer
   const PINYIN = {
-    ae:'alabolianheqiuzhangguo',
+    ae:'alabolianheqiuzhangguo alianqiu',
     af:'afuhan',
     al:'aerbaniya',
     am:'yameiniya',
@@ -417,6 +417,8 @@ window.addEventListener("error", function(e){
   let panelWired = false;
   let _searchEmboss = null;   // 由 initWorld 内 searchEmboss 赋值，供搜索 IIFE（平行作用域）跨域调用
   let _embossView = null;     // 浮雕前的 zoom transform 快照，清空搜索时还原视图
+  // 跨域桥接：搜索 IIFE 在 initWorld 之外（模块作用域），需通过模块级变量访问内部 svg/zoom/hideEmboss
+  let _svg = null, _zoom = null, _hideEmboss = null;
 
   function initWorld(){
   const tip = document.getElementById('tip');
@@ -505,6 +507,32 @@ window.addEventListener("error", function(e){
   const gGrids = tiles.map(tg => tg.append('g').attr('class','graticule graticule-in'));
   const allPaths = gZoom.selectAll('path.country');
 
+  // 微国最小可见尺寸兜底（2026-07-24 修复：坐标对但屏幕上"看不到"的根因）
+  // Natural Earth 110m 里新加坡/巴林等是"点级"几何，geoNaturalEarth1 + fitExtent 缩放下
+  // 屏幕面积 < 1px²，描边 0.5px 直接让其消失。解决：投影后包围盒过小的国，
+  // 用其质心在内容坐标画一个固定半径（MIN_R）的小圆 path 覆盖，保证可见且交互/浮雕兼容。
+  const MICRO_MIN_R = 3.2;     // 微国兜底圆半径（内容坐标 px）
+  const MICRO_BOX = 5;         // 投影后屏幕包围盒边长阈值（px），小于则视为微国
+  const MICRO_EXTRA = ['tl'];  // 显式补充：紧贴邻国易被遮挡的微国（如东帝汶挨着印尼）
+  function iso2Of(d){ const v = COUNTRY[(d.properties && d.properties.name)]; return v && v[3]; }
+  function screenBox(d){
+    try { const b = path.bounds(d); return Math.max(b[1][0]-b[0][0], b[1][1]-b[0][1]); }
+    catch(e){ return 999; }
+  }
+  function isMicro(d){ return screenBox(d) < MICRO_BOX || MICRO_EXTRA.includes(iso2Of(d)); }
+  function microCirclePath(d){
+    const c = path.centroid(d);
+    if (!c || isNaN(c[0]) || isNaN(c[1])) return '';
+    const r = MICRO_MIN_R;
+    return `M${c[0]-r},${c[1]}a${r},${r} 0 1,0 ${2*r},0a${r},${r} 0 1,0 ${-2*r},0Z`;
+  }
+  // 计算每个 feature 是否微国（投影相关，resize 时重算更准；这里预标记供交互判断）
+  let MICRO_SET = new Set();
+  function recomputeMicro(){
+    MICRO_SET = new Set();
+    features.forEach(f => { if (isMicro(f)) MICRO_SET.add(f); });
+  }
+
   // 3D 浮雕突出层：悬停国家「从平面探出」的克隆（置于内容层最上，随拖拽/缩放同步；不设 pointer-events，不拦截交互）
   const gEmboss = gZoom.append('g').attr('class', 'emboss-layer');
   // 客户绿色像素点顶层图层：置于 gEmboss 之上，确保 3D 浮雕显示时客户原点位置始终可见（不被浮雕覆盖）
@@ -518,6 +546,14 @@ window.addEventListener("error", function(e){
     const v = COUNTRY[nm];
     if (v && v[3]) iso2ToFeature[v[3]] = f;
   });
+  // 一个中国原则：台湾是中国不可分割的一部分。地图上台湾地区作为独立 feature 存在（name='Taiwan'），
+  // 但归属中国（iso2=cn）。检索/高亮中国时，台湾 feature 必须一并浮雕 + 高亮，绝不可遗漏。
+  const TAIWAN_FEATURE = nameToFeature['Taiwan'] || null;
+  // 给定一个 iso2，返回需要一并浮雕/高亮的"附庸 feature"列表（目前仅 cn→台湾）
+  function partnerFeatures(iso2){
+    if (iso2 === 'cn' && TAIWAN_FEATURE) return [TAIWAN_FEATURE];
+    return [];
+  }
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
   const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve'];
@@ -543,7 +579,8 @@ window.addEventListener("error", function(e){
     frameSphere.attr('d', dSphere);
     clipSphere.attr('d', dSphere);
     TILE = (w - GM.l - GM.r);              // 平铺周期 = 世界内容宽（含两侧留白）
-    allPaths.attr('d', path);
+    recomputeMicro();                      // 投影变了，重算微国集合
+    allPaths.attr('d', d => MICRO_SET.has(d) ? microCirclePath(d) : path(d));
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
     if (NG_PTS.length) drawNigeriaPoints();
     drawGraticule();
@@ -844,10 +881,13 @@ window.addEventListener("error", function(e){
     const k = (_curTransform && _curTransform.k) ? _curTransform.k : 1;
     const H = 9 / k;          // 浮雕高度（屏幕空间恒定 ~9px，随缩放反比，保持观感一致）
     const LAYERS = 10;        // 侧壁层数（越多越平滑）
-    (iso2List || []).forEach(code => {
-      const f = iso2ToFeature[code];
-      if (!f) return;
-      const d = path(f);
+    // 展开附庸 feature（一个中国：cn 含台湾），保证台湾随中国一并浮雕
+    const fullList = (iso2List || []).slice();
+    (iso2List || []).forEach(code => partnerFeatures(code).forEach(pf => { if (!fullList.includes(pf)) fullList.push(pf); }));
+    fullList.forEach(f => {
+      if (!f || typeof f !== 'object') return;
+      const isMicroF = MICRO_SET.has(f);
+      const d = isMicroF ? microCirclePath(f) : path(f);
       if (!d) return;
       const c = path.centroid(f);                 // 内容坐标质心
       const base = `translate(${c[0] + tx},${c[1]}) scale(1.03) translate(${-c[0]},${-c[1]})`;
@@ -872,6 +912,8 @@ window.addEventListener("error", function(e){
     });
   }
   function hideEmboss(){ gEmboss.selectAll('*').remove(); dropCustomerPoints(); }
+  // 跨域桥接赋值（供外部搜索 IIFE 的 clearSearch 调用）
+  _svg = svg; _zoom = zoom; _hideEmboss = hideEmboss;
   // 搜索栏精确匹配国家 → 自动识别并让该国 3D 浮雕显示（同时平移聚焦 + 弹 tooltip）
   function searchEmboss(iso2){
     const f = iso2ToFeature[iso2];
@@ -934,9 +976,15 @@ window.addEventListener("error", function(e){
     const cn = entry ? entry[1][0] : iso2;
     banner.innerHTML = '正在建设：<b>'+cn+'</b> 国家专属板块（即将上线）';
     banner.style.display = 'block';
-    // 高亮指定国家（台湾不作为独立国家，infoOf 已并入中国）
+    // 高亮指定国家（一个中国原则：台湾作为中国领土，检索/高亮中国时台湾一并高亮）
     const show = [iso2];
-    allPaths.classed('active', d => { const v = COUNTRY[(d.properties&&d.properties.name)]; return v && show.includes(v[3]); });
+    if (iso2 === 'cn' && TAIWAN_FEATURE) show.push('__tw__');  // 标记台湾 feature
+    allPaths.classed('active', d => {
+      const nm = d.properties && d.properties.name;
+      if (nm === 'Taiwan') return show.includes('__tw__');
+      const v = COUNTRY[nm];
+      return v && show.includes(v[3]);
+    });
   }
   readParam();
 
@@ -1051,11 +1099,11 @@ window.addEventListener("error", function(e){
       input.value = '';
       results.hidden = true; results.innerHTML = '';
       syncClear();
-      hideEmboss();
+      if (_hideEmboss) _hideEmboss();          // 取消浮雕（跨域桥接）
       // 还原浮雕前的视图（尺寸 + 位置）
-      if (_embossView && svg && zoom){
+      if (_embossView && _svg && _zoom){
         const v = _embossView; _embossView = null;
-        svg.transition().duration(450).call(zoom.transform, v);
+        _svg.transition().duration(450).call(_zoom.transform, v);
       }
       input.focus();
     }
@@ -1090,30 +1138,26 @@ window.addEventListener("error", function(e){
           .slice(0, 8)
           .map(x => [x.en, x.v]);
       }
-      // 浮雕判定（2026-07-24 修正，根治拼音检索痛点）：
-      //   A) 中文全称 或 中文别名 → 全等即浮雕（覆盖"印尼""澳洲"等掐头去尾口语词，不走前缀）
-      //   B) 英文名 / 拼音（含多写法别名）→ 全等或前缀即浮雕，要求 q.length>=2（挡单字母乱命）
-      //   C) 唯一命中 → 浮雕；若拼音/英文前缀展开命中多国（如"ba"命中9国）→ 不自动浮雕，
-      //      仅列候选，由用户点选，避免一堆无关国一起浮雕的脏视觉。
+      // 浮雕判定（2026-07-24 重构：彻底弃用前缀匹配，根治"拆东墙补西墙"）
+      // 设计原则：所有匹配均为【整词全等】，绝不做前缀/子串匹配。
+      //   - 拼音：PINYIN 每国是若干"完整拼音写法"空格分隔的整词（如 印度=yindu，印尼三写法=yinniduiya yindunixiya yinni）
+      //            → 只有 q 与其中某个整词全等才命中，yindu 不会误中 yinniduiya（因 yindu≠yinniduiya）
+      //   - 中文：COUNTRY 全称 或 CN_ALIAS 别名（也是整词）全等才命中（印尼≠印度尼西亚，靠别名整词补全）
+      //   - 英文：国家英文名整词全等才命中（不再做 startsWith，避免 ba 命中一堆）
+      //   整词全等 → 理论上最多 1 个命中（拼音/别名全局唯一），直接浮雕，无歧义、无脏视觉。
       let exactIso2 = null;
-      const exactHits = [];
       if (q){
         for (const [en, v] of cMs){
-          const cnFull = v[0].toLowerCase();
+          const cnFull  = v[0].toLowerCase();
           const cnAlias = (CN_ALIAS[v[3]] || '').toLowerCase().split(/\s+/).filter(Boolean);
-          const enFull = en.toLowerCase();
-          const pyList = pinyinOf(v[3]).toLowerCase().split(/\s+/).filter(Boolean);
-          const cnHit = (cnFull === q) || cnAlias.includes(q);   // 中文：全等（含别名）
-          const enHit = enFull === q || (q.length >= 2 && enFull.startsWith(q));
-          const pyHit = pyList.some(p => p === q || (q.length >= 2 && p.startsWith(q)));
-          const via = cnHit ? 'cn' : (enHit ? 'en' : (pyHit ? 'py' : null));
-          if (cnHit || enHit || pyHit){ exactHits.push({ iso: v[3], via }); }
-        }
-        // 唯一命中 → 浮雕；多命中且含"拼音/英文前缀展开" → 不自动浮雕（让用户点选）
-        if (exactHits.length === 1){ exactIso2 = exactHits[0].iso; }
-        else if (exactHits.length > 1){
-          const allCn = exactHits.every(h => h.via === 'cn');
-          if (allCn) exactIso2 = exactHits[0].iso;   // 极端情况：多个中文全等（理论无）
+          const enFull  = en.toLowerCase();
+          const pyList  = pinyinOf(v[3]).toLowerCase().split(/\s+/).filter(Boolean);
+          const hit =
+            (cnFull === q) || cnAlias.includes(q) ||          // 中文：全称 / 别名整词
+            (enFull === q) ||                                 // 英文：整词
+            (v[3] === q) ||                                   // iso2 代码本身（cn/us/jp…全局唯一）
+            pyList.includes(q);                               // 拼音：整词（多写法之一）
+          if (hit){ exactIso2 = v[3]; break; }                // 整词全等必唯一，命中即停
         }
       }
       if (exactIso2 && _searchEmboss){ _searchEmboss(exactIso2); }
