@@ -167,14 +167,14 @@ window.addEventListener("error", function(e){
   "Yemen":["也门","亚洲","Asia/Aden","ye"],
   "Saudi Arabia":["沙特阿拉伯","亚洲","Asia/Riyadh","sa"],
   "Antarctica":["南极洲","南极洲","Antarctica/Troll","aq"],
-  "N. Cyprus":["北塞浦路斯","亚洲","Asia/Nicosia","cy"],
+  "N. Cyprus":["北塞浦路斯","亚洲","Asia/Nicosia","xcy"],
   "Cyprus":["塞浦路斯","亚洲","Asia/Nicosia","cy"],
   "Morocco":["摩洛哥","非洲","Africa/Casablanca","ma"],
   "Egypt":["埃及","非洲","Africa/Cairo","eg"],
   "Libya":["利比亚","非洲","Africa/Tripoli","ly"],
   "Ethiopia":["埃塞俄比亚","非洲","Africa/Addis_Ababa","et"],
   "Djibouti":["吉布提","非洲","Africa/Djibouti","dj"],
-  "Somaliland":["索马里兰","非洲","Africa/Mogadishu","so"],
+  "Somaliland":["索马里兰","非洲","Africa/Mogadishu","xso"],
   "Uganda":["乌干达","非洲","Africa/Kampala","ug"],
   "Rwanda":["卢旺达","非洲","Africa/Kigali","rw"],
   "Bosnia and Herz.":["波斯尼亚和黑塞哥维那","欧洲","Europe/Sarajevo","ba"],
@@ -903,7 +903,7 @@ window.addEventListener("error", function(e){
   // 搜索栏精确匹配国家 → 自动识别并让该国 3D 浮雕显示（同时平移聚焦 + 弹 tooltip）
   function searchEmboss(iso2){
     const f = iso2ToFeature[iso2];
-    if (!f) return false;
+    if (!f){ gEmboss.selectAll('*').remove(); dropCustomerPoints(); return false; }  // 无对应地图 feature（如争议地区无独立国界）时清掉旧浮雕，避免残留
     // 世界平铺 3 份（TILES），需找到当前视野中"可见"的那一份的 translateX 偏移，
     // 使浮雕克隆与可见国形对齐（否则拖拽后落在错误 tile → 看似无浮雕）
     const c0 = path.centroid(f);            // 内容坐标质心
