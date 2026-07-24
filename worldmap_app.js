@@ -390,6 +390,7 @@ window.addEventListener("error", function(e){
   let ALL_CUSTOMERS = [];
   let panelWired = false;
   let _searchEmboss = null;   // 由 initWorld 内 searchEmboss 赋值，供搜索 IIFE（平行作用域）跨域调用
+  let _embossView = null;     // 浮雕前的 zoom transform 快照，清空搜索时还原视图
 
   function initWorld(){
   const tip = document.getElementById('tip');
@@ -865,6 +866,8 @@ window.addEventListener("error", function(e){
       tx = Math.round(tx / TILE) * TILE;
     }
     showEmboss([iso2], tx);
+    // 记录浮雕前的视图状态（仅首次浮雕时快照，连续搜索不覆盖，保证清空回到最初视图）
+    if (_curTransform && !_embossView) _embossView = _curTransform;
     // 平移聚焦：把该国质心移到视野中心并适度放大
     const k = Math.max((_curTransform && _curTransform.k) || 1, 2.2);
     const W = width(), H = height();
@@ -1021,6 +1024,11 @@ window.addEventListener("error", function(e){
       results.hidden = true; results.innerHTML = '';
       syncClear();
       hideEmboss();
+      // 还原浮雕前的视图（尺寸 + 位置）
+      if (_embossView && svg && zoom){
+        const v = _embossView; _embossView = null;
+        svg.transition().duration(450).call(zoom.transform, v);
+      }
       input.focus();
     }
     function run(){
