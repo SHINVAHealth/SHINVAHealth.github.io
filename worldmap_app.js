@@ -558,6 +558,7 @@ window.addEventListener("error", function(e){
   // 横尺贴地球框上缘外、竖尺贴地球框左缘外；刻度数值随 zoom.transform 实时重算（见 updateRuler）。
   // 记录当前 transform，供 ruler 随拖拽滚动。
   let _curTransform = d3.zoomIdentity;
+  let _rulerScheduled = false;   // updateRuler 用 rAF 合并：拖拽/缩放一帧内多次 zoom 事件只重算一次经纬度尺
   function drawRulerBase(){
     // 仅画尺子轨道（横/竖基线 + 极地 N/S 角标），刻度数字在 updateRuler 里按需生成
     const w = width(), h = height();
@@ -681,7 +682,7 @@ window.addEventListener("error", function(e){
       gZoom.attr('transform', event.transform);
       // 经纬度仪表尺随拖拽/缩放实时变化（尺子在地球外、不被裁切，数值按 transform 重算滚动）
       _curTransform = event.transform;
-      updateRuler();
+      if (!_rulerScheduled){ _rulerScheduled = true; requestAnimationFrame(function(){ _rulerScheduled = false; updateRuler(); }); }
       // 拖拽/缩放手势内同步 LOL 手位置：d3 手势中 mousemove 不一定冒泡到 window，故用 sourceEvent 兜底
       if (event.sourceEvent && typeof event.sourceEvent.clientX === 'number' && _globeEl) {
         const r = _globeEl.getBoundingClientRect();
@@ -745,17 +746,23 @@ window.addEventListener("error", function(e){
   document.getElementById('zreset').addEventListener('click', resetView);
 
   // 交互回调
+  let _lastHoverKey = null, _tipW = 0, _tipH = 0;   // 仅悬停国家改变时重建浮雕 + 缓存 tooltip 尺寸，消除每像素 mousemove 卡顿
   function onMove(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     // 联动高亮：悬停中国→台湾同亮，悬停台湾→中国同亮
-    const partner = partnerIso2(iso2);
-    allPaths.classed('active', p => { const v = COUNTRY[(p.properties&&p.properties.name)]; return v && partner.includes(v[3]); });
+    // partnerIso2 恒返回空(台湾已并入中国): 旧逻辑每 move 遍历 525 国清 active 纯属空转，已移除
     // 3D 浮雕突出 + 清晰黄边高亮：悬停国 + 联动国（cn/tw）一起探出
-    const embossIso2 = [iso2].concat(partner);
+    // (embossIso2 已弃用: 台湾并入中国，悬停仅单国浮雕)
     // 关键：悬停国所在的 tile（3 份平铺中）有水平偏移 translate(i*TILE,0)，
     // 浮雕克隆必须用同一偏移才能与可见国形对齐（否则拖拽后落在错误 tile → 看似"无浮雕"）
     const tileX = tileOffsetOf(e.currentTarget);
-    showEmboss(embossIso2, tileX);
+    // 浮雕锚定国家质心、与光标像素无关 → 仅悬停国家(含 tile)改变时重建(13+ 路径)，否则每像素重画=卡顿根因
+    const _hk = iso2 + '@' + tileX;
+    if (_hk !== _lastHoverKey){
+      _lastHoverKey = _hk;
+      showEmboss([iso2], tileX);
+      _tipW = tip.offsetWidth; _tipH = tip.offsetHeight;
+    }
     curTz = tz;
     tipCn.textContent = cn; tipEn.textContent = (d.properties&&d.properties.name)||'';
     tipCn2.textContent = cn;
@@ -763,13 +770,13 @@ window.addEventListener("error", function(e){
     tipCont.textContent = cont;
     tipTime.textContent = tz ? fmtTime(tz) : '—';
     tip.classList.add('show');
-    const pad = 16, tw = tip.offsetWidth, th = tip.offsetHeight;
+    const pad = 16, tw = (_tipW || tip.offsetWidth), th = (_tipH || tip.offsetHeight);
     let x = e.clientX + pad, y = e.clientY + pad;
     if (x + tw > window.innerWidth) x = e.clientX - tw - pad;
     if (y + th > window.innerHeight) y = e.clientY - th - pad;
     tip.style.left = x + 'px'; tip.style.top = y + 'px';
   }
-  function onLeave(){ tip.classList.remove('show'); curTz = null; allPaths.classed('active', false); hideEmboss(); }
+  function onLeave(){ tip.classList.remove('show'); _lastHoverKey = null; curTz = null; hideEmboss(); }
   // —— 3D 浮雕突出：克隆悬停国（及其联动国）路径，围绕自身质心略微放大并投偏移阴影，
   //    加清晰黄色边框（vector-effect 锁定 1:1 线宽，不模糊、不加粗边界）。克隆置于 gZoom 内，随拖拽/缩放同步。
   // 取悬停 path 所属 tile 的水平偏移（content 坐标；gZoom 之上叠加，故与国形共享同一坐标系）
@@ -890,7 +897,7 @@ window.addEventListener("error", function(e){
     tipCont.textContent = d.phone || '';
     tipTime.textContent = '点击查看国家客户检索';
     tip.classList.add('show');
-    const pad = 16, tw = tip.offsetWidth, th = tip.offsetHeight;
+    const pad = 16, tw = (_tipW || tip.offsetWidth), th = (_tipH || tip.offsetHeight);
     let x = e.clientX + pad, y = e.clientY + pad;
     if (x + tw > window.innerWidth) x = e.clientX - tw - pad;
     if (y + th > window.innerHeight) y = e.clientY - th - pad;

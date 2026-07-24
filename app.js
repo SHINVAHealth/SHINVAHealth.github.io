@@ -41,7 +41,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202607231500';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202607231600';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -212,6 +212,7 @@ window.addEventListener("unhandledrejection", function(e){
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
+  let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
   let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
     const CAP = facts ? {lat:facts.lat, lng:facts.lng, name:facts.capital} : null;
@@ -470,10 +471,14 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
     function hoverRegion(d, type){
-      _hoverRegion = { feature: d, type, name: (d.properties && (d.properties.shapeName || d.properties.name)) || '' };
+      const name = (d.properties && (d.properties.shapeName || d.properties.name)) || '';
+      // 仅当悬停区域(类型+名称)改变时才重建 3D 浮雕；否则每像素 mousemove 都重画 13+ 路径 +
+      // 对全部客户点 d3.geoContains 判定（客户多时极卡），这是国家地图悬停卡顿根因。
+      if (_hoverRegion && _hoverRegion.type === type && _hoverRegion.name === name) return;
+      _hoverRegion = { feature: d, type, name };
       renderEmboss();
     }
-    function unhoverRegion(){ _hoverRegion = null; renderEmboss(); }
+    function unhoverRegion(){ if (!_hoverRegion) return; _hoverRegion = null; renderEmboss(); }
     function findAdm1Feature(name){
       if (!_features || !name) return null;
       return _features.find(f => (f.properties.shapeName || f.properties.name) === name) || null;
@@ -655,11 +660,14 @@ window.addEventListener("unhandledrejection", function(e){
         _gAdm2.append('path')
           .datum(it.feat).attr('d', it.d).attr('class','adm2').attr('clip-path', clip)
           .on('mousemove', (e,d) => {
-            const [px,py] = d3.pointer(e, _svg.node());
-            const ll = PROJ.invert([px,py]);
-            const prov = ll ? provinceAt(ll) : null;
+            // 单市区归属唯一 ADM1：用质心定位省，仅在悬停要素改变时算一次 provinceAt，免每像素全 ADM1 geoContains
+            if (d !== _lastAdm2Feat){
+              _lastAdm2Feat = d;
+              let c = null; try { c = d3.geoCentroid(d); } catch(_e){}
+              _lastAdm2Prov = c ? provinceAt(c) : null;
+            }
             const city = d.properties.shapeName || d.properties.name || '未命名市区';
-            showTip(e, city + (prov ? ' / ' + prov : ''));
+            showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
             hoverRegion(d, 'adm2');
           })
           .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); })
@@ -706,7 +714,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2Promise = (async () => {
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
-        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607231500`); } catch(e){}
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607231600`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
@@ -746,9 +754,13 @@ window.addEventListener("unhandledrejection", function(e){
         _provFill.forEach(n => n.style.pointerEvents = '');
       }
     };
+    let _tipTxt = '', _tipW = 0, _tipH = 0;
     function showTip(e, name){
-      const tip = $('mapTip'); tip.textContent = name; tip.style.display = 'block';
-      const pad = 14, tw = tip.offsetWidth, th = tip.offsetHeight;
+      const tip = $('mapTip');
+      // 仅文案变化时重设 textContent + 测量尺寸；否则每像素 mousemove 强制 reflow（offsetWidth 触发整页布局）
+      if (name !== _tipTxt){ tip.textContent = name; _tipTxt = name; _tipW = tip.offsetWidth; _tipH = tip.offsetHeight; }
+      tip.style.display = 'block';
+      const pad = 14, tw = _tipW, th = _tipH;
       let x = e.clientX + pad, y = e.clientY + pad;
       if (x + tw > window.innerWidth) x = e.clientX - tw - pad;
       if (y + th > window.innerHeight) y = e.clientY - th - pad;
