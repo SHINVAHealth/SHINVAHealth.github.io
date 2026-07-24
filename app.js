@@ -679,6 +679,7 @@ window.addEventListener("unhandledrejection", function(e){
       const n = fc.features.length;
       setStatus(n);
       reapplyRegionSel();
+      if (_gCust) _gCust.style('pointer-events', 'none');   // ADM2 开启时客户点不拦截点击，避免遮挡二级区域选择
     }
     function loadProvinces(){
       (async () => {
@@ -760,13 +761,13 @@ window.addEventListener("unhandledrejection", function(e){
           else {
             setStatus('暂无');
             showAdm2 = false; this.classList.remove('active'); this.textContent = '显示二级行政区域';
-            _provFill.forEach(n => n.style.pointerEvents = '');   // ADM2 失败 → 恢复 ADM1 交互
+            _provFill.forEach(n => n.style.pointerEvents = ''); if(_gCust) _gCust.style('pointer-events', null);   // ADM2 失败 → 恢复 ADM1 交互
           }
         }
       } else {
         _gAdm2.selectAll('*').remove();   // 仅隐藏二级行政区域图层，地图说明保持不变
         // ADM2 关闭时：恢复 ADM1 prov-fill 的指针事件
-        _provFill.forEach(n => n.style.pointerEvents = '');
+        _provFill.forEach(n => n.style.pointerEvents = ''); if(_gCust) _gCust.style('pointer-events', null);
       }
     };
     let _tipTxt = '', _tipW = 0, _tipH = 0;
@@ -863,6 +864,7 @@ window.addEventListener("unhandledrejection", function(e){
         });
       }
       _gCust.style('display', _custVisible ? null : 'none');
+      if(_gCust) _gCust.style('pointer-events', showAdm2 ? 'none' : null);   // ADM2 开启时客户点不拦截点击，避免遮挡二级区域选择
       updateCustStat();   // 点位重绘后刷新右下角统计
     }
     // —— 右下角统计：信息总计(录入客户总数) / 位置统计(地图绿色圆点数量)，用于对比计算空白地址个数 ——
