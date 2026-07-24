@@ -41,7 +41,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202607231600';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202607240830';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -209,6 +209,9 @@ window.addEventListener("unhandledrejection", function(e){
 
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
     let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
+    // 懒加载名单（方案 A）：这些大国 ADM2 体量大，进图不预载，点击"显示二级行政区域"时才拉（IndexedDB 缓存，二次秒开）
+    const LAZY_ADM2 = new Set(['ru', 'au']);
+    let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
@@ -689,20 +692,26 @@ window.addEventListener("unhandledrejection", function(e){
         }
         if (!topo){ $('mapStatus').textContent = '该国暂无可用的 一级行政区域 边界数据'; return; }
         _topo = topo; renderProvinces(src);
-        // ADM2：默认隐藏，加载完成预载数据（点击按钮即时显示）；无数据则回退按钮
-        ensureAdm2().then(() => {
-          if (_topo2){
-          assignRegions();   // ADM2 就绪后补全客户的 __adm2 归属，供二级行政区点击筛选
-          // 兼容 TopoJSON/GeoJSON 两种格式（GRID3 同源 ADM2 为 TopoJSON，无 .features 属性）
-          const _fc2cnt = (_topo2.type === 'Topology') ? _topo2.objects[Object.keys(_topo2.objects)[0]].geometries.length : _topo2.features.length;
-          setStatus(_fc2cnt);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
-            if (showAdm2) renderAdm2();
-            else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; }
-          } else {
-            const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; showAdm2 = false;
-            setStatus('暂无');
-          }
-        });
+        // ADM2：默认隐藏；懒加载国（ru/au 等大体量）进图不预载，点击按钮时才拉取（IndexedDB 缓存二次秒开）
+        if (_adm2Lazy){
+          const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '点击加载二级行政区域';
+          // 进图即显示说明栏的二级行政区域数量须等加载后补全；此处先留 ADM1 说明
+        } else {
+          // 非懒加载国：默认隐藏，加载完成预载数据（点击按钮即时显示）；无数据则回退按钮
+          ensureAdm2().then(() => {
+            if (_topo2){
+            assignRegions();   // ADM2 就绪后补全客户的 __adm2 归属，供二级行政区点击筛选
+            // 兼容 TopoJSON/GeoJSON 两种格式（GRID3 同源 ADM2 为 TopoJSON，无 .features 属性）
+            const _fc2cnt = (_topo2.type === 'Topology') ? _topo2.objects[Object.keys(_topo2.objects)[0]].geometries.length : _topo2.features.length;
+            setStatus(_fc2cnt);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
+              if (showAdm2) renderAdm2();
+              else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; }
+            } else {
+              const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; showAdm2 = false;
+              setStatus('暂无');
+            }
+          });
+        }
       })();
     }
     // 按需加载 ADM2（二级行政区域）边界：本地优先，本地无则运行时拉 geoBoundaries
@@ -714,7 +723,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2Promise = (async () => {
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
-        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607231600`); } catch(e){}
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607240830`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
@@ -741,7 +750,13 @@ window.addEventListener("unhandledrejection", function(e){
         else {
           setStatus('loading');
           await ensureAdm2();
-          if (_topo2){ renderAdm2(); }
+          if (_topo2){
+            assignRegions();   // 懒加载国：加载完成后补全客户 __adm2 归属，二级行政区筛选可用
+            const _fc2cnt = (_topo2.type === 'Topology') ? _topo2.objects[Object.keys(_topo2.objects)[0]].geometries.length : _topo2.features.length;
+            setStatus(_fc2cnt);
+            _adm2Lazy = false;   // 已加载，后续按常规模块处理
+            renderAdm2();
+          }
           else {
             setStatus('暂无');
             showAdm2 = false; this.classList.remove('active'); this.textContent = '显示二级行政区域';
