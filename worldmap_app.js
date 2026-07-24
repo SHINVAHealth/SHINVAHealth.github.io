@@ -389,6 +389,7 @@ window.addEventListener("error", function(e){
 
   let ALL_CUSTOMERS = [];
   let panelWired = false;
+  let _searchEmboss = null;   // 由 initWorld 内 searchEmboss 赋值，供搜索 IIFE（平行作用域）跨域调用
 
   function initWorld(){
   const tip = document.getElementById('tip');
@@ -880,6 +881,7 @@ window.addEventListener("error", function(e){
     tip.style.left = (window.innerWidth / 2) + 'px'; tip.style.top = (H / 2 - 60) + 'px';
     return true;
   }
+  _searchEmboss = searchEmboss;   // 暴露给平行作用域的搜索 IIFE
   function onClick(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     if (!iso2){ return; }
@@ -1058,7 +1060,7 @@ window.addEventListener("error", function(e){
           }
         }
       }
-      if (exactIso2){ searchEmboss(exactIso2); }
+      if (exactIso2 && _searchEmboss){ _searchEmboss(exactIso2); }
       const custMs = ALL_CUSTOMERS.filter(r =>
         [r.company, r.phone, r.contact, r.address, r.city].some(x => (x || '').toLowerCase().includes(q))
       ).slice(0, 12);
