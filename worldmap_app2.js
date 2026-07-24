@@ -1146,7 +1146,7 @@ window.addEventListener("error", function(e){
             const alias = (CN_ALIAS[v[3]] || '').toLowerCase();
             const cnSearch = (v[0] + ' ' + alias).toLowerCase();
             const ci = cnSearch.indexOf(q);                 // 中文名 + 中文别名 都参与模糊匹配
-            const ei = (en.toLowerCase() === q) ? 0 : 999;  // 英文整词（不再前缀，避免 don→Dominican 误判）
+            const ei = (en.toLowerCase() === q) ? 0 : -1;  // 英文整词（不再前缀，避免 don→Dominican 误判）；无匹配须 -1（非 999）才能 fall-through 到拼音分支
             const pi = pinyinOf(v[3]).toLowerCase().split(/\s+/).filter(Boolean).includes(q) ? 0 : 999;  // 拼音整词
             const pos = ci >= 0 ? ci : (ei >= 0 ? ei + 0.5 : (pi < 900 ? pi : 999));
             const tracked = TRACKED.indexOf(v[3]) >= 0;   // 外贸跟踪国家在并列时优先
