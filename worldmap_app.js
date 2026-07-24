@@ -1154,7 +1154,8 @@ window.addEventListener("error", function(e){
           const hit =
             (cnFull === q) || cnAlias.includes(q) ||          // 中文：全称 / 别名整词
             (enFull === q) ||                                 // 英文：整词
-            (v[3] === q) ||                                   // iso2 代码本身（cn/us/jp…全局唯一）
+            // 铁律：iso2 代码(cn/us/jp/be/fr/de…) 不参与检索/浮雕。be 是比利时代码但非拼音全称，
+            // 按用户规则"拼音检索除印尼/阿联酋外必须全称"，iso2 通道关闭，杜绝 be→比利时 类误跳。
             pyList.includes(q);                               // 拼音：整词（多写法之一）
           if (hit){ exactIso2 = v[3]; break; }                // 整词全等必唯一，命中即停
         }
