@@ -23,6 +23,7 @@ window.addEventListener("error", function(e){
   "Chad":["乍得","非洲","Africa/Ndjamena","td"],
   "Haiti":["海地","北美洲","America/Port-au-Prince","ht"],
   "Dominican Rep.":["多米尼加","北美洲","America/Santo_Domingo","do"],
+  "Dominica":["多米尼克","北美洲","America/Dominica","dm"],
   "Russia":["俄罗斯","欧洲","Europe/Moscow","ru"],
   "Bahamas":["巴哈马","北美洲","America/Nassau","bs"],
   "Falkland Is.":["福克兰群岛","南美洲","Atlantic/Stanley","fk"],
@@ -195,7 +196,7 @@ window.addEventListener("error", function(e){
     ba:387, bd:880, be:32, bf:226, bg:359, bi:257, bh:973, bj:229, bn:673, bo:591, br:55,
     bs:1242, bt:975, bw:267, by:375, bz:501, ca:1, cd:243, cf:236, cg:242, ch:41,
     ci:225, cl:56, cm:237, cn:86, co:57, cr:506, cu:53, cy:357, cz:420, de:49,
-    dj:253, dk:45, do:1809, dz:213, ec:593, ee:372, eg:20, eh:212, er:291, es:34,
+    dj:253, dk:45, dm:1767, do:1809, dz:213, ec:593, ee:372, eg:20, eh:212, er:291, es:34,
     et:251, fi:358, fj:679, fk:500, fr:33, ga:241, gb:44, ge:995, gh:233, gl:299,
     gm:220, gn:224, gq:240, gr:30, gt:502, gw:245, gy:592, hn:504, hr:385, ht:509,
     hu:36, id:62, ie:353, il:972, in:91, iq:964, ir:98, is:354, it:39, jm:1876,
@@ -257,6 +258,7 @@ window.addEventListener("error", function(e){
     de:'deguo',
     dj:'jibuti',
     dk:'danmai',
+    dm:'duominike',
     do:'duominijia',
     dz:'alijiliya',
     ec:'eguaduoer',
@@ -401,7 +403,7 @@ window.addEventListener("error", function(e){
     se:'瑞典', no:'挪威', dk:'丹麦', fi:'芬兰', pl:'波兰', cz:'捷克',
     ie:'爱尔兰', is:'冰岛', gr:'希腊', tr:'土耳其', eg:'埃及', za:'南非',
     mx:'墨西哥', ar:'阿根廷', cl:'智利', co:'哥伦比亚', pe:'秘鲁', ve:'委内瑞拉',
-    cu:'古巴', do:'多米尼加', ec:'厄瓜多尔', uy:'乌拉圭', bo:'玻利维亚', py:'巴拉圭',
+    cu:'古巴', do:'多米尼加', dm:'多米尼克', ec:'厄瓜多尔', uy:'乌拉圭', bo:'玻利维亚', py:'巴拉圭',
     gt:'危地马拉', hn:'洪都拉斯', ni:'尼加拉瓜', cr:'哥斯达黎加', pa:'巴拿马', sv:'萨尔瓦多',
     th:'泰国', vn:'越南', ph:'菲律宾 菲', my:'马来西亚', sg:'新加坡',
     mm:'缅甸', la:'老挝', kh:'柬埔寨', mn:'蒙古', np:'尼泊尔', bt:'不丹', lk:'斯里兰卡',
@@ -1124,8 +1126,8 @@ window.addEventListener("error", function(e){
             const alias = (CN_ALIAS[v[3]] || '').toLowerCase();
             const cnSearch = (v[0] + ' ' + alias).toLowerCase();
             const ci = cnSearch.indexOf(q);                 // 中文名 + 中文别名 都参与模糊匹配
-            const ei = en.toLowerCase().indexOf(q);
-            const pi = pinyinOf(v[3]).split(/\s+/).some(p => p.indexOf(q) >= 0) ? 0 : 999;
+            const ei = (en.toLowerCase() === q) ? 0 : 999;  // 英文整词（不再前缀，避免 don→Dominican 误判）
+            const pi = pinyinOf(v[3]).toLowerCase().split(/\s+/).filter(Boolean).includes(q) ? 0 : 999;  // 拼音整词
             const pos = ci >= 0 ? ci : (ei >= 0 ? ei + 0.5 : (pi < 900 ? pi : 999));
             const tracked = TRACKED.indexOf(v[3]) >= 0;   // 外贸跟踪国家在并列时优先
             return { en, v, score: pos + (tracked ? -0.05 : 0) };
