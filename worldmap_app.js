@@ -872,14 +872,19 @@ window.addEventListener("error", function(e){
       .translate(W / 2 - c0[0] * k, H / 2 - c0[1] * k)
       .scale(k);
     svg.transition().duration(500).call(zoom.transform, target);
-    // 弹 tooltip 显示国名
+    // 弹 tooltip 显示国名：定位在该国轮廓「正下方」，避免遮挡小国中心（如厄瓜多尔）
     const [cn, cont, tz, _] = infoOf(f);
     tipCn.textContent = cn; tipEn.textContent = (f.properties && f.properties.name) || '';
     tipCn2.textContent = cn; tipEn2.textContent = (f.properties && f.properties.name) || '';
     tipCont.textContent = cont; tipTime.textContent = tz ? fmtTime(tz) : '—';
     tip.classList.add('show');
-    tip.style.left = (window.innerWidth / 2) + 'px'; tip.style.top = (H / 2 - 60) + 'px';
-    return true;
+    // 估算国家在该缩放下的屏幕半径（包围盒高度一半 × k），tooltip 置于质心下方
+    const b = path.bounds(f);
+    const rH = ((b[1][1] - b[0][1]) / 2) * k;          // 内容坐标半高 → 屏幕半高
+    const below = Math.max(40, rH + 18);               // 质心下移量，至少 40px
+    const tw = tip.offsetWidth || 200;                 // 单次测量，避免遮挡小国中心
+    tip.style.left = (W / 2 - tw / 2) + 'px';
+    tip.style.top = (H / 2 + below) + 'px';
   }
   _searchEmboss = searchEmboss;   // 暴露给平行作用域的搜索 IIFE
   function onClick(e, d){
@@ -1050,12 +1055,14 @@ window.addEventListener("error", function(e){
       // 仅当输入完全等于某国中文名 / 英文名 / 全拼（拼音可含空格或连写，统一去空格比对）时触发，避免部分输入误触发
       let exactIso2 = null;
       if (q){
-        const pyNorm = (v3) => pinyinOf(v3).toLowerCase().replace(/\s+/g, '');
+        const pySegs = (v3) => pinyinOf(v3).toLowerCase().split(/\s+/).filter(Boolean);  // 多段拼音，如 ["meiguo","meilijian"]
         for (const [en, v] of cMs){
           const cnFull = v[0].toLowerCase();
           const enFull = en.toLowerCase();
-          const pyFull = pyNorm(v[3]);
-          if (cnFull === q || enFull === q || (pyFull && pyFull === q)){
+          const segs = pySegs(v[3]);
+          const pyFull = segs.join('');                            // 连写整串
+          const pyHit = segs.some(s => s === q) || pyFull === q;   // 任一段全拼相等，或整串连写相等
+          if (cnFull === q || enFull === q || pyHit){
             exactIso2 = v[3]; break;
           }
         }
