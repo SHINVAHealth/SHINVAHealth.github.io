@@ -41,7 +41,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202607240830';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202607241610';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -732,7 +732,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2Promise = (async () => {
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
-        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607240830`); } catch(e){}
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241610`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
@@ -914,29 +914,56 @@ window.addEventListener("unhandledrejection", function(e){
       if (q) flt = flt.filter(r => [r.company, r.phone, r.name, r.address].some(v => (v||'').toLowerCase().includes(q)));
       renderCustomers(flt);
     }
-    // 在点击点附近（含堆叠层与半径采样）查找最近的二级行政区 path，解决“区域太小/被局部覆盖导致点不中”
+    // 在点击点附近查找最近的二级行政区 path，解决“区域太小/被局部覆盖/落在相邻 LGA 缝隙导致点不中”
+    // 关键修正：旧版用 elementsFromPoint 取“最上层 adm2”，但 adm2 path 之间常存在几何缝隙、且描边与填充分离，
+    // 落在缝隙/下层时取不到目标 → 返回 null(选不中)。改为遍历所有 adm2 path 用 isPointInFill 做纯几何包含判定，
+    // 不依赖 pointer-events 与 z 序；点击点落在缝隙时再半径采样兜底，取最近含该点的 LGA。
     function nearestAdm2At(px, py){
-      const isAdm2 = el => el && el.matches && el.matches('path.adm2');
-      let arr = document.elementsFromPoint(px, py).filter(isAdm2);
-      if (!arr.length){
-        for (let r = 3; r <= 16 && !arr.length; r += 3){
-          for (let a = 0; a < 360; a += 30){
+      const R = 26; // 半径采样最大范围(px)
+      // 1) 候选预筛：仅取包围盒覆盖点击点附近(R 内)的 adm2 path，避免遍历全部 774 个，保证点击不卡
+      const all = document.querySelectorAll('path.adm2');
+      const near = [];
+      for (const el of all){
+        const b = el.getBoundingClientRect();
+        if (b.right >= px - R && b.left <= px + R && b.bottom >= py - R && b.top <= py + R) near.push(el);
+      }
+      if (!near.length) return null;
+      // 2) 几何包含判定：某屏幕点是否真实落入某 adm2 几何内（与 pointer-events / z 序无关）
+      const containsAt = (x, y) => {
+        const p = new DOMPoint(x, y);
+        const hit = [];
+        for (const el of near){
+          try {
+            const m = el.getScreenCTM(); if (!m) continue;
+            const local = p.matrixTransform(m.inverse());
+            if (el.isPointInFill(local)) hit.push(el);
+          } catch(e){}
+        }
+        return hit;
+      };
+      // 3) 先判定点击点本身
+      let inside = containsAt(px, py);
+      // 4) 缝隙兜底：点击点落在 LGA 几何之外(相邻 LGA 之间空隙)时，半径采样找最近含该点的 adm2
+      if (!inside.length){
+        for (let r = 2; r <= R && !inside.length; r += 2){
+          for (let a = 0; a < 360; a += 15){
             const x = px + r*Math.cos(a*Math.PI/180), y = py + r*Math.sin(a*Math.PI/180);
-            arr = arr.concat(document.elementsFromPoint(x, y).filter(isAdm2));
+            const h = containsAt(x, y);
+            if (h.length){ inside = h; break; }
           }
         }
       }
-      if (!arr.length) return null;
-      // 优先选“点击点真实落入其几何内”的 path（正确处理相邻/重叠区被上层 path 覆盖的情形）
-      const pt = new DOMPoint(px, py);
-      const inside = [];
-      arr.forEach(el => {
-        try { const m = el.getScreenCTM(); if (!m) return; const local = pt.matrixTransform(m.inverse()); if (el.isPointInFill(local)) inside.push(el); } catch(e){}
+      if (!inside.length) return null;
+      // 5) 多个命中取面积最小者（最具体的细小 LGA 更可能是用户意图）；同面积量级取离点击点更近的
+      let best = null, bestArea = Infinity, bestDist = Infinity;
+      inside.forEach(el => {
+        const b = el.getBoundingClientRect();
+        const area = b.width * b.height;
+        const d = Math.hypot(b.x + b.width/2 - px, b.y + b.height/2 - py);
+        if (area < bestArea - 0.5 || (Math.abs(area - bestArea) <= 0.5 && d < bestDist)){
+          bestArea = area; bestDist = d; best = el;
+        }
       });
-      const cand = inside.length ? inside : arr;
-      // 多个候选时优先面积最小者（最具体的细小 LGA 更可能是用户意图）
-      let best = null, bestArea = Infinity;
-      cand.forEach(el => { const b = el.getBoundingClientRect(); const area = b.width * b.height; if (area < bestArea){ bestArea = area; best = el; } });
       return best;
     }
     function setRegionFilter(type, name, label, el, feature){
