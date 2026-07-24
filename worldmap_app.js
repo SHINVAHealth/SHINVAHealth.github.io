@@ -1018,6 +1018,34 @@ window.addEventListener("error", function(e){
     function syncClear(){
       if (clearBtn) clearBtn.hidden = !input.value;
     }
+    // —— 拼音音节级模糊匹配（容错用户拼写偏差，如 gesidalijia ↔ geluosidalika）——
+    const SHENG = ['zh','ch','sh','b','p','m','f','d','t','n','l','g','k','h','j','q','x','r','z','c','s','y','w'];
+    function splitSyllables(p){
+      p = (p || '').toLowerCase().replace(/\s+/g, '');
+      const out = []; let i = 0;
+      while (i < p.length){
+        let m = null;
+        for (const s of SHENG){ if (p.startsWith(s, i)){ m = s; break; } }
+        if (m){
+          let j = i + m.length;
+          while (j < p.length){ let nx = false; for (const s of SHENG){ if (p.startsWith(s, j)){ nx = true; break; } } if (nx) break; j++; }
+          out.push(p.slice(i, j)); i = j;
+        } else {
+          let j = i + 1;
+          while (j < p.length){ let nx = false; for (const s of SHENG){ if (p.startsWith(s, j)){ nx = true; break; } } if (nx) break; j++; }
+          out.push(p.slice(i, j)); i = j;
+        }
+      }
+      return out;
+    }
+    // 双向音节相似度（取较小比，避免短输入高比例命中长国拼音）
+    function pinyinSim(a, b){
+      const sa = splitSyllables(a), sb = splitSyllables(b);
+      if (!sa.length || !sb.length) return 0;
+      const setB = new Set(sb); let hit = 0;
+      for (const s of sa){ if (setB.has(s)) hit++; }
+      return Math.min(hit / sa.length, hit / sb.length);
+    }
     // 清空搜索：清除文本 + 收起结果 + 隐藏"×" + 清除搜索触发的浮雕
     function clearSearch(){
       input.value = '';
@@ -1062,6 +1090,8 @@ window.addEventListener("error", function(e){
       // 完整名称精确匹配（中文/英文/拼音完全相等）→ 自动识别并让该国 3D 浮雕显示
       // 仅当输入完全等于某国中文名 / 英文名 / 全拼（拼音可含空格或连写，统一去空格比对）时触发，避免部分输入误触发
       let exactIso2 = null;
+      let fuzzyIso2 = null, fuzzyBest = 0;
+      const FUZZY_TH = 0.6;   // 音节相似度阈值（≥0.6 视为"完整拼音的近似拼写"）
       if (q){
         const pySegs = (v3) => pinyinOf(v3).toLowerCase().split(/\s+/).filter(Boolean);  // 多段拼音，如 ["meiguo","meilijian"]
         for (const [en, v] of cMs){
@@ -1073,8 +1103,15 @@ window.addEventListener("error", function(e){
           if (cnFull === q || enFull === q || pyHit){
             exactIso2 = v[3]; break;
           }
+          // 精确未中 → 收集最佳拼音模糊候选（仅当输入≥4字符，避免短片段误触发）
+          if (q.length >= 4){
+            const sim = pinyinSim(q, pyFull);
+            if (sim > fuzzyBest){ fuzzyBest = sim; fuzzyIso2 = v[3]; }
+          }
         }
       }
+      // 精确未命中时，若模糊候选达阈值则采用（容错拼音拼写偏差）
+      if (!exactIso2 && fuzzyIso2 && fuzzyBest >= FUZZY_TH) exactIso2 = fuzzyIso2;
       if (exactIso2 && _searchEmboss){ _searchEmboss(exactIso2); }
       const custMs = ALL_CUSTOMERS.filter(r =>
         [r.company, r.phone, r.contact, r.address, r.city].some(x => (x || '').toLowerCase().includes(q))
