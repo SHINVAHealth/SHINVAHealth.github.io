@@ -345,7 +345,7 @@ window.addEventListener("unhandledrejection", function(e){
       _curT = d3.zoomIdentity;
       const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => {
         g.attr('transform', ev.transform);
-        scheduleLayout(ev.transform.k, { x: ev.transform.x, y: ev.transform.y });  // 客户点屏幕空间去重叠(恒定像素、贴地图、不漂移)
+        layoutCust(ev.transform.k, { x: ev.transform.x, y: ev.transform.y });  // 客户点 O(n) 同步落屏：恒定 off + base*k+t，贴图不漂移、无滞后
         updateMarkers(ev.transform);
         _curK = ev.transform.k; _curT = ev.transform;
       });
@@ -455,7 +455,7 @@ window.addEventListener("unhandledrejection", function(e){
       // 无区域：客点落回平面
       if (!regions.length){
         _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
-        if (_curT) updateMarkers(_curT);
+        if (_curT){ updateMarkers(_curT); layoutCust(_curK || 1, _curT); }
         return;
       }
       // 预计算每区域的路径与质心（feature 保留用于客户点 d3.geoContains 判定）
@@ -499,7 +499,7 @@ window.addEventListener("unhandledrejection", function(e){
           }
         }
       });
-      if (_curT) updateMarkers(_curT);
+      if (_curT){ updateMarkers(_curT); layoutCust(_curK || 1, _curT); }
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
     function hoverRegion(d, type){
@@ -646,11 +646,8 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 缩放时：标志图标保持固定大小，仅按缩放变换重新定位（不缩放自身）
     function updateMarkers(t){
+      // 仅负责标志图标；客户点位置由 layoutCust 统一落屏（含恒定去重叠 off），避免两套逻辑互相覆盖导致抖动/重叠
       _markEls.forEach(m => m.el.attr('transform', `translate(${t.x + t.k*m.base[0]}, ${t.y + t.k*m.base[1]})`));
-      _custEls.forEach(m => {
-        const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;
-        m.el.attr('transform', `translate(${t.x + t.k*b[0]}, ${t.y + t.k*b[1]})`);
-      });
     }
     function provinceAt(lonlat){
       if (!FC1) return null;
@@ -860,40 +857,66 @@ window.addEventListener("unhandledrejection", function(e){
     }
 
     // —— 客户像素点（customers.json，按经纬度落点）——
-    // 屏幕空间碰撞去重叠：点在 svg 顶层(非 zoom 组)，坐标由 layoutCust 按 (base*k + t) 实时计算并互相推开，
-    // 保证圆点恒定屏幕像素、不随缩放漂移、互不重叠。base 为 PROJ 在 k=1 的内容坐标。
-    let _layoutPending = false, _layoutK = 1, _layoutT = { x: 0, y: 0 };
-    function scheduleLayout(k, t){
-      _layoutK = k; _layoutT = t;
-      if (_layoutPending) return;
-      _layoutPending = true;
-      requestAnimationFrame(() => { _layoutPending = false; layoutCust(_layoutK, _layoutT); });
-    }
-    function layoutCust(k, t){
-      if (!_gCust || !_custEls || !_custEls.length) return;
-      const els = _custEls, n = els.length;
-      const minDist = _CUST_R * 2 + 2.0;   // 屏幕像素最小间距（含 2px 间隙）
-      const sx = new Float64Array(n), sy = new Float64Array(n);
-      for (let i = 0; i < n; i++){ const b = els[i].base; sx[i] = b[0] * k + t.x; sy[i] = b[1] * k + t.y; }
-      // 确定性松弛（按索引顺序，稳定不抖动）：把相距 < minDist 的点在屏幕空间互相推开
-      for (let iter = 0; iter < 8; iter++){
+    // 设计：每点记录地理基准投影 base（PROJ，k=1 内容坐标），并在「绘制时一次性」算出恒定屏幕空间偏移 off（去重叠铺开）。
+    // 之后缩放/平移只做 base*k + t + off 的 O(n) 线性落屏——off 与 k/t 无关，故圆点恒定贴图、既不随缩放漂移、也不随拖动滞后，
+    // 且永不重叠。彻底取代「每帧重松弛」导致的位移抖动与卡顿。
+    const _GA = 2.399963229728653;            // 黄金角：重合点均匀扇开
+    // 一次性计算每点恒定屏幕空间偏移 off（参考系 k=1 / t=0 下去重叠），之后不再随缩放重算
+    function computeOffsets(){
+      const els = _custEls, n = els ? els.length : 0;
+      if (!n) return;
+      const minDist = _CUST_R * 2 + 2.0;      // 屏幕像素最小间距（含 2px 间隙）
+      for (let i = 0; i < n; i++){ els[i].off = [0, 0]; }
+      // 1) 按基准坐标分桶：完全/极近重合的点用向日葵螺旋均匀扇开
+      const buckets = {};
+      for (let i = 0; i < n; i++){
+        const b = els[i].base;
+        const key = Math.round(b[0]) + '_' + Math.round(b[1]);
+        (buckets[key] = buckets[key] || []).push(i);
+      }
+      for (const key in buckets){
+        const grp = buckets[key], m = grp.length;
+        if (m <= 1) continue;
+        const R = minDist * 0.6 * Math.sqrt(m);   // 螺旋半径，保证整簇互不重叠
+        for (let j = 0; j < m; j++){
+          const i = grp[j];
+          if (j === 0){ els[i].off = [0, 0]; continue; }
+          const ang = j * _GA, rad = R * Math.sqrt(j / m);
+          els[i].off = [Math.cos(ang) * rad, Math.sin(ang) * rad];
+        }
+      }
+      // 2) 轻量松弛：化解跨桶（相邻城市）重叠，确定性、一次性
+      for (let iter = 0; iter < 25; iter++){
+        let moved = false;
         for (let i = 0; i < n; i++){
+          const xi = els[i].base[0] + els[i].off[0], yi = els[i].base[1] + els[i].off[1];
           for (let j = i + 1; j < n; j++){
-            let dx = sx[j] - sx[i], dy = sy[j] - sy[i];
-            let d2 = dx * dx + dy * dy;
+            const xj = els[j].base[0] + els[j].off[0], yj = els[j].base[1] + els[j].off[1];
+            let dx = xj - xi, dy = yj - yi, d2 = dx * dx + dy * dy;
             if (d2 < minDist * minDist){
               let d = Math.sqrt(d2), ux, uy;
               if (d > 0.01){ ux = dx / d; uy = dy / d; }
-              else { const a = i * 2.399963229728653; ux = Math.cos(a); uy = Math.sin(a); d = 0; } // 完全重合：按索引黄金角打破对称
+              else { const a = i * _GA; ux = Math.cos(a); uy = Math.sin(a); d = 0; }
               const push = (minDist - d) / 2 + 0.05;
-              sx[i] -= ux * push; sy[i] -= uy * push;
-              sx[j] += ux * push; sy[j] += uy * push;
+              els[i].off[0] -= ux * push; els[i].off[1] -= uy * push;
+              els[j].off[0] += ux * push; els[j].off[1] += uy * push;
+              moved = true;
             }
           }
         }
+        if (!moved) break;
       }
-      for (let i = 0; i < n; i++){
-        if (els[i].el) els[i].el.attr('transform', `translate(${sx[i].toFixed(2)},${sy[i].toFixed(2)})`);
+    }
+    // 落屏：O(n) 线性变换（base*k + t + 恒定 off）。同步调用，无 rAF 滞后、无每帧重松弛。
+    function layoutCust(k, t){
+      if (!_gCust || !_custEls || !_custEls.length) return;
+      const els = _custEls;
+      for (let i = 0; i < els.length; i++){
+        const m = els[i]; if (!m.el) continue;
+        const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;   // 3D 浮雕抬升时改用 liftedBase
+        const x = t.x + t.k * b[0] + (m.off ? m.off[0] : 0);
+        const y = t.y + t.k * b[1] + (m.off ? m.off[1] : 0);
+        m.el.attr('transform', `translate(${x.toFixed(2)},${y.toFixed(2)})`);
       }
     }
     function drawCustomerPointsOnMap(list){
@@ -924,7 +947,7 @@ window.addEventListener("unhandledrejection", function(e){
         g.append('circle').attr('class','cust-hit').attr('r', 6).attr('cx',0).attr('cy',0)
           .attr('fill','transparent').style('cursor','pointer')
           .on('mouseenter', () => showCustTip(r)).on('mouseleave', hideTip);
-        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
+        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null, off: [0, 0] });
       });
       assignRegions();
       // 重绘后恢复已有黄/绿选中高亮（仅改 fill，尺寸/位置不变，不影响其他点）
@@ -934,6 +957,7 @@ window.addEventListener("unhandledrejection", function(e){
         });
       }
       _gCust.style('display', _custVisible ? null : 'none');
+      computeOffsets();                                  // 一次性算出恒定屏幕空间去重叠偏移
       layoutCust(_curK || 1, _curT || { x: 0, y: 0 });  // 初始布局（与当前缩放/平移一致）
       updateCustStat();   // 点位重绘后刷新右下角统计
     }
