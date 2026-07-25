@@ -1124,7 +1124,8 @@ window.addEventListener("unhandledrejection", function(e){
       document.querySelectorAll('.cust-table tbody tr.sel').forEach(t => t.classList.remove('sel'));
     }
     // 点击客户检索行 → 自动放大并居中到该客户所在一级行政区域（ADM1）
-    function zoomToAdm1(name){
+    // rec：可选，传入客户记录以在「当前已放大更多」时居中其真实坐标点（而非省份质心）
+    function zoomToAdm1(name, rec){
       if (!_svg || !_zoom || !_features || !_path) return;
       const feat = _features.find(f => (f.properties.shapeName || f.properties.name) === name);
       if (!feat) return;
@@ -1139,11 +1140,18 @@ window.addEventListener("unhandledrejection", function(e){
       const pad = 0.82;  // 省份占视口 82%，留出边距
       let scale = pad / Math.max(dx / W, dy / H);
       scale = Math.max(1, Math.min(9, scale));   // 受 zoom.scaleExtent([1,9]) 约束
-      const t = d3.zoomIdentity.translate(W/2 - scale * cx, H/2 - scale * cy).scale(scale);
+      const cur = d3.zoomTransform(node);
+      const hasPt = !!(rec && rec.lat != null && rec.lng != null);
+      // 当前放大倍数已大于本次目标倍数 → 保持当前倍数不变，仅把选中客户真实坐标点平滑居中（不缩小）
+      const effScale = (cur.k > scale && hasPt) ? cur.k : scale;
+      const fx = (cur.k > scale && hasPt) ? PROJ([+rec.lng, +rec.lat])[0] : cx;
+      const fy = (cur.k > scale && hasPt) ? PROJ([+rec.lng, +rec.lat])[1] : cy;
+      const t = d3.zoomIdentity.translate(W/2 - effScale * fx, H/2 - effScale * fy).scale(effScale);
       _svg.transition().duration(620).call(_zoom.transform, t);
     }
     // 选中客户但无一级区域(ADM1)归属时（坐标落在行政区外/海上等）：放大并居中到该客户真实坐标点。
     // 兜底，保证“选中后的后续操作（自动放大定位）”对任何有坐标的客户都执行，不会只选中不放大。
+    // 若当前放大倍数已大于目标倍数(6)，保持当前倍数、仅平滑居中该客户点（不缩小）。
     function zoomToPoint(lat, lng){
       if (!_svg || !_zoom || !PROJ) return;
       const p = PROJ([+lng, +lat]);
@@ -1151,8 +1159,10 @@ window.addEventListener("unhandledrejection", function(e){
       const node = _svg.node();
       const W = node.clientWidth || ($('map') && $('map').clientWidth) || 800;
       const H = node.clientHeight || ($('map') && $('map').clientHeight) || 480;
-      const scale = Math.max(1, Math.min(9, 6));   // 固定放大到合适级别，便于看清落点
-      const t = d3.zoomIdentity.translate(W/2 - scale * p[0], H/2 - scale * p[1]).scale(scale);
+      const targetScale = Math.max(1, Math.min(9, 6));   // 固定放大到合适级别，便于看清落点
+      const cur = d3.zoomTransform(node);
+      const effScale = cur.k > targetScale ? cur.k : targetScale;   // 当前已更放大则保持当前倍数
+      const t = d3.zoomIdentity.translate(W/2 - effScale * p[0], H/2 - effScale * p[1]).scale(effScale);
       _svg.transition().duration(620).call(_zoom.transform, t);
     }
     // 需求2：点击检索行 → 仅该客户原绿点变纯黄（同尺寸/位置，无高亮无边框），再点恢复绿；其余绿点不受影响、不清暗。
@@ -1174,7 +1184,7 @@ window.addEventListener("unhandledrejection", function(e){
         const rec = (window.__custList || []).find(x => x.__id === id);
         // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝"只选中不放大"）
         if (doZoom && !_staticLock){
-          if (rec && rec.__adm1) zoomToAdm1(rec.__adm1);
+          if (rec && rec.__adm1) zoomToAdm1(rec.__adm1, rec);
           else if (rec && rec.lat != null && rec.lng != null) zoomToPoint(rec.lat, rec.lng);
         }
       } else if (!_multiTrack && _saveT) {
