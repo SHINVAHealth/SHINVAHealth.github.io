@@ -437,6 +437,8 @@ window.addEventListener("unhandledrejection", function(e){
         const mapEl = $('map');
         if (mapEl) mapEl.classList.toggle('static-locked', _staticLock);  // CSS：区域 path 置 pointer-events:none → 无悬停高亮/点击
         if (_staticLock){
+          countryCursor.style.display = 'none';            // 立即隐藏自定义小手，避免残留
+          document.body.classList.remove('over-map');       // 立即清 over-map，让原生箭头光标可见（静止时无需等 mousemove）
           _hoverRegion = null; _embossRegions.clear(); renderEmboss();    // 立即清除一切悬停/选中浮雕
         } else {
           renderEmboss();   // 退出锁定：恢复选中区域的浮雕（如有）
