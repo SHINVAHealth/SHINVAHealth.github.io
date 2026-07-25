@@ -1156,7 +1156,10 @@ window.addEventListener("unhandledrejection", function(e){
         if (doZoom) _svg.transition().duration(620).call(_zoom.transform, _saveT);
         _saveT = null;
       }
-      if (node) sel.classed('cust-hl', !nowHl);   // 仅在 黄↔绿 之间切换；半径/位置始终不变（绿点尺寸=黄点）
+      if (node){
+        sel.classed('cust-hl', !nowHl);   // 仅在 黄↔绿 之间切换；半径/位置始终不变（绿点尺寸=黄点）
+        if (!nowHl) sel.raise();          // 选中(变绿)的客户点置顶：同坐标(达卡 59 家)叠加时，确保绿点始终绘制在最上层，不会被后绘制的邻点黄点覆盖/误认成邻点
+      }
       if (!nowHl) _hlIds.add(id); else _hlIds.delete(id);
       // 该客户所属区域（优先 ADM1，无则 ADM2）同步 3D 浮雕显示：黄点所在区域随浮雕一起探出（单点替换/多点追踪累积，与黄点保持同步）
       _syncCustomerEmboss();
