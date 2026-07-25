@@ -338,21 +338,14 @@ window.addEventListener("unhandledrejection", function(e){
       const gEmboss = g.append('g').attr('class','emboss-layer');
       _gEmboss = gEmboss;
       _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
-      _gCust = g.append('g').attr('class','cust-layer');  // 客户绿色像素点图层（置于 zoom 变换组 g 内，随地图平移/缩放；圆点 r 在 zoom 时除以 k 保持屏幕像素恒定→颗粒化）
+      _gCust = svg.append('g').attr('class','cust-layer');  // 客户点屏幕空间顶层图层（不随 zoom 变换；坐标由 layoutCust 实时计算，圆点恒定屏幕像素、去重叠、贴地图）
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
       const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => {
         g.attr('transform', ev.transform);
-        if (_gCust){
-          const k = ev.transform.k;
-          // 去重叠偏移 dx/dy 在屏幕空间恒定：随缩放除以 k，使点簇不随放大铺开/漂移，始终贴真实位置
-          // 去重叠偏移在屏幕空间随缩放缩小（dx/k）：全图(k=1)铺开防重叠，放大后点贴近真实位置不再"偏移"。
-          // 点在 scale(k) 组内，局部偏移需写成 dx/(k*k)，经 g 放大后屏幕偏移 = k*(dx/k²)=dx/k。
-          for (const m of _custEls){ if (m.el) m.el.attr('transform', `translate(${m.base[0] + m.dx / (k * k)},${m.base[1] + m.dy / (k * k)})`); }
-          _gCust.selectAll('circle.cust-pt').attr('r', _CUST_R / k);
-        }
+        scheduleLayout(ev.transform.k, { x: ev.transform.x, y: ev.transform.y });  // 客户点屏幕空间去重叠(恒定像素、贴地图、不漂移)
         updateMarkers(ev.transform);
         _curK = ev.transform.k; _curT = ev.transform;
       });
@@ -866,8 +859,43 @@ window.addEventListener("unhandledrejection", function(e){
       _hlIds.forEach(id => { const rr = $('custBody').querySelector('tr[data-id="'+id+'"]'); if (rr) rr.classList.add('sel'); });
     }
 
-    // —— 客户绿色像素点（customers.json，按经纬度落点）——
-    // 样式：亮绿像素点 + 绿色发光，无暗色边框；半径固定略缩（上版 4.2 → 3.8），数据更新后直接按真实坐标落点。
+    // —— 客户像素点（customers.json，按经纬度落点）——
+    // 屏幕空间碰撞去重叠：点在 svg 顶层(非 zoom 组)，坐标由 layoutCust 按 (base*k + t) 实时计算并互相推开，
+    // 保证圆点恒定屏幕像素、不随缩放漂移、互不重叠。base 为 PROJ 在 k=1 的内容坐标。
+    let _layoutPending = false, _layoutK = 1, _layoutT = { x: 0, y: 0 };
+    function scheduleLayout(k, t){
+      _layoutK = k; _layoutT = t;
+      if (_layoutPending) return;
+      _layoutPending = true;
+      requestAnimationFrame(() => { _layoutPending = false; layoutCust(_layoutK, _layoutT); });
+    }
+    function layoutCust(k, t){
+      if (!_gCust || !_custEls || !_custEls.length) return;
+      const els = _custEls, n = els.length;
+      const minDist = _CUST_R * 2 + 2.0;   // 屏幕像素最小间距（含 2px 间隙）
+      const sx = new Float64Array(n), sy = new Float64Array(n);
+      for (let i = 0; i < n; i++){ const b = els[i].base; sx[i] = b[0] * k + t.x; sy[i] = b[1] * k + t.y; }
+      // 确定性松弛（按索引顺序，稳定不抖动）：把相距 < minDist 的点在屏幕空间互相推开
+      for (let iter = 0; iter < 8; iter++){
+        for (let i = 0; i < n; i++){
+          for (let j = i + 1; j < n; j++){
+            let dx = sx[j] - sx[i], dy = sy[j] - sy[i];
+            let d2 = dx * dx + dy * dy;
+            if (d2 < minDist * minDist){
+              let d = Math.sqrt(d2), ux, uy;
+              if (d > 0.01){ ux = dx / d; uy = dy / d; }
+              else { const a = i * 2.399963229728653; ux = Math.cos(a); uy = Math.sin(a); d = 0; } // 完全重合：按索引黄金角打破对称
+              const push = (minDist - d) / 2 + 0.05;
+              sx[i] -= ux * push; sy[i] -= uy * push;
+              sx[j] += ux * push; sy[j] += uy * push;
+            }
+          }
+        }
+      }
+      for (let i = 0; i < n; i++){
+        if (els[i].el) els[i].el.attr('transform', `translate(${sx[i].toFixed(2)},${sy[i].toFixed(2)})`);
+      }
+    }
     function drawCustomerPointsOnMap(list){
       // 省份地图（PROJ / _gCust）异步加载，可能晚于客户数据到达；未就绪则短暂重试
       if (!_gCust || !PROJ){
@@ -876,48 +904,37 @@ window.addEventListener("unhandledrejection", function(e){
         return;
       }
       drawCustomerPointsOnMap._tries = 0;
-      _CUST_R = 1.5;  // 颗粒化像素点（用户要求）；随 zoom 恒屏幕像素(r/k)，配合螺旋去重叠铺开
-      const k0 = _curK || 1;  // 绘制时当前缩放比（默认 1），使初始 transform 与后续 zoom 一致
+      _CUST_R = 1.4;  // 颗粒化像素点（用户要求尽可能缩小）；恒定屏幕像素，由 layoutCust 在屏幕空间去重叠铺开
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
-      // 同坐标（如多条客户都落到 Dhaka 市中心）圆点会完全叠在一起看不见 → 做确定性螺旋去重叠(declutter)，
-      // 真实经纬度仍原样保留在 customers.json 中，仅渲染时扇出，保证每个点都能独立 hover。
-      // 屏幕空间分桶去重叠：先投影全部点，按四舍五入的屏幕栅格(8px)分桶，
-      // 同桶(含坐标相近的邻近客户，不仅经纬度完全相同的点)做黄金角螺旋扇出，保证每个点独立可见、互不重叠。
-      const GOLD = 2.399963229728653; // 黄金角：螺旋均匀分布
-      const BUCKET = 8;               // 屏幕栅格(px)：落入同一栅格的邻近客户一并扇开
+      // 同坐标（如多条客户都落到 Dhaka 市中心）圆点会完全叠在一起看不见 → 在屏幕空间做碰撞去重叠(declutter)：
+      // 每个点记录其地理基准投影 base（PROJ，k=1 内容坐标），渲染/缩放/平移时由 layoutCust 把屏幕锚点
+      // (base*k + t) 在屏幕像素层面推开，保证每个点独立可见、互不重叠，且始终贴合地图真实位置、不随缩放漂移。
       const projAll = pts.map(r => { const p = PROJ([+r.lng, +r.lat]); return p ? { r, p } : null; }).filter(Boolean);
-      const buckets = {};
-      projAll.forEach(o => {
-        const bx = Math.round(o.p[0] / BUCKET), by = Math.round(o.p[1] / BUCKET);
-        const key = bx + ',' + by;
-        (buckets[key] = buckets[key] || []).push(o);
-      });
-      Object.keys(buckets).forEach((key) => {
-        const grp = buckets[key]; const same = grp.length > 1;
-        grp.forEach((o, gi) => {
-          const p = o.p; const r = o.r;
-          let dx = 0, dy = 0;
-          if (same){ const rad = 14 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
-          const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
-            .attr('transform', `translate(${p[0] + dx / (k0 * k0)},${p[1] + dy / (k0 * k0)})`)
-            .on('mouseenter', () => showCustTip(r))
-            .on('mouseleave', hideTip);
-          g.append('circle').attr('class','cust-pt').attr('r', _CUST_R / (_curK || 1)).attr('cx',0).attr('cy',0)
-            .attr('fill','#fde047')
-            .style('cursor','pointer');
-          _custEls.push({ el: g, base: p, dx, dy, rec: r, lifted: false, liftedBase: null });
-        });
+      projAll.forEach((o) => {
+        const p = o.p; const r = o.r;
+        const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
+          .on('mouseenter', () => showCustTip(r))
+          .on('mouseleave', hideTip);
+        // 可见圆点（纯黄，无发光）
+        g.append('circle').attr('class','cust-pt').attr('r', _CUST_R).attr('cx',0).attr('cy',0)
+          .attr('fill','#fde047').style('cursor','pointer');
+        // 透明大命中区（r=6）提升点击/hover 命中率，视觉无影响
+        g.append('circle').attr('class','cust-hit').attr('r', 6).attr('cx',0).attr('cy',0)
+          .attr('fill','transparent').style('cursor','pointer')
+          .on('mouseenter', () => showCustTip(r)).on('mouseleave', hideTip);
+        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
       });
       assignRegions();
-      // 重绘后恢复已有黄色高亮（仅改 fill，尺寸/位置不变，不影响其他点）
+      // 重绘后恢复已有黄/绿选中高亮（仅改 fill，尺寸/位置不变，不影响其他点）
       if (_hlIds.size){
         _gCust.selectAll('g.cust-pt-g').each(function(){
           if (_hlIds.has(+this.getAttribute('data-id'))) this.classList.add('cust-hl');
         });
       }
       _gCust.style('display', _custVisible ? null : 'none');
+      layoutCust(_curK || 1, _curT || { x: 0, y: 0 });  // 初始布局（与当前缩放/平移一致）
       updateCustStat();   // 点位重绘后刷新右下角统计
     }
     // —— 右下角统计：信息总计(录入客户总数) / 位置统计(地图绿色圆点数量)，用于对比计算空白地址个数 ——
