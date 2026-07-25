@@ -338,12 +338,12 @@ window.addEventListener("unhandledrejection", function(e){
       const gEmboss = g.append('g').attr('class','emboss-layer');
       _gEmboss = gEmboss;
       _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
-      _gCust = svg.append('g').attr('class','cust-layer');  // 客户绿色像素点独立图层（避免被 drawMarkers 清空）
+      _gCust = g.append('g').attr('class','cust-layer');  // 客户绿色像素点图层（置于 zoom 变换组 g 内，随地图平移/缩放；圆点 r 在 zoom 时除以 k 保持屏幕像素恒定→颗粒化）
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
-      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); updateMarkers(ev.transform); _curK = ev.transform.k; _curT = ev.transform; });
+      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); if (_gCust) _gCust.selectAll('circle.cust-pt').attr('r', _CUST_R / ev.transform.k); updateMarkers(ev.transform); _curK = ev.transform.k; _curT = ev.transform; });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
       applyPendingHl();   // 省份地图就绪，若客户也已加载则自动点亮世界地图跳转带来的 hl 行
@@ -864,7 +864,7 @@ window.addEventListener("unhandledrejection", function(e){
         return;
       }
       drawCustomerPointsOnMap._tries = 0;
-      _CUST_R = 2.0;  // 再缩小绿点半径（用户二次要求）；配合螺旋去重叠(相邻 12-18px ≫ 直径 4.0px) 彻底不重叠
+      _CUST_R = 1.5;  // 颗粒化像素点（用户要求）；随 zoom 恒屏幕像素(r/k)，配合螺旋去重叠铺开
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
@@ -886,12 +886,12 @@ window.addEventListener("unhandledrejection", function(e){
         grp.forEach((o, gi) => {
           const p = o.p; const r = o.r;
           let dx = 0, dy = 0;
-          if (same){ const rad = 6 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
+          if (same){ const rad = 14 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
           const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
             .attr('transform', `translate(${p[0] + dx},${p[1] + dy})`)
             .on('mouseenter', () => showCustTip(r))
             .on('mouseleave', hideTip);
-          g.append('circle').attr('class','cust-pt').attr('r', _CUST_R).attr('cx',0).attr('cy',0)
+          g.append('circle').attr('class','cust-pt').attr('r', _CUST_R / (_curK || 1)).attr('cx',0).attr('cy',0)
             .attr('fill','#22c55e')
             .style('cursor','pointer');
           _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
