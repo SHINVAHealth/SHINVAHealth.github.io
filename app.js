@@ -927,7 +927,7 @@ window.addEventListener("unhandledrejection", function(e){
         return;
       }
       drawCustomerPointsOnMap._tries = 0;
-      _CUST_R = 1.4;  // 颗粒化像素点（用户要求尽可能缩小）；恒定屏幕像素，由 layoutCust 在屏幕空间去重叠铺开
+      _CUST_R = 2.6;  // 国家(放大)视图：清晰圆点呈现每个经销商位置；恒定屏幕像素，由 layoutCust 在屏幕空间去重叠铺开
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
