@@ -837,18 +837,22 @@ window.addEventListener("error", function(e){
     const r = lerp(8, 14, t), g = lerp(47, 116, t), b = lerp(73, 178, t);
     return `rgb(${r},${g},${b})`;
   }
-  // 客户绿点随悬停国家「浮雕」一起 3D 探出：仅抬升落在被悬停 tile 内、且位于该国家多边形内的点，
+  // 客户绿点随悬停国家「浮雕」一起 3D 探出：以客户所属 iso2 归属判定（不再用 d3.geoContains 几何包含，
+  // 避免海岸/边境城市因多边形不含水域被误判为「不在国内」而停留原平面），抬升落在被悬停 tile 内的该国客户点，
   // 使其精准贴合浮雕顶面（content 坐标抬升 H、绕质心放大 1.04，与 emboss-top 同一变换，tile 偏移被 tile 组抵消）。
   function dropCustomerPoints(){ if (gCust) gCust.selectAll('circle.cust-pt').attr('transform', null); }
-  function liftCustomerPoints(f, c, H, tileX){
-    if (!gCust) return;
+  function liftCustomerPoints(isoSet, c, H, tileX){
+    if (!gCust || !isoSet || !isoSet.size) return;
     const tx = Math.round(tileX || 0);
     const tileG = gCust.selectAll('g.cust-tile').filter(function(){
       const m = /translate\(([-\d.]+)/.exec(this.getAttribute('transform') || '');
       return m && Math.round(parseFloat(m[1])) === tx;
     });
+    // 改以「客户所属国家 iso2」判定是否随浮雕探出，而非 d3.geoContains 几何包含——
+    // 后者对海岸/边境城市（如拉各斯）因多边形边界不含水域而误判为「不在国内」，
+    // 导致该国客户点不随浮雕抬升、停留在原平面。以 iso2 归属判定则语义正确且稳定。
     tileG.selectAll('circle.cust-pt')
-      .filter(d => d && d.d && d.d.lng != null && d.d.lat != null && d3.geoContains(f, [+d.d.lng, +d.d.lat]))
+      .filter(d => d && d.d && d.d.iso2 && isoSet.has(d.d.iso2.toLowerCase()))
       .attr('transform', `translate(${c[0]},${c[1]-H}) scale(1.04) translate(${-c[0]},${-c[1]})`);
   }
   function showEmboss(iso2List, tileX){
@@ -894,7 +898,11 @@ window.addEventListener("error", function(e){
       gEmboss.append('path').attr('class','emboss-top')
         .attr('d', d)
         .attr('transform', `translate(${c[0] + tx},${c[1] - H}) scale(${sTop}) translate(${-c[0]},${-c[1]})`);
-      liftCustomerPoints(f, c, H, tx);    // 该国内客户绿点随浮雕一起探出
+      const fc = iso2Of(f);
+      const codes = new Set();
+      if (fc) codes.add(fc.toLowerCase());
+      partnerFeatures(fc).forEach(pf => { const pi = iso2Of(pf); if (pi) codes.add(pi.toLowerCase()); });
+      liftCustomerPoints(codes, c, H, tx);    // 该国内（含附庸）客户绿点随浮雕一起探出
     });
   }
   function hideEmboss(){ gEmboss.selectAll('*').remove(); dropCustomerPoints(); }
