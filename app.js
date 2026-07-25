@@ -905,7 +905,7 @@ window.addEventListener("unhandledrejection", function(e){
             .on('mouseenter', () => showCustTip(r))
             .on('mouseleave', hideTip);
           g.append('circle').attr('class','cust-pt').attr('r', _CUST_R / (_curK || 1)).attr('cx',0).attr('cy',0)
-            .attr('fill','#22c55e')
+            .attr('fill','#fde047')
             .style('cursor','pointer');
           _custEls.push({ el: g, base: p, dx, dy, rec: r, lifted: false, liftedBase: null });
         });
@@ -1095,7 +1095,7 @@ window.addEventListener("unhandledrejection", function(e){
         _svg.transition().duration(620).call(_zoom.transform, _saveT);
         _saveT = null;
       }
-      if (node) sel.classed('cust-hl', !nowHl);   // 仅在 绿↔黄 之间切换；半径/位置始终不变
+      if (node) sel.classed('cust-hl', !nowHl);   // 仅在 黄↔绿 之间切换；半径/位置始终不变
       if (!nowHl) _hlIds.add(id); else _hlIds.delete(id);
       // 该客户所属区域（优先 ADM1，无则 ADM2）同步 3D 浮雕显示：黄点所在区域随浮雕一起探出（单点替换/多点追踪累积，与黄点保持同步）
       _syncCustomerEmboss();
