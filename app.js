@@ -343,7 +343,17 @@ window.addEventListener("unhandledrejection", function(e){
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
-      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => { g.attr('transform', ev.transform); if (_gCust) _gCust.selectAll('circle.cust-pt').attr('r', _CUST_R / ev.transform.k); updateMarkers(ev.transform); _curK = ev.transform.k; _curT = ev.transform; });
+      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => {
+        g.attr('transform', ev.transform);
+        if (_gCust){
+          const k = ev.transform.k;
+          // 去重叠偏移 dx/dy 在屏幕空间恒定：随缩放除以 k，使点簇不随放大铺开/漂移，始终贴真实位置
+          for (const m of _custEls){ if (m.el) m.el.attr('transform', `translate(${m.base[0] + m.dx / k},${m.base[1] + m.dy / k})`); }
+          _gCust.selectAll('circle.cust-pt').attr('r', _CUST_R / k);
+        }
+        updateMarkers(ev.transform);
+        _curK = ev.transform.k; _curT = ev.transform;
+      });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
       applyPendingHl();   // 省份地图就绪，若客户也已加载则自动点亮世界地图跳转带来的 hl 行
@@ -894,7 +904,7 @@ window.addEventListener("unhandledrejection", function(e){
           g.append('circle').attr('class','cust-pt').attr('r', _CUST_R / (_curK || 1)).attr('cx',0).attr('cy',0)
             .attr('fill','#22c55e')
             .style('cursor','pointer');
-          _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
+          _custEls.push({ el: g, base: p, dx, dy, rec: r, lifted: false, liftedBase: null });
         });
       });
       assignRegions();
