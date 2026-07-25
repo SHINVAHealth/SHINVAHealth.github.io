@@ -216,6 +216,7 @@ window.addEventListener("unhandledrejection", function(e){
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
+  let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
   let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
@@ -440,6 +441,12 @@ window.addEventListener("unhandledrejection", function(e){
         } else {
           renderEmboss();   // 退出锁定：恢复选中区域的浮雕（如有）
         }
+      };
+      $('hideunsel').onclick = function(){
+        _hideUnselected = !_hideUnselected;
+        this.classList.toggle('active', _hideUnselected);
+        this.textContent = _hideUnselected ? '显示全部客户' : '隐藏未选客户';
+        applyHideUnselected();
       };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
       $('backSys').onclick = () => { window.location.href = 'index.html'; };
@@ -1122,6 +1129,17 @@ window.addEventListener("unhandledrejection", function(e){
       if (_gCust) _gCust.selectAll('g.cust-pt-g.cust-hl').classed('cust-hl', false);
       _hlIds.clear();
       document.querySelectorAll('.cust-table tbody tr.sel').forEach(t => t.classList.remove('sel'));
+      applyHideUnselected();
+    }
+    // 隐藏未选客户：开启后仅显示已选中(绿点)客户点，隐藏其余所有黄点（地图圆点与 hover tooltip 一并失效）
+    function applyHideUnselected(){
+      if (!_gCust || !_custEls.length) return;
+      _custEls.forEach(m => {
+        if (!m || !m.el || !m.rec) return;
+        const idv = m.rec.__id;
+        const isSel = _hlIds.has(idv) || _hlIds.has(+idv) || _hlIds.has(String(idv));
+        m.el.style('display', (_hideUnselected && !isSel) ? 'none' : null);
+      });
     }
     // 点击客户检索行 → 自动放大并居中到该客户所在一级行政区域（ADM1）
     // rec：可选，传入客户记录以在「当前已放大更多」时居中其真实坐标点（而非省份质心）
@@ -1204,6 +1222,7 @@ window.addEventListener("unhandledrejection", function(e){
         row.classList.toggle('sel', !nowHl);   // 行选中态与地图点同步（黄↔绿）
         if (!nowHl && opts.scroll) row.scrollIntoView({ block:'nearest', behavior:'smooth' });  // 点击地图黄点→右侧检索栏平滑滚动到该客户行
       }
+      applyHideUnselected();   // 选中态变化后同步“隐藏未选客户”：仅保留绿点，隐藏其余黄点
     }
     // 世界地图搜索客户跳转后，自动点亮对应客户行（变黄 + 放大定位一级区域）：等客户数据+省份地图都就绪再执行，保证只触发一次
     function applyPendingHl(){
