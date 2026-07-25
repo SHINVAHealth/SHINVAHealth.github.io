@@ -983,28 +983,22 @@ window.addEventListener("error", function(e){
     // 世界尺度下，同城市(同坐标，四舍五入到 0.1°≈同城区)的客户合并为「一个标记」置于真实位置，
     // hover/tooltip 显示数量，点击进国家检索——这样既保证坐标全部正确(都在陆地)、又避免孟加拉 101 家叠成一片。
     gCust.selectAll('*').remove();
+    // 每个客户点都落在「真实经纬度投影」上，半径=像素粒(WORLD_DOT_R)，绝不做螺旋/聚合偏移(那会把点推入海洋或挪动坐标)。
+    // 同坐标(同城市)的重合点自然堆叠在同一像素——像素粒尺度下不可见重叠；放大地图时像素粒随 zoom 同步放大成清晰圆点。
+    // tooltip 显示该坐标的客户数量；点击进对应国家检索。gCust 在 zoom 组内，故缩放时坐标恒定、尺寸随放大。
     const projPts = WORLD_PTS.map(d => { const p = projection([d.lng, d.lat]); return p ? { d, p } : null; }).filter(Boolean);
-    // 按近似坐标(0.1°)聚合：同桶=同城市客户
-    const groups = {};
-    projPts.forEach(o => {
-      const k = Math.round(o.d.lng * 10) / 10 + ',' + Math.round(o.d.lat * 10) / 10;
-      (groups[k] = groups[k] || []).push(o);
-    });
-    const list = Object.keys(groups).map(k => {
-      const grp = groups[k];
-      const o = grp[0];
-      const cnt = grp.length;
-      const r = cnt > 1 ? Math.min(WORLD_DOT_R + 1.4, 2.8) : WORLD_DOT_R;  // 多家客户的点略放大，提示聚合
-      return { o, cnt, r };
-    });
-    const _tip = (e, g) => showCustTip(e, g.o.d, g.cnt);
-    const _go = (g) => { if (g.o.d.iso2) window.location.href = 'country.html?c=' + g.o.d.iso2; };
+    // 统计每个近似坐标(0.1°)的客户数，用于 tooltip 提示“X 家”
+    const coordCnt = {};
+    projPts.forEach(o => { const k = Math.round(o.d.lng*10)/10 + ',' + Math.round(o.d.lat*10)/10; coordCnt[k] = (coordCnt[k]||0) + 1; });
+    projPts.forEach(o => { const k = Math.round(o.d.lng*10)/10 + ',' + Math.round(o.d.lat*10)/10; o.cnt = coordCnt[k]; });
+    const _tip = (e, o) => showCustTip(e, o.d, o.cnt);
+    const _go = (o) => { if (o.d.iso2) window.location.href = 'country.html?c=' + o.d.iso2; };
     for (let i = 0; i < TILES; i++){
       const ox = i * TILE;
       const tileG = gCust.append('g').attr('class', 'cust-tile').attr('transform', `translate(${ox},0)`);
-      tileG.selectAll('circle.cust-pt').data(list).enter().append('circle')
+      tileG.selectAll('circle.cust-pt').data(projPts).enter().append('circle')
         .attr('class', 'cust-pt')
-        .attr('cx', g => g.o.p[0]).attr('cy', g => g.o.p[1]).attr('r', g => g.r)
+        .attr('cx', o => o.p[0]).attr('cy', o => o.p[1]).attr('r', WORLD_DOT_R)
         .attr('fill', '#fde047')
         .style('cursor', 'pointer')
         .on('mousemove', _tip)
