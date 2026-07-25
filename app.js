@@ -215,6 +215,7 @@ window.addEventListener("unhandledrejection", function(e){
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
+  let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
   let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
@@ -300,6 +301,7 @@ window.addEventListener("unhandledrejection", function(e){
       // 相邻/重叠区取面积最小者（最具体的小 LGA，更符合用户意图）；直接命中的 adm2 也走此判定以修正 z 序覆盖。
       // 命中 adm2 时 stopPropagation，避免冒泡干扰 ADM1 省面 handler；未命中则放行由 ADM1 处理。
       svg.on('click', (e) => {
+        if (_staticLock) return;   // 静态锁图：禁用区域点击(含二级行政区)交互
         if (!showAdm2) return;
         const el = nearestAdm2At(e.clientX, e.clientY);
         if (el){ e.stopPropagation(); const d = el.__data__; setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, el, d); }
@@ -307,6 +309,7 @@ window.addEventListener("unhandledrejection", function(e){
       // 悬停兜底：鼠标落在客户绿点(显示客户信息，优先保留)、海岸线/州界(pointer-events:none 不产生事件)、
       // 或相邻 LGA 几何缝隙(无直接命中的 adm2 path)时，各自 mousemove 不触发 → 这里用几何判定补上最近区域信息。
       svg.on('mousemove', (e) => {
+        if (_staticLock) return;   // 静态锁图：禁用悬停兜底(含二级行政区)高亮
         if (!showAdm2) return;
         const t = e.target;
         // 鼠标已在 adm2 path 上 → 交各自 mousemove handler 处理（已显示区域信息）
@@ -343,7 +346,7 @@ window.addEventListener("unhandledrejection", function(e){
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
-      const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => {
+      const zoom = d3.zoom().scaleExtent([1, 9]).filter((event) => !_staticLock && (!event.ctrlKey || event.type === 'wheel') && !event.button).on('zoom', ev => {
         g.attr('transform', ev.transform);
         updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
         updateMarkers(ev.transform);
@@ -366,6 +369,7 @@ window.addEventListener("unhandledrejection", function(e){
         const _setGrabbing = () => { countryCursor.src = 'data:image/png;base64,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'; };
         function _updatePos(e){ countryCursor.style.transform = 'translate(' + (e.clientX - 3) + 'px,' + (e.clientY - 1) + 'px)'; }
         window.addEventListener('mousemove', (e) => {
+          if (_staticLock){ countryCursor.style.display = 'none'; document.body.classList.remove('over-map'); return; }  // 静态锁图：不显示可拖拽光标
           if (_mapEl) {
             const r = _mapEl.getBoundingClientRect();
             const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
@@ -395,9 +399,10 @@ window.addEventListener("unhandledrejection", function(e){
         zoom.on('end', _setGrab);
       })();
 
-      $('zin').onclick = () => svg.transition().duration(200).call(zoom.scaleBy, 1.4);
-      $('zout').onclick = () => svg.transition().duration(200).call(zoom.scaleBy, 1/1.4);
+      $('zin').onclick = () => { if (_staticLock) return; svg.transition().duration(200).call(zoom.scaleBy, 1.4); };
+      $('zout').onclick = () => { if (_staticLock) return; svg.transition().duration(200).call(zoom.scaleBy, 1/1.4); };
       $('zreset').onclick = () => {
+        if (_staticLock) return;
         svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
         clearCustomerHighlight();                                       // 重置所有客户黄点 + 行选中
         _embossRegions.clear(); _hoverRegion = null; renderEmboss();    // 清空选中的行政区域 3D 浮雕
@@ -424,6 +429,19 @@ window.addEventListener("unhandledrejection", function(e){
           reapplyRegionSel(); applyRegionFilter();
         }
       };
+      // [开启/关闭静态锁图]：默认关闭。开启 → 禁用悬停高亮 + 3D浮雕，并锁住地图（无滚轮缩放/拖拽/按钮缩放），冻结当前视图
+      $('staticlock').onclick = function(){
+        _staticLock = !_staticLock;
+        this.classList.toggle('active', _staticLock);
+        this.textContent = _staticLock ? '关闭静态锁图' : '开启静态锁图';
+        const mapEl = $('map');
+        if (mapEl) mapEl.classList.toggle('static-locked', _staticLock);  // CSS：区域 path 置 pointer-events:none → 无悬停高亮/点击
+        if (_staticLock){
+          _hoverRegion = null; _embossRegions.clear(); renderEmboss();    // 立即清除一切悬停/选中浮雕
+        } else {
+          renderEmboss();   // 退出锁定：恢复选中区域的浮雕（如有）
+        }
+      };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
       $('backSys').onclick = () => { window.location.href = 'index.html'; };
       // ADM2 默认开启时，初次渲染也禁用 ADM1 prov-fill 交互（与 adm2toggle 一致）
@@ -441,6 +459,7 @@ window.addEventListener("unhandledrejection", function(e){
     // 保证多区域选中时所有顶面处于同一高度平面、互不遮挡，绝不出现「一层叠一层」。
     function renderEmboss(){
       if (!_gEmboss || !_path) return;
+      if (_staticLock){ _gEmboss.selectAll('*').remove(); return; }  // 静态锁图：强制无浮雕（清除一切悬停/选中浮雕）
       _gEmboss.selectAll('*').remove();
       const k = (_curK && _curK > 0) ? _curK : 1;
       const H = 9 / k;            // 所有区域统一高度（屏幕 ~9px，随缩放反比）
@@ -503,6 +522,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
     function hoverRegion(d, type){
+      if (_staticLock) return;   // 静态锁图：禁用悬停高亮/浮雕
       const name = (d.properties && (d.properties.shapeName || d.properties.name)) || '';
       // 仅当悬停区域(类型+名称)改变时才重建 3D 浮雕；否则每像素 mousemove 都重画 13+ 路径 +
       // 对全部客户点 d3.geoContains 判定（客户多时极卡），这是国家地图悬停卡顿根因。
@@ -510,7 +530,7 @@ window.addEventListener("unhandledrejection", function(e){
       _hoverRegion = { feature: d, type, name };
       renderEmboss();
     }
-    function unhoverRegion(){ if (!_hoverRegion) return; _hoverRegion = null; renderEmboss(); }
+    function unhoverRegion(){ if (_staticLock || !_hoverRegion) return; _hoverRegion = null; renderEmboss(); }
     function findAdm1Feature(name){
       if (!_features || !name) return null;
       return _features.find(f => (f.properties.shapeName || f.properties.name) === name) || null;
@@ -1154,13 +1174,13 @@ window.addEventListener("unhandledrejection", function(e){
         assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
         const rec = (window.__custList || []).find(x => x.__id === id);
         // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝"只选中不放大"）
-        if (doZoom){
+        if (doZoom && !_staticLock){
           if (rec && rec.__adm1) zoomToAdm1(rec.__adm1);
           else if (rec && rec.lat != null && rec.lng != null) zoomToPoint(rec.lat, rec.lng);
         }
       } else if (!_multiTrack && _saveT) {
         // 单点模式取消选中同一行 → 恢复点击前的地图 transform（"返回"功能）
-        if (doZoom) _svg.transition().duration(620).call(_zoom.transform, _saveT);
+        if (doZoom && !_staticLock) _svg.transition().duration(620).call(_zoom.transform, _saveT);
         _saveT = null;
       }
       if (node){
