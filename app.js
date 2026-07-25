@@ -954,7 +954,8 @@ window.addEventListener("unhandledrejection", function(e){
         const p = o.p; const r = o.r;
         const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
           .on('mouseenter', () => showCustTip(r))
-          .on('mouseleave', hideTip);
+          .on('mouseleave', hideTip)
+          .on('click', (e) => { e.stopPropagation(); highlightCustomer(r.__id, { doZoom: false, scroll: true }); });  // 点击黄点→变绿 + 右侧检索栏平滑滚到该行并选中（不强制放大）
         // 可见圆点（纯黄，无发光）
         g.append('circle').attr('class','cust-pt').attr('r', _CUST_R).attr('cx',0).attr('cy',0)
           .attr('fill','#fde047').style('cursor','pointer');
@@ -1130,7 +1131,9 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 需求2：点击检索行 → 仅该客户原绿点变纯黄（同尺寸/位置，无高亮无边框），再点恢复绿；其余绿点不受影响、不清暗。
     // 选中后的“后续操作”：自动放大并居中定位（优先 ADM1，无 ADM1 归属则放大到客户坐标点）——无论地图是否有该圆点，行选中都执行。
-    function highlightCustomer(id){
+    function highlightCustomer(id, opts){
+      opts = opts || {};
+      const doZoom = (opts.doZoom !== false);   // 默认 true：点击检索行 / 世界地图跳转时自动放大定位；点击地图黄点传 false（仅高亮+滚动，不强制放大）
       if (!_custVisible && _gCust){ _custVisible = true; _gCust.style('display', null); const b=$('custtoggle'); if(b){ b.classList.add('active'); b.textContent='隐藏客户位点'; } }
       // 即便该客户没有地图圆点（无坐标），也允许“行选中”执行；无节点时仅做行高亮、不做圆点切换
       const sel = (_gCust) ? _gCust.selectAll('g.cust-pt-g').filter(function(){ return +this.getAttribute('data-id') === id; }) : d3.select(null);
@@ -1139,24 +1142,29 @@ window.addEventListener("unhandledrejection", function(e){
       if (!nowHl){
         // 即将点亮成黄点：单点模式（默认）先清掉其它所有高亮，保证地图上始终只有当前这一个黄点
         if (!_multiTrack) clearCustomerHighlight();
-        // 单点模式：记录点击前的地图 transform，取消选中同一行时恢复（"返回"功能）
-        if (!_multiTrack) _saveT = d3.zoomTransform(_svg.node());
+        // 单点模式：记录点击前的地图 transform，取消选中同一行时恢复（"返回"功能，仅 doZoom 时记录/恢复）
+        if (!_multiTrack && doZoom) _saveT = d3.zoomTransform(_svg.node());
         assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
         const rec = (window.__custList || []).find(x => x.__id === id);
         // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝"只选中不放大"）
-        if (rec && rec.__adm1) zoomToAdm1(rec.__adm1);
-        else if (rec && rec.lat != null && rec.lng != null) zoomToPoint(rec.lat, rec.lng);
+        if (doZoom){
+          if (rec && rec.__adm1) zoomToAdm1(rec.__adm1);
+          else if (rec && rec.lat != null && rec.lng != null) zoomToPoint(rec.lat, rec.lng);
+        }
       } else if (!_multiTrack && _saveT) {
         // 单点模式取消选中同一行 → 恢复点击前的地图 transform（"返回"功能）
-        _svg.transition().duration(620).call(_zoom.transform, _saveT);
+        if (doZoom) _svg.transition().duration(620).call(_zoom.transform, _saveT);
         _saveT = null;
       }
-      if (node) sel.classed('cust-hl', !nowHl);   // 仅在 黄↔绿 之间切换；半径/位置始终不变
+      if (node) sel.classed('cust-hl', !nowHl);   // 仅在 黄↔绿 之间切换；半径/位置始终不变（绿点尺寸=黄点）
       if (!nowHl) _hlIds.add(id); else _hlIds.delete(id);
       // 该客户所属区域（优先 ADM1，无则 ADM2）同步 3D 浮雕显示：黄点所在区域随浮雕一起探出（单点替换/多点追踪累积，与黄点保持同步）
       _syncCustomerEmboss();
       const row = document.querySelector('.cust-table tbody tr[data-id="'+id+'"]');
-      if (row) row.classList.toggle('sel', !nowHl);
+      if (row){
+        row.classList.toggle('sel', !nowHl);   // 行选中态与地图点同步（黄↔绿）
+        if (!nowHl && opts.scroll) row.scrollIntoView({ block:'nearest', behavior:'smooth' });  // 点击地图黄点→右侧检索栏平滑滚动到该客户行
+      }
     }
     // 世界地图搜索客户跳转后，自动点亮对应客户行（变黄 + 放大定位一级区域）：等客户数据+省份地图都就绪再执行，保证只触发一次
     function applyPendingHl(){
