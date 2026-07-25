@@ -836,7 +836,8 @@ window.addEventListener("unhandledrejection", function(e){
         updateCustStat();               // 右下角：信息总计 / 位置统计
         applyPendingHl();               // 世界地图跳转带 hl 参数时，客户就绪即点亮该行（省份未就绪则由 renderProvinces 兜底触发）
         warnDupCoords(list);            // 自检：坐标撞车会导致圆点叠在一起看不见，立即暴露
-        $('custSearch').oninput = () => { applyRegionFilter(); };
+        let _custSearchTimer = null;
+        $('custSearch').oninput = () => { clearTimeout(_custSearchTimer); _custSearchTimer = setTimeout(() => applyRegionFilter(), 120); };
       }).catch(() => { $('custEmpty').textContent = '客户数据加载失败'; $('custEmpty').style.display = 'block'; });
     }
     function renderCustomers(list){
@@ -869,16 +870,23 @@ window.addEventListener("unhandledrejection", function(e){
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
       // 同坐标（如多条客户都落到 Dhaka 市中心）圆点会完全叠在一起看不见 → 做确定性螺旋去重叠(declutter)，
       // 真实经纬度仍原样保留在 customers.json 中，仅渲染时扇出，保证每个点都能独立 hover。
-      const groups = {};
-      pts.forEach((r) => { const k = (+r.lat).toFixed(3) + ',' + (+r.lng).toFixed(3); (groups[k] = groups[k] || []).push(r); });
+      // 屏幕空间分桶去重叠：先投影全部点，按四舍五入的屏幕栅格(8px)分桶，
+      // 同桶(含坐标相近的邻近客户，不仅经纬度完全相同的点)做黄金角螺旋扇出，保证每个点独立可见、互不重叠。
       const GOLD = 2.399963229728653; // 黄金角：螺旋均匀分布
-      Object.keys(groups).forEach((k) => {
-        const grp = groups[k]; const same = grp.length > 1;
-        grp.forEach((r, gi) => {
-          const p = PROJ([+r.lng, +r.lat]);
-          if (!p) return;
+      const BUCKET = 8;               // 屏幕栅格(px)：落入同一栅格的邻近客户一并扇开
+      const projAll = pts.map(r => { const p = PROJ([+r.lng, +r.lat]); return p ? { r, p } : null; }).filter(Boolean);
+      const buckets = {};
+      projAll.forEach(o => {
+        const bx = Math.round(o.p[0] / BUCKET), by = Math.round(o.p[1] / BUCKET);
+        const key = bx + ',' + by;
+        (buckets[key] = buckets[key] || []).push(o);
+      });
+      Object.keys(buckets).forEach((key) => {
+        const grp = buckets[key]; const same = grp.length > 1;
+        grp.forEach((o, gi) => {
+          const p = o.p; const r = o.r;
           let dx = 0, dy = 0;
-          if (same){ const rad = 7 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
+          if (same){ const rad = 6 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
           const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
             .attr('transform', `translate(${p[0] + dx},${p[1] + dy})`)
             .on('mouseenter', () => showCustTip(r))
@@ -928,7 +936,8 @@ window.addEventListener("unhandledrejection", function(e){
       });
     }
     function applyRegionFilter(){
-      assignRegions();
+      // 注：__adm1/__adm2 已在客户加载(drawCustomerPointsOnMap 内 assignRegions)与省份加载完成时算好并缓存，
+      // 此处不再重复 assignRegions()，否则每次搜索按键都要对 102 客户 × 774 个 ADM2 多边形跑约 8 万次 d3.geoContains，造成严重卡顿。
       const list = window.__custList || [];
       let flt = list;
       const regions = _selectedRegions();   // 已选中的全部行政区域（单点 1 个 / 多点追踪多个）
