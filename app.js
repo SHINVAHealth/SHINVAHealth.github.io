@@ -915,6 +915,7 @@ window.addEventListener("unhandledrejection", function(e){
     const GRAIN_R = 1.4;            // 初始像素粒半径（屏幕 px）
     const DOT_R   = 2.6;            // 放大后清晰圆点半径（屏幕 px）
     const ZOOM_FULL = 3;            // 缩放到此倍率时完全变成圆点 + 完全铺开
+    const CUST_HIT_PX = 10;         // 透明命中区：恒定屏幕尺寸(px)，不随缩放放大 → 放大到最大也不会出现超大盲区误触发 hover
     function zoomFactor(k){ return Math.max(0, Math.min(1, (k - 1) / (ZOOM_FULL - 1))); }
     function updateCustZoom(k){
       if (!_gCust || !_custEls || !_custEls.length) return;
@@ -931,7 +932,8 @@ window.addEventListener("unhandledrejection", function(e){
         const oy = (m.off ? m.off[1] : 0) * sK;
         m.el.attr('transform', `translate(${(b[0] + ox).toFixed(2)},${(b[1] + oy).toFixed(2)})`);
         m.el.select('circle.cust-pt').attr('r', rContent);
-        m.el.select('circle.cust-hit').attr('r', Math.max(6, rContent * 2.4));
+        // 命中区恒定屏幕尺寸：content 半径 = HIT_PX / k（在 zoom 组被 scale(k) 还原成屏幕 HIT_PX px），任意缩放下都是 10px，放大到最大也不会变成 54px 盲区
+        m.el.select('circle.cust-hit').attr('r', CUST_HIT_PX / k);
       }
     }
     function drawCustomerPointsOnMap(list){
