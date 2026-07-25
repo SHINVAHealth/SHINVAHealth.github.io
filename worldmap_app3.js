@@ -990,7 +990,7 @@ window.addEventListener("error", function(e){
         .attr('cx', d => { const p = projection([d.lng, d.lat]); return p ? p[0] : -9999; })
         .attr('cy', d => { const p = projection([d.lng, d.lat]); return p ? p[1] : -9999; })
         .attr('r', WORLD_DOT_R)
-        .attr('fill', '#22c55e')
+        .attr('fill', '#fde047')
         .style('cursor', 'pointer')
         .on('mousemove', (e, d) => showCustTip(e, d))
         .on('mouseleave', hideCustTip)
