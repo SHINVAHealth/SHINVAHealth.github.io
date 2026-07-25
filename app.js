@@ -334,11 +334,11 @@ window.addEventListener("unhandledrejection", function(e){
       if (_countryOutlineD){
         g.append('path').attr('d', _countryOutlineD).attr('class','country-outline');
       }
-      // 3D 浮雕突出层：悬停一级/二级行政区域时整块「从平面探出」，置于 g 内最上（随缩放同步），在 _gMark/_gCust 之下（客户点仍可见）
+      // 3D 浮雕突出层：悬停一级/二级行政区域时整块「从平面探出」，置于 g 内最上（随缩放同步）
       const gEmboss = g.append('g').attr('class','emboss-layer');
       _gEmboss = gEmboss;
-      _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
-      _gCust = g.append('g').attr('class','cust-layer');  // 客户点图层置于 zoom 组 g 内：随地图平移/缩放自动同步，绝不会漂移/消失；圆点大小与去重叠铺开由 updateCustZoom 按缩放动态控制
+      _gCust = g.append('g').attr('class','cust-layer');  // 客户点图层（顶层）：置于标志层之上，永不被机场/首都图标遮挡；随地图平移/缩放自动同步，绝不会漂移/消失
+      _gMark = g.insert('g', '.cust-layer');  // 标志层（机场/首都）置于客户点之下、省图层之上：不遮挡客户点；随 g 变换自动跟随，尺寸由 updateMarkers 反向 scale 恒定屏幕大小
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
@@ -614,12 +614,14 @@ window.addEventListener("unhandledrejection", function(e){
       let pCap = null;
       if (CAP && CAP.lat != null){
         pCap = PROJ([CAP.lng, CAP.lat]);
-        // 外层定位组：translate 到投影坐标；内层图标组固定 scale，缩放时图标大小不变
+        // outer：定位到投影坐标（k=1）；g 的缩放变换负责平移/缩放位置；
+        // inner：反向 scale(1/k) 抵消 g 的缩放，使图标/标签保持恒定屏幕尺寸（不随放大变大）
         const outer = _gMark.append('g').attr('transform', `translate(${pCap[0]},${pCap[1]})`);
-        outer.append('g').attr('class','marker-cap-star').attr('transform','scale(0.95)').attr('filter','url(#relief)')
+        const inner = outer.append('g');
+        inner.append('g').attr('class','marker-cap-star').attr('transform','scale(0.95)').attr('filter','url(#relief)')
           .append('path').attr('d', STAR).attr('fill','url(#gradCap)').attr('stroke','#7c4a03').attr('stroke-width','0.8');
-        outer.append('text').attr('class','marker-label').attr('x',0).attr('y',-12).text(capCnName || (CAP.name||'首都'));
-        _markEls.push({ el: outer, base: pCap });
+        inner.append('text').attr('class','marker-label').attr('x',0).attr('y',-12).text(capCnName || (CAP.name||'首都'));
+        _markEls.push({ el: outer, inner, base: pCap });
       }
       if (AIR && AIR.lat != null){
         let p = PROJ([AIR.lon, AIR.lat]);
@@ -633,21 +635,24 @@ window.addEventListener("unhandledrejection", function(e){
           }
         }
         const outer = _gMark.append('g').attr('class','marker-plane-g').attr('transform', `translate(${p[0]},${p[1]})`);
-        outer.append('g').attr('transform','scale(0.8) rotate(45) translate(-12,-12)').attr('filter','url(#relief)')
+        const inner = outer.append('g');
+        inner.append('g').attr('transform','scale(0.8) rotate(45) translate(-12,-12)').attr('filter','url(#relief)')
           .append('path').attr('d', PLANE).attr('fill','#38bdf8').attr('stroke','#075985').attr('stroke-width','0.9');
         const cnName = AIR.cn || ((META.ISO2_TO_CN[iso2] || '') + (facts && facts.capital ? ' · ' + facts.capital : ''));
-        const label = outer.append('text').attr('class','marker-air-label').attr('x',0).attr('y',-14);
+        const label = inner.append('text').attr('class','marker-air-label').attr('x',0).attr('y',-14);
         label.append('tspan').attr('x',0).attr('dy',0).text((AIR.iata ? AIR.iata + ' ' : '') + (AIR.name || '机场'));
         label.append('tspan').attr('class','cn').attr('x',0).attr('dy',13).text(cnName);
         outer.on('mouseenter', () => label.style('display','block'))
              .on('mouseleave', () => label.style('display','none'));
-        _markEls.push({ el: outer, base: p });
+        _markEls.push({ el: outer, inner, base: p });
       }
     }
-    // 缩放时：标志图标保持固定大小，仅按缩放变换重新定位（不缩放自身）
+    // 缩放时：标志图标随 g 变换自动平移（outer 已固定在地理坐标，g 负责位置），
+    // 仅用 inner 反向 scale(1/k) 抵消 g 的放大，保持图标/标签恒定屏幕尺寸（不随放大变大、且位于客户点下层不遮挡）
     function updateMarkers(t){
-      // 仅负责标志图标；客户点位置随 g 变换自动跟随（_gCust 在 zoom 组内），大小/铺开由 updateCustZoom 按缩放控制，避免两套逻辑互相覆盖
-      _markEls.forEach(m => m.el.attr('transform', `translate(${t.x + t.k*m.base[0]}, ${t.y + t.k*m.base[1]})`));
+      if (!_gMark) return;
+      const s = 1 / t.k;
+      _markEls.forEach(m => { if (m.inner) m.inner.attr('transform', `scale(${s})`); });
     }
     function provinceAt(lonlat){
       if (!FC1) return null;
