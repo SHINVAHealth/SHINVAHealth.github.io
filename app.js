@@ -978,9 +978,9 @@ window.addEventListener("unhandledrejection", function(e){
         const ox = (m.off ? m.off[0] : 0) * sK;
         const oy = (m.off ? m.off[1] : 0) * sK;
         m.el.attr('transform', `translate(${(b[0] + ox).toFixed(2)},${(b[1] + oy).toFixed(2)})`);
-        m.el.select('circle.cust-pt').attr('r', rContent);
+        if (m.ptEl) m.ptEl.attr('r', rContent); else m.el.select('circle.cust-pt').attr('r', rContent);
         // 命中区恒定屏幕尺寸：content 半径 = HIT_PX / k（在 zoom 组被 scale(k) 还原成屏幕 HIT_PX px），任意缩放下都是 10px，放大到最大也不会变成 54px 盲区
-        m.el.select('circle.cust-hit').attr('r', CUST_HIT_PX / k);
+        if (m.hitEl) m.hitEl.attr('r', CUST_HIT_PX / k); else m.el.select('circle.cust-hit').attr('r', CUST_HIT_PX / k);
       }
     }
     function drawCustomerPointsOnMap(list){
@@ -1012,7 +1012,9 @@ window.addEventListener("unhandledrejection", function(e){
         g.append('circle').attr('class','cust-hit').attr('r', 6).attr('cx',0).attr('cy',0)
           .attr('fill','transparent').style('cursor','pointer')
           .on('mouseenter', () => showCustTip(r)).on('mouseleave', hideTip);
-        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null, off: [0, 0] });
+        const ptEl = g.select('circle.cust-pt');   // 缓存子元素引用：避免放大动画每帧重复 d3.select 子查询（性能优化）
+        const hitEl = g.select('circle.cust-hit');
+        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null, off: [0, 0], ptEl, hitEl });
       });
       assignRegions();
       // 重绘后恢复已有黄/绿选中高亮（仅改 fill，尺寸/位置不变，不影响其他点）
@@ -1045,12 +1047,17 @@ window.addEventListener("unhandledrejection", function(e){
     function assignRegions(){
       const list = window.__custList || [];
       if (!list.length) return;
-      const fc2 = (_topo2 && _topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : (_topo2 || null);
+      // 缓存 ADM2 GeoJSON 反序列化结果：只算一次（774 个多边形反序列化是重活，避免每次调用都重建）
+      if (!assignRegions._fc2){
+        assignRegions._fc2 = (_topo2 && _topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : (_topo2 || null);
+      }
+      const fc2 = assignRegions._fc2;
       list.forEach(r => {
+        if (r.__adm1 && r.__adm2) return;   // 已算过则跳过（增量）：首次全量后所有客户都有缓存，后续调用零成本
         if (r.lat != null && r.lng != null){
           const ll = [+r.lng, +r.lat];
-          if (_features){ for (const f of _features){ try { if (d3.geoContains(f, ll)){ r.__adm1 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
-          if (fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
+          if (!r.__adm1 && _features){ for (const f of _features){ try { if (d3.geoContains(f, ll)){ r.__adm1 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
+          if (!r.__adm2 && fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
         }
       });
     }
@@ -1313,8 +1320,8 @@ window.addEventListener("unhandledrejection", function(e){
         if (!_multiTrack) clearCustomerHighlight();
         // 单点模式：记录点击前的地图 transform，取消选中同一行时恢复（"返回"功能，仅 doZoom 时记录/恢复）
         if (!_multiTrack && doZoom) _saveT = d3.zoomTransform(_svg.node());
-        assignRegions();   // 确保 __adm1 已算（省份异步加载时兜底）
         const rec = (window.__custList || []).find(x => x.__id === id);
+        if (rec && rec.__adm1 == null) assignRegions();   // 仅当该客户区域尚未缓存时增量补算（省份异步加载兜底）；正常已缓存，零成本，杜绝每次选中全量 geoContains 卡顿
         // 后续操作：自动放大并居中定位 —— 优先放大到一级区域(ADM1)，无 ADM1 归属则放大到客户真实坐标点（有坐标就一定放大，杜绝"只选中不放大"）
         if (doZoom && !_staticLock){
           if (rec && rec.__adm1) zoomToAdm1(rec.__adm1, rec);
