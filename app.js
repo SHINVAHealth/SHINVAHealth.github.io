@@ -217,6 +217,10 @@ window.addEventListener("unhandledrejection", function(e){
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
+  let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「整体最短」路线（TSP 近似）
+  let _gRoute = null;            // 路线图层（置于 zoom 组 g 内、客户点之下，随地图同步变换）
+  let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
+  let _routeOrder = [];         // TSP 近似访问顺序（_routePts 下标数组）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
   let _embossRegions = new Map(); // 选中(持久)区域浮雕：key = source|type|name -> {feature,type,name,source}
@@ -351,6 +355,7 @@ window.addEventListener("unhandledrejection", function(e){
         g.attr('transform', ev.transform);
         updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
         updateMarkers(ev.transform);
+        if (_routeOn) drawRoute(ev.transform.k);   // 路线端点随缩放铺开量同步，仅 O(n) 重拼路径，不重算 TSP 顺序（防卡）
         _curK = ev.transform.k; _curT = ev.transform;
       });
       svg.call(zoom);
@@ -414,6 +419,7 @@ window.addEventListener("unhandledrejection", function(e){
         this.classList.toggle('active', _custVisible);
         this.textContent = _custVisible ? '隐藏客户位点' : '显示客户位点';
         if (_gCust) _gCust.style('display', _custVisible ? null : 'none');
+        if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
         if (!_custVisible){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
       };
       // [开启/关闭多点追踪]：默认关闭（单点）。开启 → 可同时保留多个客户黄点；关闭 → 点新行即清空上家。
@@ -447,6 +453,15 @@ window.addEventListener("unhandledrejection", function(e){
         this.classList.toggle('active', _hideUnselected);
         this.textContent = _hideUnselected ? '显示全部客户' : '隐藏未选客户';
         applyHideUnselected();
+      };
+      // [开启/关闭路线规划]：默认关闭。开启 → 按可见客户点的实际位置，用虚线连成一条整体最短路线（TSP 近似）
+      $('routeplan').onclick = function(){
+        _routeOn = !_routeOn;
+        this.classList.toggle('active', _routeOn);
+        this.textContent = _routeOn ? '关闭路线规划' : '开启路线规划';
+        if (_routeOn && !_gRoute && typeof g !== 'undefined') _gRoute = g.insert('g', '.cust-layer').attr('class', 'route-layer');
+        rebuildRoute();   // 重算点集 + 顺序 + 绘制
+        if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
       };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
       $('backSys').onclick = () => { window.location.href = 'index.html'; };
@@ -885,6 +900,7 @@ window.addEventListener("unhandledrejection", function(e){
       $('custBody').querySelectorAll('tr').forEach(tr => { tr.onclick = () => highlightCustomer(+tr.dataset.id); });
       // 重绘后恢复黄色选中行
       _hlIds.forEach(id => { const rr = $('custBody').querySelector('tr[data-id="'+id+'"]'); if (rr) rr.classList.add('sel'); });
+      applyHideUnselected();   // 重渲染后重新应用「隐藏未选客户」：仅保留选中行
     }
 
     // —— 客户像素点（customers.json，按经纬度落点）——
@@ -1131,15 +1147,114 @@ window.addEventListener("unhandledrejection", function(e){
       document.querySelectorAll('.cust-table tbody tr.sel').forEach(t => t.classList.remove('sel'));
       applyHideUnselected();
     }
-    // 隐藏未选客户：开启后仅显示已选中(绿点)客户点，隐藏其余所有黄点（地图圆点与 hover tooltip 一并失效）
+    // 隐藏未选客户：开启后仅显示已选中(绿点)客户点，隐藏其余所有黄点（地图圆点与 hover tooltip 一并失效）；
+    // 同时把右侧客户检索栏的信息行一并隐藏，只保留被选中的客户信息行。
     function applyHideUnselected(){
       if (!_gCust || !_custEls.length) return;
+      const isSelected = (idv) => _hlIds.has(idv) || _hlIds.has(+idv) || _hlIds.has(String(idv));
       _custEls.forEach(m => {
         if (!m || !m.el || !m.rec) return;
-        const idv = m.rec.__id;
-        const isSel = _hlIds.has(idv) || _hlIds.has(+idv) || _hlIds.has(String(idv));
+        const isSel = isSelected(m.rec.__id);
         m.el.style('display', (_hideUnselected && !isSel) ? 'none' : null);
       });
+      // 检索栏信息行：未选中则隐藏（保留选中行）
+      document.querySelectorAll('.cust-table tbody tr').forEach(tr => {
+        const idv = tr.getAttribute('data-id');
+        const isSel = isSelected(idv);
+        tr.style.display = (_hideUnselected && !isSel) ? 'none' : null;
+      });
+      if (_routeOn) rebuildRoute();   // 点集变化（隐藏/显示）→ 路线需重算
+    }
+    // —— 路线规划：在可见客户点间以虚线连成一条「整体最短」路线 ——
+    // TSP 近似：最近邻构造初始顺序 + 有界 2-opt 优化（限定轮数，防卡 UI）。坐标用真实投影基坐标(与地图同投影，距离=地图实际距离)。
+    function tspOrder(coords){
+      const n = coords.length;
+      if (n < 3) return coords.map((_, i) => i);
+      const visited = new Array(n).fill(false);
+      const order = [0]; visited[0] = true;
+      for (let step = 1; step < n; step++){
+        const last = coords[order[order.length - 1]];
+        let best = -1, bestD = Infinity;
+        for (let j = 0; j < n; j++){
+          if (visited[j]) continue;
+          const dx = coords[j][0] - last[0], dy = coords[j][1] - last[1];
+          const d = dx * dx + dy * dy;
+          if (d < bestD){ bestD = d; best = j; }
+        }
+        order.push(best); visited[best] = true;
+      }
+      // 2-opt 改进（限定 40 轮，足够逼近整体最短且不会卡）
+      const dist = (a, b) => Math.hypot(coords[a][0] - coords[b][0], coords[a][1] - coords[b][1]);
+      let improved = true, pass = 0;
+      while (improved && pass < 40){
+        improved = false; pass++;
+        for (let i = 0; i < n - 1; i++){
+          for (let j = i + 1; j < n; j++){
+            const a = order[i], b = order[i + 1], c = order[j], d = order[(j + 1) % n];
+            const before = dist(a, b) + dist(c, d);
+            const after  = dist(a, c) + dist(b, d);
+            if (after + 1e-6 < before){
+              let lo = i + 1, hi = j;
+              while (lo < hi){ const t = order[lo]; order[lo] = order[hi]; order[hi] = t; lo++; hi--; }
+              improved = true;
+            }
+          }
+        }
+      }
+      return order;
+    }
+    // 客户点「当前显示坐标」= 真实基坐标 + 去重叠铺开偏移(与 updateCustZoom 完全一致)，保证虚线端点贴合圆点
+    function routePos(m, k){
+      const zf = zoomFactor(k);
+      const sepF = Math.min(1, zf * 1.8);
+      const sK = sepF / k;
+      const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;
+      const ox = (m.off ? m.off[0] : 0) * sK;
+      const oy = (m.off ? m.off[1] : 0) * sK;
+      return [b[0] + ox, b[1] + oy];
+    }
+    // 重算参与路线的点集 + TSP 顺序，再绘制（开启隐藏未选时仅用已选中点）
+    function rebuildRoute(){
+      if (!_gRoute) return;
+      _gRoute.selectAll('*').remove();
+      if (!_routeOn){ return; }
+      _routePts = [];
+      _custEls.forEach(m => {
+        if (!m || !m.el || !m.rec) return;
+        if (_hideUnselected){
+          const idv = m.rec.__id;
+          const isSel = _hlIds.has(idv) || _hlIds.has(+idv) || _hlIds.has(String(idv));
+          if (!isSel) return;
+        }
+        if (_custVisible === false) return;            // 整层被隐藏（custtoggle）
+        if (m.el.style('display') === 'none') return;  // 被隐藏未选客户隐藏
+        _routePts.push(m);
+      });
+      if (_routePts.length < 2){ return; }              // 不足两点无法成线
+      const bases = _routePts.map(m => (m.lifted && m.liftedBase) ? m.liftedBase : m.base);
+      _routeOrder = tspOrder(bases);
+      drawRoute(_curK || 1);
+    }
+    // 按当前缩放绘制虚线路线（仅 O(n) 拼接路径，重算顺序只在 rebuildRoute 做，避免缩放过程卡顿）
+    function drawRoute(k){
+      if (!_gRoute) return;
+      _gRoute.selectAll('*').remove();
+      if (!_routeOn || !_routePts.length || _routePts.length < 2) return;
+      const d = _routeOrder.map(i => {
+        const p = routePos(_routePts[i], k);
+        return p[0].toFixed(2) + ',' + p[1].toFixed(2);
+      }).join(' L ');
+      _gRoute.append('path')
+        .attr('class', 'route-line')
+        .attr('d', 'M ' + d)
+        .attr('fill', 'none')
+        .attr('stroke', '#f59e0b')
+        .attr('stroke-width', 1.6)
+        .attr('stroke-dasharray', '6 4')
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round')
+        .attr('vector-effect', 'non-scaling-stroke')   // 线宽/虚线不随缩放放大，恒定屏幕尺寸
+        .style('pointer-events', 'none');
     }
     // 点击客户检索行 → 自动放大并居中到该客户所在一级行政区域（ADM1）
     // rec：可选，传入客户记录以在「当前已放大更多」时居中其真实坐标点（而非省份质心）
