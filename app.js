@@ -863,7 +863,7 @@ window.addEventListener("unhandledrejection", function(e){
         return;
       }
       drawCustomerPointsOnMap._tries = 0;
-      _CUST_R = 3.8;  // 固定略缩半径，亮绿像素点、无暗边框
+      _CUST_R = 2.6;  // 缩小绿点半径（用户要求避免重叠）；配合下方螺旋去重叠(相邻 12-18px ≫ 直径 5.2px) 彻底不重叠
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);

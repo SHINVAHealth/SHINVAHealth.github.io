@@ -545,8 +545,8 @@ window.addEventListener("error", function(e){
   // 地球（fitExtent）四周留白，用于给经纬度标注让出空间；drawGraticule 同步使用
   // 左侧留白加大到 40，给纬度刻度尺（N/S 标注）让出充足空间，避免被侧边面板/UI 遮挡
   const GM = { t: 44, r: 22, b: 22, l: 40 };
-  // 尼日利亚客户绿色分布点（来自 customers.json，按经纬度落点）
-  let NG_PTS = [];
+  // 客户绿色分布点（来自 customers.json，全部国家，按经纬度落点）
+  let WORLD_PTS = [];
   function resize(){
     const w = width(), h = height();
     svg.attr('viewBox', `0 0 ${w} ${h}`);
@@ -559,7 +559,7 @@ window.addEventListener("error", function(e){
     TILE = (w - GM.l - GM.r);              // 平铺周期 = 世界内容宽（含两侧留白）
     allPaths.attr('d', d => path(d));
     tiles.forEach((tg, i) => tg.attr('transform', `translate(${i * TILE},0)`));
-    if (NG_PTS.length) drawNigeriaPoints();
+    if (WORLD_PTS.length) drawWorldCustomerPoints();
     drawGraticule();
     drawRulerBase();
     updateRuler();
@@ -974,16 +974,18 @@ window.addEventListener("error", function(e){
   }
   readParam();
 
-  // —— 尼日利亚客户绿色像素点（customers.json）——
+  // —— 客户绿色像素点（customers.json，全部国家）——
   const WORLD_DOT_R = 1.5;   // 世界地图统一最小圆点尺寸（全图一致，仅缩点尺寸，绝不移动经纬度）
-  function drawNigeriaPoints(){
+  function drawWorldCustomerPoints(){
     // 亮绿单色像素点，边缘清晰无发光无高亮；所有点统一为 WORLD_DOT_R，尺寸一致。
     // 画在 gCust 顶层图层（gEmboss 之上），使 3D 浮雕显示时客户原点位置始终可见。
+    // 修复：此前写死只画尼日利亚(NG_PTS)，导致孟加拉等其他国家客户在世界地图不显示；
+    //       现改为绘制 customers.json 中所有有经纬度的客户（ng/bd/…），按各自 iso2 跳转国家地图。
     gCust.selectAll('*').remove();
     for (let i = 0; i < TILES; i++){
       const ox = i * TILE;
       const tileG = gCust.append('g').attr('class', 'cust-tile').attr('transform', `translate(${ox},0)`);
-      tileG.selectAll('circle.cust-pt').data(NG_PTS).enter().append('circle')
+      tileG.selectAll('circle.cust-pt').data(WORLD_PTS).enter().append('circle')
         .attr('class', 'cust-pt')
         .attr('cx', d => { const p = projection([d.lng, d.lat]); return p ? p[0] : -9999; })
         .attr('cy', d => { const p = projection([d.lng, d.lat]); return p ? p[1] : -9999; })
@@ -992,12 +994,13 @@ window.addEventListener("error", function(e){
         .style('cursor', 'pointer')
         .on('mousemove', (e, d) => showCustTip(e, d))
         .on('mouseleave', hideCustTip)
-        .on('click', () => { window.location.href = 'country.html?c=ng'; });
+        .on('click', d => { if (d.iso2) window.location.href = 'country.html?c=' + d.iso2; });
     }
   }
   function showCustTip(e, d){
     tipCn.textContent = d.company;
-    tipEn.textContent = '尼日利亚 · 客户分布点';
+    const cn = (d.country || (ISO2CN[(d.iso2 || '').toLowerCase()]) || (d.iso2 || ''));
+    tipEn.textContent = cn + ' · 客户分布点';
     tipCn2.textContent = d.city || '';
     tipEn2.textContent = d.address || '';
     tipCont.textContent = d.phone || '';
@@ -1012,9 +1015,9 @@ window.addEventListener("error", function(e){
   function hideCustTip(){ tip.classList.remove('show'); }
   fetch('customers.json').then(r => r.json()).then(data => {
     ALL_CUSTOMERS = data.records || [];
-    NG_PTS = ALL_CUSTOMERS.filter(r => (r.iso2 || '').toLowerCase() === 'ng' && r.lat != null && r.lng != null)
-      .map(r => ({ company: r.company, address: r.address, city: r.city, phone: r.phone, lat: +r.lat, lng: +r.lng }));
-    drawNigeriaPoints();
+    WORLD_PTS = ALL_CUSTOMERS.filter(r => r.lat != null && r.lng != null)
+      .map(r => ({ company: r.company, address: r.address, city: r.city, phone: r.phone, country: r.country, iso2: (r.iso2 || '').toLowerCase(), lat: +r.lat, lng: +r.lng }));
+    drawWorldCustomerPoints();
   }).catch(() => {});
 
   // 外贸跟踪国家名单：点击展开子栏，点击国家进入其国家地图（仅接一次，避免看门狗重建重复绑定）
