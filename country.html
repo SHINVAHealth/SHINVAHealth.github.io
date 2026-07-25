@@ -109,8 +109,7 @@
   .map-toolbar button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
   /* 静态锁图：区域 path 置为不可交互 → 无悬停高亮/点击；光标恢复默认，避免误以为可拖拽 */
   #map.static-locked .prov-fill, #map.static-locked .prov-line, #map.static-locked path.adm2{ pointer-events:none !important; }
-  /* 静态锁图：显示原生箭头光标（覆盖 .mapwrap svg 的 cursor:none!important，让锁定后地图仍可看到系统箭头） */
-  #map.static-locked, #map.static-locked svg, #map.static-locked svg *{ cursor:default !important; }
+  #map.static-locked{ cursor:url('assets/cursors/LoLNormal.png') 3 2, default; }  /* 静态锁图：光标维持 LOL 小手（DOM 图接管；此规则仅在光标图隐藏时兜底） */
   #map{ flex:1; position:relative; min-height:0; contain:layout paint; }
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
@@ -355,6 +354,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607251510"></script>
+  <script defer src="app.js?v=202607251515"></script>
 </body>
 </html>
