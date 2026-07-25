@@ -867,17 +867,27 @@ window.addEventListener("unhandledrejection", function(e){
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
-      pts.forEach((r) => {
-        const p = PROJ([+r.lng, +r.lat]);
-        if (!p) return;
-        const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
-          .attr('transform', `translate(${p[0]},${p[1]})`)
-          .on('mouseenter', () => showCustTip(r))
-          .on('mouseleave', hideTip);
-        g.append('circle').attr('class','cust-pt').attr('r', _CUST_R).attr('cx',0).attr('cy',0)
-          .attr('fill','#22c55e')
-          .style('cursor','pointer');
-        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
+      // 同坐标（如多条客户都落到 Dhaka 市中心）圆点会完全叠在一起看不见 → 做确定性螺旋去重叠(declutter)，
+      // 真实经纬度仍原样保留在 customers.json 中，仅渲染时扇出，保证每个点都能独立 hover。
+      const groups = {};
+      pts.forEach((r) => { const k = (+r.lat).toFixed(3) + ',' + (+r.lng).toFixed(3); (groups[k] = groups[k] || []).push(r); });
+      const GOLD = 2.399963229728653; // 黄金角：螺旋均匀分布
+      Object.keys(groups).forEach((k) => {
+        const grp = groups[k]; const same = grp.length > 1;
+        grp.forEach((r, gi) => {
+          const p = PROJ([+r.lng, +r.lat]);
+          if (!p) return;
+          let dx = 0, dy = 0;
+          if (same){ const rad = 7 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
+          const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
+            .attr('transform', `translate(${p[0] + dx},${p[1] + dy})`)
+            .on('mouseenter', () => showCustTip(r))
+            .on('mouseleave', hideTip);
+          g.append('circle').attr('class','cust-pt').attr('r', _CUST_R).attr('cx',0).attr('cy',0)
+            .attr('fill','#22c55e')
+            .style('cursor','pointer');
+          _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null });
+        });
       });
       assignRegions();
       // 重绘后恢复已有黄色高亮（仅改 fill，尺寸/位置不变，不影响其他点）
@@ -902,7 +912,7 @@ window.addEventListener("unhandledrejection", function(e){
       const seen = {};
       list.forEach(r => { if (r.lat != null && r.lng != null){ const k = (+r.lat).toFixed(4) + ',' + (+r.lng).toFixed(4); (seen[k] = seen[k] || []).push(r.company); } });
       const dups = Object.entries(seen).filter(([, v]) => v.length > 1);
-      if (dups.length) console.warn('[客户定位自检] 以下客户经纬度完全重合，圆点会叠在一起看不见，请重新精确地理编码：\n' + dups.map(([k, v]) => '  ' + k + ' => ' + v.join(' , ')).join('\n'));
+      if (dups.length) console.warn('[客户定位自检] 以下客户经纬度完全重合（多为同落 Dhaka 市中心），数据已按真实坐标保留；地图端已做螺旋去重叠(declutter)，每个点仍可独立 hover。如需更精确街道级坐标可单独重编码：\n' + dups.map(([k, v]) => '  ' + k + ' => ' + v.join(' , ')).join('\n'));
     }
     // —— 区域筛选：把每个客户关联到所属一级(ADM1)/二级(ADM2)行政区域（按经纬度 geoContains）——
     function assignRegions(){
