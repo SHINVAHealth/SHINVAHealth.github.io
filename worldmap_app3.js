@@ -975,47 +975,47 @@ window.addEventListener("error", function(e){
   readParam();
 
   // —— 客户绿色像素点（customers.json，全部国家）——
-  const WORLD_DOT_R = 1.0;   // 世界地图统一最小圆点尺寸（全图一致，仅缩点尺寸，绝不移动经纬度）
+  const WORLD_DOT_R = 1.5;   // 世界地图统一最小圆点尺寸（全图一致，仅缩点尺寸，绝不移动经纬度）
   function drawWorldCustomerPoints(){
-    // 纯黄单色像素点，边缘清晰无发光；所有点统一为 WORLD_DOT_R，尺寸一致。
-    // 画在 gCust 顶层图层（gEmboss 之上），使 3D 浮雕显示时客户原点位置始终可见。
+    // 纯黄单色像素点，边缘清晰无发光；画在 gCust 顶层图层（gEmboss 之上），使 3D 浮雕显示时客户原点位置始终可见。
     // 绘制 customers.json 中所有有经纬度的客户（ng/bd/…），按各自 iso2 跳转国家地图。
-    // 同坐标(如孟加拉 59 家同落 Dhaka 市中心)在世界尺度下重叠成一个点 → 内容坐标做向日葵螺旋铺开，
-    // 保证每个点独立可见、互不重叠；螺旋在内容坐标(随缩放同步放大)，放大世界地图时簇自然展开。
+    // 关键：每个点都落在「真实经纬度投影」上，绝不做会把点推入海洋的螺旋铺开。
+    // 世界尺度下，同城市(同坐标，四舍五入到 0.1°≈同城区)的客户合并为「一个标记」置于真实位置，
+    // hover/tooltip 显示数量，点击进国家检索——这样既保证坐标全部正确(都在陆地)、又避免孟加拉 101 家叠成一片。
     gCust.selectAll('*').remove();
-    const GOLD = 2.399963229728653; // 黄金角：螺旋均匀分布
     const projPts = WORLD_PTS.map(d => { const p = projection([d.lng, d.lat]); return p ? { d, p } : null; }).filter(Boolean);
-    // 按内容坐标(1px 精度)分桶，同桶(坐标完全重合/极近的邻近客户)一并扇开
-    const buckets = {};
-    projPts.forEach(o => { const key = Math.round(o.p[0]) + ',' + Math.round(o.p[1]); (buckets[key] = buckets[key] || []).push(o); });
-    const off = new Map();
-    Object.keys(buckets).forEach(key => {
-      const grp = buckets[key];
-      grp.forEach((o, gi) => {
-        let dx = 0, dy = 0;
-        if (grp.length > 1){ const rad = 5 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
-        off.set(o, { dx, dy });
-      });
+    // 按近似坐标(0.1°)聚合：同桶=同城市客户
+    const groups = {};
+    projPts.forEach(o => {
+      const k = Math.round(o.d.lng * 10) / 10 + ',' + Math.round(o.d.lat * 10) / 10;
+      (groups[k] = groups[k] || []).push(o);
     });
+    const list = Object.keys(groups).map(k => {
+      const grp = groups[k];
+      const o = grp[0];
+      const cnt = grp.length;
+      const r = cnt > 1 ? Math.min(WORLD_DOT_R + 1.4, 2.8) : WORLD_DOT_R;  // 多家客户的点略放大，提示聚合
+      return { o, cnt, r };
+    });
+    const _tip = (e, g) => showCustTip(e, g.o.d, g.cnt);
+    const _go = (g) => { if (g.o.d.iso2) window.location.href = 'country.html?c=' + g.o.d.iso2; };
     for (let i = 0; i < TILES; i++){
       const ox = i * TILE;
       const tileG = gCust.append('g').attr('class', 'cust-tile').attr('transform', `translate(${ox},0)`);
-      tileG.selectAll('circle.cust-pt').data(projPts).enter().append('circle')
+      tileG.selectAll('circle.cust-pt').data(list).enter().append('circle')
         .attr('class', 'cust-pt')
-        .attr('cx', o => o.p[0] + (off.get(o) || { dx: 0, dy: 0 }).dx)
-        .attr('cy', o => o.p[1] + (off.get(o) || { dx: 0, dy: 0 }).dy)
-        .attr('r', WORLD_DOT_R)
+        .attr('cx', g => g.o.p[0]).attr('cy', g => g.o.p[1]).attr('r', g => g.r)
         .attr('fill', '#fde047')
         .style('cursor', 'pointer')
-        .on('mousemove', (e, o) => showCustTip(e, o.d))
+        .on('mousemove', _tip)
         .on('mouseleave', hideCustTip)
-        .on('click', o => { if (o.d.iso2) window.location.href = 'country.html?c=' + o.d.iso2; });
+        .on('click', _go);
     }
   }
-  function showCustTip(e, d){
-    tipCn.textContent = d.company;
+  function showCustTip(e, d, cnt){
+    tipCn.textContent = (cnt && cnt > 1) ? ((d.company || '') + ' 等 ' + cnt + ' 家') : (d.company || '');
     const cn = (d.country || (ISO2CN[(d.iso2 || '').toLowerCase()]) || (d.iso2 || ''));
-    tipEn.textContent = cn + ' · 客户分布点';
+    tipEn.textContent = cn + (cnt && cnt > 1 ? (' · ' + cnt + ' 个客户分布点') : ' · 客户分布点');
     tipCn2.textContent = d.city || '';
     tipEn2.textContent = d.address || '';
     tipCont.textContent = d.phone || '';
