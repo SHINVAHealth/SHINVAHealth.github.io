@@ -107,6 +107,9 @@
   }
   .map-toolbar button:hover{ border-color:var(--accent); }
   .map-toolbar button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  /* 静态锁图：区域 path 置为不可交互 → 无悬停高亮/点击；光标恢复默认，避免误以为可拖拽 */
+  #map.static-locked .prov-fill, #map.static-locked .prov-line, #map.static-locked path.adm2{ pointer-events:none !important; }
+  #map.static-locked{ cursor:url('assets/cursors/LoLGrab.png') 1 2, default; }
   #map{ flex:1; position:relative; min-height:0; contain:layout paint; }
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
@@ -316,6 +319,7 @@
         <button id="adm2toggle">显示二级行政区域</button>
         <button id="custtoggle" class="active">隐藏客户位点</button>
         <button id="multitrack">开启多点追踪</button>
+        <button id="staticlock">开启静态锁图</button>
       </div>
       <div id="map"></div>
       <div id="inset" class="map-inset" style="display:none;"></div>
@@ -350,6 +354,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607251432"></script>
+  <script defer src="app.js?v=202607251500"></script>
 </body>
 </html>
