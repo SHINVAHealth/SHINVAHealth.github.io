@@ -975,7 +975,7 @@ window.addEventListener("error", function(e){
   readParam();
 
   // —— 客户绿色像素点（customers.json，全部国家）——
-  const WORLD_DOT_R = 1.5;   // 世界地图统一最小圆点尺寸（全图一致，仅缩点尺寸，绝不移动经纬度）
+  const WORLD_DOT_R = 1.2;   // 世界地图统一最小圆点尺寸（全图一致，仅缩点尺寸，绝不移动经纬度）
   function drawWorldCustomerPoints(){
     // 亮绿单色像素点，边缘清晰无发光无高亮；所有点统一为 WORLD_DOT_R，尺寸一致。
     // 画在 gCust 顶层图层（gEmboss 之上），使 3D 浮雕显示时客户原点位置始终可见。
