@@ -205,7 +205,7 @@
   .cust-table tbody tr{ cursor:pointer; }
   .cust-table tbody tr:hover{ background:rgba(56,189,248,.10); }
   .cust-table tbody tr.sel{ background:rgba(56,189,248,.22); outline:1px solid var(--accent); }
-  .cust-pt-g.cust-hl circle{ fill:#22c55e !important; }  /* 纯绿单色，同尺寸同位置，无高亮无边框 */
+  .cust-pt-g.cust-hl circle.cust-pt{ fill:#22c55e !important; }  /* 仅可见圆点变绿，透明命中圈不参与 → 绿点与黄点同尺寸同位置，无高亮无边框 */
   /* 选中行政区（一级/二级）高亮：仅描边/底色提示，不发光 */
   .prov-fill.prov-sel{ fill:rgba(245,158,11,.26) !important; }
   .prov-line.prov-sel{ stroke:#f59e0b !important; stroke-width:2.4 !important; }
@@ -350,6 +350,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607251312"></script>
+  <script defer src="app.js?v=202607251345"></script>
 </body>
 </html>
