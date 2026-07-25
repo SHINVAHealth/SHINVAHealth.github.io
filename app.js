@@ -369,7 +369,6 @@ window.addEventListener("unhandledrejection", function(e){
         const _setGrabbing = () => { countryCursor.src = 'data:image/png;base64,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'; };
         function _updatePos(e){ countryCursor.style.transform = 'translate(' + (e.clientX - 3) + 'px,' + (e.clientY - 1) + 'px)'; }
         window.addEventListener('mousemove', (e) => {
-          if (_staticLock){ countryCursor.style.display = 'none'; document.body.classList.remove('over-map'); return; }  // 静态锁图：不显示可拖拽光标
           if (_mapEl) {
             const r = _mapEl.getBoundingClientRect();
             const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
@@ -437,9 +436,7 @@ window.addEventListener("unhandledrejection", function(e){
         const mapEl = $('map');
         if (mapEl) mapEl.classList.toggle('static-locked', _staticLock);  // CSS：区域 path 置 pointer-events:none → 无悬停高亮/点击
         if (_staticLock){
-          countryCursor.style.display = 'none';            // 立即隐藏自定义小手，避免残留
-          document.body.classList.remove('over-map');       // 立即清 over-map，让原生箭头光标可见（静止时无需等 mousemove）
-          _hoverRegion = null; _embossRegions.clear(); renderEmboss();    // 立即清除一切悬停/选中浮雕
+          _hoverRegion = null; _embossRegions.clear(); renderEmboss();    // 立即清除一切悬停/选中浮雕（光标仍维持 LOL 小手）
         } else {
           renderEmboss();   // 退出锁定：恢复选中区域的浮雕（如有）
         }
