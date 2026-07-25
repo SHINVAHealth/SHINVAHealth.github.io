@@ -338,14 +338,14 @@ window.addEventListener("unhandledrejection", function(e){
       const gEmboss = g.append('g').attr('class','emboss-layer');
       _gEmboss = gEmboss;
       _gMark = svg.append('g');     // 标志层（最上，不随缩放缩放，仅由 updateMarkers 重新定位）
-      _gCust = svg.append('g').attr('class','cust-layer');  // 客户点屏幕空间顶层图层（不随 zoom 变换；坐标由 layoutCust 实时计算，圆点恒定屏幕像素、去重叠、贴地图）
+      _gCust = g.append('g').attr('class','cust-layer');  // 客户点图层置于 zoom 组 g 内：随地图平移/缩放自动同步，绝不会漂移/消失；圆点大小与去重叠铺开由 updateCustZoom 按缩放动态控制
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
       const zoom = d3.zoom().scaleExtent([1, 9]).on('zoom', ev => {
         g.attr('transform', ev.transform);
-        layoutCust(ev.transform.k, { x: ev.transform.x, y: ev.transform.y });  // 客户点 O(n) 同步落屏：恒定 off + base*k+t，贴图不漂移、无滞后
+        updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
         updateMarkers(ev.transform);
         _curK = ev.transform.k; _curT = ev.transform;
       });
@@ -455,7 +455,7 @@ window.addEventListener("unhandledrejection", function(e){
       // 无区域：客点落回平面
       if (!regions.length){
         _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
-        if (_curT){ updateMarkers(_curT); layoutCust(_curK || 1, _curT); }
+        if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); }
         return;
       }
       // 预计算每区域的路径与质心（feature 保留用于客户点 d3.geoContains 判定）
@@ -499,7 +499,7 @@ window.addEventListener("unhandledrejection", function(e){
           }
         }
       });
-      if (_curT){ updateMarkers(_curT); layoutCust(_curK || 1, _curT); }
+      if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); }
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
     function hoverRegion(d, type){
@@ -646,7 +646,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 缩放时：标志图标保持固定大小，仅按缩放变换重新定位（不缩放自身）
     function updateMarkers(t){
-      // 仅负责标志图标；客户点位置由 layoutCust 统一落屏（含恒定去重叠 off），避免两套逻辑互相覆盖导致抖动/重叠
+      // 仅负责标志图标；客户点位置随 g 变换自动跟随（_gCust 在 zoom 组内），大小/铺开由 updateCustZoom 按缩放控制，避免两套逻辑互相覆盖
       _markEls.forEach(m => m.el.attr('transform', `translate(${t.x + t.k*m.base[0]}, ${t.y + t.k*m.base[1]})`));
     }
     function provinceAt(lonlat){
@@ -857,9 +857,10 @@ window.addEventListener("unhandledrejection", function(e){
     }
 
     // —— 客户像素点（customers.json，按经纬度落点）——
-    // 设计：每点记录地理基准投影 base（PROJ，k=1 内容坐标），并在「绘制时一次性」算出恒定屏幕空间偏移 off（去重叠铺开）。
-    // 之后缩放/平移只做 base*k + t + off 的 O(n) 线性落屏——off 与 k/t 无关，故圆点恒定贴图、既不随缩放漂移、也不随拖动滞后，
-    // 且永不重叠。彻底取代「每帧重松弛」导致的位移抖动与卡顿。
+    // 设计：_gCust 置于 zoom 组 g 内 → 客户点位置随 g 变换自动跟随，物理上不可能漂移/消失。
+    // 每点记录地理基准投影 base（PROJ，k=1 内容坐标），绘制时一次性算恒定屏幕空间偏移 off（去重叠铺开，参考系 k=1）。
+    // updateCustZoom(k) 按缩放插值：k=1 时 off·zf=0（像素粒堆叠于真实位置、绝无重叠错觉），半径=GRAIN_R；
+    // k→ZOOM_FULL 时 off 全量铺开、半径=DOT_R，圆点逐一可见且不重叠。彻底取代「每帧重松弛」与「手动 layoutCust 易脱节」两类问题。
     const _GA = 2.399963229728653;            // 黄金角：重合点均匀扇开
     // 一次性计算每点恒定屏幕空间偏移 off（参考系 k=1 / t=0 下去重叠），之后不再随缩放重算
     function computeOffsets(){
@@ -907,16 +908,30 @@ window.addEventListener("unhandledrejection", function(e){
         if (!moved) break;
       }
     }
-    // 落屏：O(n) 线性变换（base*k + t + 恒定 off）。同步调用，无 rAF 滞后、无每帧重松弛。
-    function layoutCust(k, t){
+    // —— 客户点缩放动态：颗粒 ↔ 圆点 ——
+    // 设计（用户 2026-07-25）：初始(k=1)全图时客户点是「像素粒」(小、坐标绝对准确、同坐标重合点自然堆叠成一粒不可见重叠)；
+    // 随放大(k→ZOOM_FULL)逐步变成「清晰圆点」并把去重叠铺开量同步放大，使圆点能代表其准确位置时再铺开。
+    // 关键：_gCust 已置于 zoom 组 g 内，坐标随 g 变换自动跟随（不可能漂移/消失）；此函数只调「半径」与「铺开量」。
+    const GRAIN_R = 1.4;            // 初始像素粒半径（屏幕 px）
+    const DOT_R   = 2.6;            // 放大后清晰圆点半径（屏幕 px）
+    const ZOOM_FULL = 3;            // 缩放到此倍率时完全变成圆点 + 完全铺开
+    function zoomFactor(k){ return Math.max(0, Math.min(1, (k - 1) / (ZOOM_FULL - 1))); }
+    function updateCustZoom(k){
       if (!_gCust || !_custEls || !_custEls.length) return;
+      const zf = zoomFactor(k);
+      const sepF = Math.min(1, zf * 1.8);                  // 铺开量比半径更快到满：保证任意缩放下都不重叠（半径尚小、铺开已足）
+      const rScreen = GRAIN_R + (DOT_R - GRAIN_R) * zf;   // 屏幕半径：k=1 粒 → k=ZOOM_FULL 圆点
+      const rContent = rScreen / k;                        // 内容坐标半径（在 g 内被 scale(k) 还原成屏幕 rScreen）
+      const sK = sepF / k;                                  // 去重叠偏移系数：屏幕 off * sepF，转内容坐标需 /k（g 变换会再 ×k 还原成屏幕 off·sepF）
       const els = _custEls;
       for (let i = 0; i < els.length; i++){
         const m = els[i]; if (!m.el) continue;
         const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;   // 3D 浮雕抬升时改用 liftedBase
-        const x = t.x + t.k * b[0] + (m.off ? m.off[0] : 0);
-        const y = t.y + t.k * b[1] + (m.off ? m.off[1] : 0);
-        m.el.attr('transform', `translate(${x.toFixed(2)},${y.toFixed(2)})`);
+        const ox = (m.off ? m.off[0] : 0) * sK;
+        const oy = (m.off ? m.off[1] : 0) * sK;
+        m.el.attr('transform', `translate(${(b[0] + ox).toFixed(2)},${(b[1] + oy).toFixed(2)})`);
+        m.el.select('circle.cust-pt').attr('r', rContent);
+        m.el.select('circle.cust-hit').attr('r', Math.max(6, rContent * 2.4));
       }
     }
     function drawCustomerPointsOnMap(list){
@@ -927,13 +942,13 @@ window.addEventListener("unhandledrejection", function(e){
         return;
       }
       drawCustomerPointsOnMap._tries = 0;
-      _CUST_R = 2.6;  // 国家(放大)视图：清晰圆点呈现每个经销商位置；恒定屏幕像素，由 layoutCust 在屏幕空间去重叠铺开
+      _CUST_R = 2.6;  // 去重叠铺开用半径（=DOT_R）；computeOffsets 据此算恒定屏幕偏移 off（一次性）。实际屏幕半径由 updateCustZoom 按缩放在 GRAIN_R↔DOT_R 间动态插值
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
-      // 同坐标（如多条客户都落到 Dhaka 市中心）圆点会完全叠在一起看不见 → 在屏幕空间做碰撞去重叠(declutter)：
-      // 每个点记录其地理基准投影 base（PROJ，k=1 内容坐标），渲染/缩放/平移时由 layoutCust 把屏幕锚点
-      // (base*k + t) 在屏幕像素层面推开，保证每个点独立可见、互不重叠，且始终贴合地图真实位置、不随缩放漂移。
+      // 同坐标（如多条客户都落到 Dhaka 市中心）在 k=1 全图时天然堆叠成一粒（像素粒，坐标准确、不可见重叠）；
+      // 放大时 updateCustZoom 把去重叠铺开量(off)随 zoomFactor 放大、半径由 GRAIN_R→DOT_R，使圆点逐一可见且不重叠。
+      // _gCust 在 zoom 组 g 内，位置随 g 变换自动跟随（不可能漂移/消失）。
       const projAll = pts.map(r => { const p = PROJ([+r.lng, +r.lat]); return p ? { r, p } : null; }).filter(Boolean);
       projAll.forEach((o) => {
         const p = o.p; const r = o.r;
@@ -958,7 +973,7 @@ window.addEventListener("unhandledrejection", function(e){
       }
       _gCust.style('display', _custVisible ? null : 'none');
       computeOffsets();                                  // 一次性算出恒定屏幕空间去重叠偏移
-      layoutCust(_curK || 1, _curT || { x: 0, y: 0 });  // 初始布局（与当前缩放/平移一致）
+      updateCustZoom(_curK || 1);  // 初始布局（与当前缩放一致：k=1 → 像素粒堆叠于真实位置）
       updateCustStat();   // 点位重绘后刷新右下角统计
     }
     // —— 右下角统计：信息总计(录入客户总数) / 位置统计(地图绿色圆点数量)，用于对比计算空白地址个数 ——
