@@ -348,7 +348,9 @@ window.addEventListener("unhandledrejection", function(e){
         if (_gCust){
           const k = ev.transform.k;
           // 去重叠偏移 dx/dy 在屏幕空间恒定：随缩放除以 k，使点簇不随放大铺开/漂移，始终贴真实位置
-          for (const m of _custEls){ if (m.el) m.el.attr('transform', `translate(${m.base[0] + m.dx / k},${m.base[1] + m.dy / k})`); }
+          // 去重叠偏移在屏幕空间随缩放缩小（dx/k）：全图(k=1)铺开防重叠，放大后点贴近真实位置不再"偏移"。
+          // 点在 scale(k) 组内，局部偏移需写成 dx/(k*k)，经 g 放大后屏幕偏移 = k*(dx/k²)=dx/k。
+          for (const m of _custEls){ if (m.el) m.el.attr('transform', `translate(${m.base[0] + m.dx / (k * k)},${m.base[1] + m.dy / (k * k)})`); }
           _gCust.selectAll('circle.cust-pt').attr('r', _CUST_R / k);
         }
         updateMarkers(ev.transform);
@@ -875,6 +877,7 @@ window.addEventListener("unhandledrejection", function(e){
       }
       drawCustomerPointsOnMap._tries = 0;
       _CUST_R = 1.5;  // 颗粒化像素点（用户要求）；随 zoom 恒屏幕像素(r/k)，配合螺旋去重叠铺开
+      const k0 = _curK || 1;  // 绘制时当前缩放比（默认 1），使初始 transform 与后续 zoom 一致
       _gCust.selectAll('g.cust-pt-g').remove();
       _custEls = [];
       const pts = (list || []).filter(r => r.lat != null && r.lng != null);
@@ -898,7 +901,7 @@ window.addEventListener("unhandledrejection", function(e){
           let dx = 0, dy = 0;
           if (same){ const rad = 14 * Math.sqrt(gi + 0.5); const ang = gi * GOLD; dx = Math.cos(ang) * rad; dy = Math.sin(ang) * rad; }
           const g = _gCust.append('g').attr('class','cust-pt-g').attr('data-id', r.__id)
-            .attr('transform', `translate(${p[0] + dx},${p[1] + dy})`)
+            .attr('transform', `translate(${p[0] + dx / (k0 * k0)},${p[1] + dy / (k0 * k0)})`)
             .on('mouseenter', () => showCustTip(r))
             .on('mouseleave', hideTip);
           g.append('circle').attr('class','cust-pt').attr('r', _CUST_R / (_curK || 1)).attr('cx',0).attr('cy',0)
