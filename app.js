@@ -219,6 +219,7 @@ window.addEventListener("unhandledrejection", function(e){
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
   let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「整体最短」路线（TSP 近似）
   let _gRoute = null;            // 路线图层（置于 zoom 组 g 内、客户点之下，随地图同步变换）
+  let _gRouteEnds = null;        // 起点/终点标记图层（置于 zoom 组 g 内、客户点之上，恒定屏幕尺寸）
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
   let _routeOrder = [];         // TSP 近似访问顺序（_routePts 下标数组）
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
@@ -1254,9 +1255,9 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return order;
       };
-      // 多起点：最近邻(从 0) + 若干随机起点，取总长最小者，避免单起点陷入局部最优
+      // 多起点：最近邻(从 0) + 若干随机起点，取总长最小者，避免单起点陷入局部最优（起点数随 n 增大，保证更短）
       const starts = [0];
-      const R = Math.min(6, n);
+      const R = Math.min(n, Math.max(6, Math.ceil(n / 3)));
       for (let s = 1; s < R; s++) starts.push(Math.floor(Math.random() * n));
       let best = null, bestLen = Infinity;
       for (const seed of starts){
@@ -1278,11 +1279,13 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 重算参与路线的点集 + TSP 顺序，再绘制（开启隐藏未选时仅用已选中点）
     function rebuildRoute(){
-      // 自愈：resize 重绘会重建 zoom 组 g，旧的 _gRoute 节点脱离文档 → route 仍开启时重新挂到当前 g，避免路线在缩放/重绘后消失
+      // 自愈：resize 重绘会重建 zoom 组 g，旧的 _gRoute/_gRouteEnds 节点脱离文档 → route 仍开启时重新挂到当前 g，避免路线在缩放/重绘后消失
       if (_gRoute && (!_gRoute.node() || !_gRoute.node().isConnected)) _gRoute = null;
+      if (_gRouteEnds && (!_gRouteEnds.node() || !_gRouteEnds.node().isConnected)) _gRouteEnds = null;
       if (_routeOn && !_gRoute) _gRoute = _gProv.insert('g', '.cust-layer').attr('class', 'route-layer');
+      if (_routeOn && !_gRouteEnds) _gRouteEnds = _gProv.append('g').attr('class', 'route-ends');  // 置于最上层（客户点之上）
       if (!_gRoute) return;
-      if (!_routeOn){ _gRoute.selectAll('*').remove(); return; }
+      if (!_routeOn){ _gRoute.selectAll('*').remove(); if (_gRouteEnds) _gRouteEnds.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
       const pts = [];
       _custEls.forEach(m => {
         if (!m || !m.el || !m.rec) return;
@@ -1295,23 +1298,26 @@ window.addEventListener("unhandledrejection", function(e){
         if (m.el.style('display') === 'none') return;  // 被隐藏未选客户隐藏
         pts.push(m);
       });
-      if (pts.length < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); return; }
+      if (pts.length < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); if (_gRouteEnds) _gRouteEnds.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
       // 点集签名不变 → 复用已算顺序，仅重绘(O(n))；仅当选中变化导致点集改变才重跑 TSP
       const sig = pts.map(m => m.rec.__id).join('|');
       if (sig !== _routeSig || !_routeOrder.length || _routeOrder.length !== pts.length){
         _routeSig = sig;
         _routePts = pts;
         const bases = pts.map(m => (m.lifted && m.liftedBase) ? m.liftedBase : m.base);
-        _routeOrder = tspOrder(bases);
+        _routeOrder = tspOrder(bases);   // 最短行程（开路径 TSP 近似），与选中顺序无关
       } else {
         _routePts = pts;   // 顺序引用更新（_custEls 顺序稳定，下标仍对齐）
       }
+      const rl = $('routeLegend');
+      if (rl){ rl.style.display = 'inline-flex'; const note = rl.querySelector('.rt-note'); if (note) note.textContent = '最短行程(TSP) · ' + pts.length + '点 · 起→终'; }
       drawRoute(_curK || 1);
     }
-    // 按当前缩放绘制虚线路线（仅 O(n) 拼接路径，重算顺序只在 rebuildRoute 做，避免缩放过程卡顿）
+    // 按当前缩放绘制虚线路线 + 起点/终点标记（仅 O(n) 拼接路径，重算顺序只在 rebuildRoute 做，避免缩放过程卡顿）
     function drawRoute(k){
       if (!_gRoute) return;
       _gRoute.selectAll('*').remove();
+      if (_gRouteEnds) _gRouteEnds.selectAll('*').remove();
       if (!_routeOn || !_routePts.length || _routePts.length < 2) return;
       const d = _routeOrder.map(i => {
         const p = routePos(_routePts[i], k);
@@ -1328,6 +1334,24 @@ window.addEventListener("unhandledrejection", function(e){
         .attr('stroke-linecap', 'round')
         .attr('vector-effect', 'non-scaling-stroke')   // 线宽/虚线不随缩放放大，恒定屏幕尺寸
         .style('pointer-events', 'none');
+      // 起点/终点标记：恒定屏幕尺寸（半径/字号 = 屏幕值 / k），置于客户点上层，明确行程方向与端点
+      if (_gRouteEnds && _routeOrder.length >= 2){
+        const rK = 5 / k, lbl = 11 / k;
+        const ends = [
+          { idx: _routeOrder[0], color: '#22c55e', text: '起' },
+          { idx: _routeOrder[_routeOrder.length - 1], color: '#ef4444', text: '终' }
+        ];
+        ends.forEach(e => {
+          const p = routePos(_routePts[e.idx], k);
+          const g = _gRouteEnds.append('g').attr('transform', 'translate(' + p[0] + ',' + p[1] + ')');
+          g.append('circle').attr('r', rK).attr('fill', e.color)
+            .attr('stroke', '#fff').attr('stroke-width', 2 / k).attr('vector-effect', 'non-scaling-stroke');
+          g.append('text').attr('y', -(rK + 9 / k)).attr('text-anchor', 'middle')
+            .attr('font-size', lbl).attr('font-weight', 700).attr('fill', e.color)
+            .attr('stroke', 'rgba(0,0,0,.45)').attr('stroke-width', 0.8 / k)
+            .attr('paint-order', 'stroke').attr('vector-effect', 'non-scaling-stroke').text(e.text);
+        });
+      }
     }
     // 点击客户检索行 → 自动放大并居中到该客户所在一级行政区域（ADM1）
     // rec：可选，传入客户记录以在「当前已放大更多」时居中其真实坐标点（而非省份质心）
