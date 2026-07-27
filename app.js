@@ -389,7 +389,9 @@ window.addEventListener("unhandledrejection", function(e){
         isChunked(){ return _adm2Chunked; },
         chunksSize(){ return _adm2Chunks ? _adm2Chunks.size : 0; },
         builtSize(){ return _adm2Chunks ? Array.from(_adm2Chunks.values()).filter(s => s.built).length : 0; },
-        curK(){ return _curK; }
+        curK(){ return _curK; },
+        // 验证：在指定经纬度直接放置「计划位置」红旗（中国国旗图标），绕开 jsdom 无 SVG 布局无法做地图点击反投影
+        placeDepotAt(lng, lat){ _depot = { geo: [lng, lat] }; drawDepotMarker(); return this; }
       };
 
       // 国家地图 LOL 小手（DOM 跟随，与世界地图地球完全一致）：规避 CSS 光标拒载 + d3.zoom 拖拽握拳
@@ -1772,13 +1774,33 @@ window.addEventListener("unhandledrejection", function(e){
       if (!_depot) return;
       const base = PROJ(_depot.geo);
       const outer = _gDepot.append('g').attr('class', 'depot-marker').attr('transform', `translate(${base[0]},${base[1]})`);
-      const inner = outer.append('g');
-      // 旗杆
-      inner.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -18).attr('stroke', '#fff').attr('stroke-width', 1.5).attr('vector-effect', 'non-scaling-stroke');
-      // 旗面
-      inner.append('path').attr('d', 'M0,-18 L14,-13 L0,-8 Z').attr('fill', '#ef4444').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
-      // 锚点
-      inner.append('circle').attr('r', 2.5).attr('fill', '#ef4444').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
+      // —— 小中国国旗（五星红旗）图标：恒定屏幕尺寸，仅随缩放做反缩放 ——
+      const inner = outer.append('g');   // 由 updateDepotMarker 做 scale(1/k)，原点 = 选取点
+      const flag = inner.append('g').attr('transform', 'translate(-9,-12)');  // 旗底中心对准选取点
+      // 旗面 18×12（3:2），红底
+      flag.append('rect').attr('x', 0).attr('y', 0).attr('width', 18).attr('height', 12)
+        .attr('rx', 1.2).attr('fill', '#de2910').attr('stroke', '#fff').attr('stroke-width', 0.8)
+        .attr('vector-effect', 'non-scaling-stroke');
+      // 五角星路径生成器（5 尖，内半径 = R*0.382）
+      const starPath = (cx, cy, R, rot) => {
+        rot = (rot || 0) * Math.PI / 180; const segs = [];
+        for (let i = 0; i < 5; i++){
+          const a = rot - Math.PI / 2 + i * 2 * Math.PI / 5;
+          segs.push((i === 0 ? 'M' : 'L') + (cx + R * Math.cos(a)).toFixed(2) + ',' + (cy + R * Math.sin(a)).toFixed(2));
+          const b = a + Math.PI / 5;
+          segs.push('L' + (cx + R * 0.382 * Math.cos(b)).toFixed(2) + ',' + (cy + R * 0.382 * Math.sin(b)).toFixed(2));
+        }
+        return segs.join('') + 'Z';
+      };
+      const Lc = [3, 3];                                   // 大星中心（按 30×20 标准网格 ×0.6 缩放）
+      const sc = [[6, 1.2], [7.2, 2.4], [7.2, 4.2], [6, 5.4]];  // 四颗小星中心
+      flag.append('path').attr('d', starPath(Lc[0], Lc[1], 1.8, 0)).attr('fill', '#ffde00');
+      sc.forEach(s => {
+        const ang = Math.atan2(Lc[1] - s[1], Lc[0] - s[0]) * 180 / Math.PI + 90;  // 每颗小星一尖指向大星
+        flag.append('path').attr('d', starPath(s[0], s[1], 0.6, ang)).attr('fill', '#ffde00');
+      });
+      // 锚点（精确选取坐标）
+      flag.append('circle').attr('cx', 9).attr('cy', 12).attr('r', 2).attr('fill', '#de2910').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
       _depotInner = inner;
       updateDepotMarker(_curT || d3.zoomIdentity);
     }
