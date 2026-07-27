@@ -877,7 +877,7 @@ window.addEventListener("unhandledrejection", function(e){
       let x = e.clientX + pad, y = e.clientY + pad;
       if (x + tw > window.innerWidth) x = e.clientX - tw - pad;
       if (y + th > window.innerHeight) y = e.clientY - th - pad;
-      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+      tip.style.transform = 'translate(' + x + 'px,' + y + 'px)';   // transform 定位→GPU 合成，避免每像素 layout 重排（悬停卡顿来源之一）
     }
     function hideTip(){ $('mapTip').style.display = 'none'; }
     // 仅在地图窗口的像素尺寸【真正变化】时才重绘（避免右侧检索栏内容增减引起的整页高度波动误触发重绘，
