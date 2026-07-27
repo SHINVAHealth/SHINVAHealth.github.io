@@ -217,11 +217,10 @@ window.addEventListener("unhandledrejection", function(e){
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
-  let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「整体最短」路线（TSP 近似）
+  let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「闭合最短」路线（Closed TSP）
   let _gRoute = null;            // 路线图层（置于 zoom 组 g 内、客户点之下，随地图同步变换）
-  let _gRouteEnds = null;        // 起点/终点标记图层（置于 zoom 组 g 内、客户点之上，恒定屏幕尺寸）
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
-  let _routeOrder = [];         // TSP 近似访问顺序（_routePts 下标数组）
+  let _routeOrder = [];         // TSP 闭合访问顺序（_routePts 下标数组）
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
@@ -1278,17 +1277,45 @@ window.addEventListener("unhandledrejection", function(e){
       });
       if (_routeOn) rebuildRoute();   // 点集变化（隐藏/显示）→ 路线需重算
     }
-    // —— 路线规划：在可见客户点间以虚线连成一条「整体最短」路线 ——
-    // TSP：计算连接所有点的「最短行程」。采用 最近邻构造 + 多起点(随机重启) + 2-opt 完全收敛，
-    // 得到一条开路径(首尾不强制相连，符合"行程"语义且总长更短)。坐标用与地图同投影的基坐标，
-    // 距离=地图实际距离；孟加拉纬度低、投影畸变小，投影平面距离≈真实地理距离。
+    // —— 路线规划：在可见客户点间连成一条「闭合最短路线」——
+    // 用户要求：去掉起终点，把所有点连成一个封闭图形，使总周长最短。
+    // 这是经典闭合 TSP（Closed TSP Tour）。坐标用与地图同投影的基坐标，
+    // 距离=地图实际距离；低纬度国家投影畸变小，平面距离≈真实地理距离。
     function tspOrder(coords){
       const n = coords.length;
       if (n < 2) return coords.map((_, i) => i);
-      if (n === 2) return [0, 1];
-      // 平方距离(仅用于比较/排序，sqrt 不影响大小关系，省去开方提速)
+      if (n === 2) return [0, 1];   // 2 点：来回同一条边
       const d2 = (i, j) => { const dx = coords[i][0] - coords[j][0], dy = coords[i][1] - coords[j][1]; return dx * dx + dy * dy; };
-      // 最近邻构造一条初始顺序
+      // 闭合回路总长度
+      const tourLen = (ord) => {
+        let s = 0;
+        for (let i = 0; i < ord.length; i++) s += d2(ord[i], ord[(i + 1) % n]);
+        return s;
+      };
+      // 精确枚举（n <= 10）：固定第 0 个点，枚举其余 n-1 个点的全排列，取最短闭合周长。
+      // 对 n=10 仅 9! = 362880 次计算，现代浏览器 < 100ms；n=11 起退到启发式。
+      if (n <= 10){
+        let best = null, bestLen = Infinity;
+        const idx = new Array(n - 1).fill(0).map((_, i) => i + 1);
+        function nextPerm(a){
+          let i = a.length - 1;
+          while (i > 0 && a[i - 1] >= a[i]) i--;
+          if (i === 0) return false;
+          let j = a.length - 1;
+          while (a[j] <= a[i - 1]) j--;
+          [a[i - 1], a[j]] = [a[j], a[i - 1]];
+          let l = i, r = a.length - 1;
+          while (l < r){ [a[l], a[r]] = [a[r], a[l]]; l++; r--; }
+          return true;
+        }
+        do {
+          const ord = [0].concat(idx);
+          const len = tourLen(ord);
+          if (len < bestLen){ bestLen = len; best = ord.slice(); }
+        } while (nextPerm(idx));
+        return best;
+      }
+      // 最近邻构造（多起点）
       const nn = (start) => {
         const visited = new Array(n).fill(false);
         const order = [start]; visited[start] = true;
@@ -1304,14 +1331,33 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return order;
       };
-      // 开路径 2-opt：反转某段使总长下降，迭代到不再改进(cap 防极端)。不连接首尾(末尾边不被交换)。
-      const optimize = (order) => {
+      // 最远插入构造：从 0 出发，每次把距当前环最远的点插入到使周长增加最少的位置
+      const farthestInsertion = () => {
+        let order = [0];
+        const inTour = new Array(n).fill(false); inTour[0] = true;
+        while (order.length < n){
+          let far = -1, farD = -1;
+          for (let v = 0; v < n; v++) if (!inTour[v]){ let md = Infinity; for (let u of order) md = Math.min(md, d2(u, v)); if (md > farD){ farD = md; far = v; } }
+          let bestPos = -1, bestInc = Infinity;
+          for (let i = 0; i < order.length; i++){
+            const a = order[i], b = order[(i + 1) % order.length];
+            const inc = d2(a, far) + d2(far, b) - d2(a, b);
+            if (inc < bestInc){ bestInc = inc; bestPos = i + 1; }
+          }
+          order.splice(bestPos, 0, far); inTour[far] = true;
+        }
+        return order;
+      };
+      // 闭合回路 2-opt：所有边（含首尾）都参与交换，消除交叉。
+      const twoOpt = (order) => {
         let improved = true, pass = 0;
-        while (improved && pass < 120){
+        while (improved && pass < 200){
           improved = false; pass++;
-          for (let i = 0; i < n - 1; i++){
-            for (let j = i + 1; j < n - 1; j++){
-              const a = order[i], b = order[i + 1], c = order[j], d = order[j + 1];
+          for (let i = 0; i < n; i++){
+            for (let j = i + 2; j < n; j++){
+              if (i === 0 && j === n - 1) continue;   // 整条链反转，无意义
+              const a = order[i], b = order[(i + 1) % n];
+              const c = order[j], d = order[(j + 1) % n];
               const before = d2(a, b) + d2(c, d);
               const after  = d2(a, c) + d2(b, d);
               if (after + 1e-9 < before){
@@ -1324,17 +1370,17 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return order;
       };
-      // 多起点：最近邻(从 0) + 若干随机起点，取总长最小者，避免单起点陷入局部最优（起点数随 n 增大，保证更短）
-      const starts = [0];
-      const R = Math.min(n, Math.max(6, Math.ceil(n / 3)));
-      for (let s = 1; s < R; s++) starts.push(Math.floor(Math.random() * n));
+      // 多起点：最近邻 + 最远插入，取最短；再各自 2-opt 精炼
+      const candidates = [farthestInsertion()];
+      const R = Math.min(n, Math.max(20, Math.ceil(n / 2)));
+      for (let s = 1; s < R; s++) candidates.push(nn(Math.floor(Math.random() * n)));
       let best = null, bestLen = Infinity;
-      for (const seed of starts){
-        const ord = optimize(nn(seed));
-        let len = 0; for (let i = 0; i < n - 1; i++) len += d2(ord[i], ord[i + 1]);
+      for (const cand of candidates){
+        const ord = twoOpt(cand.slice());
+        const len = tourLen(ord);
         if (len < bestLen){ bestLen = len; best = ord.slice(); }
       }
-      return best || nn(0);
+      return best || farthestInsertion();
     }
     // 客户点「当前显示坐标」= 真实基坐标 + 去重叠铺开偏移(与 updateCustZoom 完全一致)，保证虚线端点贴合圆点
     function routePos(m, k){
@@ -1346,15 +1392,13 @@ window.addEventListener("unhandledrejection", function(e){
       const oy = (m.off ? m.off[1] : 0) * sK;
       return [b[0] + ox, b[1] + oy];
     }
-    // 重算参与路线的点集 + TSP 顺序，再绘制（开启隐藏未选时仅用已选中点）
+    // 重算参与路线的点集 + TSP 闭合顺序，再绘制（开启隐藏未选时仅用已选中点）
     function rebuildRoute(){
-      // 自愈：resize 重绘会重建 zoom 组 g，旧的 _gRoute/_gRouteEnds 节点脱离文档 → route 仍开启时重新挂到当前 g，避免路线在缩放/重绘后消失
+      // 自愈：resize 重绘会重建 zoom 组 g，旧的 _gRoute 节点脱离文档 → route 仍开启时重新挂到当前 g，避免路线在缩放/重绘后消失
       if (_gRoute && (!_gRoute.node() || !_gRoute.node().isConnected)) _gRoute = null;
-      if (_gRouteEnds && (!_gRouteEnds.node() || !_gRouteEnds.node().isConnected)) _gRouteEnds = null;
       if (_routeOn && !_gRoute) _gRoute = _gProv.insert('g', '.cust-layer').attr('class', 'route-layer');
-      if (_routeOn && !_gRouteEnds) _gRouteEnds = _gProv.append('g').attr('class', 'route-ends');  // 置于最上层（客户点之上）
       if (!_gRoute) return;
-      if (!_routeOn){ _gRoute.selectAll('*').remove(); if (_gRouteEnds) _gRouteEnds.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
+      if (!_routeOn){ _gRoute.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
       const pts = [];
       _custEls.forEach(m => {
         if (!m || !m.el || !m.rec) return;
@@ -1367,26 +1411,25 @@ window.addEventListener("unhandledrejection", function(e){
         if (m.el.style('display') === 'none') return;  // 被隐藏未选客户隐藏
         pts.push(m);
       });
-      if (pts.length < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); if (_gRouteEnds) _gRouteEnds.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
+      if (pts.length < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
       // 点集签名不变 → 复用已算顺序，仅重绘(O(n))；仅当选中变化导致点集改变才重跑 TSP
       const sig = pts.map(m => m.rec.__id).join('|');
       if (sig !== _routeSig || !_routeOrder.length || _routeOrder.length !== pts.length){
         _routeSig = sig;
         _routePts = pts;
         const bases = pts.map(m => (m.lifted && m.liftedBase) ? m.liftedBase : m.base);
-        _routeOrder = tspOrder(bases);   // 最短行程（开路径 TSP 近似），与选中顺序无关
+        _routeOrder = tspOrder(bases);   // 闭合最短路线（Closed TSP），与选中顺序无关
       } else {
         _routePts = pts;   // 顺序引用更新（_custEls 顺序稳定，下标仍对齐）
       }
       const rl = $('routeLegend');
-      if (rl){ rl.style.display = 'inline-flex'; const note = rl.querySelector('.rt-note'); if (note) note.textContent = '最短行程(TSP) · ' + pts.length + '点 · 起→终'; }
+      if (rl){ rl.style.display = 'inline-flex'; const note = rl.querySelector('.rt-note'); if (note) note.textContent = '闭合最短路线(TSP) · ' + pts.length + '点'; }
       drawRoute(_curK || 1);
     }
-    // 按当前缩放绘制虚线路线 + 起点/终点标记（仅 O(n) 拼接路径，重算顺序只在 rebuildRoute 做，避免缩放过程卡顿）
+    // 按当前缩放绘制闭合虚线路径（仅 O(n) 拼接路径，重算顺序只在 rebuildRoute 做，避免缩放过程卡顿）
     function drawRoute(k){
       if (!_gRoute) return;
       _gRoute.selectAll('*').remove();
-      if (_gRouteEnds) _gRouteEnds.selectAll('*').remove();
       if (!_routeOn || !_routePts.length || _routePts.length < 2) return;
       const d = _routeOrder.map(i => {
         const p = routePos(_routePts[i], k);
@@ -1394,7 +1437,7 @@ window.addEventListener("unhandledrejection", function(e){
       }).join(' L ');
       _gRoute.append('path')
         .attr('class', 'route-line')
-        .attr('d', 'M ' + d)
+        .attr('d', 'M ' + d + ' Z')   // Z 闭合：最后一点连回第一点，形成封闭图形
         .attr('fill', 'none')
         .attr('stroke', '#f59e0b')
         .attr('stroke-width', 1.6)
@@ -1403,24 +1446,6 @@ window.addEventListener("unhandledrejection", function(e){
         .attr('stroke-linecap', 'round')
         .attr('vector-effect', 'non-scaling-stroke')   // 线宽/虚线不随缩放放大，恒定屏幕尺寸
         .style('pointer-events', 'none');
-      // 起点/终点标记：恒定屏幕尺寸（半径/字号 = 屏幕值 / k），置于客户点上层，明确行程方向与端点
-      if (_gRouteEnds && _routeOrder.length >= 2){
-        const rK = 5 / k, lbl = 11 / k;
-        const ends = [
-          { idx: _routeOrder[0], color: '#22c55e', text: '起' },
-          { idx: _routeOrder[_routeOrder.length - 1], color: '#ef4444', text: '终' }
-        ];
-        ends.forEach(e => {
-          const p = routePos(_routePts[e.idx], k);
-          const g = _gRouteEnds.append('g').attr('transform', 'translate(' + p[0] + ',' + p[1] + ')');
-          g.append('circle').attr('r', rK).attr('fill', e.color)
-            .attr('stroke', '#fff').attr('stroke-width', 2 / k).attr('vector-effect', 'non-scaling-stroke');
-          g.append('text').attr('y', -(rK + 9 / k)).attr('text-anchor', 'middle')
-            .attr('font-size', lbl).attr('font-weight', 700).attr('fill', e.color)
-            .attr('stroke', 'rgba(0,0,0,.45)').attr('stroke-width', 0.8 / k)
-            .attr('paint-order', 'stroke').attr('vector-effect', 'non-scaling-stroke').text(e.text);
-        });
-      }
     }
     // 点击客户检索行 → 自动放大并居中到该客户所在一级行政区域（ADM1）
     // rec：可选，传入客户记录以在「当前已放大更多」时居中其真实坐标点（而非省份质心）
