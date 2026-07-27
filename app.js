@@ -468,7 +468,7 @@ window.addEventListener("unhandledrejection", function(e){
         _selectDepotMode = active;
         const btn = $('selectDepot');
         const overlay = $('depotOverlay');
-        if (btn){ btn.classList.toggle('active', active); btn.textContent = active ? '点击地图放置红旗' : (_depot ? '重新选取位置' : '选取计划位置'); }
+        if (btn){ btn.classList.toggle('active', active); btn.textContent = active ? '放置位置坐标' : (_depot ? '重新选取位置' : '选取计划位置'); }
         if (overlay) overlay.style.display = active ? 'block' : 'none';
       }
       function placeDepot(e){
