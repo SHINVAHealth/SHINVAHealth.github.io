@@ -213,7 +213,7 @@ window.addEventListener("unhandledrejection", function(e){
     const LAZY_ADM2 = new Set(['ru', 'au']);
     let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
-  let _gEmboss = null, _curK = 1;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）
+  let _gEmboss = null, _curK = 1, _curT = null;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）；_curT 同处声明，避免泄漏到 window 全局（非严格模式下静默成全局变量，一旦加 'use strict' 即崩）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
@@ -397,8 +397,9 @@ window.addEventListener("unhandledrejection", function(e){
         });
         // 按下即握拳：监听范围从 svg 扩到整个地图容器，浮层按钮（二级行政区/客户点/缩放）点击也触发叩击
         // 同时挂 mousedown + pointerdown（覆盖不同浏览器事件模型），确保悬停→点击的握拳反馈必现
+        const _grabIfFree = () => { if (!_staticLock) _setGrabbing(); };   // 静态锁图时禁止显示握拳光标（锁定=不可拖拽）
         const _mw = _mapEl.parentElement || document.querySelector('.mapwrap');
-        if (_mw) { _mw.addEventListener('mousedown', _setGrabbing, true); _mw.addEventListener('pointerdown', _setGrabbing, true); }
+        if (_mw) { _mw.addEventListener('mousedown', _grabIfFree, true); _mw.addEventListener('pointerdown', _grabIfFree, true); }
         window.addEventListener('mouseup', _setGrab);
         window.addEventListener('pointerup', _setGrab);
         zoom.on('start', _setGrabbing);
@@ -460,8 +461,7 @@ window.addEventListener("unhandledrejection", function(e){
         _routeOn = !_routeOn;
         this.classList.toggle('active', _routeOn);
         this.textContent = _routeOn ? '关闭路线规划' : '开启路线规划';
-        if (_routeOn && !_gRoute && typeof g !== 'undefined') _gRoute = g.insert('g', '.cust-layer').attr('class', 'route-layer');
-        rebuildRoute();   // 重算点集 + 顺序 + 绘制
+        rebuildRoute();   // 重算点集 + 顺序 + 绘制（_gRoute 图层在 rebuildRoute 内自愈，归属当前 zoom 组 g）
         if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
       };
       // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
@@ -1243,6 +1243,9 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 重算参与路线的点集 + TSP 顺序，再绘制（开启隐藏未选时仅用已选中点）
     function rebuildRoute(){
+      // 自愈：resize 重绘会重建 zoom 组 g，旧的 _gRoute 节点脱离文档 → route 仍开启时重新挂到当前 g，避免路线在缩放/重绘后消失
+      if (_gRoute && (!_gRoute.node() || !_gRoute.node().isConnected)) _gRoute = null;
+      if (_routeOn && !_gRoute) _gRoute = _gProv.insert('g', '.cust-layer').attr('class', 'route-layer');
       if (!_gRoute) return;
       if (!_routeOn){ _gRoute.selectAll('*').remove(); return; }
       const pts = [];
