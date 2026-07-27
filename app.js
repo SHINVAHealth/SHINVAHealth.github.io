@@ -1292,9 +1292,9 @@ window.addEventListener("unhandledrejection", function(e){
         for (let i = 0; i < ord.length; i++) s += d2(ord[i], ord[(i + 1) % n]);
         return s;
       };
-      // 精确枚举（n <= 10）：固定第 0 个点，枚举其余 n-1 个点的全排列，取最短闭合周长。
-      // 对 n=10 仅 9! = 362880 次计算，现代浏览器 < 100ms；n=11 起退到启发式。
-      if (n <= 10){
+      // 精确枚举（n <= 12）：固定第 0 个点，枚举其余 n-1 个点的全排列，取最短闭合周长。
+      // 对 n=12 仅 11! ≈ 4 千万次计算，现代浏览器约 50-150ms；n=13 起退到启发式。
+      if (n <= 12){
         let best = null, bestLen = Infinity;
         const idx = new Array(n - 1).fill(0).map((_, i) => i + 1);
         function nextPerm(a){
@@ -1370,13 +1370,38 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return order;
       };
-      // 多起点：最近邻 + 最远插入，取最短；再各自 2-opt 精炼
+      // 单点移动精修（Or-opt 简化）：把某个点从当前位置拔出，插入到另一段之间，若总周长缩短则接受。
+      const relocateOpt = (order) => {
+        let improved = true;
+        while (improved){
+          improved = false;
+          for (let i = 0; i < n; i++){
+            const v = order[i];
+            const prev = order[(i - 1 + n) % n], next = order[(i + 1) % n];
+            const saved = d2(prev, v) + d2(v, next) - d2(prev, next);
+            for (let j = 0; j < n; j++){
+              if (j === i || j === (i - 1 + n) % n) continue;
+              const a = order[j], b = order[(j + 1) % n];
+              const cost = d2(a, v) + d2(v, b) - d2(a, b);
+              if (saved - cost > 1e-9){
+                order.splice(i, 1);
+                const insertAt = j < i ? j + 1 : j;
+                order.splice(insertAt, 0, v);
+                improved = true; break;
+              }
+            }
+            if (improved) break;
+          }
+        }
+        return order;
+      };
+      // 多起点：最近邻 + 最远插入，取最短；再各自 2-opt + relocate 精炼
       const candidates = [farthestInsertion()];
       const R = Math.min(n, Math.max(20, Math.ceil(n / 2)));
       for (let s = 1; s < R; s++) candidates.push(nn(Math.floor(Math.random() * n)));
       let best = null, bestLen = Infinity;
       for (const cand of candidates){
-        const ord = twoOpt(cand.slice());
+        const ord = relocateOpt(twoOpt(cand.slice()));
         const len = tourLen(ord);
         if (len < bestLen){ bestLen = len; best = ord.slice(); }
       }
@@ -1417,8 +1442,12 @@ window.addEventListener("unhandledrejection", function(e){
       if (sig !== _routeSig || !_routeOrder.length || _routeOrder.length !== pts.length){
         _routeSig = sig;
         _routePts = pts;
-        const bases = pts.map(m => (m.lifted && m.liftedBase) ? m.liftedBase : m.base);
-        _routeOrder = tspOrder(bases);   // 闭合最短路线（Closed TSP），与选中顺序无关
+        // TSP 必须在"实际绘制坐标"上算，不能直接用真实地理坐标：
+        // 达卡等重合客户真实坐标几乎相同，但绘制时会按去重叠偏移散开；
+        // 若用真实坐标排序，画出来就会在散开的点上交叉绕远。
+        // 这里用 k=3（最大展开状态）的 routePos 作为输入，保证每个重合客户都有独立可见位置。
+        const dispCoords = pts.map(m => routePos(m, 3));
+        _routeOrder = tspOrder(dispCoords);   // 闭合最短路线（Closed TSP），与选中顺序无关
       } else {
         _routePts = pts;   // 顺序引用更新（_custEls 顺序稳定，下标仍对齐）
       }
