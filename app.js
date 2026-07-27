@@ -242,6 +242,8 @@ window.addEventListener("unhandledrejection", function(e){
     const US_INSULAR = new Set(["Puerto Rico","American Samoa","United States Virgin Islands","Guam","Commonwealth of the Northern Mariana Islands"]);
     function adm1Name(f){ return (f && f.properties && (f.properties.shapeName || f.properties.name)) || ''; }
     function renderProvinces(src){
+      _adm2BuildGen++;            // 取消进行中的 ADM2 分帧构建（新 svg 已重建 _gAdm2）
+      _adm2ProjKey = null; _adm2Building = false;   // 投影随尺寸可能变化 → 失效缓存，下次构建重算
       _hoverRegion = null; _embossRegions = new Map();   // 重绘前清空浮雕选中，避免引用过期 feature
       const map = $('map');
       const W = map.clientWidth || 800, H = map.clientHeight || 480;
@@ -701,57 +703,72 @@ window.addEventListener("unhandledrejection", function(e){
       for (const f of FC1.features){ try { if (d3.geoContains(f, lonlat)) return f.properties.shapeName || f.properties.name; } catch(e){} }
       return null;
     }
-    function renderAdm2(){
-      if (!_topo2 || !_gAdm2 || !PROJ) return;
-      _gAdm2.selectAll('*').remove();
-      const fc = (_topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : _topo2;
-      const path = _path;
-      // 1) 为每个市区定位所属省（pi），并缓存其投影路径 d
-      const items = fc.features.map(feat => {
-        let pi = -1;
-        const grp = feat.properties.shapeGroup || feat.properties.parent || null;
-        if (grp && _features){
-          const idx = _features.findIndex(p => (p.properties.shapeName || p.properties.name) === grp);
-          if (idx >= 0) pi = idx;
-        }
-        if (pi < 0 && _features){
-          let c = null; try { c = d3.geoCentroid(feat); } catch(e){}
-          if (c){ for (let i = 0; i < _features.length; i++){ try { if (d3.geoContains(_features[i], c)){ pi = i; break; } } catch(e){} } }
-        }
-        return { feat, pi, d: path(feat) };
-      });
-      // 2) 为每个省建立裁剪区 = 该省真实 ADM1 边界（屏幕坐标 path(feat)）
-      //    二级行政区域严格裁剪到所属一级区域真实边界内 → 绝不会超出一级轮廓（先画二级，后画一级轮廓压边）
-      const byProv = {};
-      items.forEach(it => { if (it.pi >= 0){ (byProv[it.pi] = byProv[it.pi] || []).push(it); } });
+    // —— ADM2 二级行政区域：增量构建 + 分帧渲染 + 缓存（消除“开启二级区域”瞬时卡顿，零精度/细节损失）——
+    // 根因：原 renderAdm2 在点击瞬间同步投影 774 个市区 + 算每个市区所属省(pi：geoCentroid/geoContains 兜底) + 创建 774 个 <path>，
+    //       全部挤在单击 handler 的单帧里 → 主线程冻结数百毫秒，表现为卡顿；且每次开启都重算。
+    // 修复：① 投影按“投影签名(W×H)”失效，仅在窗口尺寸变化(投影变)时重算；② 774 个 path 分帧(rAF)批量创建，单帧 ≤16ms 不卡；
+    //       ③ 首次构建后隐藏只切 display:none 保留 DOM，再次开启瞬时显示；④ 进图后在浏览器空闲(requestIdleCallback)预构建隐藏层，首次点击即开即显。
+    let _adm2Fc = null, _adm2ProjKey = null, _adm2BuildGen = 0, _adm2Building = false;
+    const _adm2CH = 15;   // 每帧构建的市区数（≈单帧 <16ms，保证不卡顿）
+    const _requestIdle = (window.requestIdleCallback ? (cb)=>requestIdleCallback(cb,{timeout:2500}) : (cb)=>setTimeout(cb, 300));
+    function adm2ProjKey(){ const m = $('map'); return (m ? m.clientWidth : 0) + 'x' + (m ? m.clientHeight : 0); }
+    function adm2IsBuilt(){ return _gAdm2 && _gAdm2.selectAll('path.adm2').size() > 0 && _adm2ProjKey === adm2ProjKey(); }
+    function buildAdm2ClipPaths(){
       const defs = _svg.select('defs');
       defs.selectAll('[id^="clip-"]').remove();   // 清旧的对省裁剪区，避免重复 ID
       _features.forEach((ft, pi) => {
         const cp = defs.append('clipPath').attr('id', 'clip-' + pi);
-        cp.append('path').attr('d', path(ft));   // 真实一级区域边界（屏幕坐标，与二级区域同坐标系）
+        cp.append('path').attr('d', _path(ft));   // 真实一级区域边界（屏幕坐标，与二级区域同坐标系）
       });
-      // 3) 绘制市区（按所属省并集裁剪）
-      items.forEach(it => {
-        const clip = (it.pi >= 0) ? 'url(#clip-' + it.pi + ')' : 'url(#admClip)';
-        _gAdm2.append('path')
-          .datum(it.feat).attr('d', it.d).attr('class','adm2').attr('clip-path', clip)
-          .on('mousemove', (e,d) => {
-            // 单市区归属唯一 ADM1：用质心定位省，仅在悬停要素改变时算一次 provinceAt，免每像素全 ADM1 geoContains
-            if (d !== _lastAdm2Feat){
-              _lastAdm2Feat = d;
-              let c = null; try { c = d3.geoCentroid(d); } catch(_e){}
-              _lastAdm2Prov = c ? provinceAt(c) : null;
-            }
-            const city = d.properties.shapeName || d.properties.name || '未命名市区';
-            showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
-            hoverRegion(d, 'adm2');
-          })
-      .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); });
-    });
-      const n = fc.features.length;
-      setStatus(n);
-      if (_gAdm2) _adm2Paths = _gAdm2.selectAll('path.adm2').nodes();  // 缓存用于悬停/点击兜底，免每次遍历 querySelectorAll
-      reapplyRegionSel();
+    }
+    function buildAdm2LayerChunked(hidden){
+      if (!_topo2 || !_gAdm2 || !PROJ) return;
+      if (!_adm2Fc){ _adm2Fc = (_topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : _topo2; }
+      _adm2ProjKey = adm2ProjKey();
+      buildAdm2ClipPaths();
+      _gAdm2.selectAll('*').remove();
+      const gen = ++_adm2BuildGen; _adm2Building = true;
+      const total = _adm2Fc.features.length; let i = 0;
+      function step(){
+        if (gen !== _adm2BuildGen) return;   // 被新构建/隐藏取消
+        const end = Math.min(i + _adm2CH, total);
+        for (; i < end; i++){
+          const feat = _adm2Fc.features[i];
+          let pi = -1;
+          const grp = feat.properties.shapeGroup || feat.properties.parent || null;
+          if (grp && _features){ const idx = _features.findIndex(p => (p.properties.shapeName || p.properties.name) === grp); if (idx >= 0) pi = idx; }
+          if (pi < 0 && _features){ let c = null; try { c = d3.geoCentroid(feat); } catch(e){} if (c){ for (let j = 0; j < _features.length; j++){ try { if (d3.geoContains(_features[j], c)){ pi = j; break; } } catch(e){} } } }
+          const clip = (pi >= 0) ? 'url(#clip-' + pi + ')' : 'url(#admClip)';
+          _gAdm2.append('path')
+            .datum(feat).attr('d', _path(feat)).attr('class','adm2').attr('clip-path', clip)
+            .on('mousemove', (e,d) => {
+              // 单市区归属唯一 ADM1：用质心定位省，仅在悬停要素改变时算一次 provinceAt，免每像素全 ADM1 geoContains
+              if (d !== _lastAdm2Feat){
+                _lastAdm2Feat = d;
+                let c = null; try { c = d3.geoCentroid(d); } catch(_e){}
+                _lastAdm2Prov = c ? provinceAt(c) : null;
+              }
+              const city = d.properties.shapeName || d.properties.name || '未命名市区';
+              showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
+              hoverRegion(d, 'adm2');
+            })
+            .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); });
+        }
+        if (i < total){ setStatus('二级行政区域绘制中… ' + Math.round(i / total * 100) + '%'); (window.requestAnimationFrame || setTimeout)(step, 0); }
+        else {
+          _adm2Building = false;
+          if (_gAdm2) _adm2Paths = _gAdm2.selectAll('path.adm2').nodes();  // 缓存用于悬停/点击兜底，免每次遍历 querySelectorAll
+          setStatus(total);
+          reapplyRegionSel();
+          _gAdm2.style('display', (hidden || !showAdm2) ? 'none' : null);   // 预构建隐藏；开启则显示
+        }
+      }
+      step();
+    }
+    function renderAdm2(){
+      if (!_topo2 || !_gAdm2 || !PROJ) return;
+      if (adm2IsBuilt()){ _gAdm2.style('display', null); return; }   // 已构建且投影未变 → 仅显示，瞬时（零重建）
+      buildAdm2LayerChunked(false);   // 首次/投影变化 → 分帧构建并显示
     }
     function loadProvinces(){
       (async () => {
@@ -778,7 +795,9 @@ window.addEventListener("unhandledrejection", function(e){
             const _fc2cnt = (_topo2.type === 'Topology') ? _topo2.objects[Object.keys(_topo2.objects)[0]].geometries.length : _topo2.features.length;
             setStatus(_fc2cnt);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
               if (showAdm2) renderAdm2();
-              else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; }
+              else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域';
+                _requestIdle(() => { if (!showAdm2 && _gAdm2 && _topo2 && !adm2IsBuilt()) buildAdm2LayerChunked(true); });  // 浏览器空闲预构建隐藏层，首次点击即开即显
+              }
             } else {
               const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; showAdm2 = false;
               setStatus('暂无');
@@ -837,7 +856,8 @@ window.addEventListener("unhandledrejection", function(e){
           }
         }
       } else {
-        _gAdm2.selectAll('*').remove();   // 仅隐藏二级行政区域图层，地图说明保持不变
+        _adm2BuildGen++;                  // 取消可能进行中的分帧构建
+        _gAdm2.style('display', 'none');  // 仅隐藏二级行政区域图层（保留 DOM，下次开启瞬时显示），地图说明保持不变
         // ADM2 关闭时：恢复 ADM1 prov-fill 的指针事件
         _provFill.forEach(n => n.style.pointerEvents = '');
       }
