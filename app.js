@@ -357,15 +357,20 @@ window.addEventListener("unhandledrejection", function(e){
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
-      const zoom = d3.zoom().scaleExtent([1, 9]).filter((event) => !_staticLock && (!event.ctrlKey || event.type === 'wheel') && !event.button).on('zoom', ev => {
-        g.attr('transform', ev.transform);
-        updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
-        updateMarkers(ev.transform);
-        updateDepotMarker(ev.transform); // 红旗图标恒定屏幕尺寸
-        if (_routeOn) drawRoute(ev.transform.k);   // 路线端点随缩放铺开量同步，仅 O(n) 重拼路径，不重算 TSP 顺序（防卡）
-        _curK = ev.transform.k; _curT = ev.transform;
-        _updateLod();   // LOD 分级：低缩放仅省界，越过阈值/切换 LOD 带才细化市区（渲染期简化，不入库）
-      });
+      const zoom = d3.zoom().scaleExtent([1, 9]).filter((event) => !_staticLock && (!event.ctrlKey || event.type === 'wheel') && !event.button)
+        .on('zoom', ev => {
+          g.attr('transform', ev.transform);
+          updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
+          updateMarkers(ev.transform);
+          updateDepotMarker(ev.transform); // 红旗图标恒定屏幕尺寸
+          if (_routeOn) drawRoute(ev.transform.k);   // 路线端点随缩放铺开量同步，仅 O(n) 重拼路径，不重算 TSP 顺序（防卡）
+          _curK = ev.transform.k; _curT = ev.transform;
+          _updateLod();   // LOD 分级：低缩放仅省界，越过阈值/切换 LOD 带才细化市区（渲染期简化，不入库）
+        })
+        .on('end', () => {
+          // 缩放结束后用「当前视图实际坐标」重算 TSP，保证路线与当前看到的点位置最优匹配，消除因 k=3 与当前缩放不一致导致的视觉交叉。
+          if (_routeOn) rebuildRoute();
+        });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
       applyPendingHl();   // 省份地图就绪，若客户也已加载则自动点亮世界地图跳转带来的 hl 行
@@ -1474,6 +1479,44 @@ window.addEventListener("unhandledrejection", function(e){
     // 用户要求：去掉起终点，把所有点连成一个封闭图形，使总周长最短。
     // 这是经典闭合 TSP（Closed TSP Tour）。坐标用与地图同投影的基坐标 + 去重叠偏移，
     // 距离=地图实际距离；低纬度国家投影畸变小，平面距离≈真实地理距离。
+
+    // 几何交叉兜底：对闭合折线中任意两条不相邻边做定向相交判定，若交叉则执行 2-opt 翻转。
+    // 作为 2-opt 精炼后的安全网，确保用户视觉上不会看到虚线互相穿越。
+    function uncross(order, coords){
+      const n = order.length; if (n < 4) return order;
+      const orient = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+      const onSeg = (a, b, p) => {
+        const minx = Math.min(a[0], b[0]) - 1e-9, maxx = Math.max(a[0], b[0]) + 1e-9;
+        const miny = Math.min(a[1], b[1]) - 1e-9, maxy = Math.max(a[1], b[1]) + 1e-9;
+        return p[0] >= minx && p[0] <= maxx && p[1] >= miny && p[1] <= maxy;
+      };
+      const segIntersect = (a, b, c, d) => {
+        const o1 = orient(a, b, c), o2 = orient(a, b, d), o3 = orient(c, d, a), o4 = orient(c, d, b);
+        if (o1 * o2 < 0 && o3 * o4 < 0) return true;
+        if (Math.abs(o1) < 1e-12 && onSeg(a, b, c)) return true;
+        if (Math.abs(o2) < 1e-12 && onSeg(a, b, d)) return true;
+        if (Math.abs(o3) < 1e-12 && onSeg(c, d, a)) return true;
+        if (Math.abs(o4) < 1e-12 && onSeg(c, d, b)) return true;
+        return false;
+      };
+      let improved = true, pass = 0;
+      while (improved && pass < 100){
+        improved = false; pass++;
+        for (let i = 0; i < n; i++){
+          const a = coords[order[i]], b = coords[order[(i + 1) % n]];
+          for (let j = i + 2; j < n; j++){
+            if (i === 0 && j === n - 1) continue;   // 整条链反转，无意义
+            const c = coords[order[j]], d = coords[order[(j + 1) % n]];
+            if (!segIntersect(a, b, c, d)) continue;
+            let lo = i + 1, hi = j;
+            while (lo < hi){ const t = order[lo]; order[lo] = order[hi]; order[hi] = t; lo++; hi--; }
+            improved = true;
+          }
+        }
+      }
+      return order;
+    }
+
     function tspOrder(coords){
       const n = coords.length;
       if (n < 2) return coords.map((_, i) => i);
@@ -1524,6 +1567,7 @@ window.addEventListener("unhandledrejection", function(e){
           node = p;
         }
         order.reverse();
+        uncross(order, coords);   // 精确解本不应交叉，但浮点/退化坐标仍可能共线穿越，兜底保证视觉上无交叉
         return order;   // 以第 0 点为起点的最短闭合回路
       }
       // 启发式构造（n > 16）：多起点最近邻 + cheapest insertion + farthest insertion，
@@ -1626,7 +1670,8 @@ window.addEventListener("unhandledrejection", function(e){
         return order;
       };
       const candidates = [cheapestInsertion(), farthestInsertion()];
-      const R = Math.min(n, Math.max(24, Math.ceil(n / 2)));
+      // 更多随机化起点 + 全部节点起点，提升跳出局部最优、消除残余交叉的概率。
+      const R = Math.min(n, Math.max(40, Math.ceil(n * 0.75)));
       for (let s = 0; s < R; s++) candidates.push(nn(s % n));
       let best = null, bestLen = Infinity;
       for (const cand of candidates){
@@ -1634,6 +1679,8 @@ window.addEventListener("unhandledrejection", function(e){
         const len = tourLen(ord);
         if (len < bestLen){ bestLen = len; best = ord.slice(); }
       }
+      // 最后做一次几何交叉兜底：若 2-opt/Or-opt 因浮点/局部最优漏掉交叉，在这里强制翻转消除。
+      if (best) uncross(best, coords);
       return best || candidates[0];
     }
     // 客户点「当前显示坐标」= 真实基坐标 + 去重叠铺开偏移(与 updateCustZoom 完全一致)，保证虚线端点贴合圆点
@@ -1668,16 +1715,16 @@ window.addEventListener("unhandledrejection", function(e){
       const hasDepot = !!_depot;
       const totalNodes = pts.length + (hasDepot ? 1 : 0);
       if (totalNodes < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); return; }
-      // 点集签名不变 → 复用已算顺序，仅重绘(O(n))；仅当选中变化或红旗变化才重跑 TSP
-      const sig = (hasDepot ? _depot.geo.join(',') + '|' : '') + pts.map(m => m.rec.__id).join('|');
+      // TSP 必须在「当前视图实际绘制坐标」上算：去重叠偏移随缩放变化，k=3 算出的顺序在 k=1 等视图下可能出现视觉交叉。
+      // 因此签名包含按 0.3 粒度取整的当前缩放倍率，同一段缩放内复用顺序，缩放结束后自动重算。
+      const kForTsp = Math.max(1, _curK || 1);
+      const kBand = Math.round(kForTsp * 3.333) / 3.333;   // 约 0.3 倍分段，减少缩放中频繁重算
+      const sig = (hasDepot ? _depot.geo.join(',') + '|' : '') + 'k' + kBand.toFixed(2) + '|' + pts.map(m => m.rec.__id).join('|');
       if (sig !== _routeSig || !_routeOrder.length || _routeOrder.length !== totalNodes){
         _routeSig = sig;
         _routePts = pts;
-        // TSP 必须在"实际绘制坐标"上算，不能直接用真实地理坐标：
-        // 达卡等重合客户真实坐标几乎相同，但绘制时会按去重叠偏移散开；
-        // 若用真实坐标排序，画出来就会在散开的点上交叉绕远。
-        // 这里用 k=3（最大展开状态）的 routePos 作为输入，保证每个重合客户都有独立可见位置。
-        const dispCoords = pts.map(m => routePos(m, 3));
+        // 用当前缩放下的 routePos 作为输入，保证 TSP 顺序与当前看到的点位置一致，消除视觉交叉。
+        const dispCoords = pts.map(m => routePos(m, kForTsp));
         if (hasDepot) dispCoords.unshift(PROJ(_depot.geo));   // 红旗固定为节点 0
         const order = tspOrder(dispCoords);   // 闭合最短路线（Closed TSP），与选中顺序无关
         // 把红旗旋转到首位，作为视觉上的起点/终点
