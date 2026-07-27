@@ -244,7 +244,7 @@ window.addEventListener("unhandledrejection", function(e){
     function adm1Name(f){ return (f && f.properties && (f.properties.shapeName || f.properties.name)) || ''; }
     function renderProvinces(src){
       _adm2BuildGen++;            // 取消进行中的 ADM2 分帧构建（新 svg 已重建 _gAdm2）
-      _adm2ProjKey = null; _adm2Building = false;   // 投影随尺寸可能变化 → 失效缓存，下次构建重算
+      _adm2ProjKey = null; _adm2Building = false; _adm2BuiltKey = null;   // 投影随尺寸可能变化 → 失效缓存，下次构建重算（含 LOD 带）
       _hoverRegion = null; _embossRegions = new Map();   // 重绘前清空浮雕选中，避免引用过期 feature
       const map = $('map');
       const W = map.clientWidth || 800, H = map.clientHeight || 480;
@@ -361,6 +361,7 @@ window.addEventListener("unhandledrejection", function(e){
         updateMarkers(ev.transform);
         if (_routeOn) drawRoute(ev.transform.k);   // 路线端点随缩放铺开量同步，仅 O(n) 重拼路径，不重算 TSP 顺序（防卡）
         _curK = ev.transform.k; _curT = ev.transform;
+        _updateLod();   // LOD 分级：低缩放仅省界，越过阈值/切换 LOD 带才细化市区（渲染期简化，不入库）
       });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
@@ -714,10 +715,53 @@ window.addEventListener("unhandledrejection", function(e){
     // 修复：① 投影按“投影签名(W×H)”失效，仅在窗口尺寸变化(投影变)时重算；② 774 个 path 分帧(rAF)批量创建，单帧 ≤16ms 不卡；
     //       ③ 首次构建后隐藏只切 display:none 保留 DOM，再次开启瞬时显示；④ 进图后在浏览器空闲(requestIdleCallback)预构建隐藏层，首次点击即开即显。
     let _adm2Fc = null, _adm2ProjKey = null, _adm2BuildGen = 0, _adm2Building = false, _adm2CustMap = null;
+    // —— B 级 LOD 分级（仅大体量国，如 mx=2457 市区）：低缩放只显示省界，放大越过阈值才细化市区 ——
+    // 简化轮廓在渲染期派生（Douglas-Peucker，容差 = 恒定屏幕误差 / k），绝不入库/改 _topo2，守住“数据保真”铁律。
+    let _lodAdm2 = false;            // 当前国是否启用 LOD（ADM2 市区数 > 800 自动启用，按国独立，不牵连他国）
+    const _lodZoom = 2.2;           // 放大到此倍率才显示二级行政区域（低缩放仅省界）
+    let _adm2BuiltKey = null;       // 已构建层对应的“投影签名|LOD带”键；LOD 带变化即视为需重建
+    function _lodBand(k){ if (!_lodAdm2 || k < _lodZoom) return 0; const bands = [3, 4.5, 6.5, 9]; let b = 1; for (const t of bands) if (k >= t) b++; return b; }
+    function adm2BuiltKey(){ return adm2ProjKey() + '|' + (_lodAdm2 ? ('lod' + _lodBand(_curK || 1)) : 'full'); }
+    // —— 渲染期轮廓简化：解析 d3.geoPath 输出的屏幕坐标 path，逐环 Douglas-Peucker 抽稀（容差=恒定屏幕误差/k）——
+    function _parsePts(body){
+      const nums = (body.replace(/L/gi, ' ').match(/-?\d*\.?\d+(?:[eE]-?\d+)?/g) || []).map(Number);
+      const pts = []; for (let i = 0; i + 1 < nums.length; i += 2) pts.push([nums[i], nums[i + 1]]); return pts;
+    }
+    function _dpPts(pts, eps){
+      const n = pts.length; if (n < 3) return pts;
+      const keep = new Uint8Array(n); keep[0] = 1; keep[n - 1] = 1;
+      const stack = [[0, n - 1]];
+      while (stack.length){
+        const [s, e] = stack.pop();
+        let maxD = -1, idx = -1;
+        const [x1, y1] = pts[s], [x2, y2] = pts[e];
+        const dx = x2 - x1, dy = y2 - y1; const len2 = dx * dx + dy * dy;
+        for (let i = s + 1; i < e; i++){
+          const [x0, y0] = pts[i]; let d;
+          if (len2 === 0) d = Math.hypot(x0 - x1, y0 - y1);
+          else { const t = ((x0 - x1) * dx + (y0 - y1) * dy) / len2; const tt = t < 0 ? 0 : (t > 1 ? 1 : t); const px = x1 + tt * dx, py = y1 + tt * dy; d = Math.hypot(x0 - px, y0 - py); }
+          if (d > maxD){ maxD = d; idx = i; }
+        }
+        if (maxD > eps && idx > 0){ keep[idx] = 1; stack.push([s, idx]); stack.push([idx, e]); }
+      }
+      const out = []; for (let i = 0; i < n; i++) if (keep[i]) out.push(pts[i]); return out;
+    }
+    function _simplifyPathD(d, tolPx){
+      if (!tolPx || tolPx <= 0) return d;
+      const re = /M([^MZ]*)Z/gi; let out = '', mm;
+      while ((mm = re.exec(d))){
+        const pts = _parsePts(mm[1]); if (!pts.length) continue;
+        const s = _dpPts(pts, tolPx);
+        out += 'M' + s[0][0].toFixed(1) + ',' + s[0][1].toFixed(1);
+        for (let i = 1; i < s.length; i++) out += 'L' + s[i][0].toFixed(1) + ',' + s[i][1].toFixed(1);
+        out += 'Z';
+      }
+      return out || d;
+    }
     const _adm2CH = 15;   // 每帧构建的市区数（≈单帧 <16ms，保证不卡顿）
     const _requestIdle = (window.requestIdleCallback ? (cb)=>requestIdleCallback(cb,{timeout:2500}) : (cb)=>setTimeout(cb, 300));
     function adm2ProjKey(){ const m = $('map'); return (m ? m.clientWidth : 0) + 'x' + (m ? m.clientHeight : 0); }
-    function adm2IsBuilt(){ return _gAdm2 && _gAdm2.selectAll('path.adm2').size() > 0 && _adm2ProjKey === adm2ProjKey(); }
+    function adm2IsBuilt(){ return _gAdm2 && _gAdm2.selectAll('path.adm2').size() > 0 && _adm2ProjKey === adm2ProjKey() && _adm2BuiltKey === adm2BuiltKey(); }
     function buildAdm2ClipPaths(){
       const defs = _svg.select('defs');
       defs.selectAll('[id^="clip-"]').remove();   // 清旧的对省裁剪区，避免重复 ID
@@ -734,10 +778,12 @@ window.addEventListener("unhandledrejection", function(e){
       _gAdm2.selectAll('*').remove();
       _gAdm2.style('display', hidden ? 'none' : null);   // 预构建隐藏：第一帧起就隐藏，杜绝加载时“闪一下显示又隐藏”
       const gen = ++_adm2BuildGen; _adm2Building = true;
+      const _adm2Tol = _lodAdm2 ? Math.min(3.5, Math.max(0.4, 2.2 / (_curK || 1))) : 0;  // 渲染期简化容差=恒定屏幕误差/k（不入库）
       const total = _adm2Fc.features.length; let i = 0;
+      const CH = _lodAdm2 ? 40 : _adm2CH;   // LOD 大体量国加大每帧批量，缩短分帧构建时长
       function step(){
         if (gen !== _adm2BuildGen) return;   // 被新构建/隐藏取消
-        const end = Math.min(i + _adm2CH, total);
+        const end = Math.min(i + CH, total);
         for (; i < end; i++){
           const feat = _adm2Fc.features[i];
           let pi = -1;
@@ -747,7 +793,7 @@ window.addEventListener("unhandledrejection", function(e){
           feat.__pi = pi;   // 缓存所属省索引，悬停时直接读，免质心+geoContains（零精度损失）
           const clip = (pi >= 0) ? 'url(#clip-' + pi + ')' : 'url(#admClip)';
           _gAdm2.append('path')
-            .datum(feat).attr('d', _path(feat)).attr('class','adm2').attr('clip-path', clip)
+            .datum(feat).attr('d', _lodAdm2 ? _simplifyPathD(_path(feat), _adm2Tol) : _path(feat)).attr('class','adm2').attr('clip-path', clip)
             .on('mousemove', (e,d) => {
               // 单市区归属唯一 ADM1：构建时已缓存省索引(__pi)，悬停直接读，免质心+geoContains（零精度损失）
               if (d !== _lastAdm2Feat){
@@ -763,6 +809,7 @@ window.addEventListener("unhandledrejection", function(e){
         if (i < total){ setStatus('二级行政区域绘制中… ' + Math.round(i / total * 100) + '%'); (window.requestAnimationFrame || setTimeout)(step, 0); }
         else {
           _adm2Building = false;
+          _adm2BuiltKey = adm2BuiltKey();   // 记录本次构建对应的“投影签名|LOD带”，跨带即视为需重建
           if (_gAdm2) _adm2Paths = _gAdm2.selectAll('path.adm2').nodes();  // 缓存用于悬停/点击兜底，免每次遍历 querySelectorAll
           setStatus(total);
           reapplyRegionSel();
@@ -773,8 +820,24 @@ window.addEventListener("unhandledrejection", function(e){
     }
     function renderAdm2(){
       if (!_topo2 || !_gAdm2 || !PROJ) return;
-      if (adm2IsBuilt()){ _gAdm2.style('display', null); return; }   // 已构建且投影未变 → 仅显示，瞬时（零重建）
-      buildAdm2LayerChunked(false);   // 首次/投影变化 → 分帧构建并显示
+      // LOD 大体量国：阈值以下不构建二级区域（仅显示省界），避免低缩放渲染 2457 条精细 path 卡顿
+      if (_lodAdm2 && (_curK || 1) < _lodZoom){ _gAdm2.style('display', 'none'); return; }
+      if (adm2IsBuilt()){ _gAdm2.style('display', null); return; }   // 已构建且投影/LOD带未变 → 仅显示，瞬时（零重建）
+      buildAdm2LayerChunked(false);   // 首次/投影变化/跨 LOD 带 → 分帧构建并显示
+    }
+    // 缩放时驱动 LOD：低于阈值仅省界；越过阈值或切换 LOD 带才重建（渲染期简化，不入库）。跨带重建有上限（4 带），自节流。
+    function _updateLod(){
+      if (!_lodAdm2 || !showAdm2 || !_gAdm2) return;
+      const k = _curK || 1;
+      if (k < _lodZoom){ _gAdm2.style('display', 'none'); return; }   // 阈值以下：隐藏二级区域层（仅省界可见）
+      const key = adm2BuiltKey();
+      if (_adm2BuiltKey !== key){            // 进入阈值 或 切换 LOD 带 → 重建（渲染期简化派生，源数据不动）
+        _adm2BuildGen++;                     // 取消可能进行中的分帧构建，避免叠加
+        _gAdm2.style('display', null);
+        buildAdm2LayerChunked(false);
+      } else {
+        _gAdm2.style('display', null);
+      }
     }
     function loadProvinces(){
       (async () => {
@@ -802,7 +865,7 @@ window.addEventListener("unhandledrejection", function(e){
             setStatus(_fc2cnt);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
               if (showAdm2) renderAdm2();
               else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域';
-                _requestIdle(() => { if (!showAdm2 && _gAdm2 && _topo2 && !adm2IsBuilt()) buildAdm2LayerChunked(true); });  // 浏览器空闲预构建隐藏层，首次点击即开即显
+                _requestIdle(() => { if (!showAdm2 && !_lodAdm2 && _gAdm2 && _topo2 && !adm2IsBuilt()) buildAdm2LayerChunked(true); });  // 浏览器空闲预构建隐藏层（LOD 大体量国跳过，避免加载即建 2457 path 又隐藏）
               }
             } else {
               const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; showAdm2 = false;
@@ -832,6 +895,9 @@ window.addEventListener("unhandledrejection", function(e){
           } catch(e){}
         }
         _topo2 = fc; _adm2Loading = false;
+        // B 级 LOD 自动判定：ADM2 市区数 > 800 的大体量国（如 mx=2457）启用分级，按国独立、不牵连小数目国
+        const _cnt = fc && fc.type === 'Topology' ? fc.objects[Object.keys(fc.objects)[0]].geometries.length : (fc && fc.features ? fc.features.length : 0);
+        _lodAdm2 = _cnt > 800;
         return fc;
       })();
       return _adm2Promise;
@@ -845,6 +911,7 @@ window.addEventListener("unhandledrejection", function(e){
         // ADM2 开启时：禁用 ADM1 prov-fill 的指针事件，杜绝 ADM2 透明内部点击穿透到 ADM1 选中一级行政区域
         _provFill.forEach(n => n.style.pointerEvents = 'none');
         if (_topo2){ renderAdm2(); }
+        if (_lodAdm2 && (_curK || 1) < _lodZoom) $('mapStatus').textContent = '二级行政区域已开启 · 放大地图以查看市区';  // LOD：阈值以下仅省界，给提示
         else {
           setStatus('loading');
           await ensureAdm2();
@@ -1116,6 +1183,8 @@ window.addEventListener("unhandledrejection", function(e){
     // 落在缝隙/下层时取不到目标 → 返回 null(选不中)。改为遍历所有 adm2 path 用 isPointInFill 做纯几何包含判定，
     // 不依赖 pointer-events 与 z 序；点击点落在缝隙时再半径采样兜底，取最近含该点的 LGA。
     function nearestAdm2At(px, py){
+      // LOD：阈值以下二级区域层隐藏（仅省界），不该命中市区，直接短路避免误选
+      if (_lodAdm2 && (!showAdm2 || (_curK || 1) < _lodZoom)) return null;
       const R = 26; // 半径采样最大范围(px)
       // 1) 候选预筛：仅取包围盒覆盖点击点附近(R 内)的 adm2 path，避免遍历全部 774 个，保证点击不卡
       const all = (_adm2Paths && _adm2Paths.length) ? _adm2Paths : document.querySelectorAll('path.adm2');
