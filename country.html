@@ -107,8 +107,6 @@
   }
   .map-toolbar button:hover{ border-color:var(--accent); }
   .map-toolbar button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
-  .route-legend{ display:inline-flex; align-items:center; gap:7px; margin-left:6px; padding:4px 10px; border-radius:10px; font-size:12px; color:var(--txt); background:rgba(10,18,32,.8); border:1px solid var(--line); white-space:nowrap; }
-  .route-legend .rt-note{ opacity:.75; }
   /* 静态锁图：区域 path 置为不可交互 → 无悬停高亮/点击；光标恢复默认，避免误以为可拖拽 */
   #map.static-locked .prov-fill, #map.static-locked .prov-line, #map.static-locked path.adm2{ pointer-events:none !important; }
   #map.static-locked{ cursor:url('assets/cursors/LoLNormal.png') 3 2, default; }  /* 静态锁图：光标维持 LOL 小手（DOM 图接管；此规则仅在光标图隐藏时兜底） */
@@ -323,15 +321,10 @@
         <button id="multitrack">开启多点追踪</button>
         <button id="staticlock">开启静态锁图</button>
         <button id="hideunsel">隐藏未选客户</button>
+        <button id="selectDepot">选取计划位置</button>
         <button id="routeplan">开启路线规划</button>
-        <span id="routeLegend" class="route-legend" style="display:none">
-          <svg width="14" height="14" viewBox="0 0 14 14" style="vertical-align:middle;margin-right:4px">
-            <path d="M2,7 L5,12 L12,2" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span class="rt-note">闭合最短路线(TSP)</span>
-        </span>
       </div>
-      <div id="map"></div>
+      <div id="map"><div id="depotOverlay" style="display:none;position:absolute;inset:0;z-index:4;cursor:crosshair"></div></div>
       <div id="inset" class="map-inset" style="display:none;"></div>
       <div class="map-ctrl">
         <button id="zin" title="放大">＋</button>
@@ -364,6 +357,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607271049"></script>
+  <script defer src="app.js?v=202607271132"></script>
 </body>
 </html>
