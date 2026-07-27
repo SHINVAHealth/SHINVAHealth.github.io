@@ -527,28 +527,27 @@ window.addEventListener("unhandledrejection", function(e){
         _gEmboss.append('path').attr('class','emboss-top').attr('d', it.d)
           .attr('transform', `translate(${it.c[0]},${it.c[1]-H}) scale(${sTop}) translate(${-it.c[0]},${-it.c[1]})`);
       });
-      // 客户点：落在任一浮雕多边形内的点，按与 emboss-top 完全相同的变换抬升（统一高度 H、绕质心放大 sTop），
-      // 由 updateMarkers 套用当前 zoom 落屏 → 精准贴合浮雕顶面、随区域一起 3D 探出
-      _custEls.forEach(m => {
-        const rec = m.rec;
-        m.lifted = false; m.liftedBase = null;
-        if (rec && rec.lng != null && rec.lat != null){
-          for (const it of items){
-            if (d3.geoContains(it.feature, [+rec.lng, +rec.lat])){
-              m.lifted = true;
-              m.liftedBase = [ it.c[0] + sTop*(m.base[0]-it.c[0]), (it.c[1]-H) + sTop*(m.base[1]-it.c[1]) ];
-              break;
-            }
+      // 客户点抬升：先统一复位(仅属性赋值，零 geoContains)，再【仅测落在该区域自己的客户】
+      // （按 assignRegions 预分组的 __adm2 → _adm2CustMap），彻底去掉逐区域对全部客户的 geoContains（零精度损失）
+      _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
+      items.forEach(it => {
+        const nm = it.feature.properties ? (it.feature.properties.shapeName || it.feature.properties.name) : null;
+        const list = (_adm2CustMap && nm) ? (_adm2CustMap.get(nm) || []) : _custEls;
+        list.forEach(m => {
+          const rec = m.rec;
+          if (rec && rec.lng != null && rec.lat != null && d3.geoContains(it.feature, [+rec.lng, +rec.lat])){
+            m.lifted = true;
+            m.liftedBase = [ it.c[0] + sTop*(m.base[0]-it.c[0]), (it.c[1]-H) + sTop*(m.base[1]-it.c[1]) ];
           }
-        }
+        });
       });
       if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); }
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
-    let _embossRaf = 0;
-    function scheduleEmboss(){   // 同帧内多次悬停切换 → 合并为一次浮雕重算（仅对最终区域），消除快速划过多个二级区域的卡顿（零精度损失）
-      if (_embossRaf) return;
-      _embossRaf = (window.requestAnimationFrame || setTimeout)(() => { _embossRaf = 0; renderEmboss(); }, 0);
+    let _embossTimer = 0;
+    function scheduleEmboss(){   // 快速划过多个二级区域 → 重置计时器，仅在“停下 ~60ms”后才重建 3D 浮雕；扫动中绝不每帧重建（消除 paint 卡顿，零精度损失，仅延迟出现浮雕）
+      if (_embossTimer) clearTimeout(_embossTimer);
+      _embossTimer = setTimeout(() => { _embossTimer = 0; renderEmboss(); }, 60);
     }
     function hoverRegion(d, type){
       if (_staticLock) return;   // 静态锁图：禁用悬停高亮/浮雕
@@ -713,7 +712,7 @@ window.addEventListener("unhandledrejection", function(e){
     //       全部挤在单击 handler 的单帧里 → 主线程冻结数百毫秒，表现为卡顿；且每次开启都重算。
     // 修复：① 投影按“投影签名(W×H)”失效，仅在窗口尺寸变化(投影变)时重算；② 774 个 path 分帧(rAF)批量创建，单帧 ≤16ms 不卡；
     //       ③ 首次构建后隐藏只切 display:none 保留 DOM，再次开启瞬时显示；④ 进图后在浏览器空闲(requestIdleCallback)预构建隐藏层，首次点击即开即显。
-    let _adm2Fc = null, _adm2ProjKey = null, _adm2BuildGen = 0, _adm2Building = false;
+    let _adm2Fc = null, _adm2ProjKey = null, _adm2BuildGen = 0, _adm2Building = false, _adm2CustMap = null;
     const _adm2CH = 15;   // 每帧构建的市区数（≈单帧 <16ms，保证不卡顿）
     const _requestIdle = (window.requestIdleCallback ? (cb)=>requestIdleCallback(cb,{timeout:2500}) : (cb)=>setTimeout(cb, 300));
     function adm2ProjKey(){ const m = $('map'); return (m ? m.clientWidth : 0) + 'x' + (m ? m.clientHeight : 0); }
@@ -732,6 +731,7 @@ window.addEventListener("unhandledrejection", function(e){
       _adm2ProjKey = adm2ProjKey();
       buildAdm2ClipPaths();
       _gAdm2.selectAll('*').remove();
+      _gAdm2.style('display', hidden ? 'none' : null);   // 预构建隐藏：第一帧起就隐藏，杜绝加载时“闪一下显示又隐藏”
       const gen = ++_adm2BuildGen; _adm2Building = true;
       const total = _adm2Fc.features.length; let i = 0;
       function step(){
@@ -1069,6 +1069,15 @@ window.addEventListener("unhandledrejection", function(e){
       const dups = Object.entries(seen).filter(([, v]) => v.length > 1);
       if (dups.length) console.warn('[客户定位自检] 以下客户经纬度完全重合（多为同落 Dhaka 市中心），数据已按真实坐标保留；地图端已做螺旋去重叠(declutter)，每个点仍可独立 hover。如需更精确街道级坐标可单独重编码：\n' + dups.map(([k, v]) => '  ' + k + ' => ' + v.join(' , ')).join('\n'));
     }
+    // —— 客户按二级区域(__adm2 名称)预分组：renderEmboss 仅测“该区域自己的客户”，彻底去掉逐区域对全部客户的 geoContains（零精度损失）——
+    function buildAdm2CustMap(){
+      _adm2CustMap = new Map();
+      _custEls.forEach(m => {
+        const nm = m.rec && (m.rec.__adm2); if (!nm) return;
+        if (!_adm2CustMap.has(nm)) _adm2CustMap.set(nm, []);
+        _adm2CustMap.get(nm).push(m);
+      });
+    }
     // —— 区域筛选：把每个客户关联到所属一级(ADM1)/二级(ADM2)行政区域（按经纬度 geoContains）——
     function assignRegions(){
       const list = window.__custList || [];
@@ -1086,6 +1095,7 @@ window.addEventListener("unhandledrejection", function(e){
           if (!r.__adm2 && fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
         }
       });
+      buildAdm2CustMap();   // 客户按二级区域预分组，供 renderEmboss 精准跳过重算（零精度损失）
     }
     function applyRegionFilter(){
       // 注：__adm1/__adm2 已在客户加载(drawCustomerPointsOnMap 内 assignRegions)与省份加载完成时算好并缓存，
