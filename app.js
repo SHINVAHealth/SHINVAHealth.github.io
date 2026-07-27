@@ -370,6 +370,23 @@ window.addEventListener("unhandledrejection", function(e){
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
       applyPendingHl();   // 省份地图就绪，若客户也已加载则自动点亮世界地图跳转带来的 hl 行
 
+      // —— 验证钩子（仅暴露只读/驱动接口，完全不影响生产逻辑；供 jsdom 冒烟测试驱动真实 d3.zoom 路径，
+      //     绕开 jsdom 无 SVG 布局导致 wheel 事件崩溃 baseVal 的问题）。——
+      window.__countryDebug = {
+        zoomTo(k, cx, cy){
+          cx = (cx == null) ? 600 : cx; cy = (cy == null) ? 400 : cy;
+          _curK = k;
+          _curT = d3.zoomIdentity.translate(cx, cy).scale(k).translate(-cx, -cy);
+          _updateLod();   // 直接驱动真实 LOD/分块逻辑（绕开 jsdom 无 SVG 布局导致 d3.zoom baseVal 崩溃）
+          return this;
+        },
+        updateChunks(){ if (_adm2Chunked) updateChunks(); return this; },
+        isChunked(){ return _adm2Chunked; },
+        chunksSize(){ return _adm2Chunks ? _adm2Chunks.size : 0; },
+        builtSize(){ return _adm2Chunks ? Array.from(_adm2Chunks.values()).filter(s => s.built).length : 0; },
+        curK(){ return _curK; }
+      };
+
       // 国家地图 LOL 小手（DOM 跟随，与世界地图地球完全一致）：规避 CSS 光标拒载 + d3.zoom 拖拽握拳
       (function(){
         const countryCursor = document.createElement('img');
@@ -748,6 +765,20 @@ window.addEventListener("unhandledrejection", function(e){
     let _adm2BuiltKey = null;       // 已构建层对应的“投影签名|LOD带”键；LOD 带变化即视为需重建
     function _lodBand(k){ if (!_lodAdm2 || k < _lodZoom) return 0; const bands = [3, 4.5, 6.5, 9]; let b = 1; for (const t of bands) if (k >= t) b++; return b; }
     function adm2BuiltKey(){ return adm2ProjKey() + '|' + (_lodAdm2 ? ('lod' + _lodBand(_curK || 1)) : 'full'); }
+    // —— C 级矢量瓦片式分块（仅大体量国，如 mx=2457 市区）：整文件不进图，放大到某州才拉该州细节 ——
+    // 三层铁律：每国独立(仅 _CHUNKED_ISO，不牵连他国) / 互不污染(州→chunk 一对一映射、州独立卸载) / 数据层保真(chunk 为源数据无损子集，简化仅渲染期派生)。
+    const _CHUNKED_ISO = new Set(['mx']);   // 启用分块的国家 ISO2（按需扩展；改数据务必同步生成对应 chunk）
+    const _ADM2_CHUNK_VER = '202607271300'; // 分块数据版本戳（与 gen_mx_chunks.js VER 对应）；改动 chunk 数据时 bump
+    let _adm2Chunked = false;     // 当前国是否启用矢量瓦片式分块
+    let _adm2Index = null;        // 分块索引 {iso2, version, states:[{slug,iso,name,count}]}
+    let _stateSlugByName = null;  // ADM1 shapeName -> chunk slug（运行时 join）
+    let _stateSlugByIdx = null;   // ADM1 要素下标 -> chunk slug
+    let _stateLocalBounds = null; // ADM1 要素屏幕包围盒缓存（投影签名失效时重算）
+    let _adm2Chunks = null;       // slug -> {fc, gNode, built, band, loading, pi}
+    let _chunkProjKey = null;     // 分块构建对应的投影签名（变化→重建 clip+所有州）
+    let _clipBuilt = false;       // clip-path 是否已构建
+    const _CHUNK_FETCH_MAX = 4;   // 并发拉取 chunk 上限
+    let _fetchInflight = 0; const _fetchWaiters = [];
     // —— 渲染期轮廓简化：解析 d3.geoPath 输出的屏幕坐标 path，逐环 Douglas-Peucker 抽稀（容差=恒定屏幕误差/k）——
     function _parsePts(body){
       const nums = (body.replace(/L/gi, ' ').match(/-?\d*\.?\d+(?:[eE]-?\d+)?/g) || []).map(Number);
@@ -845,6 +876,7 @@ window.addEventListener("unhandledrejection", function(e){
       step();
     }
     function renderAdm2(){
+      if (_adm2Chunked){ updateChunks(); return; }   // 矢量瓦片式分块：委托视口驱动的分块加载/构建
       if (!_topo2 || !_gAdm2 || !PROJ) return;
       // LOD 大体量国：阈值以下不构建二级区域（仅显示省界），避免低缩放渲染 2457 条精细 path 卡顿
       if (_lodAdm2 && (_curK || 1) < _lodZoom){ _gAdm2.style('display', 'none'); return; }
@@ -853,6 +885,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 缩放时驱动 LOD：低于阈值仅省界；越过阈值或切换 LOD 带才重建（渲染期简化，不入库）。跨带重建有上限（4 带），自节流。
     function _updateLod(){
+      if (_adm2Chunked){ updateChunks(); return; }   // 分块国：缩放即重算可见州并卸载离屏州
       if (!_lodAdm2 || !showAdm2 || !_gAdm2) return;
       const k = _curK || 1;
       if (k < _lodZoom){ _gAdm2.style('display', 'none'); return; }   // 阈值以下：隐藏二级区域层（仅省界可见）
@@ -864,6 +897,103 @@ window.addEventListener("unhandledrejection", function(e){
       } else {
         _gAdm2.style('display', null);
       }
+    }
+    // —— 矢量瓦片式分块：拉取限流（最多 _CHUNK_FETCH_MAX 并发，避免一次放大拉爆网络）——
+    function _chunkFetch(url){
+      return new Promise((resolve, reject) => {
+        const run = () => {
+          if (_fetchInflight >= _CHUNK_FETCH_MAX){ _fetchWaiters.push(run); return; }
+          _fetchInflight++;
+          fetchCached(url).then(d => { _fetchInflight--; resolve(d); const w = _fetchWaiters.shift(); if (w) w(); },
+                                e => { _fetchInflight--; reject(e); const w = _fetchWaiters.shift(); if (w) w(); });
+        };
+        run();
+      });
+    }
+    // 放大越过阈值时：按视口裁剪可见州 → 懒加载/构建可见州 chunk → 离屏卸载 DOM（数据保留，便于再次进入秒显）
+    function updateChunks(){
+      if (!_adm2Chunked || !showAdm2 || !_gAdm2 || !PROJ || !_features) return;
+      const k = _curK || 1;
+      if (k < _lodZoom){ _gAdm2.style('display', 'none'); const ms = $('mapStatus'); if (ms) ms.textContent = '二级行政区域已开启 · 放大地图以查看市区'; return; }
+      _gAdm2.style('display', null);
+      const mEl = $('map'); const W = mEl ? mEl.clientWidth : 0, H = mEl ? mEl.clientHeight : 0;
+      const t = _curT || d3.zoomIdentity;
+      // 投影签名变化（窗口尺寸/投影改变）→ 重建 clip + 所有已建州 paths
+      const pk = adm2ProjKey();
+      if (_chunkProjKey !== pk || !_clipBuilt){
+        _chunkProjKey = pk;
+        _stateLocalBounds = _features.map(f => _path.bounds(f));
+        buildAdm2ClipPaths(); _clipBuilt = true;
+        _adm2Chunks.forEach(st => { if (st.gNode){ st.gNode.remove(); st.gNode = null; } st.built = false; });
+      }
+      const band = _lodBand(k);
+      const tol = Math.min(3.5, Math.max(0.4, 2.2 / k));   // 渲染期简化容差=恒定屏幕误差/k（不入库）
+      // 1) 计算可见州（州屏幕包围盒与视口相交）
+      const vis = new Set();
+      for (let pi = 0; pi < _features.length; pi++){
+        const b = _stateLocalBounds[pi]; if (!b) continue;
+        const x0 = b[0][0]*k + t.x, y0 = b[0][1]*k + t.y, x1 = b[1][0]*k + t.x, y1 = b[1][1]*k + t.y;
+        if (x1 >= 0 && x0 <= W && y1 >= 0 && y0 <= H) vis.add(_stateSlugByIdx[pi]);
+      }
+      // 2) 卸载离屏州 DOM（数据保留，再次进入秒显）
+      _adm2Chunks.forEach((st, slug) => { if (!vis.has(slug) && st.built && st.gNode){ st.gNode.remove(); st.gNode = null; st.built = false; } });
+      // 3) 加载/构建可见州
+      vis.forEach(slug => ensureStateChunk(slug, k, band, tol));
+    }
+    function ensureStateChunk(slug, k, band, tol){
+      let st = _adm2Chunks.get(slug);
+      if (!st){ st = { fc:null, gNode:null, built:false, band:0, loading:null, pi:-1 }; _adm2Chunks.set(slug, st); }
+      if (st.built && st.band === band) return;          // 已构建且 LOD 带未变 → 不重建（防缩放卡顿）
+      if (st.loading) return;                             // 拉取中 → 完成后回调构建
+      if (st.fc){ st.pi = _stateSlugByIdx.indexOf(slug); buildStatePaths(slug, st, tol); return; }
+      st.loading = _chunkFetch(`provinces/${iso2}_adm2_${slug}.min.json?v=${_ADM2_CHUNK_VER}`).then(chunk => {
+        st.loading = null;
+        const fc = (chunk && chunk.type === 'Topology') ? topojson.feature(chunk, chunk.objects.adm2) : chunk;
+        st.fc = fc; st.pi = _stateSlugByIdx.indexOf(slug);
+        ensureAdm2CustForState(slug, fc);                 // 增量补全该州客户 ADM2 归属 + 预分组（零精度损失）
+        buildStatePaths(slug, st, tol);
+      }).catch(e => { st.loading = null; console.warn('[chunk] 加载失败', slug, e && e.message); });
+    }
+    function buildStatePaths(slug, st, tol){
+      if (st.gNode){ st.gNode.remove(); st.gNode = null; }
+      const sg = _gAdm2.append('g').attr('class', 'adm2-state').attr('data-slug', slug);
+      st.gNode = sg;
+      const pi = st.pi;
+      const clip = (pi >= 0) ? 'url(#clip-' + pi + ')' : 'url(#admClip)';
+      st.fc.features.forEach(feat => {
+        feat.__pi = pi;   // 缓存省索引，悬停直接读，免质心+geoContains
+        sg.append('path')
+          .datum(feat).attr('d', _simplifyPathD(_path(feat), tol)).attr('class', 'adm2').attr('clip-path', clip)
+          .on('mousemove', (e, d) => {
+            if (d !== _lastAdm2Feat){ _lastAdm2Feat = d; _lastAdm2Prov = (d.__pi != null && _features[d.__pi]) ? (_features[d.__pi].properties.shapeName || _features[d.__pi].properties.name) : null; }
+            const city = d.properties.shapeName || d.properties.name || '未命名市区';
+            showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
+            hoverRegion(d, 'adm2');
+          })
+          .on('mouseleave', (e, d) => { hideTip(e, d); unhoverRegion(); });
+      });
+      st.built = true;
+      _adm2Paths = _gAdm2.selectAll('path.adm2').nodes();   // 刷新悬停/点击命中缓存
+      reapplyRegionSel();
+    }
+    // 某州 chunk 加载完成后：增量把该州客户关联到 ADM2（geoContains）+ 预分组，避免整文件一次性 geoContains
+    function ensureAdm2CustForState(slug, fc){
+      if (!_adm2CustMap) _adm2CustMap = new Map();
+      const st0 = (_adm2Index && _adm2Index.states) ? _adm2Index.states.find(s => s.slug === slug) : null;
+      const stateName = st0 ? st0.name : null;
+      _custEls.forEach(m => {
+        const r = m.rec; if (!r || r.lat == null) return;
+        if (stateName && r.__adm1 !== stateName) return;   // 仅处理该州客户
+        if (!r.__adm2){
+          const ll = [+r.lng, +r.lat];
+          for (const f of fc.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} }
+        }
+        if (r.__adm2){
+          if (!_adm2CustMap.has(r.__adm2)) _adm2CustMap.set(r.__adm2, []);
+          const arr = _adm2CustMap.get(r.__adm2);
+          if (!arr.includes(m)) arr.push(m);
+        }
+      });
     }
     function loadProvinces(){
       (async () => {
@@ -893,6 +1023,14 @@ window.addEventListener("unhandledrejection", function(e){
               else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域';
                 _requestIdle(() => { if (!showAdm2 && !_lodAdm2 && _gAdm2 && _topo2 && !adm2IsBuilt()) buildAdm2LayerChunked(true); });  // 浏览器空闲预构建隐藏层（LOD 大体量国跳过，避免加载即建 2457 path 又隐藏）
               }
+            } else if (_adm2Chunked){
+              // 分块国：仅索引已载入，整文件不进图。客户先按 ADM1 归属；ADM2 在放大到州、chunk 加载时增量补全。
+              assignRegions();
+              const total = (_adm2Index && _adm2Index.states) ? _adm2Index.states.reduce((a, s) => a + s.count, 0) : 0;
+              setStatus(total);   // 说明栏显示二级行政区域总数（即便尚未拉取）
+              const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域';
+              if (showAdm2) updateChunks();   // 已默认开启 → 按当前视口拉取可见州细节（否则等放大触发）
+              // 注意：分块国不空闲预载整文件（违背矢量瓦片初衷），仅放大到某州才拉该州 chunk
             } else {
               const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; showAdm2 = false;
               setStatus('暂无');
@@ -903,11 +1041,29 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 按需加载 ADM2（二级行政区域）边界：本地优先，本地无则运行时拉 geoBoundaries
     function ensureAdm2(){
-      if (_topo2) return Promise.resolve(_topo2);
+      if (_topo2 || _adm2Chunked) return Promise.resolve(_topo2);
       if (_adm2Loading) return _adm2Promise;
       _adm2Loading = true;
       if (showAdm2) $('mapStatus').textContent = '二级行政区域边界加载中…';
       _adm2Promise = (async () => {
+        // —— 矢量瓦片式分块国：仅拉取 tiny 索引，几何按州懒加载（类 Google Maps 矢量瓦片）——
+        if (_CHUNKED_ISO.has(iso2)){
+          const idx = await fetchCached(`provinces/${iso2}_adm2_index.json?v=${_ADM2_CHUNK_VER}`);
+          _adm2Index = idx;
+          _stateSlugByName = new Map();
+          _stateSlugByIdx = new Array(_features.length).fill(null);
+          _features.forEach((f, pi) => {
+            const nm = f.properties.shapeName || f.properties.name;
+            const st = (idx.states || []).find(s => s.name === nm);
+            const slug = st ? st.slug : null;
+            if (slug){ _stateSlugByName.set(nm, slug); _stateSlugByIdx[pi] = slug; }
+          });
+          _stateLocalBounds = _features.map(f => _path.bounds(f));
+          _adm2Chunks = new Map();
+          _adm2Chunked = true; _lodAdm2 = true;   // 分块即启用 LOD 阈值（低缩放仅省界）
+          _adm2Loading = false;
+          return null;   // 无单一 _topo2：几何在放大到州时才按需拉取 chunk
+        }
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
         try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241650`); } catch(e){}
@@ -947,6 +1103,14 @@ window.addEventListener("unhandledrejection", function(e){
             setStatus(_fc2cnt);
             _adm2Lazy = false;   // 已加载，后续按常规模块处理
             renderAdm2();
+          }
+          else if (_adm2Chunked){
+            // 矢量瓦片式分块国：索引已在 ensureAdm2 阶段载入；按当前视口拉取可见州细节
+            assignRegions();   // 客户先按 ADM1 归属；ADM2 在 chunk 加载时增量补全
+            const total = (_adm2Index && _adm2Index.states) ? _adm2Index.states.reduce((a, s) => a + s.count, 0) : 0;
+            setStatus(total);
+            _adm2Lazy = false;
+            updateChunks();
           }
           else {
             setStatus('暂无');
@@ -1137,6 +1301,8 @@ window.addEventListener("unhandledrejection", function(e){
         _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null, off: [0, 0], ptEl, hitEl });
       });
       assignRegions();
+      // 分块国：客户晚于某些州 chunk 到达时，回填这些已建州的客户 ADM2 归属 + 预分组（增量，零精度损失）
+      if (_adm2Chunked && _adm2Chunks){ _adm2Chunks.forEach((st, slug) => { if (st.built && st.fc) ensureAdm2CustForState(slug, st.fc); }); }
       // 重绘后恢复已有黄/绿选中高亮（仅改 fill，尺寸/位置不变，不影响其他点）
       if (_hlIds.size){
         _gCust.selectAll('g.cust-pt-g').each(function(){
@@ -1189,7 +1355,7 @@ window.addEventListener("unhandledrejection", function(e){
           if (!r.__adm2 && fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
         }
       });
-      buildAdm2CustMap();   // 客户按二级区域预分组，供 renderEmboss 精准跳过重算（零精度损失）
+      if (!_adm2Chunked) buildAdm2CustMap();   // 非分块国：全量重建预分组；分块国改为增量 ensureAdm2CustForState（避免每次 assignRegions 清空已增量补全的归属）
     }
     function applyRegionFilter(){
       // 注：__adm1/__adm2 已在客户加载(drawCustomerPointsOnMap 内 assignRegions)与省份加载完成时算好并缓存，
