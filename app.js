@@ -545,6 +545,11 @@ window.addEventListener("unhandledrejection", function(e){
       if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); }
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
+    let _embossRaf = 0;
+    function scheduleEmboss(){   // 同帧内多次悬停切换 → 合并为一次浮雕重算（仅对最终区域），消除快速划过多个二级区域的卡顿（零精度损失）
+      if (_embossRaf) return;
+      _embossRaf = (window.requestAnimationFrame || setTimeout)(() => { _embossRaf = 0; renderEmboss(); }, 0);
+    }
     function hoverRegion(d, type){
       if (_staticLock) return;   // 静态锁图：禁用悬停高亮/浮雕
       const name = (d.properties && (d.properties.shapeName || d.properties.name)) || '';
@@ -552,9 +557,9 @@ window.addEventListener("unhandledrejection", function(e){
       // 对全部客户点 d3.geoContains 判定（客户多时极卡），这是国家地图悬停卡顿根因。
       if (_hoverRegion && _hoverRegion.type === type && _hoverRegion.name === name) return;
       _hoverRegion = { feature: d, type, name };
-      renderEmboss();
+      scheduleEmboss();
     }
-    function unhoverRegion(){ if (_staticLock || !_hoverRegion) return; _hoverRegion = null; renderEmboss(); }
+    function unhoverRegion(){ if (_staticLock || !_hoverRegion) return; _hoverRegion = null; scheduleEmboss(); }
     function findAdm1Feature(name){
       if (!_features || !name) return null;
       return _features.find(f => (f.properties.shapeName || f.properties.name) === name) || null;
@@ -738,15 +743,15 @@ window.addEventListener("unhandledrejection", function(e){
           const grp = feat.properties.shapeGroup || feat.properties.parent || null;
           if (grp && _features){ const idx = _features.findIndex(p => (p.properties.shapeName || p.properties.name) === grp); if (idx >= 0) pi = idx; }
           if (pi < 0 && _features){ let c = null; try { c = d3.geoCentroid(feat); } catch(e){} if (c){ for (let j = 0; j < _features.length; j++){ try { if (d3.geoContains(_features[j], c)){ pi = j; break; } } catch(e){} } } }
+          feat.__pi = pi;   // 缓存所属省索引，悬停时直接读，免质心+geoContains（零精度损失）
           const clip = (pi >= 0) ? 'url(#clip-' + pi + ')' : 'url(#admClip)';
           _gAdm2.append('path')
             .datum(feat).attr('d', _path(feat)).attr('class','adm2').attr('clip-path', clip)
             .on('mousemove', (e,d) => {
-              // 单市区归属唯一 ADM1：用质心定位省，仅在悬停要素改变时算一次 provinceAt，免每像素全 ADM1 geoContains
+              // 单市区归属唯一 ADM1：构建时已缓存省索引(__pi)，悬停直接读，免质心+geoContains（零精度损失）
               if (d !== _lastAdm2Feat){
                 _lastAdm2Feat = d;
-                let c = null; try { c = d3.geoCentroid(d); } catch(_e){}
-                _lastAdm2Prov = c ? provinceAt(c) : null;
+                _lastAdm2Prov = (d.__pi != null && _features[d.__pi]) ? (_features[d.__pi].properties.shapeName || _features[d.__pi].properties.name) : null;
               }
               const city = d.properties.shapeName || d.properties.name || '未命名市区';
               showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
