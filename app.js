@@ -219,8 +219,11 @@ window.addEventListener("unhandledrejection", function(e){
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
   let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「闭合最短」路线（Closed TSP）
   let _gRoute = null;            // 路线图层（置于 zoom 组 g 内、客户点之下，随地图同步变换）
+  let _gDepot = null, _depotInner = null;  // 路线起点红旗图层 / 内部缩放抵消组
+  let _depot = null;             // 用户选取的路线出发点 {geo:[lng,lat]}
+  let _selectDepotMode = false;  // 是否正在“选取计划位置”
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
-  let _routeOrder = [];         // TSP 闭合访问顺序（_routePts 下标数组）
+  let _routeOrder = [];         // TSP 闭合访问顺序（_routePts 下标数组；含 depot 时 depot 在顺序中排首位/末位）
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
@@ -358,6 +361,7 @@ window.addEventListener("unhandledrejection", function(e){
         g.attr('transform', ev.transform);
         updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
         updateMarkers(ev.transform);
+        updateDepotMarker(ev.transform); // 红旗图标恒定屏幕尺寸
         if (_routeOn) drawRoute(ev.transform.k);   // 路线端点随缩放铺开量同步，仅 O(n) 重拼路径，不重算 TSP 顺序（防卡）
         _curK = ev.transform.k; _curT = ev.transform;
         _updateLod();   // LOD 分级：低缩放仅省界，越过阈值/切换 LOD 带才细化市区（渲染期简化，不入库）
@@ -459,7 +463,30 @@ window.addEventListener("unhandledrejection", function(e){
         this.textContent = _hideUnselected ? '显示全部客户' : '隐藏未选客户';
         applyHideUnselected();
       };
-      // [开启/关闭路线规划]：默认关闭。开启 → 按可见客户点的实际位置，用虚线连成一条整体最短路线（TSP 近似）
+      // [选取计划位置]：进入选点模式 → 用户在地图上点击任意位置生成一面小红旗，作为路线规划的固定出发点与返回点
+      function setSelectDepotMode(active){
+        _selectDepotMode = active;
+        const btn = $('selectDepot');
+        const overlay = $('depotOverlay');
+        if (btn){ btn.classList.toggle('active', active); btn.textContent = active ? '点击地图放置红旗' : (_depot ? '重新选取位置' : '选取计划位置'); }
+        if (overlay) overlay.style.display = active ? 'block' : 'none';
+      }
+      function placeDepot(e){
+        if (!_svg || !PROJ) return;
+        const overlay = $('depotOverlay'); if (!overlay) return;
+        const rect = overlay.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const pt = d3.zoomTransform(_svg.node()).invert([x, y]);
+        const [lng, lat] = PROJ.invert(pt);
+        if (!isFinite(lng) || !isFinite(lat)) return;
+        _depot = { geo: [lng, lat] };
+        drawDepotMarker();
+        setSelectDepotMode(false);
+        if (_routeOn) rebuildRoute();
+      }
+      if ($('selectDepot')) $('selectDepot').onclick = function(){ setSelectDepotMode(!_selectDepotMode); };
+      if ($('depotOverlay')) $('depotOverlay').onclick = placeDepot;
+      // [开启/关闭路线规划]：默认关闭。开启 → 按可见客户点 + 红旗（如有）的实际位置，用虚线连成一条闭合最短路线（TSP）
       $('routeplan').onclick = function(){
         _routeOn = !_routeOn;
         this.classList.toggle('active', _routeOn);
@@ -1279,87 +1306,125 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // —— 路线规划：在可见客户点间连成一条「闭合最短路线」——
     // 用户要求：去掉起终点，把所有点连成一个封闭图形，使总周长最短。
-    // 这是经典闭合 TSP（Closed TSP Tour）。坐标用与地图同投影的基坐标，
+    // 这是经典闭合 TSP（Closed TSP Tour）。坐标用与地图同投影的基坐标 + 去重叠偏移，
     // 距离=地图实际距离；低纬度国家投影畸变小，平面距离≈真实地理距离。
     function tspOrder(coords){
       const n = coords.length;
       if (n < 2) return coords.map((_, i) => i);
       if (n === 2) return [0, 1];   // 2 点：来回同一条边
-      const d2 = (i, j) => { const dx = coords[i][0] - coords[j][0], dy = coords[i][1] - coords[j][1]; return dx * dx + dy * dy; };
-      // 闭合回路总长度
-      const tourLen = (ord) => {
-        let s = 0;
-        for (let i = 0; i < ord.length; i++) s += d2(ord[i], ord[(i + 1) % n]);
-        return s;
-      };
-      // 精确枚举（n <= 12）：固定第 0 个点，枚举其余 n-1 个点的全排列，取最短闭合周长。
-      // 对 n=12 仅 11! ≈ 4 千万次计算，现代浏览器约 50-150ms；n=13 起退到启发式。
-      if (n <= 12){
-        let best = null, bestLen = Infinity;
-        const idx = new Array(n - 1).fill(0).map((_, i) => i + 1);
-        function nextPerm(a){
-          let i = a.length - 1;
-          while (i > 0 && a[i - 1] >= a[i]) i--;
-          if (i === 0) return false;
-          let j = a.length - 1;
-          while (a[j] <= a[i - 1]) j--;
-          [a[i - 1], a[j]] = [a[j], a[i - 1]];
-          let l = i, r = a.length - 1;
-          while (l < r){ [a[l], a[r]] = [a[r], a[l]]; l++; r--; }
-          return true;
+      // 预计算真实欧氏距离矩阵（sqrt 不可省：平方和会改变最优解）
+      const dist = new Array(n);
+      for (let i = 0; i < n; i++){
+        const row = new Array(n); dist[i] = row;
+        for (let j = 0; j < n; j++){
+          const dx = coords[i][0] - coords[j][0], dy = coords[i][1] - coords[j][1];
+          row[j] = Math.hypot(dx, dy);
         }
-        do {
-          const ord = [0].concat(idx);
-          const len = tourLen(ord);
-          if (len < bestLen){ bestLen = len; best = ord.slice(); }
-        } while (nextPerm(idx));
-        return best;
       }
-      // 最近邻构造（多起点）
+      const tourLen = (ord) => { let s = 0; for (let i = 0; i < n; i++) s += dist[ord[i]][ord[(i + 1) % n]]; return s; };
+      // 精确最优（n <= 16）：Held-Karp 动态规划，O(n^2·2^n)。n=16 约 400 万次状态转移，现代浏览器 < 100ms。
+      if (n <= 16){
+        const N = 1 << n;
+        const dp = new Float64Array(N * n).fill(Infinity);
+        const parent = new Int16Array(N * n).fill(-1);
+        dp[1 * n + 0] = 0;   // 从第 0 点出发
+        for (let mask = 1; mask < N; mask++){
+          if (!(mask & 1)) continue;       // 只处理包含起点的集合
+          const base = mask * n;
+          for (let i = 0; i < n; i++){
+            if (!(mask & (1 << i))) continue;
+            const cur = dp[base + i]; if (cur === Infinity) continue;
+            for (let j = 0; j < n; j++){
+              if (mask & (1 << j)) continue;
+              const nm = mask | (1 << j);
+              const idx = nm * n + j;
+              const cand = cur + dist[i][j];
+              if (cand < dp[idx]){ dp[idx] = cand; parent[idx] = i; }
+            }
+          }
+        }
+        const full = N - 1;
+        let bestLen = Infinity, bestEnd = -1;
+        for (let i = 1; i < n; i++){
+          const cand = dp[full * n + i] + dist[i][0];
+          if (cand < bestLen){ bestLen = cand; bestEnd = i; }
+        }
+        const order = [];
+        let mask = full, node = bestEnd;
+        while (node !== -1){
+          order.push(node);
+          const p = parent[mask * n + node];
+          mask ^= (1 << node);
+          node = p;
+        }
+        order.reverse();
+        return order;   // 以第 0 点为起点的最短闭合回路
+      }
+      // 启发式构造（n > 16）：多起点最近邻 + cheapest insertion + farthest insertion，
+      // 再经完整 2-opt + Or-opt 精炼，消除交叉并逼近最优。
       const nn = (start) => {
-        const visited = new Array(n).fill(false);
-        const order = [start]; visited[start] = true;
+        const visited = new Uint8Array(n);
+        const order = [start]; visited[start] = 1;
         for (let s = 1; s < n; s++){
           const last = order[order.length - 1];
           let best = -1, bd = Infinity;
           for (let j = 0; j < n; j++){
             if (visited[j]) continue;
-            const dd = d2(last, j);
-            if (dd < bd){ bd = dd; best = j; }
+            const d = dist[last][j];
+            if (d < bd){ bd = d; best = j; }
           }
-          order.push(best); visited[best] = true;
+          order.push(best); visited[best] = 1;
         }
         return order;
       };
-      // 最远插入构造：从 0 出发，每次把距当前环最远的点插入到使周长增加最少的位置
+      const cheapestInsertion = () => {
+        if (n < 3) return [0, 1];
+        const order = [0, 1];
+        const inTour = new Uint8Array(n); inTour[0] = 1; inTour[1] = 1;
+        while (order.length < n){
+          let bestV = -1, bestInc = Infinity, bestPos = -1;
+          for (let v = 0; v < n; v++) if (!inTour[v]){
+            for (let i = 0; i < order.length; i++){
+              const a = order[i], b = order[(i + 1) % order.length];
+              const inc = dist[a][v] + dist[v][b] - dist[a][b];
+              if (inc < bestInc){ bestInc = inc; bestV = v; bestPos = i + 1; }
+            }
+          }
+          order.splice(bestPos, 0, bestV); inTour[bestV] = 1;
+        }
+        return order;
+      };
       const farthestInsertion = () => {
         let order = [0];
-        const inTour = new Array(n).fill(false); inTour[0] = true;
+        const inTour = new Uint8Array(n); inTour[0] = 1;
         while (order.length < n){
           let far = -1, farD = -1;
-          for (let v = 0; v < n; v++) if (!inTour[v]){ let md = Infinity; for (let u of order) md = Math.min(md, d2(u, v)); if (md > farD){ farD = md; far = v; } }
+          for (let v = 0; v < n; v++) if (!inTour[v]){
+            let md = Infinity;
+            for (let u of order) md = Math.min(md, dist[u][v]);
+            if (md > farD){ farD = md; far = v; }
+          }
           let bestPos = -1, bestInc = Infinity;
           for (let i = 0; i < order.length; i++){
             const a = order[i], b = order[(i + 1) % order.length];
-            const inc = d2(a, far) + d2(far, b) - d2(a, b);
+            const inc = dist[a][far] + dist[far][b] - dist[a][b];
             if (inc < bestInc){ bestInc = inc; bestPos = i + 1; }
           }
-          order.splice(bestPos, 0, far); inTour[far] = true;
+          order.splice(bestPos, 0, far); inTour[far] = 1;
         }
         return order;
       };
-      // 闭合回路 2-opt：所有边（含首尾）都参与交换，消除交叉。
       const twoOpt = (order) => {
         let improved = true, pass = 0;
-        while (improved && pass < 200){
+        while (improved && pass < 250){
           improved = false; pass++;
           for (let i = 0; i < n; i++){
             for (let j = i + 2; j < n; j++){
               if (i === 0 && j === n - 1) continue;   // 整条链反转，无意义
               const a = order[i], b = order[(i + 1) % n];
               const c = order[j], d = order[(j + 1) % n];
-              const before = d2(a, b) + d2(c, d);
-              const after  = d2(a, c) + d2(b, d);
+              const before = dist[a][b] + dist[c][d];
+              const after  = dist[a][c] + dist[b][d];
               if (after + 1e-9 < before){
                 let lo = i + 1, hi = j;
                 while (lo < hi){ const t = order[lo]; order[lo] = order[hi]; order[hi] = t; lo++; hi--; }
@@ -1370,7 +1435,6 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return order;
       };
-      // 单点移动精修（Or-opt 简化）：把某个点从当前位置拔出，插入到另一段之间，若总周长缩短则接受。
       const relocateOpt = (order) => {
         let improved = true;
         while (improved){
@@ -1378,11 +1442,11 @@ window.addEventListener("unhandledrejection", function(e){
           for (let i = 0; i < n; i++){
             const v = order[i];
             const prev = order[(i - 1 + n) % n], next = order[(i + 1) % n];
-            const saved = d2(prev, v) + d2(v, next) - d2(prev, next);
+            const saved = dist[prev][v] + dist[v][next] - dist[prev][next];
             for (let j = 0; j < n; j++){
               if (j === i || j === (i - 1 + n) % n) continue;
               const a = order[j], b = order[(j + 1) % n];
-              const cost = d2(a, v) + d2(v, b) - d2(a, b);
+              const cost = dist[a][v] + dist[v][b] - dist[a][b];
               if (saved - cost > 1e-9){
                 order.splice(i, 1);
                 const insertAt = j < i ? j + 1 : j;
@@ -1395,17 +1459,16 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return order;
       };
-      // 多起点：最近邻 + 最远插入，取最短；再各自 2-opt + relocate 精炼
-      const candidates = [farthestInsertion()];
-      const R = Math.min(n, Math.max(20, Math.ceil(n / 2)));
-      for (let s = 1; s < R; s++) candidates.push(nn(Math.floor(Math.random() * n)));
+      const candidates = [cheapestInsertion(), farthestInsertion()];
+      const R = Math.min(n, Math.max(24, Math.ceil(n / 2)));
+      for (let s = 0; s < R; s++) candidates.push(nn(s % n));
       let best = null, bestLen = Infinity;
       for (const cand of candidates){
         const ord = relocateOpt(twoOpt(cand.slice()));
         const len = tourLen(ord);
         if (len < bestLen){ bestLen = len; best = ord.slice(); }
       }
-      return best || farthestInsertion();
+      return best || candidates[0];
     }
     // 客户点「当前显示坐标」= 真实基坐标 + 去重叠铺开偏移(与 updateCustZoom 完全一致)，保证虚线端点贴合圆点
     function routePos(m, k){
@@ -1423,7 +1486,7 @@ window.addEventListener("unhandledrejection", function(e){
       if (_gRoute && (!_gRoute.node() || !_gRoute.node().isConnected)) _gRoute = null;
       if (_routeOn && !_gRoute) _gRoute = _gProv.insert('g', '.cust-layer').attr('class', 'route-layer');
       if (!_gRoute) return;
-      if (!_routeOn){ _gRoute.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
+      if (!_routeOn){ _gRoute.selectAll('*').remove(); return; }
       const pts = [];
       _custEls.forEach(m => {
         if (!m || !m.el || !m.rec) return;
@@ -1436,10 +1499,12 @@ window.addEventListener("unhandledrejection", function(e){
         if (m.el.style('display') === 'none') return;  // 被隐藏未选客户隐藏
         pts.push(m);
       });
-      if (pts.length < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); const rl = $('routeLegend'); if (rl) rl.style.display = 'none'; return; }
-      // 点集签名不变 → 复用已算顺序，仅重绘(O(n))；仅当选中变化导致点集改变才重跑 TSP
-      const sig = pts.map(m => m.rec.__id).join('|');
-      if (sig !== _routeSig || !_routeOrder.length || _routeOrder.length !== pts.length){
+      const hasDepot = !!_depot;
+      const totalNodes = pts.length + (hasDepot ? 1 : 0);
+      if (totalNodes < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); return; }
+      // 点集签名不变 → 复用已算顺序，仅重绘(O(n))；仅当选中变化或红旗变化才重跑 TSP
+      const sig = (hasDepot ? _depot.geo.join(',') + '|' : '') + pts.map(m => m.rec.__id).join('|');
+      if (sig !== _routeSig || !_routeOrder.length || _routeOrder.length !== totalNodes){
         _routeSig = sig;
         _routePts = pts;
         // TSP 必须在"实际绘制坐标"上算，不能直接用真实地理坐标：
@@ -1447,23 +1512,34 @@ window.addEventListener("unhandledrejection", function(e){
         // 若用真实坐标排序，画出来就会在散开的点上交叉绕远。
         // 这里用 k=3（最大展开状态）的 routePos 作为输入，保证每个重合客户都有独立可见位置。
         const dispCoords = pts.map(m => routePos(m, 3));
-        _routeOrder = tspOrder(dispCoords);   // 闭合最短路线（Closed TSP），与选中顺序无关
+        if (hasDepot) dispCoords.unshift(PROJ(_depot.geo));   // 红旗固定为节点 0
+        const order = tspOrder(dispCoords);   // 闭合最短路线（Closed TSP），与选中顺序无关
+        // 把红旗旋转到首位，作为视觉上的起点/终点
+        if (hasDepot){
+          const idx = order.indexOf(0);
+          _routeOrder = idx > 0 ? order.slice(idx).concat(order.slice(0, idx)) : order;
+        } else {
+          _routeOrder = order;
+        }
       } else {
         _routePts = pts;   // 顺序引用更新（_custEls 顺序稳定，下标仍对齐）
       }
-      const rl = $('routeLegend');
-      if (rl){ rl.style.display = 'inline-flex'; const note = rl.querySelector('.rt-note'); if (note) note.textContent = '闭合最短路线(TSP) · ' + pts.length + '点'; }
       drawRoute(_curK || 1);
     }
     // 按当前缩放绘制闭合虚线路径（仅 O(n) 拼接路径，重算顺序只在 rebuildRoute 做，避免缩放过程卡顿）
     function drawRoute(k){
       if (!_gRoute) return;
       _gRoute.selectAll('*').remove();
-      if (!_routeOn || !_routePts.length || _routePts.length < 2) return;
-      const d = _routeOrder.map(i => {
-        const p = routePos(_routePts[i], k);
-        return p[0].toFixed(2) + ',' + p[1].toFixed(2);
-      }).join(' L ');
+      if (!_routeOn) return;
+      const hasDepot = !!_depot;
+      const totalNodes = _routePts.length + (hasDepot ? 1 : 0);
+      if (totalNodes < 2) return;
+      const coords = _routeOrder.map(idx => {
+        if (hasDepot && idx === 0) return PROJ(_depot.geo);
+        const m = _routePts[hasDepot ? idx - 1 : idx];
+        return routePos(m, k);
+      });
+      const d = coords.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' L ');
       _gRoute.append('path')
         .attr('class', 'route-line')
         .attr('d', 'M ' + d + ' Z')   // Z 闭合：最后一点连回第一点，形成封闭图形
@@ -1476,6 +1552,24 @@ window.addEventListener("unhandledrejection", function(e){
         .attr('vector-effect', 'non-scaling-stroke')   // 线宽/虚线不随缩放放大，恒定屏幕尺寸
         .style('pointer-events', 'none');
     }
+    // 绘制/更新红旗：作为路线规划的固定出发点与返回点
+    function drawDepotMarker(){
+      if (!_gDepot) _gDepot = _gProv.append('g').attr('class', 'depot-layer');
+      _gDepot.selectAll('*').remove(); _depotInner = null;
+      if (!_depot) return;
+      const base = PROJ(_depot.geo);
+      const outer = _gDepot.append('g').attr('class', 'depot-marker').attr('transform', `translate(${base[0]},${base[1]})`);
+      const inner = outer.append('g');
+      // 旗杆
+      inner.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -18).attr('stroke', '#fff').attr('stroke-width', 1.5).attr('vector-effect', 'non-scaling-stroke');
+      // 旗面
+      inner.append('path').attr('d', 'M0,-18 L14,-13 L0,-8 Z').attr('fill', '#ef4444').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
+      // 锚点
+      inner.append('circle').attr('r', 2.5).attr('fill', '#ef4444').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
+      _depotInner = inner;
+      updateDepotMarker(_curT || d3.zoomIdentity);
+    }
+    function updateDepotMarker(t){ if (_depotInner) _depotInner.attr('transform', `scale(${1 / t.k})`); }
     // 点击客户检索行 → 自动放大并居中到该客户所在一级行政区域（ADM1）
     // rec：可选，传入客户记录以在「当前已放大更多」时居中其真实坐标点（而非省份质心）
     function zoomToAdm1(name, rec){
