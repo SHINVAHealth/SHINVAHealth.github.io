@@ -225,7 +225,7 @@ window.addEventListener("unhandledrejection", function(e){
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
   let _routeOrder = [];         // 闭合访问顺序（_routePts 下标数组；含 depot 时 depot 在顺序中排首位/末位）
   let _routeMode = 'tsp';       // 🔴 路线规划铁律：绘制的闭合路线「无论如何都是最短路径」（Closed TSP），不可改为其它顺序
-  let _listMode = 'tsp';        // 清单名单阅读顺序：'tsp'=按最短路径顺序（默认）；'cw'=顺时针环形；'ccw'=逆时针环形（仅重排名单，不改绘制路线）
+  let _listMode = 'ccw';        // 清单名单阅读顺序（仅重排名单，不改绘制路线）：'ccw'=逆时针环形（默认）；'cw'=顺时针环形。🔴 始终基于「放大后图标的空间位置」做环形排序，统一跟随屏幕上的图标，不采用最短路径漫游顺序
   let _routeListOpen = false;   // 路线规划清单弹窗是否打开
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
@@ -373,6 +373,9 @@ window.addEventListener("unhandledrejection", function(e){
         .on('end', () => {
           // 缩放结束后用「当前视图实际坐标」重算 TSP，保证路线与当前看到的点位置最优匹配，消除因 k=3 与当前缩放不一致导致的视觉交叉。
           if (_routeOn) rebuildRoute();
+          // 关键：缩放结束后（"最终放大后"）清单名单须按当前图标位置重排，使其统一跟随屏幕上的图标排列
+          const panel = $('routeListPanel');
+          if (panel && panel.style.display !== 'none' && _routeOn) renderRouteList();
         });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
@@ -1825,22 +1828,14 @@ window.addEventListener("unhandledrejection", function(e){
         .style('pointer-events', 'none');
     }
     // —— 路线规划清单弹窗：按「阅读顺序」罗列 起点 → 各客户 → 回到起点 ——
-    // 清单名单阅读顺序（仅重排显示，不改变绘制路线）：
-    //  'tsp' → 与绘制路线一致的最短路径顺序；'cw'/'ccw' → 以客户点当前显示坐标质心为极点的方位角环形顺序
+    // 清单名单阅读顺序（仅重排显示，不改变绘制路线）：始终以「客户点当前在屏幕上的显示坐标」为极点，
+    // 按方位角做环形排序（ccw=逆时针 / cw=顺时针）。这样清单顺序统一跟随「放大后图标的空间位置」，
+    // 与用户在地图上看到的排列一致。绘制路线仍是独立的「最短路径」铁律，互不影响。
     function listCustomerOrder(){
       const P = _routePts.length;
       if (P === 0) return [];
-      const hasDepot = !!_depot;
-      if (_listMode === 'tsp'){
-        const cust = [];
-        _routeOrder.forEach(idx => {
-          if (hasDepot && idx === 0) return;        // 跳过 depot 占位（始终在 _routeOrder[0]）
-          cust.push(hasDepot ? idx - 1 : idx);       // 映射回 _routePts 下标
-        });
-        return cust;
-      }
-      const disp = _routePts.map(m => routePos(m, _curK || 1));
-      return ringOrder(disp, _listMode);
+      const disp = _routePts.map(m => routePos(m, _curK || 1));   // 与图标铺开完全一致的显示坐标（routePos≡updateCustZoom 数学）
+      return ringOrder(disp, _listMode);                          // 纯空间环形顺序，统一跟随图标
     }
     function routeListSeq(){
       const hasDepot = !!_depot;
@@ -1883,7 +1878,7 @@ window.addEventListener("unhandledrejection", function(e){
         const r = m.rec;
         const region = r.__adm2 ? r.__adm2 : (r.__adm1 || '');
         const sub = [r.name, region].filter(Boolean).join(' · ');
-        return `<li class="rl-row ${it.isStart ? 'rl-start' : ''}" data-ci="${it.ci}"><span class="rl-idx">${it.n}</span><span class="rl-main"><span class="rl-name">${esc(r.company || '未命名客户')}</span>${sub ? `<span class="rl-sub">${esc(sub)}</span>` : ''}</span></li>`;
+        return `<li class="rl-row ${it.isStart ? 'rl-start' : ''}" data-ci="${it.ci}" data-id="${r.__id}"><span class="rl-idx">${it.n}</span><span class="rl-main"><span class="rl-name">${esc(r.company || '未命名客户')}</span>${sub ? `<span class="rl-sub">${esc(sub)}</span>` : ''}</span></li>`;
       });
       body.innerHTML = rows.join('');
     }
@@ -1899,12 +1894,12 @@ window.addEventListener("unhandledrejection", function(e){
       _routeListOpen = false;
       panel.style.display = 'none';
     }
-    // 切换清单名单阅读顺序（tsp/cw/ccw）：仅重排名单显示，不改变「绘制路线永远是最短路径」这一铁律
+    // 切换清单名单阅读顺序（cw/ccw）：仅重排名单显示，不改变「绘制路线永远是最短路径」这一铁律
     function setRouteMode(mode){
-      if (!['tsp','cw','ccw'].includes(mode)) return;
-      _listMode = (_listMode === mode) ? 'tsp' : mode;   // 再点已选项 → 回到默认(最短路径顺序)
+      if (!['cw','ccw'].includes(mode)) return;
+      _listMode = (_listMode === mode) ? 'ccw' : mode;   // 再点已选项 → 回到默认(逆时针环形)；否则切到所选方向
       document.querySelectorAll('.rl-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === _listMode));
-      if (_routeListOpen) renderRouteList();             // 只重绘名单，不重算/重绘路线（路线保持最短路径）
+      if (_routeListOpen) renderRouteList();             // 只重绘名单（按图标空间位置重排），不重算/重绘路线（路线保持最短路径）
     }
     // 绘制/更新红旗：作为路线规划的固定出发点与返回点
     function drawDepotMarker(){
