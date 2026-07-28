@@ -373,9 +373,8 @@ window.addEventListener("unhandledrejection", function(e){
         .on('end', () => {
           // 缩放结束后用「当前视图实际坐标」重算 TSP，保证路线与当前看到的点位置最优匹配，消除因 k=3 与当前缩放不一致导致的视觉交叉。
           if (_routeOn) rebuildRoute();
-          // 关键：缩放结束后（"最终放大后"）清单名单须按当前图标位置重排，使其统一跟随屏幕上的图标排列
-          const panel = $('routeListPanel');
-          if (panel && panel.style.display !== 'none' && _routeOn) renderRouteList();
+          // 注：清单名单顺序固定基于 ZOOM_MAX(最大化地图) 基准（见 listCustomerOrder），与当前缩放无关，
+          // 故缩放结束不再重排清单 —— 避免无谓重绘/重置滚动，且顺序始终等于放大到最大后的图标排列。
         });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
@@ -1296,6 +1295,7 @@ window.addEventListener("unhandledrejection", function(e){
     const GRAIN_R = 1.4;            // 初始像素粒半径（屏幕 px）
     const DOT_R   = 2.6;            // 放大后清晰圆点半径（屏幕 px）
     const ZOOM_FULL = 3;            // 缩放到此倍率时完全变成圆点 + 完全铺开
+    const ZOOM_MAX  = 9;            // d3.zoom scaleExtent 上限 = 最大化尺寸地图。清单排序固定用此基准，使顺序=放大到最大后图标的真实地址定位，与当前缩放无关
     const CUST_HIT_PX = 10;         // 透明命中区：恒定屏幕尺寸(px)，不随缩放放大 → 放大到最大也不会出现超大盲区误触发 hover
     function zoomFactor(k){ return Math.max(0, Math.min(1, (k - 1) / (ZOOM_FULL - 1))); }
     function updateCustZoom(k){
@@ -1834,8 +1834,11 @@ window.addEventListener("unhandledrejection", function(e){
     function listCustomerOrder(){
       const P = _routePts.length;
       if (P === 0) return [];
-      const disp = _routePts.map(m => routePos(m, _curK || 1));   // 与图标铺开完全一致的显示坐标（routePos≡updateCustZoom 数学）
-      return ringOrder(disp, _listMode);                          // 纯空间环形顺序，统一跟随图标
+      // 🔴 固定用「最大化尺寸地图(最高缩放 ZOOM_MAX)」下客户点的定位坐标排序：
+      // 此时 off 铺开(=1/k)相对真实坐标可忽略，屏幕位置≈真实地址坐标，ring 顺序即按真实地址定位；
+      // 与当前缩放 _curK 完全无关 —— 低缩放下坐标堆叠导致顺序错乱的根因即在此，现用最大缩放基准彻底消除。
+      const disp = _routePts.map(m => routePos(m, ZOOM_MAX));
+      return ringOrder(disp, _listMode);                          // 纯空间环形顺序，永远跟随「放大到最大后」的图标位置
     }
     function routeListSeq(){
       const hasDepot = !!_depot;
