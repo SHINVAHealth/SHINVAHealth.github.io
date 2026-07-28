@@ -376,7 +376,7 @@
           <button class="rl-mode" data-mode="cw">顺时针顺序</button>
           <button class="rl-mode" data-mode="ccw">逆时针顺序</button>
         </div>
-        <div class="rl-hint">清单按「放大后图标的空间位置」环形罗列：默认逆时针（ccw），可切换为顺时针（cw）。绘制路线本身始终为最短路径，与清单顺序解耦。</div>
+        <div class="rl-hint">清单按「最大化尺寸地图（最高缩放）下客户点的真实定位坐标」环形罗列：默认逆时针（ccw），可切换为顺时针（cw）。顺序与当前缩放无关，恒等于放大到最大后图标的排列。绘制路线本身始终为最短路径，与清单顺序解耦。</div>
         <ol id="routeListBody" class="rl-body"></ol>
       </div>
     </section>
@@ -403,6 +403,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607281355"></script>
+  <script defer src="app.js?v=202607281433"></script>
 </body>
 </html>
