@@ -262,6 +262,7 @@
     padding:6px 8px; border-radius:9px; font-size:12px; cursor:pointer; transition:.18s; }
   .rl-mode:hover{ border-color:var(--accent); color:#fff; }
   .rl-mode.active{ background:rgba(56,189,248,.3); border-color:var(--accent); color:#fff; font-weight:700; }
+  .rl-hint{ padding:6px 13px 9px; font-size:11px; color:var(--muted); line-height:1.5; }
   .rl-body{ list-style:none; margin:0; padding:6px 8px 10px; overflow-y:auto; }
   .rl-body::-webkit-scrollbar{ width:7px; }
   .rl-body::-webkit-scrollbar-thumb{ background:rgba(56,189,248,.4); border-radius:4px; }
@@ -372,9 +373,10 @@
           <button id="routeListClose" class="rl-close" title="关闭">×</button>
         </div>
         <div class="rl-modes">
-          <button class="rl-mode active" data-mode="ring">逆时针环形</button>
-          <button class="rl-mode" data-mode="tsp">最短路径</button>
+          <button class="rl-mode" data-mode="cw">顺时针顺序</button>
+          <button class="rl-mode" data-mode="ccw">逆时针顺序</button>
         </div>
+        <div class="rl-hint">默认按「最短路径」顺序罗列；可切换为顺 / 逆时针环形阅读顺序（路线本身始终为最短路径）。</div>
         <ol id="routeListBody" class="rl-body"></ol>
       </div>
     </section>
@@ -401,6 +403,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607281147"></script>
+  <script defer src="app.js?v=202607281213"></script>
 </body>
 </html>
