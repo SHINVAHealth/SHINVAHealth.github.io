@@ -543,7 +543,17 @@ window.addEventListener("unhandledrejection", function(e){
         if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
       };
       // [路线规划清单]：弹出小窗口，按当前路线顺序罗列 起点 → 各客户 → 回到起点
-      if ($('routelist')) $('routelist').onclick = function(){ openRouteList(); };
+      // 修复：清单按钮应「读取并自动开启路线规划」——若路线规划未开，先开启（与 routeplan 同款逻辑）再弹窗，避免清单读到空态
+      if ($('routelist')) $('routelist').onclick = function(){
+        if (!_routeOn){
+          _routeOn = true;
+          const rp = $('routeplan');
+          if (rp){ rp.classList.add('active'); rp.textContent = '关闭路线规划'; }
+          rebuildRoute();   // 重算点集 + 顺序 + 绘制
+          if (_gRoute) _gRoute.style('display', _custVisible ? null : 'none');
+        }
+        openRouteList();
+      };
       if ($('routeListClose')) $('routeListClose').onclick = closeRouteList;
       document.querySelectorAll('.rl-mode').forEach(b => { b.onclick = () => setRouteMode(b.dataset.mode); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && _routeListOpen) closeRouteList(); });
