@@ -224,7 +224,7 @@ window.addEventListener("unhandledrejection", function(e){
   let _selectDepotMode = false;  // 是否正在“选取计划位置”
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
   let _routeOrder = [];         // 闭合访问顺序（_routePts 下标数组；含 depot 时 depot 在顺序中排首位/末位）
-  let _routeMode = 'ccw';       // 路线排序方式：'ccw'=逆时针环形（默认）；'cw'=顺时针环形。已去除最短路径(TSP)方案
+  let _routeMode = 'ring';      // 路线排序方式：'ring'=逆时针环形（默认）；'tsp'=最短闭合路径
   let _routeListOpen = false;   // 路线规划清单弹窗是否打开
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
@@ -542,16 +542,17 @@ window.addEventListener("unhandledrejection", function(e){
         rebuildRoute();   // 重算点集 + 顺序 + 绘制（_gRoute 图层在 rebuildRoute 内自愈，归属当前 zoom 组 g）
         if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
       };
-      // [路线规划清单]：先确保弹窗打开（即使后续重算出错也能看到空态/已生成内容），再开启路线规划并重算
+      // [路线规划清单]：弹出小窗口，按当前路线顺序罗列 起点 → 各客户 → 回到起点
+      // 修复：清单按钮应「读取并自动开启路线规划」——若路线规划未开，先开启（与 routeplan 同款逻辑）再弹窗，避免清单读到空态
       if ($('routelist')) $('routelist').onclick = function(){
         if (!_routeOn){
           _routeOn = true;
           const rp = $('routeplan');
           if (rp){ rp.classList.add('active'); rp.textContent = '关闭路线规划'; }
+          rebuildRoute();   // 重算点集 + 顺序 + 绘制
+          if (_gRoute) _gRoute.style('display', _custVisible ? null : 'none');
         }
-        openRouteList();    // 先弹窗（关键：避免 rebuildRoute 异常导致清单「不弹出」）
-        rebuildRoute();     // 重算点集 + 逆/顺时针顺序 + 绘制路线，并刷新清单
-        if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
+        openRouteList();
       };
       if ($('routeListClose')) $('routeListClose').onclick = closeRouteList;
       document.querySelectorAll('.rl-mode').forEach(b => { b.onclick = () => setRouteMode(b.dataset.mode); });
@@ -1725,9 +1726,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 逆时针环形顺序：以质心为极点，按与质心连线的「屏幕逆时针」角度排序，得到一条不自交的环形闭合路线。
     // 屏幕 y 向下，故 atan2 递减 = 视觉逆时针。depot 固定为下标 0，交由 rebuildRoute 旋转到首位。
-    // 逆/顺时针环形：以客户点（含红旗）的质心为极点，按方位角排序得到一条不自交的简单环状顺序。
-    // dir='ccw' → 方位角递减（视觉逆时针）；dir='cw' → 方位角递增（视觉顺时针）。
-    function ringOrder(coords, dir){
+    function ringOrder(coords){
       const n = coords.length;
       if (n < 3) return coords.map((_, i) => i);
       let cx = 0, cy = 0;
@@ -1737,7 +1736,7 @@ window.addEventListener("unhandledrejection", function(e){
       idx.sort((a, b) => {
         const aa = Math.atan2(coords[a][1] - cy, coords[a][0] - cx);
         const bb = Math.atan2(coords[b][1] - cy, coords[b][0] - cx);
-        return dir === 'cw' ? (aa - bb) : (bb - aa);   // cw 递增=视觉顺时针；ccw 递减=视觉逆时针
+        return bb - aa;   // 递减 → 视觉逆时针
       });
       return idx;
     }
@@ -1784,8 +1783,7 @@ window.addEventListener("unhandledrejection", function(e){
         // 用当前缩放下的 routePos 作为输入，保证 TSP 顺序与当前看到的点位置一致，消除视觉交叉。
         const dispCoords = pts.map(m => routePos(m, kForTsp));
         if (hasDepot) dispCoords.unshift(PROJ(_depot.geo));   // 红旗固定为节点 0
-        // 逆/顺时针环形顺序（已去除最短路径 TSP）：以质心为极点按方位角排序，得到不自交的环状名单
-        const order = ringOrder(dispCoords, _routeMode);
+        const order = (_routeMode === 'tsp') ? tspOrder(dispCoords) : ringOrder(dispCoords);   // 默认逆时针环形；可选最短闭合路径
         // 把红旗旋转到首位，作为视觉上的起点/终点
         if (hasDepot){
           const idx = order.indexOf(0);
