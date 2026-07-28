@@ -508,7 +508,16 @@ window.addEventListener("unhandledrejection", function(e){
         setSelectDepotMode(false);
         if (_routeOn) rebuildRoute();
       }
-      if ($('selectDepot')) $('selectDepot').onclick = function(){ setSelectDepotMode(!_selectDepotMode); };
+      if ($('selectDepot')) $('selectDepot').onclick = function(){
+        // 当前显示「重新选取位置」(已选过点) → 点击先做重置：当前红旗消失，再进入选点模式
+        const reselect = !_selectDepotMode && _depot;
+        if (reselect){
+          _depot = null;            // 重置：清除出发点，红旗消失
+          drawDepotMarker();
+          if (_routeOn) rebuildRoute();   // 路线去掉出发点节点（若开启）
+        }
+        setSelectDepotMode(!_selectDepotMode);
+      };
       if ($('depotOverlay')) $('depotOverlay').onclick = placeDepot;
       // [开启/关闭路线规划]：默认关闭。开启 → 按可见客户点 + 红旗（如有）的实际位置，用虚线连成一条闭合最短路线（TSP）
       $('routeplan').onclick = function(){
@@ -1774,13 +1783,25 @@ window.addEventListener("unhandledrejection", function(e){
       if (!_depot) return;
       const base = PROJ(_depot.geo);
       const outer = _gDepot.append('g').attr('class', 'depot-marker').attr('transform', `translate(${base[0]},${base[1]})`);
-      // —— 小中国国旗（五星红旗）图标：恒定屏幕尺寸，仅随缩放做反缩放 ——
-      const inner = outer.append('g');   // 由 updateDepotMarker 做 scale(1/k)，原点 = 选取点
-      const flag = inner.append('g').attr('transform', 'translate(-9,-12)');  // 旗底中心对准选取点
-      // 旗面 18×12（3:2），红底
-      flag.append('rect').attr('x', 0).attr('y', 0).attr('width', 18).attr('height', 12)
-        .attr('rx', 1.2).attr('fill', '#de2910').attr('stroke', '#fff').attr('stroke-width', 0.8)
-        .attr('vector-effect', 'non-scaling-stroke');
+      // —— 带旗杆的五星红旗（波浪形 ≈，左高右低）：恒定屏幕尺寸，仅随缩放做反缩放 ——
+      const inner = outer.append('g');   // 由 updateDepotMarker 做 scale(1/k)，原点 = 选取点(0,0)
+      // 旗杆：从选取点(0,0)竖直向上，顶端略高于旗面，杆顶一颗小黄珠
+      inner.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -26)
+        .attr('stroke', '#fff').attr('stroke-width', 1.6).attr('vector-effect', 'non-scaling-stroke');
+      inner.append('circle').attr('cx', 0).attr('cy', -26).attr('r', 1.6).attr('fill', '#ffde00');
+      // 波浪形旗面（左高右低，≈ 形）：沿旗宽采样正弦波生成闭合路径
+      const W = 22, H = 14, x0 = 0, yTop0 = -24, tilt = -7, amp = 1.4, humps = 2, N = 20;
+      const flagPoint = (fx, fy) => {
+        const x = x0 + fx * W;                       // fx∈[0,1] 沿旗宽
+        const yBase = yTop0 + fx * tilt;             // 线性左高右低（右端低 tilt）
+        const yWave = Math.sin(fx * Math.PI * 2 * humps) * amp;  // ≈ 形双波起伏
+        return [x, yBase + yWave + fy * H];
+      };
+      let d = '';
+      for (let i = 0; i <= N; i++){ const p = flagPoint(i / N, 0); d += (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ',' + p[1].toFixed(2); }
+      for (let i = N; i >= 0; i--){ const p = flagPoint(i / N, 1); d += 'L' + p[0].toFixed(2) + ',' + p[1].toFixed(2); }
+      d += 'Z';
+      inner.append('path').attr('d', d).attr('fill', '#de2910').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
       // 五角星路径生成器（5 尖，内半径 = R*0.382）
       const starPath = (cx, cy, R, rot) => {
         rot = (rot || 0) * Math.PI / 180; const segs = [];
@@ -1792,15 +1813,17 @@ window.addEventListener("unhandledrejection", function(e){
         }
         return segs.join('') + 'Z';
       };
-      const Lc = [3, 3];                                   // 大星中心（按 30×20 标准网格 ×0.6 缩放）
-      const sc = [[6, 1.2], [7.2, 2.4], [7.2, 4.2], [6, 5.4]];  // 四颗小星中心
-      flag.append('path').attr('d', starPath(Lc[0], Lc[1], 1.8, 0)).attr('fill', '#ffde00');
+      // 中国国旗标准网格 30×20 → fx=gx/30, fy=gy/20；星位置用 flagPoint 贴合波浪面
+      const Lc = [3, 3], sc = [[6, 1.2], [7.2, 2.4], [7.2, 4.2], [6, 5.4]];
+      const big = flagPoint(Lc[0] / 30, Lc[1] / 20);
+      inner.append('path').attr('d', starPath(big[0], big[1], 1.8, 0)).attr('fill', '#ffde00');
       sc.forEach(s => {
+        const p = flagPoint(s[0] / 30, s[1] / 20);
         const ang = Math.atan2(Lc[1] - s[1], Lc[0] - s[0]) * 180 / Math.PI + 90;  // 每颗小星一尖指向大星
-        flag.append('path').attr('d', starPath(s[0], s[1], 0.6, ang)).attr('fill', '#ffde00');
+        inner.append('path').attr('d', starPath(p[0], p[1], 0.6, ang)).attr('fill', '#ffde00');
       });
       // 锚点（精确选取坐标）
-      flag.append('circle').attr('cx', 9).attr('cy', 12).attr('r', 2).attr('fill', '#de2910').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
+      inner.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 2).attr('fill', '#de2910').attr('stroke', '#fff').attr('stroke-width', 0.8).attr('vector-effect', 'non-scaling-stroke');
       _depotInner = inner;
       updateDepotMarker(_curT || d3.zoomIdentity);
     }
