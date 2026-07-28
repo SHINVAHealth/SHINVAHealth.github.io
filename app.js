@@ -1778,7 +1778,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 绘制/更新红旗：作为路线规划的固定出发点与返回点
     function drawDepotMarker(){
-      if (!_gDepot) _gDepot = _gProv.append('g').attr('class', 'depot-layer');
+      if (!_gDepot) _gDepot = _gProv.insert('g', '.cust-layer').attr('class', 'depot-layer');  // 置于客户点层之下，不遮挡客户圆点
       _gDepot.selectAll('*').remove(); _depotInner = null;
       if (!_depot) return;
       const base = PROJ(_depot.geo);
@@ -1790,7 +1790,7 @@ window.addEventListener("unhandledrejection", function(e){
         .attr('stroke', '#fff').attr('stroke-width', 1.6).attr('vector-effect', 'non-scaling-stroke');
       inner.append('circle').attr('cx', 0).attr('cy', -26).attr('r', 1.6).attr('fill', '#ffde00');
       // 波浪形旗面（左高右低，≈ 形）：沿旗宽采样正弦波生成闭合路径
-      const W = 22, H = 14, x0 = 0, yTop0 = -24, tilt = -7, amp = 1.4, humps = 2, N = 20;
+      const W = 22, H = 14, x0 = 0, yTop0 = -24, tilt = -7, amp = 0.9, humps = 2, N = 20;
       const flagPoint = (fx, fy) => {
         const x = x0 + fx * W;                       // fx∈[0,1] 沿旗宽
         const yBase = yTop0 + fx * tilt;             // 线性左高右低（右端低 tilt）
