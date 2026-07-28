@@ -457,13 +457,51 @@ window.addEventListener("unhandledrejection", function(e){
 
       $('zin').onclick = () => { if (_staticLock) return; svg.transition().duration(200).call(zoom.scaleBy, 1.4); };
       $('zout').onclick = () => { if (_staticLock) return; svg.transition().duration(200).call(zoom.scaleBy, 1/1.4); };
+      // 重置一切操作 → 恢复到默认地图初始界面（含解除静态锁图、关闭路线规划/清单/红旗、恢复客户位点与全部客户、清空搜索、二级行政区回到默认）
+      const _showAdm2Init = showAdm2;
       $('zreset').onclick = () => {
-        if (_staticLock) return;
-        svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
-        clearCustomerHighlight();                                       // 重置所有客户黄点 + 行选中
-        _embossRegions.clear(); _hoverRegion = null; renderEmboss();    // 清空选中的行政区域 3D 浮雕
-        reapplyRegionSel(); applyRegionFilter();                        // 区域筛选随之清空 → 右侧客户检索行同步重置为全部
-        _saveT = null;                                                  // 重置地图返回记忆
+        svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);   // 缩放/平移归位（默认全览视图）
+        clearCustomerHighlight();                                              // 清除客户黄点 + 行选中高亮
+        _embossRegions.clear(); _hoverRegion = null; renderEmboss();           // 清空选中行政区域 3D 浮雕
+        reapplyRegionSel();                                                    // 清空一级/二级行政区选中态
+        const cs = $('custSearch'); if (cs) cs.value = '';                     // 清空搜索框
+        applyRegionFilter();                                                   // 区域筛选 + 搜索 → 重置为全部客户
+        if (_hideUnselected){                                                  // 恢复「显示全部客户」
+          _hideUnselected = false;
+          const hu = $('hideunsel'); if (hu){ hu.classList.remove('active'); hu.textContent = '隐藏未选客户'; }
+          applyHideUnselected();
+        }
+        if (_routeListOpen) closeRouteList();                                  // 关闭路线规划清单弹窗
+        if (_routeOn || _depot){                                               // 关闭路线规划 + 清除出发点红旗
+          _routeOn = false;
+          if (_gRoute){ _gRoute.selectAll('*').remove(); _gRoute.style('display', 'none'); }
+          const rp = $('routeplan'); if (rp){ rp.classList.remove('active'); rp.textContent = '开启路线规划'; }
+        }
+        if (_selectDepotMode || _depot){                                       // 退出选点模式 + 清除红旗
+          _selectDepotMode = false;
+          const sd = $('selectDepot'); if (sd){ sd.classList.remove('active'); sd.textContent = '选取计划位置'; }
+          const ov = $('depotOverlay'); if (ov) ov.style.display = 'none';
+          _depot = null; drawDepotMarker();
+        }
+        if (_multiTrack){                                                      // 关闭多点追踪
+          _multiTrack = false;
+          const mt = $('multitrack'); if (mt){ mt.classList.remove('active'); mt.textContent = '开启多点追踪'; }
+        }
+        if (_staticLock){                                                      // 关闭静态锁图（重置包含解除锁定）
+          _staticLock = false;
+          const sl = $('staticlock'); if (sl){ sl.classList.remove('active'); sl.textContent = '开启静态锁图'; }
+          const mapEl = $('map'); if (mapEl) mapEl.classList.remove('static-locked');
+          renderEmboss();
+        }
+        if (!_custVisible){                                                    // 恢复客户位点显示
+          _custVisible = true;
+          const ct = $('custtoggle'); if (ct){ ct.classList.add('active'); ct.textContent = '隐藏客户位点'; }
+          if (_gCust) _gCust.style('display', null);
+        }
+        if (showAdm2 !== _showAdm2Init && $('adm2toggle')){                    // 二级行政区域回到初始默认态
+          $('adm2toggle').click();
+        }
+        _saveT = null;                                                         // 重置地图返回记忆
       };
       $('custtoggle').onclick = function(){
         _custVisible = !_custVisible;
