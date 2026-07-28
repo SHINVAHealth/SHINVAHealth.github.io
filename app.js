@@ -224,7 +224,8 @@ window.addEventListener("unhandledrejection", function(e){
   let _selectDepotMode = false;  // 是否正在“选取计划位置”
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
   let _routeOrder = [];         // 闭合访问顺序（_routePts 下标数组；含 depot 时 depot 在顺序中排首位/末位）
-  let _routeMode = 'ring';      // 路线排序方式：'ring'=逆时针环形（默认）；'tsp'=最短闭合路径
+  let _routeMode = 'tsp';       // 🔴 路线规划铁律：绘制的闭合路线「无论如何都是最短路径」（Closed TSP），不可改为其它顺序
+  let _listMode = 'tsp';        // 清单名单阅读顺序：'tsp'=按最短路径顺序（默认）；'cw'=顺时针环形；'ccw'=逆时针环形（仅重排名单，不改绘制路线）
   let _routeListOpen = false;   // 路线规划清单弹窗是否打开
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
@@ -395,10 +396,10 @@ window.addEventListener("unhandledrejection", function(e){
         // 验证：在指定经纬度直接放置「计划位置」红旗（中国国旗图标），绕开 jsdom 无 SVG 布局无法做地图点击反投影
         placeDepotAt(lng, lat){ _depot = { geo: [lng, lat] }; drawDepotMarker(); return this; },
         // 路线规划清单验证钩子
-        routeMode(){ return _routeMode; },
+        routeMode(){ return _listMode; },
         setRouteMode(m){ setRouteMode(m); return this; },
         openRouteList(){ openRouteList(); return this; },
-        routeInfo(){ return { on:_routeOn, mode:_routeMode, pts:_routePts.length, orderLen:_routeOrder.length, hasDepot:!!_depot }; },
+        routeInfo(){ return { on:_routeOn, mode:_listMode, drawn:_routeMode, pts:_routePts.length, orderLen:_routeOrder.length, hasDepot:!!_depot }; },
         routeCoords(){
           const hasDepot = !!_depot; const k = _curK || 1;
           return _routeOrder.map(idx => {
@@ -1724,9 +1725,9 @@ window.addEventListener("unhandledrejection", function(e){
       if (best) uncross(best, coords);
       return best || candidates[0];
     }
-    // 逆时针环形顺序：以质心为极点，按与质心连线的「屏幕逆时针」角度排序，得到一条不自交的环形闭合路线。
-    // 屏幕 y 向下，故 atan2 递减 = 视觉逆时针。depot 固定为下标 0，交由 rebuildRoute 旋转到首位。
-    function ringOrder(coords){
+    // 顺/逆时针环形顺序：以质心为极点，按与质心连线的方位角排序，得到一条不自交的环形阅读顺序（仅用于清单重排，不影响绘制路线）
+    // 屏幕 y 向下：ccw（逆时针）视觉 = 角度递减；cw（顺时针）视觉 = 角度递增
+    function ringOrder(coords, dir){
       const n = coords.length;
       if (n < 3) return coords.map((_, i) => i);
       let cx = 0, cy = 0;
@@ -1736,7 +1737,7 @@ window.addEventListener("unhandledrejection", function(e){
       idx.sort((a, b) => {
         const aa = Math.atan2(coords[a][1] - cy, coords[a][0] - cx);
         const bb = Math.atan2(coords[b][1] - cy, coords[b][0] - cx);
-        return bb - aa;   // 递减 → 视觉逆时针
+        return dir === 'cw' ? (aa - bb) : (bb - aa);   // cw 递增 / ccw 递减
       });
       return idx;
     }
@@ -1783,7 +1784,7 @@ window.addEventListener("unhandledrejection", function(e){
         // 用当前缩放下的 routePos 作为输入，保证 TSP 顺序与当前看到的点位置一致，消除视觉交叉。
         const dispCoords = pts.map(m => routePos(m, kForTsp));
         if (hasDepot) dispCoords.unshift(PROJ(_depot.geo));   // 红旗固定为节点 0
-        const order = (_routeMode === 'tsp') ? tspOrder(dispCoords) : ringOrder(dispCoords);   // 默认逆时针环形；可选最短闭合路径
+        const order = tspOrder(dispCoords);   // 🔴 铁律：绘制路线永远是「最短闭合路径」（TSP）；清单的顺/逆时针只是名单重排，不改这里
         // 把红旗旋转到首位，作为视觉上的起点/终点
         if (hasDepot){
           const idx = order.indexOf(0);
@@ -1823,17 +1824,35 @@ window.addEventListener("unhandledrejection", function(e){
         .attr('vector-effect', 'non-scaling-stroke')   // 线宽/虚线不随缩放放大，恒定屏幕尺寸
         .style('pointer-events', 'none');
     }
-    // —— 路线规划清单弹窗：按顺序罗列 起点 → 各客户 → 回到起点 ——
+    // —— 路线规划清单弹窗：按「阅读顺序」罗列 起点 → 各客户 → 回到起点 ——
+    // 清单名单阅读顺序（仅重排显示，不改变绘制路线）：
+    //  'tsp' → 与绘制路线一致的最短路径顺序；'cw'/'ccw' → 以客户点当前显示坐标质心为极点的方位角环形顺序
+    function listCustomerOrder(){
+      const P = _routePts.length;
+      if (P === 0) return [];
+      const hasDepot = !!_depot;
+      if (_listMode === 'tsp'){
+        const cust = [];
+        _routeOrder.forEach(idx => {
+          if (hasDepot && idx === 0) return;        // 跳过 depot 占位（始终在 _routeOrder[0]）
+          cust.push(hasDepot ? idx - 1 : idx);       // 映射回 _routePts 下标
+        });
+        return cust;
+      }
+      const disp = _routePts.map(m => routePos(m, _curK || 1));
+      return ringOrder(disp, _listMode);
+    }
     function routeListSeq(){
       const hasDepot = !!_depot;
+      const order = listCustomerOrder();   // 客户在 _routePts 中的下标数组
       const seq = [];
       if (hasDepot){
         seq.push({ role: 'start' });
-        _routeOrder.forEach((idx, i) => seq.push({ role: 'cust', oi: idx, n: i + 1 }));
+        order.forEach((ci, i) => seq.push({ role: 'cust', ci, n: i + 1 }));
         seq.push({ role: 'end' });
       } else {
-        _routeOrder.forEach((idx, i) => seq.push({ role: 'cust', oi: idx, n: i + 1, isStart: i === 0 }));
-        seq.push({ role: 'loop', firstIdx: _routeOrder[0] });
+        order.forEach((ci, i) => seq.push({ role: 'cust', ci, n: i + 1, isStart: i === 0 }));
+        if (order.length) seq.push({ role: 'loop', firstCi: order[0] });
       }
       return seq;
     }
@@ -1857,14 +1876,14 @@ window.addEventListener("unhandledrejection", function(e){
           return `<li class="rl-row rl-end"><span class="rl-badge">回</span><span class="rl-main"><span class="rl-name">回到计划位置（终点）</span><span class="rl-sub">闭合回路终点，与起点重合</span></span></li>`;
         }
         if (it.role === 'loop'){
-          const fr = _routePts[it.firstIdx] && _routePts[it.firstIdx].rec;
+          const fr = _routePts[it.firstCi] && _routePts[it.firstCi].rec;
           return `<li class="rl-row rl-end"><span class="rl-badge">↺</span><span class="rl-main"><span class="rl-name">回到起点（${esc(fr ? (fr.company || '客户') : '客户')}）</span><span class="rl-sub">闭合回路，回到第 1 站</span></span></li>`;
         }
-        const m = _routePts[hasDepot ? it.oi - 1 : it.oi];
+        const m = _routePts[it.ci];
         const r = m.rec;
         const region = r.__adm2 ? r.__adm2 : (r.__adm1 || '');
         const sub = [r.name, region].filter(Boolean).join(' · ');
-        return `<li class="rl-row ${it.isStart ? 'rl-start' : ''}"><span class="rl-idx">${it.n}</span><span class="rl-main"><span class="rl-name">${esc(r.company || '未命名客户')}</span>${sub ? `<span class="rl-sub">${esc(sub)}</span>` : ''}</span></li>`;
+        return `<li class="rl-row ${it.isStart ? 'rl-start' : ''}" data-ci="${it.ci}"><span class="rl-idx">${it.n}</span><span class="rl-main"><span class="rl-name">${esc(r.company || '未命名客户')}</span>${sub ? `<span class="rl-sub">${esc(sub)}</span>` : ''}</span></li>`;
       });
       body.innerHTML = rows.join('');
     }
@@ -1872,7 +1891,7 @@ window.addEventListener("unhandledrejection", function(e){
       const panel = $('routeListPanel'); if (!panel) return;
       _routeListOpen = true;
       panel.style.display = 'flex';
-      document.querySelectorAll('.rl-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === _routeMode));
+      document.querySelectorAll('.rl-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === _listMode));
       renderRouteList();
     }
     function closeRouteList(){
@@ -1880,11 +1899,12 @@ window.addEventListener("unhandledrejection", function(e){
       _routeListOpen = false;
       panel.style.display = 'none';
     }
+    // 切换清单名单阅读顺序（tsp/cw/ccw）：仅重排名单显示，不改变「绘制路线永远是最短路径」这一铁律
     function setRouteMode(mode){
-      if (_routeMode === mode) return;
-      _routeMode = mode;
-      document.querySelectorAll('.rl-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-      rebuildRoute();   // 重新按新模式算顺序 + 绘制 + 重绘清单
+      if (!['tsp','cw','ccw'].includes(mode)) return;
+      _listMode = (_listMode === mode) ? 'tsp' : mode;   // 再点已选项 → 回到默认(最短路径顺序)
+      document.querySelectorAll('.rl-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === _listMode));
+      if (_routeListOpen) renderRouteList();             // 只重绘名单，不重算/重绘路线（路线保持最短路径）
     }
     // 绘制/更新红旗：作为路线规划的固定出发点与返回点
     function drawDepotMarker(){
