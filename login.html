@@ -26,6 +26,10 @@
   .login-card .login-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:20px;height:20px;line-height:18px;text-align:center;border:none;border-radius:50%;padding:0;background:#e2e8f0;color:#64748b;font-size:15px;cursor:pointer;transition:.15s;display:none;}
   .login-card .login-clear:not([hidden]){display:block;}
   .login-card .login-clear:hover{background:#cbd5e1;color:#0f172a;}
+  /* 密码框：右侧同时容纳 显示密码眼睛(右34px) 与 清除×按钮(右8px)，故加宽右内边距 */
+  .login-card #p{padding-right:58px;}
+  .login-card .login-eye{position:absolute;right:34px;top:50%;transform:translateY(-50%);width:22px;height:22px;line-height:20px;text-align:center;border:none;border-radius:50%;padding:0;background:transparent;color:#64748b;font-size:15px;cursor:pointer;transition:.15s;}
+  .login-card .login-eye:hover{color:#0f172a;}
   .login-card button.submit{width:100%;margin-top:18px;padding:11px;border:none;border-radius:9px;background:#0d9488;color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
   .login-card button.submit:hover{background:#0f766e;}
   .login-err{color:#dc2626;font-size:12.5px;margin-top:10px;min-height:16px;text-align:center;}
@@ -56,6 +60,7 @@
     <div class="field">
       <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
       <button type="button" class="login-clear" data-target="p" aria-label="清除密码" title="清除" hidden>×</button>
+      <button type="button" class="login-eye" id="togglePwd" aria-label="显示密码" title="显示密码">👁️</button>
     </div>
     <button type="submit" class="submit">登 录</button>
     <div class="login-err" id="err"></div>
@@ -101,6 +106,18 @@
   }
   wireClear('u');
   wireClear('p');
+  // 密码显示/隐藏：点击眼睛在 password ↔ text 间切换（👁️=隐藏态可点显示，🙈=已显示可点隐藏）
+  var pwd=document.getElementById('p');
+  var eye=document.getElementById('togglePwd');
+  if(pwd&&eye){
+    eye.addEventListener('click',function(){
+      var show = pwd.type==='password';
+      pwd.type = show ? 'text' : 'password';
+      eye.textContent = show ? '🙈' : '👁️';
+      eye.setAttribute('aria-label', show?'隐藏密码':'显示密码');
+      eye.setAttribute('title', show?'隐藏密码':'显示密码');
+    });
+  }
 </script>
 </body>
 </html>
