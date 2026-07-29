@@ -6,9 +6,6 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script data-xh-night>
-  (function(){ try{ if(localStorage.getItem('xh_night')==='1'){ document.documentElement.className += ' night'; } }catch(e){} })();
-</script>
 <title>新华健康外贸客户管理系统 - 登录</title>
 <style>
   *{box-sizing:border-box;}
@@ -41,22 +38,6 @@
   /* 底部免责声明（与 index.html 登录遮罩一致） */
   .corner-note{position:fixed;left:0;right:0;bottom:14px;padding:0 14px;text-align:center;font-size:12px;line-height:1.4;color:#fff;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.65);z-index:10000;pointer-events:none;}
   @media (max-width:600px){ .corner-note{white-space:normal;max-width:94%;margin:0 auto;font-size:10.5px;line-height:1.5;bottom:12px;} }
-  /* ===== 夜间模式：黑色单色护眼 ===== */
-  html.night body, html.night .login-mask{ background:#000 !important; }
-  html.night .login-mask .bg{ opacity:.18; filter:brightness(.55); }
-  html.night .login-card{ background:rgba(18,18,18,.96); box-shadow:0 24px 60px rgba(0,0,0,.6); }
-  html.night .login-card .title{ color:#e5e5e5; }
-  html.night .login-card label{ color:#cbd5e1; }
-  html.night .login-card input{ background:#0c0c0c; border-color:#333; color:#e5e5e5; }
-  html.night .login-card input:focus{ border-color:var(--brand,#0d9488); box-shadow:0 0 0 3px rgba(13,148,136,.2); }
-  html.night .login-card .login-clear{ background:#1f2937; color:#94a3b8; }
-  html.night .login-card .login-clear:hover{ background:#334155; color:#e2e8f0; }
-  html.night .login-card .sysname{ color:#94a3b8; }
-  html.night .login-err{ color:#f87171; }
-  html.night .corner-note{ color:#cbd5e1; }
-  /* 浮动夜间切换按钮（全站可用） */
-  #nightFloat{ position:fixed; top:14px; right:14px; z-index:2147483647; width:44px; height:44px; border-radius:50%; border:1px solid #333; background:rgba(20,20,20,.85); color:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.5); backdrop-filter:blur(6px); transition:transform .2s; }
-  #nightFloat:hover{ transform:scale(1.08); }
   /* 主题化光标 */
   html,body{cursor:default;}
   a,button,label,.corner-note{cursor:pointer;}
@@ -141,21 +122,6 @@
       eye.setAttribute('title', show?'隐藏密码':'显示密码');
     });
   }
-</script>
-<script data-xh-night-float>
-  (function(){
-    var KEY='xh_night';
-    function apply(on){ document.documentElement.classList.toggle('night', !!on); }
-    apply(localStorage.getItem(KEY)==='1');
-    function mk(){
-      if(document.getElementById('nightFloat')) return;
-      var b=document.createElement('button'); b.id='nightFloat'; b.title='夜间模式（护眼）';
-      b.textContent = (localStorage.getItem(KEY)==='1') ? '☀️' : '🌙';
-      b.onclick=function(){ var on=localStorage.getItem(KEY)!=='1'; localStorage.setItem(KEY, on?'1':'0'); apply(on); b.textContent = on?'☀️':'🌙'; };
-      document.body.appendChild(b);
-    }
-    if(document.readyState!=='loading') mk(); else document.addEventListener('DOMContentLoaded', mk);
-  })();
 </script>
 </body>
 </html>
