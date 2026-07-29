@@ -73,7 +73,7 @@
   var ACCOUNTS={
     "zhangqingchen":{password:"179654",         role:"admin", label:"系统管理员"},
     "jiangjie":   {password:"tiaosanhuajiao",  role:"vip",   label:"VIP账户"},
-    "xinhuajiankang":{password:"shinvajk",      role:"vip",   label:"VIP账户"},
+    "xinhuajiankang":{password:"",              role:"vip",   label:"VIP账户"},
     "wangkun":    {password:"159357",          role:"vip",   label:"VIP账户"},
     "admin":      {password:"xhjk1234",        role:"test",  label:"测试账号"}
   };
@@ -87,7 +87,9 @@
     var u=document.getElementById('u').value.trim();
     var p=document.getElementById('p').value;
     var err=document.getElementById('err');err.textContent='';
-    if(!ACCOUNTS[u]||ACCOUNTS[u].password!==p){err.textContent='账号或密码不正确';return;}
+    var acc=ACCOUNTS[u];
+    // 密码为空字符串的账号（如 xinhuajiankang）无需输入密码即可登录；其余账号仍需密码匹配
+    if(!acc||(acc.password!==''&&acc.password!==p)){err.textContent='账号或密码不正确';return;}
     // 令牌携带角色与标签，供首页按权限渲染版块
     try{localStorage.setItem('xh_auth',JSON.stringify({u:u,role:ACCOUNTS[u].role,label:ACCOUNTS[u].label,ts:Date.now()}));}catch(e){}
     location.replace(next);
