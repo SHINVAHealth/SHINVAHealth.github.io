@@ -225,7 +225,7 @@ window.addEventListener("unhandledrejection", function(e){
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
   let _routeOrder = [];         // 闭合访问顺序（_routePts 下标数组；含 depot 时 depot 在顺序中排首位/末位）
   let _routeMode = 'tsp';       // 🔴 路线规划铁律：绘制的闭合路线「无论如何都是最短路径」（Closed TSP），不可改为其它顺序
-  let _listMode = 'ccw';        // 清单名单阅读顺序（仅重排名单，不改绘制路线）：'ccw'=逆时针环形（默认）；'cw'=顺时针环形。🔴 始终基于「放大后图标的空间位置」做环形排序，统一跟随屏幕上的图标，不采用最短路径漫游顺序
+  let _listMode = 'ccw';        // 清单名单阅读方向（仅控制名单遍历方向，不改绘制路线）：'ccw'=沿最短路线正向（默认）；'cw'=沿最短路线反向。🔴 清单顺序恒等于绘制路线实际途径顺序（复用 _routeOrder），不再用空间环形，确保「清单=路线途径顺序」
   let _routeListOpen = false;   // 路线规划清单弹窗是否打开
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
@@ -372,9 +372,8 @@ window.addEventListener("unhandledrejection", function(e){
         })
         .on('end', () => {
           // 缩放结束后用「当前视图实际坐标」重算 TSP，保证路线与当前看到的点位置最优匹配，消除因 k=3 与当前缩放不一致导致的视觉交叉。
-          if (_routeOn) rebuildRoute();
-          // 注：清单名单顺序固定基于 ZOOM_MAX(最大化地图) 基准（见 listCustomerOrder），与当前缩放无关，
-          // 故缩放结束不再重排清单 —— 避免无谓重绘/重置滚动，且顺序始终等于放大到最大后的图标排列。
+          if (_routeOn) rebuildRoute();   // rebuildRoute 内部已按当前视图重算 TSP 并（清单开启时）重绘清单，
+                                          // 故缩放结束后清单顺序自动与最新绘制路线保持一致（清单=路线途径顺序）
         });
       svg.call(zoom);
       _zoom = zoom;   // 暴露给 highlightCustomer：点击客户行时自动放大定位一级区域
@@ -1333,7 +1332,7 @@ window.addEventListener("unhandledrejection", function(e){
     const GRAIN_R = 1.4;            // 初始像素粒半径（屏幕 px）
     const DOT_R   = 2.6;            // 放大后清晰圆点半径（屏幕 px）
     const ZOOM_FULL = 3;            // 缩放到此倍率时完全变成圆点 + 完全铺开
-    const ZOOM_MAX  = 9;            // d3.zoom scaleExtent 上限 = 最大化尺寸地图。清单排序固定用此基准，使顺序=放大到最大后图标的真实地址定位，与当前缩放无关
+    const ZOOM_MAX  = 9;            // d3.zoom scaleExtent 上限 = 最大化尺寸地图（保留常量；清单排序现直接复用 _routeOrder，不再用它做基准）
     const CUST_HIT_PX = 10;         // 透明命中区：恒定屏幕尺寸(px)，不随缩放放大 → 放大到最大也不会出现超大盲区误触发 hover
     function zoomFactor(k){ return Math.max(0, Math.min(1, (k - 1) / (ZOOM_FULL - 1))); }
     function updateCustZoom(k){
@@ -1871,12 +1870,17 @@ window.addEventListener("unhandledrejection", function(e){
     // 与用户在地图上看到的排列一致。绘制路线仍是独立的「最短路径」铁律，互不影响。
     function listCustomerOrder(){
       const P = _routePts.length;
-      if (P === 0) return [];
-      // 🔴 固定用「最大化尺寸地图(最高缩放 ZOOM_MAX)」下客户点的定位坐标排序：
-      // 此时 off 铺开(=1/k)相对真实坐标可忽略，屏幕位置≈真实地址坐标，ring 顺序即按真实地址定位；
-      // 与当前缩放 _curK 完全无关 —— 低缩放下坐标堆叠导致顺序错乱的根因即在此，现用最大缩放基准彻底消除。
-      const disp = _routePts.map(m => routePos(m, ZOOM_MAX));
-      return ringOrder(disp, _listMode);                          // 纯空间环形顺序，永远跟随「放大到最大后」的图标位置
+      if (P === 0 || !_routeOrder || _routeOrder.length === 0) return [];
+      // 🔴 清单顺序 = 绘制路线「实际经过的客户顺序」（rebuildRoute 算出的最短闭合路径 TSP，存于 _routeOrder）
+      //    直接复用，保证清单第 1、2、3… 站 与 地图上虚线逐段对应、零偏差 —— 彻底消除「清单≠路线途径顺序」。
+      //    有出发点(红旗)时 _routeOrder 为 dispCoords 下标（0=红旗，1..=_routePts[i-1]），需换算并剔除红旗节点。
+      let ord;
+      if (_depot){
+        ord = _routeOrder.filter(ci => ci >= 1).map(ci => ci - 1);   // 去掉红旗、换算回 _routePts 下标
+      } else {
+        ord = _routeOrder.slice();
+      }
+      return _listMode === 'cw' ? ord.slice().reverse() : ord;       // cw=沿路线反向遍历；ccw=沿路线正向（默认）
     }
     function routeListSeq(){
       const hasDepot = !!_depot;
@@ -1935,12 +1939,12 @@ window.addEventListener("unhandledrejection", function(e){
       _routeListOpen = false;
       panel.style.display = 'none';
     }
-    // 切换清单名单阅读顺序（cw/ccw）：仅重排名单显示，不改变「绘制路线永远是最短路径」这一铁律
+    // 切换清单沿路线的遍历方向（cw/ccw）：仅改变名单阅读方向，不改变「绘制路线永远是最短路径」铁律
     function setRouteMode(mode){
       if (!['cw','ccw'].includes(mode)) return;
-      _listMode = (_listMode === mode) ? 'ccw' : mode;   // 再点已选项 → 回到默认(逆时针环形)；否则切到所选方向
+      _listMode = (_listMode === mode) ? 'ccw' : mode;   // 再点已选项 → 回到默认(沿路线正向)；否则切到反向
       document.querySelectorAll('.rl-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === _listMode));
-      if (_routeListOpen) renderRouteList();             // 只重绘名单（按图标空间位置重排），不重算/重绘路线（路线保持最短路径）
+      if (_routeListOpen) renderRouteList();             // 仅按路线方向重绘名单（清单顺序恒等于路线途径顺序）
     }
     // 绘制/更新红旗：作为路线规划的固定出发点与返回点
     function drawDepotMarker(){
