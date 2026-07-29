@@ -6,9 +6,6 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script data-xh-night>
-  (function(){ try{ if(localStorage.getItem('xh_night')==='1'){ document.documentElement.className += ' night'; } }catch(e){} })();
-</script>
 <title>新华健康外贸客户管理系统 - 登录</title>
 <style>
   *{box-sizing:border-box;}
@@ -24,15 +21,6 @@
   .login-card label{display:block;font-size:12px;color:#475569;font-weight:600;margin:12px 0 5px;}
   .login-card input{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;box-sizing:border-box;}
   .login-card input:focus{outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.15);}
-  .login-card .field{position:relative;}
-  .login-card .field input{padding-right:34px;}
-  .login-card .login-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:20px;height:20px;line-height:18px;text-align:center;border:none;border-radius:50%;padding:0;background:#e2e8f0;color:#64748b;font-size:15px;cursor:pointer;transition:.15s;display:none;}
-  .login-card .login-clear:not([hidden]){display:block;}
-  .login-card .login-clear:hover{background:#cbd5e1;color:#0f172a;}
-  /* 密码框：右侧同时容纳 显示密码眼睛(右34px) 与 清除×按钮(右8px)，故加宽右内边距 */
-  .login-card #p{padding-right:58px;}
-  .login-card .login-eye{position:absolute;right:34px;top:50%;transform:translateY(-50%);width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;padding:0;background:transparent;color:#64748b;cursor:pointer;transition:.15s;}
-  .login-card .login-eye:hover{color:#0f172a;}
   .login-card button.submit{width:100%;margin-top:18px;padding:11px;border:none;border-radius:9px;background:#0d9488;color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
   .login-card button.submit:hover{background:#0f766e;}
   .login-err{color:#dc2626;font-size:12.5px;margin-top:10px;min-height:16px;text-align:center;}
@@ -41,22 +29,6 @@
   /* 底部免责声明（与 index.html 登录遮罩一致） */
   .corner-note{position:fixed;left:0;right:0;bottom:14px;padding:0 14px;text-align:center;font-size:12px;line-height:1.4;color:#fff;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.65);z-index:10000;pointer-events:none;}
   @media (max-width:600px){ .corner-note{white-space:normal;max-width:94%;margin:0 auto;font-size:10.5px;line-height:1.5;bottom:12px;} }
-  /* ===== 夜间模式：黑色单色护眼 ===== */
-  html.night body, html.night .login-mask{ background:#000 !important; }
-  html.night .login-mask .bg{ opacity:.18; filter:brightness(.55); }
-  html.night .login-card{ background:rgba(18,18,18,.96); box-shadow:0 24px 60px rgba(0,0,0,.6); }
-  html.night .login-card .title{ color:#e5e5e5; }
-  html.night .login-card label{ color:#cbd5e1; }
-  html.night .login-card input{ background:#0c0c0c; border-color:#333; color:#e5e5e5; }
-  html.night .login-card input:focus{ border-color:var(--brand,#0d9488); box-shadow:0 0 0 3px rgba(13,148,136,.2); }
-  html.night .login-card .login-clear{ background:#1f2937; color:#94a3b8; }
-  html.night .login-card .login-clear:hover{ background:#334155; color:#e2e8f0; }
-  html.night .login-card .sysname{ color:#94a3b8; }
-  html.night .login-err{ color:#f87171; }
-  html.night .corner-note{ color:#cbd5e1; }
-  /* 浮动夜间切换按钮（全站可用） */
-  #nightFloat{ position:fixed; top:14px; right:14px; z-index:2147483647; width:44px; height:44px; border-radius:50%; border:1px solid #333; background:rgba(20,20,20,.85); color:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.5); backdrop-filter:blur(6px); transition:transform .2s; }
-  #nightFloat:hover{ transform:scale(1.08); }
   /* 主题化光标 */
   html,body{cursor:default;}
   a,button,label,.corner-note{cursor:pointer;}
@@ -69,21 +41,14 @@
   <div class="bg-overlay"></div>
   <form class="login-card" id="f" autocomplete="off">
     <img class="logo" src="/shinva_logo.png" alt="新华健康">
-    <div class="title">外贸客户管理系统</div>
+    <div class="title">资料查阅系统</div>
     <label for="u">账号</label>
-    <div class="field">
-      <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
-      <button type="button" class="login-clear" data-target="u" aria-label="清除账号" title="清除" hidden>×</button>
-    </div>
+    <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
     <label for="p">密码</label>
-    <div class="field">
-      <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
-      <button type="button" class="login-clear" data-target="p" aria-label="清除密码" title="清除" hidden>×</button>
-      <button type="button" class="login-eye" id="togglePwd" aria-label="显示密码" title="显示密码"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
-    </div>
+    <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
     <button type="submit" class="submit">登 录</button>
     <div class="login-err" id="err"></div>
-    <div class="sysname">新华健康产业有限公司</div>
+    <div class="sysname">新华健康外贸客户管理系统</div>
   </form>
   <div class="corner-note">本系统仅为辅助工具，不属于公司官方平台，页面背景、Logo仅临时使用，公司拥有全部修改、调整权限，如有优化意见可随时沟通联系13011609352</div>
 </div>
@@ -92,7 +57,7 @@
   var ACCOUNTS={
     "zhangqingchen":{password:"179654",         role:"admin", label:"系统管理员"},
     "jiangjie":   {password:"tiaosanhuajiao",  role:"vip",   label:"VIP账户"},
-    "xinhuajiankang":{password:"",              role:"vip",   label:"VIP账户"},
+    "xinhuajiankang":{password:"shinvajk",      role:"vip",   label:"VIP账户"},
     "wangkun":    {password:"159357",          role:"vip",   label:"VIP账户"},
     "admin":      {password:"xhjk1234",        role:"test",  label:"测试账号"}
   };
@@ -106,56 +71,11 @@
     var u=document.getElementById('u').value.trim();
     var p=document.getElementById('p').value;
     var err=document.getElementById('err');err.textContent='';
-    var acc=ACCOUNTS[u];
-    // 密码为空字符串的账号（如 xinhuajiankang）无需输入密码即可登录；其余账号仍需密码匹配
-    if(!acc||(acc.password!==''&&acc.password!==p)){err.textContent='账号或密码不正确';return;}
+    if(!ACCOUNTS[u]||ACCOUNTS[u].password!==p){err.textContent='账号或密码不正确';return;}
     // 令牌携带角色与标签，供首页按权限渲染版块
     try{localStorage.setItem('xh_auth',JSON.stringify({u:u,role:ACCOUNTS[u].role,label:ACCOUNTS[u].label,ts:Date.now()}));}catch(e){}
     location.replace(next);
   });
-  // 账号/密码输入栏右侧清除按钮：有内容时显示，点击或按 Esc 清空（参照世界地图搜索栏）
-  function wireClear(inputId){
-    var input=document.getElementById(inputId);
-    var btn=document.querySelector('.login-clear[data-target="'+inputId+'"]');
-    if(!input||!btn) return;
-    function sync(){ btn.hidden = !input.value; }
-    function clearVal(){ input.value=''; sync(); input.focus(); }
-    input.addEventListener('input', sync);
-    btn.addEventListener('click', clearVal);
-    input.addEventListener('keydown', function(e){ if(e.key==='Escape') clearVal(); });
-    sync();
-  }
-  wireClear('u');
-  wireClear('p');
-  // 密码显示/隐藏：点击眼睛在 password ↔ text 间切换（SVG 线性图标，最常见的 Feather/Lucide 眼睛符号）
-  var pwd=document.getElementById('p');
-  var eye=document.getElementById('togglePwd');
-  if(pwd&&eye){
-    var EYE_OPEN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
-    var EYE_OFF='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-    eye.addEventListener('click',function(){
-      var show = pwd.type==='password';
-      pwd.type = show ? 'text' : 'password';
-      eye.innerHTML = show ? EYE_OFF : EYE_OPEN;
-      eye.setAttribute('aria-label', show?'隐藏密码':'显示密码');
-      eye.setAttribute('title', show?'隐藏密码':'显示密码');
-    });
-  }
-</script>
-<script data-xh-night-float>
-  (function(){
-    var KEY='xh_night';
-    function apply(on){ document.documentElement.classList.toggle('night', !!on); }
-    apply(localStorage.getItem(KEY)==='1');
-    function mk(){
-      if(document.getElementById('nightFloat')) return;
-      var b=document.createElement('button'); b.id='nightFloat'; b.title='夜间模式（护眼）';
-      b.textContent = (localStorage.getItem(KEY)==='1') ? '☀️' : '🌙';
-      b.onclick=function(){ var on=localStorage.getItem(KEY)!=='1'; localStorage.setItem(KEY, on?'1':'0'); apply(on); b.textContent = on?'☀️':'🌙'; };
-      document.body.appendChild(b);
-    }
-    if(document.readyState!=='loading') mk(); else document.addEventListener('DOMContentLoaded', mk);
-  })();
 </script>
 </body>
 </html>
