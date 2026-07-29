@@ -10,43 +10,48 @@
 <style>
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;}
-  body{font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;position:relative;overflow:auto;background:#0f172a;}
-  /* 背景图 + 暗化层（与首页登录遮罩一致） */
-  .bg{position:fixed;inset:0;background:#0f172a url('bg.jpg') center center / cover no-repeat;opacity:.5;transform:scale(1.08);z-index:0;}
-  .bg-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1;}
-  /* 登录卡片 */
-  .card{position:relative;z-index:2;margin:auto;background:rgba(255,255,255,.97);border-radius:16px;padding:30px 28px;width:360px;max-width:100%;box-shadow:0 24px 60px rgba(15,23,42,.45);backdrop-filter:blur(4px);}
-  .card .logo{display:block;margin:0 auto 14px;max-height:52px;max-width:240px;width:auto;height:auto;}
-  .card .title{text-align:center;font-size:19px;font-weight:700;color:#0f172a;letter-spacing:1px;margin:0 0 4px;}
-  .card .sub{text-align:center;font-size:12px;color:#64748b;margin:0 0 18px;}
-  .card label{display:block;font-size:12px;color:#475569;font-weight:600;margin:12px 0 5px;}
-  .card input{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;}
-  .card input:focus{outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.15);}
-  .card button{width:100%;margin-top:18px;padding:11px;border:none;border-radius:9px;background:#0d9488;color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
-  .card button:hover{background:#0f766e;}
-  .err{color:#dc2626;font-size:12.5px;margin-top:10px;min-height:16px;text-align:center;}
-  .hint{font-size:11px;color:#64748b;margin-top:14px;text-align:center;}
+  body{font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;background:#0f172a;}
+  /* 登录遮罩：flex 容器 + 卡片 margin:auto → 窗口水平垂直居中（与 index.html 登录遮罩一致） */
+  .login-mask{position:fixed;inset:0;z-index:9999;display:flex;background:#0f172a;padding:20px;overflow:auto;}
+  .login-mask .bg{position:absolute;inset:0;background:#0f172a url('/bg.jpg') center center / cover no-repeat;opacity:.5;transform:scale(1.12);z-index:0;}
+  .login-mask .bg-overlay{position:absolute;inset:0;background:rgba(15,23,42,.38);z-index:1;}
+  .login-card{position:relative;z-index:2;margin:auto;background:rgba(255,255,255,.96);border-radius:16px;padding:30px 28px;width:360px;max-width:100%;box-shadow:0 24px 60px rgba(15,23,42,.35);}
+  .login-card .logo{display:block;margin:0 auto 16px;max-height:50px;max-width:240px;width:auto;height:auto;}
+  .login-card .title{text-align:center;font-size:19px;font-weight:700;color:#0f172a;letter-spacing:1px;margin:0 0 16px;}
+  .login-card label{display:block;font-size:12px;color:#475569;font-weight:600;margin:12px 0 5px;}
+  .login-card input{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;box-sizing:border-box;}
+  .login-card input:focus{outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.15);}
+  .login-card button.submit{width:100%;margin-top:18px;padding:11px;border:none;border-radius:9px;background:#0d9488;color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
+  .login-card button.submit:hover{background:#0f766e;}
+  .login-err{color:#dc2626;font-size:12.5px;margin-top:10px;min-height:16px;text-align:center;}
+  /* 系统名置于登录按钮下方 */
+  .sysname{text-align:center;font-size:13px;color:#475569;font-weight:600;margin-top:16px;letter-spacing:.5px;}
+  /* 底部免责声明（与 index.html 登录遮罩一致） */
+  .corner-note{position:fixed;left:0;right:0;bottom:14px;padding:0 14px;text-align:center;font-size:12px;line-height:1.4;color:#fff;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.65);z-index:10000;pointer-events:none;}
+  @media (max-width:600px){ .corner-note{white-space:normal;max-width:94%;margin:0 auto;font-size:10.5px;line-height:1.5;bottom:12px;} }
   /* 主题化光标 */
   html,body{cursor:default;}
-  a,button,label,.hint{cursor:pointer;}
+  a,button,label,.corner-note{cursor:pointer;}
   input{cursor:text;}
 </style>
 </head>
 <body>
-<div class="bg"></div>
-<div class="bg-overlay"></div>
-<form class="card" id="f" autocomplete="off">
-  <img class="logo" src="shinva_logo.png" alt="新华健康">
-  <div class="title">资料查阅系统</div>
-  <div class="sub">新华健康外贸客户管理系统</div>
-  <label for="u">账号</label>
-  <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
-  <label for="p">密码</label>
-  <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
-  <button type="submit">登 录</button>
-  <div class="err" id="err"></div>
-  <div class="hint">请输入账号密码登录</div>
-</form>
+<div class="login-mask">
+  <div class="bg"></div>
+  <div class="bg-overlay"></div>
+  <form class="login-card" id="f" autocomplete="off">
+    <img class="logo" src="/shinva_logo.png" alt="新华健康">
+    <div class="title">资料查阅系统</div>
+    <label for="u">账号</label>
+    <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
+    <label for="p">密码</label>
+    <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
+    <button type="submit" class="submit">登 录</button>
+    <div class="login-err" id="err"></div>
+    <div class="sysname">新华健康外贸客户管理系统</div>
+  </form>
+  <div class="corner-note">本系统仅为辅助工具，不属于公司官方平台，页面背景、Logo仅临时使用，公司拥有全部修改、调整权限，如有优化意见可随时沟通联系13011609352</div>
+</div>
 <script>
   // 账户与角色：admin=系统管理员 / vip=VIP账户 / test=测试账号（无业务权限，仅公共版块）
   var ACCOUNTS={
