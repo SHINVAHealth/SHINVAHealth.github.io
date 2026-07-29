@@ -11,9 +11,6 @@
   location.replace(prefix+'login.html?next='+encodeURIComponent(next));
 })();
 </script>
-<script data-xh-night>
-  (function(){ try{ if(localStorage.getItem('xh_night')==='1'){ document.documentElement.className += ' night'; } }catch(e){} })();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -126,39 +123,6 @@
   .modal-frame{ flex:1; border:none; width:100%; }
   .empty{ color:var(--muted); font-size:13px; padding:20px; text-align:center; }
   @media (max-width:560px){ header.hero{ padding:58px 18px 50px; } header.hero .brand-block{ top:12px; left:12px; } header.hero .brand-logo{ max-height:32px; max-width:130px; } header.hero h1{ font-size:20px; padding-left:0; text-align:center; } .grid{ grid-template-columns:1fr; } .modal-box{ width:100vw; height:100vh; border-radius:0; } .modal-mask{ padding:0; } }
-  /* ===== 夜间模式：黑色单色护眼底色（全局持久化） ===== */
-  .btn-night{ background:#0f172a; color:#fff; display:inline-flex; align-items:center; gap:6px; }
-  .btn-night:hover{ background:#1e293b; }
-  html.night{ --bg:#000; --panel:#0c0c0c; --text:#d6d6d6; --muted:#8b8b8b; --line:#1f1f1f; --brand:#2dd4bf; }
-  html.night body{ background:#000; color:#d6d6d6; }
-  html.night header.hero{ background:#000 !important; }
-  html.night header.hero::before, html.night header.hero::after{ background:transparent !important; }
-  html.night nav.topbar{ background:rgba(16,16,16,.92); border-color:#262626; }
-  html.night .card{ background:#0c0c0c; border-color:#242424; color:#d6d6d6; }
-  html.night .card .sub{ color:#8b8b8b; }
-  html.night .card:hover{ box-shadow:0 8px 20px rgba(0,0,0,.6); border-color:#3a3a3a; }
-  html.night .cat-head .cnt{ background:#0c0c0c; border-color:#2a2a2a; color:#9a9a9a; }
-  html.night .cust-region-h{ color:#8b8b8b; }
-  html.night .tool-btn{ background:linear-gradient(135deg,#1e293b,#0f172a); color:#e2e8f0; box-shadow:0 6px 18px rgba(0,0,0,.5); }
-  html.night .tool-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 26px rgba(0,0,0,.6); }
-  html.night .card.hot{ background:#0c0c0c; border-color:#3a3a3a; box-shadow:0 4px 14px rgba(0,0,0,.5); }
-  html.night .card.hot .t, html.night .card.hot .go{ color:#d6d6d6 !important; }
-  html.night .cust-sub{ background:rgba(255,255,255,.025); }
-  html.night .cust-sub .sub-card{ background:#111; border-color:#262626; }
-  html.night .cust-sub .sub-card.pin{ background:#14110a; }
-  html.night footer{ color:#777; }
-  html.night .modal-mask{ background:rgba(0,0,0,.9); }
-  html.night .modal-box{ background:#0c0c0c; }
-  html.night .modal-bar{ background:#111; border-color:#262626; }
-  html.night .modal-bar .mt{ color:#ddd; }
-  html.night .btn-night{ background:#1f2937; color:#e5e7eb; }
-  html.night .btn-night:hover{ background:#374151; }
-  html.night .btn-logout{ background:#1f2937; color:#e5e7eb; }
-  html.night .login-mask{ background:#000; }
-  html.night .login-mask .bg{ opacity:.2; }
-  html.night .login-card{ background:rgba(18,18,18,.96); }
-  html.night .login-card label{ color:#cbd5e1; }
-  html.night .login-card input{ background:#0c0c0c; border-color:#333; color:#e5e5e5; }
 </style>
 </head>
 <body>
@@ -190,7 +154,6 @@
       <span class="who" id="who"></span>
       <span class="role" id="roleTag"></span>
       <span class="spacer"></span>
-      <button class="btn-night" id="btnNight" title="夜间模式（护眼，整站生效）">🌙 夜间</button>
       <button class="btn-logout" id="btnLogout">退出登录</button>
     </nav>
     <div id="countryHint" class="country-hint"></div>
@@ -470,28 +433,6 @@
     }
     function tick(){ el.textContent = fmt(); }
     tick(); setInterval(tick, 1000);
-  })();
-
-  // 夜间模式（黑色单色护眼底色，全局持久化；预览 iframe 内客户文件同步变暗）
-  (function(){
-    const KEY='xh_night';
-    const btn=$('btnNight');
-    function on(){ return localStorage.getItem(KEY)==='1'; }
-    function applyNight(v){ document.documentElement.classList.toggle('night', !!v); }
-    applyNight(on());
-    function syncBtn(){ if(btn) btn.innerHTML = on() ? '☀️ 日间' : '🌙 夜间'; }
-    syncBtn();
-    if(btn){ btn.addEventListener('click', ()=>{ const v=!on(); localStorage.setItem(KEY, v?'1':'0'); applyNight(v); syncBtn(); pushNightToFrame(); }); }
-    // 通用暗色样式，注入到 iframe 预览内容（base/*.html、country.html 等），实现整站统一护眼
-    const NIGHT_CSS="html.night,html.night body{background:#000!important;color:#d0d0d0!important;}html.night h1,html.night h2,html.night h3,html.night h4{color:#e5e5e5!important;}html.night a{color:#7dd3fc!important;}html.night table,html.night th,html.night td,html.night tr,html.night thead,html.night tbody{background:#0c0c0c!important;color:#d0d0d0!important;border-color:#2a2a2a!important;}html.night input,html.night textarea,html.night select{background:#111!important;color:#e5e5e5!important;border-color:#333!important;}html.night .card,html.night .panel,html.night .box,html.night .container,html.night .content{background:#0c0c0c!important;color:#d0d0d0!important;}html.night img{filter:brightness(.92);}";
-    window.pushNightToFrame=function(){
-      try{
-        const f=$('modalFrame'); if(!f||!f.contentDocument) return;
-        const d=f.contentDocument; d.documentElement.classList.toggle('night', on());
-        if(on() && !d.getElementById('xh-night-style')){ const st=d.createElement('style'); st.id='xh-night-style'; st.textContent=NIGHT_CSS; (d.head||d.documentElement).appendChild(st); }
-      }catch(e){}
-    };
-    const mf=$('modalFrame'); if(mf){ mf.addEventListener('load', ()=>{ if(on()) window.pushNightToFrame(); }); }
   })();
 
   // 启动：统一令牌 xh_auth（未登录时 <head> 中 bootstrap 已重定向至 login.html）
