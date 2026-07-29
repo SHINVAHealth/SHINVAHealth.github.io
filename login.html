@@ -21,6 +21,11 @@
   .login-card label{display:block;font-size:12px;color:#475569;font-weight:600;margin:12px 0 5px;}
   .login-card input{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;box-sizing:border-box;}
   .login-card input:focus{outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.15);}
+  .login-card .field{position:relative;}
+  .login-card .field input{padding-right:34px;}
+  .login-card .login-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:20px;height:20px;line-height:18px;text-align:center;border:none;border-radius:50%;padding:0;background:#e2e8f0;color:#64748b;font-size:15px;cursor:pointer;transition:.15s;display:none;}
+  .login-card .login-clear:not([hidden]){display:block;}
+  .login-card .login-clear:hover{background:#cbd5e1;color:#0f172a;}
   .login-card button.submit{width:100%;margin-top:18px;padding:11px;border:none;border-radius:9px;background:#0d9488;color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
   .login-card button.submit:hover{background:#0f766e;}
   .login-err{color:#dc2626;font-size:12.5px;margin-top:10px;min-height:16px;text-align:center;}
@@ -43,9 +48,15 @@
     <img class="logo" src="/shinva_logo.png" alt="新华健康">
     <div class="title">外贸客户管理系统</div>
     <label for="u">账号</label>
-    <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
+    <div class="field">
+      <input id="u" type="text" placeholder="请输入账号" autocomplete="username">
+      <button type="button" class="login-clear" data-target="u" aria-label="清除账号" title="清除" hidden>×</button>
+    </div>
     <label for="p">密码</label>
-    <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
+    <div class="field">
+      <input id="p" type="password" placeholder="请输入密码" autocomplete="current-password">
+      <button type="button" class="login-clear" data-target="p" aria-label="清除密码" title="清除" hidden>×</button>
+    </div>
     <button type="submit" class="submit">登 录</button>
     <div class="login-err" id="err"></div>
     <div class="sysname">新华健康产业有限公司</div>
@@ -76,6 +87,20 @@
     try{localStorage.setItem('xh_auth',JSON.stringify({u:u,role:ACCOUNTS[u].role,label:ACCOUNTS[u].label,ts:Date.now()}));}catch(e){}
     location.replace(next);
   });
+  // 账号/密码输入栏右侧清除按钮：有内容时显示，点击或按 Esc 清空（参照世界地图搜索栏）
+  function wireClear(inputId){
+    var input=document.getElementById(inputId);
+    var btn=document.querySelector('.login-clear[data-target="'+inputId+'"]');
+    if(!input||!btn) return;
+    function sync(){ btn.hidden = !input.value; }
+    function clearVal(){ input.value=''; sync(); input.focus(); }
+    input.addEventListener('input', sync);
+    btn.addEventListener('click', clearVal);
+    input.addEventListener('keydown', function(e){ if(e.key==='Escape') clearVal(); });
+    sync();
+  }
+  wireClear('u');
+  wireClear('p');
 </script>
 </body>
 </html>
