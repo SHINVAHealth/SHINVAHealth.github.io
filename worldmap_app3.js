@@ -1078,7 +1078,7 @@ window.addEventListener("error", function(e){
 
   // —— 实时中国时间（页面左上角，SHINVA Health 下方）——
   (function(){
-    const el = document.getElementById('chinaclock');
+    const el = document.getElementById('chinaclock_engine');
     if (!el) return;
     function fmt(){
       try { return new Intl.DateTimeFormat('zh-CN', { timeZone:'Asia/Shanghai', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).format(new Date()); }
