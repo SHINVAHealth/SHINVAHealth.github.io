@@ -960,18 +960,33 @@ window.addEventListener("error", function(e){
       .translate(W / 2 - c0[0] * k, Hh / 2 - c0[1] * k)
       .scale(k);
     svg.transition().duration(650).call(zoom.transform, target);
-    // 弹 tooltip 显示国名：定位在该国轮廓「正下方」，避免遮挡小国中心（如厄瓜多尔）
+    // 弹 tooltip 显示国名：定位在该国轮廓「正下方」，且绝不遮挡国形。
+    // 关键修正：① 用国家真实屏幕包围盒底边下方放置（非质心+估算半径，规避狭长/不对称国形误判）；
+    //          ② 把 fixed 定位从「地图容器坐标」改为「视口坐标」(叠加 globe 的 getBoundingClientRect)，
+    //             消除侧栏让出 300px 左偏移导致的错位 / 压在国形左上角。
     const [cn, cont, tz, _] = infoOf(f);
     tipCn.textContent = cn; tipEn.textContent = (f.properties && f.properties.name) || '';
     tipCn2.textContent = cn; tipEn2.textContent = (f.properties && f.properties.name) || '';
     tipCont.textContent = cont; tipTime.textContent = tz ? fmtTime(tz) : '—';
+    // 目标变换下的国家屏幕包围盒（内容坐标 ×k + 目标平移）→ 叠加 globe 视口偏移转成视口坐标
+    const txT = W / 2 - c0[0] * k, tyT = Hh / 2 - c0[1] * k;   // 与下方 zoom.transform 目标一致
+    const sx0 = b[0][0] * k + txT, sy0 = b[0][1] * k + tyT;
+    const sx1 = b[1][0] * k + txT, sy1 = b[1][1] * k + tyT;
+    const gRect = document.getElementById('globe').getBoundingClientRect();
+    const vx0 = gRect.left + sx0, vy0 = gRect.top + sy0;
+    const vx1 = gRect.left + sx1, vy1 = gRect.top + sy1;
+    const tw = tip.offsetWidth || 220, th = tip.offsetHeight || 120;
+    const gap = 16;
+    let left = (vx0 + vx1) / 2 - tw / 2;
+    let top;
+    if (vy1 + gap + th + 12 <= window.innerHeight) top = vy1 + gap;          // 优先：国形正下方
+    else if (vy0 - gap - th >= 12) top = vy0 - gap - th;                     // 下方放不下：国形正上方
+    else top = window.innerHeight - th - 12;                                 // 国形铺满屏：贴底停靠（尽量避让）
+    left = Math.max(12, Math.min(left, window.innerWidth - tw - 12));
+    top  = Math.max(12, Math.min(top,  window.innerHeight - th - 12));
+    tip.style.left = left + 'px';
+    tip.style.top  = top + 'px';
     tip.classList.add('show');
-    // 估算国家在该缩放下的屏幕半径（包围盒高度一半 × k），tooltip 置于质心下方
-    const rH = ((b[1][1] - b[0][1]) / 2) * k;          // 内容坐标半高 → 屏幕半高（b 沿用上方 path.bounds(f)）
-    const below = Math.max(40, rH + 18);               // 质心下移量，至少 40px
-    const tw = tip.offsetWidth || 200;                 // 单次测量，避免遮挡小国中心
-    tip.style.left = (W / 2 - tw / 2) + 'px';
-    tip.style.top = (H / 2 + below) + 'px';
   }
   _searchEmboss = searchEmboss;   // 暴露给平行作用域的搜索 IIFE
   function onClick(e, d){
@@ -1122,18 +1137,23 @@ window.addEventListener("error", function(e){
     }
     // 拼音数据源已是"每国单一标准拼音（纯中文名直拼，按中国人习惯）"，故搜索只需精确全等即可，
     // 无需模糊层：yindu→印度、gesidalijia→哥斯达黎加、yinniduiya→印度尼西亚，输入即命中。
-    // 清空搜索：清除文本 + 收起结果 + 隐藏"×" + 清除搜索触发的浮雕
-    function clearSearch(){
-      input.value = '';
-      results.hidden = true; results.innerHTML = '';
-      syncClear();
+    // 清除搜索遗留的视觉（浮雕 + 信息窗口 + 还原视图），供「清空搜索栏」与「无准确国家名」共用，
+    // 确保世界地图界面不残留上一个检索国家的信息窗口 / 浮雕
+    function dismissSearchVisuals(){
       _searchActive = false;                    // 搜索浮雕结束，恢复悬停交互
       if (_hideEmboss) _hideEmboss();          // 取消浮雕（跨域桥接）
+      tip.classList.remove('show');            // 收起国家信息窗口，避免残留上一个检索国
       // 还原浮雕前的视图（尺寸 + 位置）
       if (_embossView && _svg && _zoom){
         const v = _embossView; _embossView = null;
         _svg.transition().duration(450).call(_zoom.transform, v);
       }
+    }
+    function clearSearch(){
+      input.value = '';
+      results.hidden = true; results.innerHTML = '';
+      syncClear();
+      dismissSearchVisuals();
       input.focus();
     }
     function run(){
@@ -1191,6 +1211,7 @@ window.addEventListener("error", function(e){
         }
       }
       if (exactIso2 && _searchEmboss){ _searchEmboss(exactIso2); }
+      else { dismissSearchVisuals(); }   // 无准确国家名：清除上一个检索国的浮雕与信息窗口残留
       const custMs = ALL_CUSTOMERS.filter(r =>
         [r.company, r.phone, r.contact, r.address, r.city].some(x => (x || '').toLowerCase().includes(q))
       ).slice(0, 12);
