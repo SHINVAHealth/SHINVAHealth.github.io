@@ -34,12 +34,11 @@
   header.hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:
     radial-gradient(78% 58% at 50% -8%, rgba(255,255,255,.16) 0%, transparent 60%),
     radial-gradient(150% 130% at 50% 45%, transparent 52%, rgba(0,0,0,.34) 100%); }
-  header.hero .brand-block{ position:absolute; top:16px; left:16px; z-index:2; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
-  header.hero .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
-  header.hero .chinaclock{ font-size:26px; color:#fff; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1; width:100%; display:flex; align-items:center; white-space:nowrap; }
-  header.hero .chinaclock .seg{ display:inline-block; }
-  header.hero .chinaclock .colon{ font-weight:400; }
-  header.hero .chinaclock .tz{ margin-left:auto; padding-left:10px; }
+  header.hero .brand-block{ position:absolute; top:16px; left:16px; z-index:2; display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+  header.hero .brand-logo{ max-height:42px; max-width:210px; width:auto; height:auto; border-radius:8px; box-shadow:inset 0 1px 1px rgba(255,255,255,.6), inset 0 -2px 3px rgba(0,0,0,.35), 0 3px 8px rgba(0,0,0,.4), 0 8px 22px rgba(0,0,0,.28); }
+  header.hero .brand-row{ display:flex; align-items:center; gap:10px; }
+  header.hero .brand-title{ font-size:20px; margin:0; letter-spacing:1px; font-weight:700; color:#fff; white-space:nowrap; }
+  header.hero .chinaclock{ font-size:20px; color:#fff; font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums; letter-spacing:.5px; line-height:1.1; text-align:left; align-self:flex-start; }
   header.hero h1, header.hero p{ position:relative; z-index:1; }
   header.hero h1{ margin:0; font-size:28px; letter-spacing:2px; font-weight:700; }
   header.hero p{ margin:10px 0 0; opacity:.92; font-size:14px; }
@@ -125,7 +124,7 @@
   .modal-bar button.primary{ background:var(--brand); color:#fff; }
   .modal-frame{ flex:1; border:none; width:100%; }
   .empty{ color:var(--muted); font-size:13px; padding:20px; text-align:center; }
-  @media (max-width:560px){ header.hero{ padding:58px 18px 50px; } header.hero .brand-block{ top:12px; left:12px; } header.hero .brand-logo{ max-height:40px; max-width:160px; } header.hero .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; } header.hero .chinaclock .tz{ padding-left:7px; } header.hero h1{ font-size:20px; padding-left:0; text-align:center; } .grid{ grid-template-columns:1fr; } .modal-box{ width:100vw; height:100vh; border-radius:0; } .modal-mask{ padding:0; } }
+  @media (max-width:560px){ header.hero{ padding:58px 18px 50px; } header.hero .brand-block{ top:12px; left:12px; } header.hero .brand-logo{ max-height:32px; max-width:130px; } header.hero .brand-title{ font-size:16px; gap:8px; } header.hero h1{ font-size:20px; padding-left:0; text-align:center; } .grid{ grid-template-columns:1fr; } .modal-box{ width:100vw; height:100vh; border-radius:0; } .modal-mask{ padding:0; } }
 </style>
 </head>
 <body>
@@ -147,7 +146,10 @@
 <div id="app" style="display:none">
   <header class="hero">
     <div class="brand-block">
-      <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+      <div class="brand-row">
+        <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+        <span class="brand-title">综合索引</span>
+      </div>
       <div class="chinaclock" id="chinaclock">--:--:--</div>
     </div>
     <h1>新华健康外贸客户管理系统</h1>
@@ -229,6 +231,7 @@
   // 基础资料清单（与后端 BASE_META 一致）
   const BASE_META = [
     // （孟加拉客户文件已全部迁移至「外贸客户」→ [孟加拉] 子链接，见 CUST_FILES.bd）
+    { file:'hosts_list.html', title:'国产高频电刀主机厂家清单', cat:'fac' },
     { file:'esu_registry.html', title:'国产高频电刀注册名单', cat:'fac' },
     { file:'history_bone.html', title:'骨组织手术设备完整发展史', cat:'pop' },
     { file:'history_hf_surgery.html', title:'高频手术设备完整发展史', cat:'pop' },
@@ -425,7 +428,7 @@
   function logout(){ ME=null; localStorage.removeItem('xh_static_user'); try{ localStorage.removeItem('gate_ok'); localStorage.removeItem('gate_user'); localStorage.removeItem('xh_auth'); }catch(e){} location.reload(); }
   $('btnLogout').onclick = logout;
 
-  // 实时中国时间（SHINVA Health 图标下，白色字体；宽度锁定为 logo 宽，左右两端与 logo 对齐）
+  // 实时中国时间（SHINVA Health 图标下，白色字体）
   (function(){
     const el = document.getElementById('chinaclock');
     if (!el) return;
@@ -433,28 +436,8 @@
       try { return new Intl.DateTimeFormat('zh-CN', { timeZone:'Asia/Shanghai', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).format(new Date()); }
       catch(e){ return '--:--:--'; }
     }
-    function sizeToLogo(){
-      const logo = document.querySelector('header.hero .brand-logo');
-      if (logo && logo.offsetWidth) el.style.width = logo.offsetWidth + 'px';
-    }
-    function render(t){
-      const p = t.split(':'); // ["HH","MM","SS"]
-      if (p.length === 3){
-        el.innerHTML = '<span class="seg">'+p[0]+'</span>'
-          + '<span class="colon">:</span>'
-          + '<span class="seg">'+p[1]+'</span>'
-          + '<span class="colon">:</span>'
-          + '<span class="seg">'+p[2]+'</span>'
-          + '<span class="tz">(UTC+8)</span>';
-      } else {
-        el.textContent = t;
-      }
-    }
-    function tick(){ const t = fmt(); render(t); sizeToLogo(); }
+    function tick(){ el.textContent = fmt(); }
     tick(); setInterval(tick, 1000);
-    const logo = document.querySelector('header.hero .brand-logo');
-    if (logo){ if (logo.complete) sizeToLogo(); else logo.addEventListener('load', sizeToLogo); }
-    window.addEventListener('resize', sizeToLogo);
   })();
 
   // 启动：统一令牌 xh_auth（未登录时 <head> 中 bootstrap 已重定向至 login.html）
