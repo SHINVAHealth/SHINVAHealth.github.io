@@ -246,7 +246,7 @@ window.addEventListener("error", function(e){
     cf:'zhongfeigongheguo',
     cg:'gangguobu',
     ch:'ruishi',
-    ci:'ketediewa',
+    ci:'ketediwa',
     cl:'zhili',
     cm:'kameilong',
     cn:'zhongguo',
@@ -937,15 +937,21 @@ window.addEventListener("error", function(e){
     }
     // 记录浮雕前的视图状态（仅首次浮雕时快照，连续搜索不覆盖，保证清空回到最初视图）
     if (_curTransform && !_embossView) _embossView = _curTransform;
-    // 平移聚焦：把该国质心移到视野中心，按国形包围盒反算缩放，但按国家大小取「适中倍率」——
-    // 大国保留上下文(k 贴近下限)，小国(新加坡/马来西亚等)只放大到适中上限，不再炸裂式填满屏幕
+    // 平移聚焦：把该国质心移到视野中心。缩放倍率按「国土真实面积」统一计算（d3.geoArea 球面面积，
+    // 转 km²），大国低、小国高，全 175 国同一套面积→缩放梯度（不再依赖包围盒形状，避免狭长国/岛国
+    // 与同面积紧凑国缩放不一致——此前仅马来西亚/新加坡手感对了，其余国家仍失准，故改为面积统一规则）
     const W = width(), Hh = height();
     const b = path.bounds(f);
     const bw = b[1][0] - b[0][0];
     const bh = b[1][1] - b[0][1];
-    // 自然倍率：让该国约占视野 50%（比原 62% 收敛，避免小国被过度膨胀）
-    let k = (bw > 0 && bh > 0) ? Math.min((W * 0.5) / bw, (Hh * 0.5) / bh) : 2.2;
-    // 适中区间：2.2(大国上下文) ~ 9(小国封顶)，不同大小国家落在该区间内，放大不再失控
+    const areaKm2 = d3.geoArea(f) * 40596441;       // 真实国土面积(km²)：球面面积(steradians) × R²(R=6371)
+    const sArea = Math.sqrt(areaKm2);               // ∝ 国家线性尺度
+    // 面积→缩放：线性∝√面积，俄罗斯(大国)≈2.2、新加坡(小国)≈9，全量国家统一梯度
+    let kArea = 9.045 - 0.00166 * sArea;
+    kArea = Math.max(2.2, Math.min(kArea, 9));
+    // 包围盒拟合兜底：保证国家完整落在视野、不溢出（狭长国/远洋岛国由拟合限幅，面积规则不越界）
+    const kFit = (bw > 0 && bh > 0) ? Math.min((W * 0.5) / bw, (Hh * 0.5) / bh) : kArea;
+    let k = Math.min(kFit, kArea);                  // 取较小值：既不溢出、也不过度放大
     k = Math.max(2.2, Math.min(k, 9));
     // 先按目标 k 算浮雕（高度按该缩放下国家大小取适中值），再触发缩放过渡
     showEmboss([iso2], tx, k);
