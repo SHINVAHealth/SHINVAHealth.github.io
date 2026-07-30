@@ -930,13 +930,17 @@ window.addEventListener("error", function(e){
     showEmboss([iso2], tx);
     // 记录浮雕前的视图状态（仅首次浮雕时快照，连续搜索不覆盖，保证清空回到最初视图）
     if (_curTransform && !_embossView) _embossView = _curTransform;
-    // 平移聚焦：把该国质心移到视野中心并适度放大
-    const k = Math.max((_curTransform && _curTransform.k) || 1, 2.2);
+    // 平移聚焦：把该国质心移到视野中心，并按国形包围盒反算缩放，使各国在主体区域呈现一致大小（小国不再被压成点）
     const W = width(), H = height();
+    const b = path.bounds(f);
+    const bw = b[1][0] - b[0][0];
+    const bh = b[1][1] - b[0][1];
+    let k = (bw > 0 && bh > 0) ? Math.min((W * 0.62) / bw, (H * 0.62) / bh) : 2.2;
+    k = Math.max(2.2, Math.min(k, 60));   // 下限保上下文，上限防跨经线大国炸裂
     const target = d3.zoomIdentity
       .translate(W / 2 - c0[0] * k, H / 2 - c0[1] * k)
       .scale(k);
-    svg.transition().duration(500).call(zoom.transform, target);
+    svg.transition().duration(650).call(zoom.transform, target);
     // 弹 tooltip 显示国名：定位在该国轮廓「正下方」，避免遮挡小国中心（如厄瓜多尔）
     const [cn, cont, tz, _] = infoOf(f);
     tipCn.textContent = cn; tipEn.textContent = (f.properties && f.properties.name) || '';
