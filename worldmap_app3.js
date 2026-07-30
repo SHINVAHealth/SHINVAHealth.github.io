@@ -855,12 +855,13 @@ window.addEventListener("error", function(e){
       .filter(d => d && d.d && d.d.iso2 && isoSet.has(d.d.iso2.toLowerCase()))
       .attr('transform', `translate(${c[0]},${c[1]-H}) scale(1.04) translate(${-c[0]},${-c[1]})`);
   }
-  function showEmboss(iso2List, tileX){
+  function showEmboss(iso2List, tileX, displayK){
     gEmboss.selectAll('*').remove();
     dropCustomerPoints();                 // 先落回平面，避免前一国残留抬升
     const tx = tileX || 0;
-    const k = (_curTransform && _curTransform.k) ? _curTransform.k : 1;
-    const H = 9 / k;          // 浮雕高度（屏幕空间恒定 ~9px，随缩放反比，保持观感一致）
+    const kDraw = (_curTransform && _curTransform.k) ? _curTransform.k : 1;
+    // 浮雕显示时的缩放：搜索传目标 k（避免放大后被二次拉伸），悬停用当前 k
+    const kDisp = (displayK && displayK > 0) ? displayK : kDraw;
     const LAYERS = 10;        // 侧壁层数（越多越平滑）
     // 展开附庸 feature（一个中国：cn 含台湾），保证台湾随中国一并浮雕
     // iso2 字符串 → feature 对象：showEmboss 内部统一以 feature 绘制。
@@ -878,6 +879,13 @@ window.addEventListener("error", function(e){
       const d = path(f);                         // 始终用真实轮廓
       if (!d) return;
       const c = path.centroid(f);                 // 内容坐标质心
+      // 浮雕高度按国家面积取适中值：小国低、大国高，避免小国被抬得视觉偏移过大
+      const bb = path.bounds(f);
+      const refC = Math.min(bb[1][0] - bb[0][0], bb[1][1] - bb[0][1]) || 1;  // 内容坐标参考边长
+      const onScreenRef = refC * kDisp;          // 该缩放下国家的屏幕参考尺寸(px)
+      let Hs = 0.10 * onScreenRef;               // 目标屏幕空间浮雕高，∝国家大小
+      Hs = Math.max(2.5, Math.min(Hs, 12));      // 适中区间：小国低(~2.5px)、大国高(~12px)
+      const H = Hs / kDisp;                      // 转回内容坐标（屏幕高 = H*kDisp = Hs）
       const sBase = 1.03;   // 阴影/侧壁基准缩放
       const sTop  = 1.04;   // 顶面缩放
       const base = `translate(${c[0] + tx},${c[1]}) scale(${sBase}) translate(${-c[0]},${-c[1]})`;
@@ -927,21 +935,22 @@ window.addEventListener("error", function(e){
       // 归一化到 [-TILE, TILE) 的整数倍，取最接近 0 的一份
       tx = Math.round(tx / TILE) * TILE;
     }
-    showEmboss([iso2], tx);
     // 记录浮雕前的视图状态（仅首次浮雕时快照，连续搜索不覆盖，保证清空回到最初视图）
     if (_curTransform && !_embossView) _embossView = _curTransform;
     // 平移聚焦：把该国质心移到视野中心，按国形包围盒反算缩放，但按国家大小取「适中倍率」——
     // 大国保留上下文(k 贴近下限)，小国(新加坡/马来西亚等)只放大到适中上限，不再炸裂式填满屏幕
-    const W = width(), H = height();
+    const W = width(), Hh = height();
     const b = path.bounds(f);
     const bw = b[1][0] - b[0][0];
     const bh = b[1][1] - b[0][1];
     // 自然倍率：让该国约占视野 50%（比原 62% 收敛，避免小国被过度膨胀）
-    let k = (bw > 0 && bh > 0) ? Math.min((W * 0.5) / bw, (H * 0.5) / bh) : 2.2;
+    let k = (bw > 0 && bh > 0) ? Math.min((W * 0.5) / bw, (Hh * 0.5) / bh) : 2.2;
     // 适中区间：2.2(大国上下文) ~ 9(小国封顶)，不同大小国家落在该区间内，放大不再失控
     k = Math.max(2.2, Math.min(k, 9));
+    // 先按目标 k 算浮雕（高度按该缩放下国家大小取适中值），再触发缩放过渡
+    showEmboss([iso2], tx, k);
     const target = d3.zoomIdentity
-      .translate(W / 2 - c0[0] * k, H / 2 - c0[1] * k)
+      .translate(W / 2 - c0[0] * k, Hh / 2 - c0[1] * k)
       .scale(k);
     svg.transition().duration(650).call(zoom.transform, target);
     // 弹 tooltip 显示国名：定位在该国轮廓「正下方」，避免遮挡小国中心（如厄瓜多尔）
