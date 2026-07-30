@@ -1239,8 +1239,22 @@ window.addEventListener("error", function(e){
       results.hidden = false;
     }
     input.addEventListener('input', run);
-    // Esc 清空（文本光标在搜索栏时）
-    input.addEventListener('keydown', (e) => { if (e.key === 'Escape') clearSearch(); });
+    // Esc 行为分两种：
+    //   ① 搜索栏有输入 → 清空搜索栏（原行为：clearSearch 清文本 + 收起浮雕/信息窗口）
+    //   ② 搜索栏无输入 → 自动重置世界地图（缩放/平移归位 + 清除任何残留视觉），与右下角「重置」按钮一致
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape'){
+        e.preventDefault();
+        if (input.value.trim()){
+          clearSearch();                       // 有输入：清空搜索
+        } else {
+          dismissSearchVisuals();              // 无输入：先收起可能的残留 tooltip/浮雕
+          results.hidden = true; results.innerHTML = '';
+          resetView();                         // 复位到默认视图（家位）
+          input.blur();                        // 失焦，避免重复触发
+        }
+      }
+    });
     // 右侧"×"按钮点击清空
     if (clearBtn) clearBtn.addEventListener('click', clearSearch);
     results.addEventListener('click', (e) => {
