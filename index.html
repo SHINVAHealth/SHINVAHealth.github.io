@@ -313,6 +313,16 @@
   function enterApp(){
     $('login').style.display='none';
     $('app').style.display='block';
+    // 时钟宽度立即锁 logo 宽：进入页面瞬间对齐，避免首帧因 logo 未布局而退回 width:100%（一瞬 (UTC+8) 闪现）
+    (function(){
+      const lg = document.querySelector('header.hero .brand-logo');
+      const clk = document.getElementById('chinaclock');
+      if (lg && clk){
+        let w = lg.offsetWidth;
+        if (!w){ const mw = parseFloat(getComputedStyle(lg).maxWidth); if (mw) w = mw; }
+        if (w) clk.style.width = w + 'px';
+      }
+    })();
     $('who').textContent = ME.username;
     $('roleTag').textContent = ME.label || roleLabel(ME.role, ME.username);
     renderSections();
@@ -441,7 +451,10 @@
     }
     function sizeToLogo(){
       const logo = document.querySelector('header.hero .brand-logo');
-      if (logo && logo.offsetWidth) el.style.width = logo.offsetWidth + 'px';
+      if (!logo) return;
+      let w = logo.offsetWidth;
+      if (!w){ const mw = parseFloat(getComputedStyle(logo).maxWidth); if (mw) w = mw; }
+      if (w) el.style.width = w + 'px';
     }
     function tick(){
       const p = fmt().split(':');
