@@ -690,7 +690,7 @@ window.addEventListener("error", function(e){
 
   // —— 滚轮缩放 + 拖拽（最小缩放下水平无缝循环，模拟地球仪旋转）——
   const zoom = d3.zoom()
-    .scaleExtent([1, 8])
+    .scaleExtent([1, 60])
     .extent(() => [[0, 0], [width(), height()]])
     .constrain(function(transform, extent){
       const [[ex0, ey0], [ex1, ey1]] = extent;
