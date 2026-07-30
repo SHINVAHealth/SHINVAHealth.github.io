@@ -231,10 +231,10 @@ window.addEventListener("error", function(e){
     bf:'bujinafaso',
     bg:'baolijiya',
     bh:'balin',
-    bi:'bujidi',
+    bi:'bulongdi',
     bj:'benin',
     bn:'wenlai',
-    bo:'boliya',
+    bo:'boliya boliweiya',
     br:'baxi',
     bs:'bahama',
     bt:'butan',
@@ -296,11 +296,11 @@ window.addEventListener("error", function(e){
     ir:'yilang',
     is:'bingdao',
     it:'yidali',
-    jm:'jiamaica',
+    jm:'yamaijia',
     jo:'yuehan',
     jp:'riben',
-    ke:'jianniya',
-    kg:'jierjisi',
+    ke:'kenniya',
+    kg:'jierjisi jierjisistan',
     kh:'jianpuzhai',
     kp:'chaoxian',
     kr:'hanguo',
@@ -311,23 +311,23 @@ window.addEventListener("error", function(e){
     lk:'sililanka',
     lr:'libiliya',
     ls:'laisuotuo',
-    lt:'libiaowan',
+    lt:'litaowan',
     lu:'lusenbao',
-    lv:'latuiya',
+    lv:'latuoweiya',
     ly:'libiya',
     ma:'moluoge',
     md:'moldowa',
     me:'heishan',
     mg:'madajiasijia',
-    mk:'maiqidong',
+    mk:'maiqidun',
     ml:'mali',
     mm:'miandian',
-    mn:'waibizu',
+    mn:'menggu',
     mr:'maolitaniya',
-    mw:'malawi',
+    mw:'malawei',
     mx:'moxige',
     my:'malaixiya',
-    mz:'monzanbike',
+    mz:'mosangbike',
     na:'namibiya',
     nc:'xinakaleduoniya',
     ne:'nirier',
@@ -340,12 +340,12 @@ window.addEventListener("error", function(e){
     om:'aman',
     pa:'banna',
     pe:'bilu',
-    pg:'babuyaxinji',
+    pg:'babuyaxinji babuyaxinjineiya',
     ph:'feilvbin',
     pk:'bajisitan',
     pl:'bolan',
     pr:'boduolige',
-    ps:'basitan',
+    ps:'basitan balesitan',
     pt:'putaoya',
     py:'balagui',
     qa:'kataer',
@@ -374,7 +374,7 @@ window.addEventListener("error", function(e){
     th:'taiguo',
     tj:'tajikesitan',
     tl:'dongdiwen',
-    tm:'tukumensitan',
+    tm:'tukumansitan',
     tn:'tunisiya',
     tr:'tuerqi',
     tt:'teliniwenghebaduo',
@@ -383,15 +383,15 @@ window.addEventListener("error", function(e){
     ug:'wuganda',
     us:'meiguo',
     uy:'wuliguai',
-    uz:'wuzibieke',
+    uz:'wuzibieke wuzibiekesitan',
     ve:'weineiruila',
     vn:'yuenan',
     vu:'wanuatu',
     xk:'kesuowo',
     ye:'yemen',
     za:'nanfei',
-    zm:'zhanbiya',
-    zw:'xinbawei'
+    zm:'zanbiya',
+    zw:'jinbabuwei'
   };
   // 中文别名（口语/缩写），仅收录"该国正式中文名的前缀性缩写"或"公认口语词"，
   // 以免前缀匹配误伤他国。例：印尼→印度尼西亚、英→英国。
@@ -419,6 +419,7 @@ window.addEventListener("error", function(e){
   let panelWired = false;
   let _searchEmboss = null;   // 由 initWorld 内 searchEmboss 赋值，供搜索 IIFE（平行作用域）跨域调用
   let _embossView = null;     // 浮雕前的 zoom transform 快照，清空搜索时还原视图
+  let _searchActive = false;  // 搜索浮雕激活标志：激活期间悬停不得清除/替换搜索浮雕（根治"小国搜索后鼠标移到海洋→onLeave 清掉浮雕"）
   // 跨域桥接：搜索 IIFE 在 initWorld 之外（模块作用域），需通过模块级变量访问内部 svg/zoom/hideEmboss
   let _svg = null, _zoom = null, _hideEmboss = null;
 
@@ -790,6 +791,7 @@ window.addEventListener("error", function(e){
   // 交互回调
   let _lastHoverKey = null, _tipW = 0, _tipH = 0;   // 仅悬停国家改变时重建浮雕 + 缓存 tooltip 尺寸，消除每像素 mousemove 卡顿
   function onMove(e, d){
+    if (_searchActive) return;                 // 搜索浮雕激活期间：悬停不重建/替换浮雕，保持搜索结果稳定可见
     const [cn, cont, tz, iso2] = infoOf(d);
     // 联动高亮：悬停中国→台湾同亮，悬停台湾→中国同亮
     // partnerIso2 恒返回空(台湾已并入中国): 旧逻辑每 move 遍历 525 国清 active 纯属空转，已移除
@@ -818,7 +820,7 @@ window.addEventListener("error", function(e){
     if (y + th > window.innerHeight) y = e.clientY - th - pad;
     tip.style.left = x + 'px'; tip.style.top = y + 'px';
   }
-  function onLeave(){ tip.classList.remove('show'); _lastHoverKey = null; curTz = null; hideEmboss(); }
+  function onLeave(){ if (_searchActive) return; tip.classList.remove('show'); _lastHoverKey = null; curTz = null; hideEmboss(); }
   // —— 3D 浮雕突出：克隆悬停国（及其联动国）路径，围绕自身质心略微放大并投偏移阴影，
   //    加清晰黄色边框（vector-effect 锁定 1:1 线宽，不模糊、不加粗边界）。克隆置于 gZoom 内，随拖拽/缩放同步。
   // 取悬停 path 所属 tile 的水平偏移（content 坐标；gZoom 之上叠加，故与国形共享同一坐标系）
@@ -920,6 +922,7 @@ window.addEventListener("error", function(e){
   function searchEmboss(iso2){
     const f = iso2ToFeature[iso2];
     if (!f){ gEmboss.selectAll('*').remove(); dropCustomerPoints(); return false; }  // 无对应地图 feature（如争议地区无独立国界）时清掉旧浮雕，避免残留
+    _searchActive = true;     // 搜索浮雕生效：悬停交互在此期间不得清除/替换它
     // 世界平铺 3 份（TILES），需找到当前视野中"可见"的那一份的 translateX 偏移，
     // 使浮雕克隆与可见国形对齐（否则拖拽后落在错误 tile → 看似无浮雕）
     const c0 = path.centroid(f);            // 内容坐标质心
@@ -1124,6 +1127,7 @@ window.addEventListener("error", function(e){
       input.value = '';
       results.hidden = true; results.innerHTML = '';
       syncClear();
+      _searchActive = false;                    // 搜索浮雕结束，恢复悬停交互
       if (_hideEmboss) _hideEmboss();          // 取消浮雕（跨域桥接）
       // 还原浮雕前的视图（尺寸 + 位置）
       if (_embossView && _svg && _zoom){
