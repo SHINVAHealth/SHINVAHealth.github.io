@@ -930,13 +930,16 @@ window.addEventListener("error", function(e){
     showEmboss([iso2], tx);
     // 记录浮雕前的视图状态（仅首次浮雕时快照，连续搜索不覆盖，保证清空回到最初视图）
     if (_curTransform && !_embossView) _embossView = _curTransform;
-    // 平移聚焦：把该国质心移到视野中心，并按国形包围盒反算缩放，使各国在主体区域呈现一致大小（小国不再被压成点）
+    // 平移聚焦：把该国质心移到视野中心，按国形包围盒反算缩放，但按国家大小取「适中倍率」——
+    // 大国保留上下文(k 贴近下限)，小国(新加坡/马来西亚等)只放大到适中上限，不再炸裂式填满屏幕
     const W = width(), H = height();
     const b = path.bounds(f);
     const bw = b[1][0] - b[0][0];
     const bh = b[1][1] - b[0][1];
-    let k = (bw > 0 && bh > 0) ? Math.min((W * 0.62) / bw, (H * 0.62) / bh) : 2.2;
-    k = Math.max(2.2, Math.min(k, 60));   // 下限保上下文，上限防跨经线大国炸裂
+    // 自然倍率：让该国约占视野 50%（比原 62% 收敛，避免小国被过度膨胀）
+    let k = (bw > 0 && bh > 0) ? Math.min((W * 0.5) / bw, (H * 0.5) / bh) : 2.2;
+    // 适中区间：2.2(大国上下文) ~ 9(小国封顶)，不同大小国家落在该区间内，放大不再失控
+    k = Math.max(2.2, Math.min(k, 9));
     const target = d3.zoomIdentity
       .translate(W / 2 - c0[0] * k, H / 2 - c0[1] * k)
       .scale(k);
