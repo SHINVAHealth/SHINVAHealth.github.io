@@ -668,11 +668,16 @@ window.addEventListener("error", function(e){
       if (sy < boxT - 4 || sy > boxB + 4) continue;        // 超出地球框不画
       latSet.push({ lat, y: sy });
     }
-    // 极点 90°N / 90°S：纳入动态纬度尺，随缩放平移、离屏即隐藏，与 60°N 等字号/对齐/锚点完全一致
-    const pN = projection([lonLeft, 90]);
-    if (pN){ const syN = pN[1] * k + t.y; if (!(syN < boxT - 4 || syN > boxB + 4)) latSet.push({ lat: 90, y: syN }); }
-    const pS = projection([lonLeft, -90]);
-    if (pS){ const syS = pS[1] * k + t.y; if (!(syS < boxT - 4 || syS > boxB + 4)) latSet.push({ lat: -90, y: syS }); }
+    // 极点 90°N / 90°S：仅在概览级缩放(k<=1.0001)显示。原因——纵向 constrain 在放大态把地球
+    // 上下缘强制钳制在 boxT/boxB，北极/南极在所有缩放级别都贴着视口顶/底边，屏幕 y 恒等于 boxT/boxB，
+    // 永远不会落出可见框，靠"离屏过滤"过滤不掉。故放大(k>1)时显式剔除，由 data join exit().remove() 隐藏，
+    // 既满足"放大时隐藏、而非固定"，又避免放大后极点与 75°N/66.5°N 等密集纬度标签在顶部重叠。
+    if (k <= 1.0001){
+      const pN = projection([lonLeft, 90]);
+      if (pN){ const syN = pN[1] * k + t.y; if (!(syN < boxT - 4 || syN > boxB + 4)) latSet.push({ lat: 90, y: syN }); }
+      const pS = projection([lonLeft, -90]);
+      if (pS){ const syS = pS[1] * k + t.y; if (!(syS < boxT - 4 || syS > boxB + 4)) latSet.push({ lat: -90, y: syS }); }
+    }
     const latSel = gRuler.selectAll('text.ruler-lat').data(latSet, d => d.lat + '@' + Math.round(d.y));
     latSel.exit().remove();
     latSel.enter().append('text').attr('class','ruler-lat')
