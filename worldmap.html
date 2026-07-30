@@ -73,6 +73,8 @@
     background:rgba(11,18,32,.55); backdrop-filter:blur(8px);
   }
   header.top .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
+  header.top .brand-row{ display:flex; align-items:center; gap:10px; }
+  header.top .brand-title{ font-size:24px; margin:0; letter-spacing:1px; font-weight:700; color:#e6f1ff; white-space:nowrap; }
   header.top h1{ font-size:24px; margin:0; letter-spacing:1px; font-weight:700; }
   header.top .sub{ color:var(--muted); font-size:12px; margin-left:6px; }
   header.top .spacer{ flex:1; }
@@ -316,6 +318,7 @@
       height:auto; min-height:52px; padding:8px 12px; gap:10px; flex-wrap:wrap;
     }
     header.top .brand-logo{ max-height:40px; max-width:160px; width:auto; height:auto; flex:none; }
+    header.top .brand-title{ font-size:18px; gap:8px; }
     header.top .brand{ gap:8px; min-width:0; }
     header.top .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; white-space:nowrap; }
     header.top .spacer{ flex:1 1 auto; }
@@ -386,7 +389,10 @@
 <body>
   <header class="top">
     <div class="brand">
-      <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+      <div class="brand-row">
+        <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+        <span class="brand-title">世界地图</span>
+      </div>
       <div class="chinaclock" id="chinaclock">--:--:--</div>
     </div>
     <span class="spacer"></span>
