@@ -632,14 +632,18 @@ window.addEventListener("error", function(e){
     const eqY = projection([0, 0])[1];
     const lonTick = k <= 1.2 ? 30 : (k <= 2.5 ? 15 : (k <= 4 ? 10 : 5));
     const lonSet = [];
+    // 横向 3 份平铺世界（translate(i*TILE)）：经度标签必须遍历每份，否则放大后左右拖动到第 2/3 份时，
+    // 第 1 份整份移出屏幕 → 所有标签 x 落出可见范围 → 整排被 exit 清空（拖回才恢复）。
     for (let lon = -180; lon <= 180; lon += lonTick){
-      const p = projection([lon, 0]);           // 赤道处该经度的内容坐标
+      const p = projection([lon, 0]);           // 赤道处该经度的内容坐标（第 1 份基准）
       if (!p) continue;
-      const x = p[0] * k + t.x;                  // 套 zoom transform 得屏幕 x
-      if (x < boxL - 2 || x > boxR + 2) continue; // 超出地球横尺不画
-      lonSet.push({ lon, x });
+      for (let i = 0; i < TILES; i++){            // 3 份平铺各生成一份，经纬度随副本重复
+        const x = (p[0] + i * TILE) * k + t.x;    // 叠加第 i 份偏移 i*TILE → 屏幕 x
+        if (x < boxL - 2 || x > boxR + 2) continue; // 超出地球横尺不画
+        lonSet.push({ lon, x, key: lon + '#' + i });
+      }
     }
-    const lonSel = gRuler.selectAll('text.ruler-lon').data(lonSet, d => d.lon);
+    const lonSel = gRuler.selectAll('text.ruler-lon').data(lonSet, d => d.key);
     lonSel.exit().remove();
     lonSel.enter().append('text').attr('class','ruler-lon')
       .merge(lonSel)
