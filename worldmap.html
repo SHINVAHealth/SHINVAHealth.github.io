@@ -72,7 +72,7 @@
     border-bottom:1px solid rgba(255,255,255,.08);
     background:rgba(11,18,32,.55); backdrop-filter:blur(8px);
   }
-  header.top .logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
+  header.top .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
   header.top h1{ font-size:24px; margin:0; letter-spacing:1px; font-weight:700; }
   header.top .sub{ color:var(--muted); font-size:12px; margin-left:6px; }
   header.top .spacer{ flex:1; }
@@ -234,17 +234,16 @@
   .mapctrl button:hover{ background:rgba(14,165,233,.22); border-color:var(--brand); transform:translateY(-1px); }
   .mapctrl button:active{ transform:translateY(0); }
 
-  /* 左上角品牌块：logo + 标题 + 实时时间（与索引界面 logo 区保持一致） */
-  header.top .brand{ display:flex; align-items:center; gap:14px; }
-  header.top .brand-col{ display:flex; flex-direction:column; line-height:1.25; }
+  /* 左上角品牌块：logo + 实时时间（与索引界面 logo 区完全对齐：logo 在上、时间在正下方、左缘对齐、宽度锁定 logo 宽） */
+  header.top .brand{ display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
   header.top .chinaclock{
-    font-size:26px; color:#fff; font-weight:700; margin-top:4px;
+    font-size:26px; color:#fff; font-weight:700; margin-top:2px;
     font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1;
-    display:flex; align-items:center; white-space:nowrap;
+    width:100%; display:flex; align-items:center; white-space:nowrap;
   }
   header.top .chinaclock .seg{ display:inline-block; }
   header.top .chinaclock .colon{ font-weight:400; }
-  header.top .chinaclock .tz{ padding-left:8px; }
+  header.top .chinaclock .tz{ margin-left:auto; padding-left:10px; }
 
   /* 左侧检索面板（玻璃质感），位于地球让出的左侧空白区 */
   .sidepanel{
@@ -312,15 +311,13 @@
   /* 移动端：纵向流 —— 页头 → 地图(上部固定) → 检索面板(地图下方中部，内部可滚动) */
   @media (max-width:900px){
     body{ overflow:hidden; }
-    /* 顶部页头：压缩间距、禁止收缩换行，确保「世界地图」标题与「返回系统」不被挤压变形 */
+    /* 顶部页头：压缩间距，品牌块保持「logo 在上、时间在正下方」的纵向结构 */
     header.top{
       height:auto; min-height:52px; padding:8px 12px; gap:10px; flex-wrap:wrap;
     }
-    header.top .logo{ max-height:40px; max-width:160px; width:auto; height:auto; flex:none; }
-    header.top .brand{ gap:10px; min-width:0; }
-    header.top h1{ font-size:16px; white-space:nowrap; flex:none; }
-    header.top .brand-col{ line-height:1.2; min-width:0; }
-    header.top .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:2px; white-space:nowrap; }
+    header.top .brand-logo{ max-height:40px; max-width:160px; width:auto; height:auto; flex:none; }
+    header.top .brand{ gap:5px; min-width:0; }
+    header.top .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; white-space:nowrap; }
     header.top .spacer{ flex:1 1 auto; }
     header.top a.back{ flex:none; padding:6px 10px; font-size:12px; white-space:nowrap; }
     .layout{
@@ -389,11 +386,8 @@
 <body>
   <header class="top">
     <div class="brand">
-      <img src="shinva_logo.png" alt="SHINVA Health" class="logo">
-      <div class="brand-col">
-        <h1>世界地图</h1>
-        <div class="chinaclock" id="chinaclock">--:--:--</div>
-      </div>
+      <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+      <div class="chinaclock" id="chinaclock">--:--:--</div>
     </div>
     <span class="spacer"></span>
     <a class="back" href="index.html">← 返回系统</a>
@@ -431,13 +425,17 @@
   <script defer src="topojson-client.min.js"></script>
   <script defer src="worldmap_app3.js?v=202607251450"></script>
   <script>
-    // 实时中国时间（与索引界面一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白）
+    // 实时中国时间（与索引界面完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
     (function(){
       var el = document.getElementById('chinaclock');
       if(!el) return;
       function fmt(){
         try { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()); }
         catch(e){ return '--:--:--'; }
+      }
+      function sizeToLogo(){
+        var logo = document.querySelector('header.top .brand-logo');
+        if (logo && logo.offsetWidth) el.style.width = logo.offsetWidth + 'px';
       }
       function tick(){
         var p = fmt().split(':');
@@ -448,8 +446,12 @@
           + '<span class="colon">:</span>'
           + '<span class="seg">'+p[2]+'</span>'
           + '<span class="tz">(UTC+8)</span>';
+        sizeToLogo();
       }
       tick(); setInterval(tick, 1000);
+      var logo = document.querySelector('header.top .brand-logo');
+      if (logo){ if (logo.complete) sizeToLogo(); else logo.addEventListener('load', sizeToLogo); }
+      window.addEventListener('resize', sizeToLogo);
     })();
   </script>
 </body>
