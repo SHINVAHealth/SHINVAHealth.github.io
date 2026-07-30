@@ -38,7 +38,10 @@
   header.hero .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
   header.hero .brand-row{ display:flex; align-items:center; gap:10px; }
   header.hero .brand-title{ font-size:24px; margin:0; letter-spacing:1px; font-weight:700; color:#fff; white-space:nowrap; }
-  header.hero .chinaclock{ font-size:26px; color:#fff; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1; text-align:left; align-self:flex-start; }
+  header.hero .chinaclock{ font-size:26px; color:#fff; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1; width:100%; display:flex; align-items:center; white-space:nowrap; }
+  header.hero .chinaclock .seg{ display:inline-block; }
+  header.hero .chinaclock .colon{ font-weight:400; }
+  header.hero .chinaclock .tz{ margin-left:auto; padding-left:10px; }
   header.hero h1, header.hero p{ position:relative; z-index:1; }
   header.hero h1{ margin:0; font-size:28px; letter-spacing:2px; font-weight:700; }
   header.hero p{ margin:10px 0 0; opacity:.92; font-size:14px; }
@@ -428,7 +431,7 @@
   function logout(){ ME=null; localStorage.removeItem('xh_static_user'); try{ localStorage.removeItem('gate_ok'); localStorage.removeItem('gate_user'); localStorage.removeItem('xh_auth'); }catch(e){} location.reload(); }
   $('btnLogout').onclick = logout;
 
-  // 实时中国时间（SHINVA Health 图标下，白色字体）
+  // 实时中国时间（与世界地图完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
   (function(){
     const el = document.getElementById('chinaclock');
     if (!el) return;
@@ -436,8 +439,25 @@
       try { return new Intl.DateTimeFormat('zh-CN', { timeZone:'Asia/Shanghai', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).format(new Date()); }
       catch(e){ return '--:--:--'; }
     }
-    function tick(){ el.textContent = fmt(); }
+    function sizeToLogo(){
+      const logo = document.querySelector('header.hero .brand-logo');
+      if (logo && logo.offsetWidth) el.style.width = logo.offsetWidth + 'px';
+    }
+    function tick(){
+      const p = fmt().split(':');
+      if (p.length !== 3){ el.textContent = fmt(); return; }
+      el.innerHTML = '<span class="seg">' + p[0] + '</span>'
+        + '<span class="colon">:</span>'
+        + '<span class="seg">' + p[1] + '</span>'
+        + '<span class="colon">:</span>'
+        + '<span class="seg">' + p[2] + '</span>'
+        + '<span class="tz">(UTC+8)</span>';
+      sizeToLogo();
+    }
     tick(); setInterval(tick, 1000);
+    const logo = document.querySelector('header.hero .brand-logo');
+    if (logo){ if (logo.complete) sizeToLogo(); else logo.addEventListener('load', sizeToLogo); }
+    window.addEventListener('resize', sizeToLogo);
   })();
 
   // 启动：统一令牌 xh_auth（未登录时 <head> 中 bootstrap 已重定向至 login.html）
