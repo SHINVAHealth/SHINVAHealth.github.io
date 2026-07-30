@@ -1242,20 +1242,19 @@ window.addEventListener("error", function(e){
       results.hidden = false;
     }
     input.addEventListener('input', run);
-    // Esc 行为分两种：
+    // Esc 行为分两种（挂 document 全局监听：无论焦点是否在搜索栏都能触发，根治"搜索栏未聚焦时 ESC 无效"）：
     //   ① 搜索栏有输入 → 清空搜索栏（原行为：clearSearch 清文本 + 收起浮雕/信息窗口）
     //   ② 搜索栏无输入 → 自动重置世界地图（缩放/平移归位 + 清除任何残留视觉），与右下角「重置」按钮一致
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape'){
-        e.preventDefault();
-        if (input.value.trim()){
-          clearSearch();                       // 有输入：清空搜索
-        } else {
-          dismissSearchVisuals();              // 无输入：先收起可能的残留 tooltip/浮雕
-          results.hidden = true; results.innerHTML = '';
-          resetView();                         // 复位到默认视图（家位）
-          input.blur();                        // 失焦，避免重复触发
-        }
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      if (input.value.trim()){
+        clearSearch();                       // 有输入：清空搜索
+      } else {
+        dismissSearchVisuals();              // 无输入：先收起可能的残留 tooltip/浮雕
+        results.hidden = true; results.innerHTML = '';
+        resetView();                         // 复位到默认视图（家位）
+        input.blur();                        // 失焦，避免重复触发
       }
     });
     // 右侧"×"按钮点击清空
