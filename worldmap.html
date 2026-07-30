@@ -67,7 +67,7 @@
   }
   header.top{
     display:flex; align-items:center; gap:14px;
-    height:auto; min-height:60px; box-sizing:border-box; padding:10px 20px;
+    height:auto; min-height:60px; box-sizing:border-box; padding:16px;
     position:sticky; top:0; z-index:20;
     border-bottom:1px solid rgba(255,255,255,.08);
     background:rgba(11,18,32,.55); backdrop-filter:blur(8px);
@@ -235,7 +235,7 @@
   .mapctrl button:active{ transform:translateY(0); }
 
   /* 左上角品牌块：logo + 实时时间（与索引界面 logo 区完全对齐：logo 在上、时间在正下方、左缘对齐、宽度锁定 logo 宽） */
-  header.top .brand{ display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+  header.top .brand{ display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
   header.top .chinaclock{
     font-size:26px; color:#fff; font-weight:700; margin-top:2px;
     font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1;
@@ -247,7 +247,7 @@
 
   /* 左侧检索面板（玻璃质感），位于地球让出的左侧空白区 */
   .sidepanel{
-    position:absolute; left:18px; top:114px; width:268px; z-index:7;
+    position:absolute; left:18px; top:120px; width:268px; z-index:7;
     background:rgba(15,23,42,.66); backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px;
     box-shadow:0 12px 34px rgba(0,0,0,.38);
@@ -316,7 +316,7 @@
       height:auto; min-height:52px; padding:8px 12px; gap:10px; flex-wrap:wrap;
     }
     header.top .brand-logo{ max-height:40px; max-width:160px; width:auto; height:auto; flex:none; }
-    header.top .brand{ gap:5px; min-width:0; }
+    header.top .brand{ gap:8px; min-width:0; }
     header.top .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; white-space:nowrap; }
     header.top .spacer{ flex:1 1 auto; }
     header.top a.back{ flex:none; padding:6px 10px; font-size:12px; white-space:nowrap; }
@@ -423,7 +423,7 @@
 
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
-  <script defer src="worldmap_app3.js?v=202607300857"></script>
+  <script defer src="worldmap_app3.js?v=202607300903"></script>
   <script>
     // 实时中国时间（与索引界面完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
     (function(){
