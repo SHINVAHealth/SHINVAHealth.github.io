@@ -948,8 +948,7 @@ window.addEventListener("error", function(e){
     tipCont.textContent = cont; tipTime.textContent = tz ? fmtTime(tz) : '—';
     tip.classList.add('show');
     // 估算国家在该缩放下的屏幕半径（包围盒高度一半 × k），tooltip 置于质心下方
-    const b = path.bounds(f);
-    const rH = ((b[1][1] - b[0][1]) / 2) * k;          // 内容坐标半高 → 屏幕半高
+    const rH = ((b[1][1] - b[0][1]) / 2) * k;          // 内容坐标半高 → 屏幕半高（b 沿用上方 path.bounds(f)）
     const below = Math.max(40, rH + 18);               // 质心下移量，至少 40px
     const tw = tip.offsetWidth || 200;                 // 单次测量，避免遮挡小国中心
     tip.style.left = (W / 2 - tw / 2) + 'px';
