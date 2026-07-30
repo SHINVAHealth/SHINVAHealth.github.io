@@ -423,8 +423,8 @@ window.addEventListener("error", function(e){
   let _searchEmboss = null;   // 由 initWorld 内 searchEmboss 赋值，供搜索 IIFE（平行作用域）跨域调用
   let _embossView = null;     // 浮雕前的 zoom transform 快照，清空搜索时还原视图
   let _searchActive = false;  // 搜索浮雕激活标志：激活期间悬停不得清除/替换搜索浮雕（根治"小国搜索后鼠标移到海洋→onLeave 清掉浮雕"）
-  // 跨域桥接：搜索 IIFE 在 initWorld 之外（模块作用域），需通过模块级变量访问内部 svg/zoom/hideEmboss
-  let _svg = null, _zoom = null, _hideEmboss = null;
+  // 跨域桥接：搜索 IIFE 在 initWorld 之外（模块作用域），需通过模块级变量访问内部 svg/zoom/hideEmboss/resetView
+  let _svg = null, _zoom = null, _hideEmboss = null, _resetView = null;
 
   function initWorld(){
   const tip = document.getElementById('tip');
@@ -992,6 +992,7 @@ window.addEventListener("error", function(e){
     tip.classList.add('show');
   }
   _searchEmboss = searchEmboss;   // 暴露给平行作用域的搜索 IIFE
+  _resetView = resetView;         // 暴露 resetView 给外部搜索 IIFE（ESC 空输入自动重置地图）
   function onClick(e, d){
     const [cn, cont, tz, iso2] = infoOf(d);
     if (!iso2){ return; }
@@ -1246,14 +1247,14 @@ window.addEventListener("error", function(e){
     //   ① 搜索栏有输入 → 清空搜索栏（原行为：clearSearch 清文本 + 收起浮雕/信息窗口）
     //   ② 搜索栏无输入 → 自动重置世界地图（缩放/平移归位 + 清除任何残留视觉），与右下角「重置」按钮一致
     document.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape') return;
+      if (e.key !== 'Escape' && e.keyCode !== 27) return;
       e.preventDefault();
       if (input.value.trim()){
         clearSearch();                       // 有输入：清空搜索
       } else {
-        dismissSearchVisuals();              // 无输入：先收起可能的残留 tooltip/浮雕
+        if (_resetView) _resetView();        // 无输入：先复位到默认视图（核心需求，优先执行，确保必发生）
+        try { dismissSearchVisuals(); } catch(_){}  // 收起可能的残留 tooltip/浮雕（隔离，异常不影响复位）
         results.hidden = true; results.innerHTML = '';
-        resetView();                         // 复位到默认视图（家位）
         input.blur();                        // 失焦，避免重复触发
       }
     });
