@@ -617,8 +617,8 @@ window.addEventListener("error", function(e){
     gRuler.append('line').attr('class','ruler-axis ruler-y')
       .attr('x1', boxL - 12).attr('y1', boxT).attr('x2', boxL - 12).attr('y2', boxB);
     // 极地角标（贴地球上下外缘）
-    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 16).attr('y', boxT + 4).text('N');
-    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 16).attr('y', boxB - 2).text('S');
+    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 16).attr('y', boxT + 4).attr('text-anchor','end').text('90°N');
+    gRuler.append('text').attr('class','ruler-pole').attr('x', boxL - 16).attr('y', boxB - 2).attr('text-anchor','end').text('90°S');
   }
   // 随拖拽/缩放实时更新刻度数值（在地球外的尺子上滚动显示）
   function updateRuler(){
