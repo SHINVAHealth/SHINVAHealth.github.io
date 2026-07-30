@@ -363,7 +363,7 @@ window.addEventListener("error", function(e){
     sl:'sailaliong',
     sn:'senneijiaer',
     so:'suomaliya',
-    sr:'suilinan',
+    sr:'sulinan',
     ss:'nansudan',
     sv:'salvador',
     sy:'xuliya',
@@ -944,17 +944,15 @@ window.addEventListener("error", function(e){
     const b = path.bounds(f);
     const bw = b[1][0] - b[0][0];
     const bh = b[1][1] - b[0][1];
-    const areaKm2 = d3.geoArea(f) * 40596441;       // 真实国土面积(km²)：球面面积(steradians) × R²(R=6371)
+    const ga = d3.geoArea(f);
+    const areaKm2 = (isFinite(ga) && ga > 0) ? ga * 40596441 : (bw * bh) * 1e6;  // 国土面积(km²)；geoArea 异常时退回包围盒面积兜底
     const sArea = Math.sqrt(areaKm2);               // ∝ 国家线性尺度
-    // 面积→缩放：线性∝√面积，俄罗斯(大国)≈2.2、新加坡(小国)≈9，全量国家统一梯度
-    let kArea = 9.045 - 0.00166 * sArea;
-    kArea = Math.max(2.2, Math.min(kArea, 9));
-    // 包围盒拟合兜底：保证国家完整落在视野、不溢出（狭长国/远洋岛国由拟合限幅，面积规则不越界）
-    const kFit = (bw > 0 && bh > 0) ? Math.min((W * 0.5) / bw, (Hh * 0.5) / bh) : kArea;
-    let k = Math.min(kFit, kArea);                  // 取较小值：既不溢出、也不过度放大
+    // 严格按国土面积等比例缩放（∝√面积），全 179 国同一套梯度：大国低(RU≈2.2)、小国高(SG≈9)。
+    // 不再与包围盒拟合 kFit 取 min —— kFit 是形状相关量，会让中大国家回落到 bbox 行为（用户实测"没按面积"）。
+    let k = 9.045 - 0.00166 * sArea;
     k = Math.max(2.2, Math.min(k, 9));
-    // 先按目标 k 算浮雕（高度按该缩放下国家大小取适中值），再触发缩放过渡
-    showEmboss([iso2], tx, k);
+    // 搜索会把国家重新居中到中心 tile，浮雕必须画在中心 tile（tx=0），否则按缩放前视图的 tile 偏移会画到屏外 → 看似无浮雕
+    showEmboss([iso2], 0, k);
     const target = d3.zoomIdentity
       .translate(W / 2 - c0[0] * k, Hh / 2 - c0[1] * k)
       .scale(k);
