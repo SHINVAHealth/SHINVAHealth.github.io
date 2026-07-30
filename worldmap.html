@@ -109,7 +109,7 @@
   a, button, .back{ cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
   .country{
     fill:rgba(56,189,248,.26);
-    stroke:rgba(8,15,30,.85); stroke-width:.5;
+    stroke:rgba(8,15,30,.45); stroke-width:.5;
     vector-effect:non-scaling-stroke;
     transition:fill .15s ease, stroke .15s ease;
     cursor:url('assets/cursors/LoLHover.png') 1 2, pointer;
@@ -117,12 +117,12 @@
   /* 已开通板块国家：持续金色高亮，便于在世界地图上快速定位（7 国：孟加拉 + 6 新国） */
   .country.hl{
     fill:rgba(34,197,94,.9);
-    stroke:rgba(134,239,172,.92); stroke-width:.7;
+    stroke:rgba(134,239,172,.5); stroke-width:.7;
   }
   .country:hover{
     /* 取消悬停蓝色高亮：底层区域不再变蓝，由 3D 浮雕层（.emboss-layer）提供悬停反馈 */
     fill:rgba(56,189,248,.26);
-    stroke:rgba(8,15,30,.85); stroke-width:.5;
+    stroke:rgba(8,15,30,.45); stroke-width:.5;
   }
   .country.active{
     /* 仅作底层描边强调；填充交给定制浮雕克隆（.emboss），避免与抬起国形重叠造成重影 */
@@ -131,7 +131,7 @@
   /* 微国（新加坡/巴林/东帝汶等，真实几何 <1px）：加粗描边 + 不透明填充，保证底图可见 */
   .country.micro{
     fill:rgba(56,189,248,.5);
-    stroke:rgba(8,15,30,.95); stroke-width:1.6;
+    stroke:rgba(8,15,30,.6); stroke-width:1.6;
   }
   /* 3D 浮雕突出层：悬停国家整块区域「从平面探出」的实体浮雕（地面阴影 + 侧壁厚度 + 高光顶面） */
   .emboss-layer{ pointer-events:none; }
@@ -169,9 +169,9 @@
   .graticule .mer{ fill:none; stroke:rgba(255,255,255,.5); stroke-width:.6; stroke-dasharray:3 3; }
   /* 关键参考圈 + 主轴：南北回归线 ±23.5° / 南北极圈 ±66.5° / 赤道 / 本初子午线
      —— 全部【实线】，统一尺寸 0.6px、统一白色高亮 rgba(255,255,255,.9)，尺寸与颜色完全一致 */
-  .graticule .par-mid{ stroke:rgba(255,255,255,.9); stroke-width:.6; stroke-dasharray:none; }
-  .graticule .par-eq{ stroke:rgba(255,255,255,.9); stroke-width:.6; stroke-dasharray:none; }
-  .graticule .mer-eq{ stroke:rgba(255,255,255,.9); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .par-mid{ stroke:rgba(255,255,255,.4); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .par-eq{ stroke:rgba(255,255,255,.4); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .mer-eq{ stroke:rgba(255,255,255,.4); stroke-width:.6; stroke-dasharray:none; }
   /* 经纬度仪表尺（固定层，地球轮廓外、界面内侧，不被裁切遮挡；数值随拖拽实时变化） */
   .ruler{ pointer-events:none; }
   .ruler .ruler-axis{ stroke:rgba(125,211,252,.45); stroke-width:1; }
