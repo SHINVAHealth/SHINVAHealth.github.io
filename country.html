@@ -262,7 +262,6 @@
     padding:6px 8px; border-radius:9px; font-size:12px; cursor:pointer; transition:.18s; }
   .rl-mode:hover{ border-color:var(--accent); color:#fff; }
   .rl-mode.active{ background:rgba(56,189,248,.3); border-color:var(--accent); color:#fff; font-weight:700; }
-  .rl-hint{ padding:6px 13px 9px; font-size:11px; color:var(--muted); line-height:1.5; }
   .rl-body{ list-style:none; margin:0; padding:6px 8px 10px; overflow-y:auto; }
   .rl-body::-webkit-scrollbar{ width:7px; }
   .rl-body::-webkit-scrollbar-thumb{ background:rgba(56,189,248,.4); border-radius:4px; }
@@ -376,7 +375,6 @@
           <button class="rl-mode" data-mode="cw">顺时针顺序</button>
           <button class="rl-mode" data-mode="ccw">逆时针顺序</button>
         </div>
-        <div class="rl-hint">清单顺序 = 绘制路线实际途径的客户顺序（最短闭合路径 TSP），与地图上虚线逐段一一对应。默认沿路线正向（ccw）罗列，可切换为反向（cw）。绘制路线本身始终为最短路径这一铁律不变。</div>
         <ol id="routeListBody" class="rl-body"></ol>
       </div>
     </section>
