@@ -75,8 +75,12 @@
     border-bottom:1px solid var(--line); position:sticky; top:0; z-index:10;
   }
   .back-btn{
-    border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--txt);
-    padding:8px 14px; border-radius:10px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; font-size:13px; transition:.2s; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:6px;
+    height:36px; padding:0 14px; box-sizing:border-box;
+    border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.12); color:var(--txt);
+    border-radius:10px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",Roboto,Helvetica,Arial,sans-serif;
+    font-size:13px; font-weight:600; transition:.2s; white-space:nowrap;
   }
   .back-btn:hover{ background:rgba(56,189,248,.18); border-color:var(--accent); }
   .title-wrap{ display:flex; align-items:center; gap:12px; min-width:0; }
@@ -139,13 +143,9 @@
   .map-ctrl button:hover{ background:rgba(56,189,248,.2); border-color:var(--accent); }
   .map-ctrl button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
   .map-toggle{ display:none; }
-  /* 整页头部右侧「返回系统」按钮：与「返回世界地图」同款样式，靠右对齐 */
-  .sys-btn{
-    margin-left:auto;
-    border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--txt);
-    padding:8px 14px; border-radius:10px; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; font-size:13px; font-family:inherit; transition:.2s; white-space:nowrap;
-  }
-  .sys-btn:hover{ background:rgba(56,189,248,.18); border-color:var(--accent); }
+  /* 整页头部右侧「返回综合索引」按钮：样式对标价格页/世界地图的 [←返回综合索引]，靠右对齐 */
+  .back{ position:fixed; top:16px; right:calc(16px - var(--sbw, 0px)); z-index:60; display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 14px; color:#fff; text-decoration:none; font-size:13px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",Roboto,Helvetica,Arial,sans-serif; font-weight:600; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:10px; transition:.18s; white-space:nowrap; box-sizing:border-box; }
+  .back:hover{ background:rgba(255,255,255,.2); transform:translateY(-1px); }
   .map-status{ position:absolute; left:14px; bottom:14px; z-index:5; font-size:11px; color:var(--muted);
     background:rgba(10,18,32,.7); padding:5px 10px; border-radius:8px; max-width:60%; }
   /* 右下角：信息总计 / 位置统计（用于对比计算空白地址个数） */
@@ -221,10 +221,9 @@
   .cust-table td.src{ color:var(--teal); font-size:11px; }
   .cust-empty{ font-size:12px; color:var(--muted); line-height:1.6; padding:8px 2px; }
   @media (max-width:980px){
-    /* 顶栏换行：返回按钮与返回系统放第一行，国名+时钟占满第二行，避免横向挤爆 */
+    /* 顶栏换行：返回世界地图与返回综合索引放第一行，国名+时钟占满第二行，避免横向挤爆 */
     .topbar{ flex-wrap:wrap; gap:10px; padding:0 12px; height:auto; min-height:60px; align-items:center; }
-    .topbar .back-btn{ order:1; padding:6px 10px; font-size:12px; }
-    .topbar .sys-btn{ order:2; margin-left:auto; padding:6px 10px; font-size:12px; }
+    .topbar .back-btn{ order:1; height:32px; padding:0 10px; font-size:12px; }
     .topbar .title-wrap{ order:3; flex:1 1 100%; min-width:0; gap:8px; }
     .title-wrap h1{ font-size:16px; }
     .title-wrap .clock{ font-size:14px; }
@@ -313,7 +312,8 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadBeacon);
   else loadBeacon();
 })();
-</script></head>
+</script><script>;(function(){var d=document.documentElement;function u(){var w=window.innerWidth-d.clientWidth;d.style.setProperty('--sbw',(w>0?w:0)+'px');}u();window.addEventListener('resize',u);window.addEventListener('load',u);if(document.readyState!=='loading')u();})();</script>
+</head>
 <body>
   <header class="topbar">
     <button class="back-btn" id="backBtn">← 返回世界地图</button>
@@ -322,8 +322,8 @@
       <span id="countryClock" class="clock">--:--:--</span>
       <span class="meta" id="countryMeta"></span>
     </div>
-    <button class="sys-btn" id="backSys">← 返回系统</button>
   </header>
+  <a class="back" href="index.html">← 返回综合索引</a>
 
   <main class="layout">
     <aside class="infobar">
