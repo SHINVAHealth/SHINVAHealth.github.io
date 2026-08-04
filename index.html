@@ -102,6 +102,20 @@
   a, button, .card, .tool-btn, [role=button], .cat-head, .cust-region-h, .modal-bar button, .topbar button{ cursor:pointer; }
   input, textarea, select{ cursor:text; }
   footer{ text-align:center; color:var(--muted); font-size:12px; padding:24px; }
+  /* 回到顶部悬浮按钮（综合索引右下角，登录后随 #app 显示；复用品牌渐变与 .tool-btn 视觉一致） */
+  #toTop{
+    position:fixed; right:24px; bottom:24px; z-index:60;
+    width:52px; height:52px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#0ea5e9,#0d9488); color:#fff;
+    font-size:22px; font-weight:700; line-height:1; border:none; cursor:pointer;
+    box-shadow:0 8px 24px rgba(14,165,233,.35);
+    transition:transform .2s ease, box-shadow .2s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #toTop:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rgba(14,165,233,.5); }
+  #toTop:active{ transform:translateY(0) scale(.94); }
+  @media (max-width:600px){ #toTop{ right:16px; bottom:16px; width:46px; height:46px; font-size:19px; } }
   /* 登录 */
   .login-mask{ position:fixed; inset:0; z-index:9999; display:flex; background:#0f172a; padding:20px; overflow:auto; }
   .login-mask .bg{ position:absolute; inset:0; background:#0f172a url('bg.jpg') center center / cover no-repeat; opacity:.5; transform:scale(1.12); z-index:0; }
@@ -168,13 +182,14 @@
     <div class="layout">
       <aside class="toolbar">
         <a class="tool-btn" href="worldmap.html" title="打开世界地图，按国家浏览客户分布"><span class="ic">🌍</span><span>世界地图</span></a>
-        <a class="tool-btn" href="price.html" title="电外科外贸价格查询：按编码 / 名称精准定位产品全部信息"><span class="ic">💰</span><span>产品价格查询</span></a>
+        <a class="tool-btn" href="price.html" title="电外科外贸价格速查：按编码 / 名称精准定位产品全部信息"><span class="ic">💰</span><span>外贸价格速查</span></a>
       </aside>
       <div id="cats" class="cats"></div>
     </div>
   </div>
-  <footer>新华健康外贸客户管理系统 · 静态版（无需后端）</footer>
-</div>
+  <footer>新华健康外贸客户管理系统</footer>
+  <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+  </div>
 
 <div class="modal-mask" id="modal">
   <div class="modal-box">
@@ -275,7 +290,7 @@
     return '普通账号';
   }
 
-  const form = $('loginForm'), errEl = $('loginErr'), submitBtn = $('submitBtn');
+  const form = $('loginForm'), errEl = $('loginErr');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const username = $('lu').value.trim();
@@ -442,6 +457,10 @@
   function logout(){ ME=null; localStorage.removeItem('xh_static_user'); try{ localStorage.removeItem('gate_ok'); localStorage.removeItem('gate_user'); localStorage.removeItem('xh_auth'); }catch(e){} location.reload(); }
   $('btnLogout').onclick = logout;
 
+  // 回到顶部悬浮按钮：点击平滑滚动到页面最上端
+  const toTopBtn = $('toTop');
+  if (toTopBtn) toTopBtn.onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
+
   // 实时中国时间（与世界地图完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
   (function(){
     const el = document.getElementById('chinaclock');
@@ -466,7 +485,6 @@
         + '<span class="colon">:</span>'
         + '<span class="seg">' + p[2] + '</span>'
         + '<span class="tz">(UTC+8)</span>';
-      sizeToLogo();
     }
     tick(); setInterval(tick, 1000);
     const logo = document.querySelector('header.hero .brand-logo');
