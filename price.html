@@ -34,7 +34,7 @@
     background:linear-gradient(180deg, rgba(15,23,42,.62) 0%, rgba(15,23,42,.30) 45%, rgba(15,23,42,.66) 100%),
       linear-gradient(135deg, rgba(13,148,136,.32) 0%, rgba(14,165,233,.28) 100%); }
   header.hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-    radial-gradient(78% 58% at 50% -8%, rgba(255,255,255,.14) 0%, transparent 60%); }
+    background: radial-gradient(78% 58% at 50% -8%, rgba(255,255,255,.14) 0%, transparent 60%); }
   header.hero .brand-block{ position:absolute; top:16px; left:16px; z-index:2; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
   header.hero .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
   header.hero .chinaclock{ font-size:26px; color:#fff; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1; width:100%; display:flex; align-items:center; white-space:nowrap; }
@@ -434,18 +434,13 @@ const RATE_CFG = {
   monthStart: 6.7910,     // 月初央行中间价（2026-08-03，8月首交易日/首工作日）
   monthEnd: 6.7894,       // 月末央行中间价（2026-07-31，7月收官日/末工作日；月度期间作预估）
   src: "中国外汇交易中心（中国人民银行授权发布）· 人民币汇率中间价",
-  histSrc: "中国外汇交易中心（中国人民银行授权发布）· 人民币汇率中间价",
-  histUrl: "",            // 已弃用第三方市场汇率源 fawazahmed0（≈6.75，非央行中间价）
-  autoUpdate: true,
+  autoUpdate: true,       // 每次打开页面 fetch 同源 fx_rate.json（无后端/计划任务）
   // 央行中间价锚点表（随官方公布维护；key=YYYY-MM-DD，value=当日 USD/CNY 中间价）。无免费「央行中间价」历史 API，故以官方公布的锚点值为准。
   centralBank: {
     "2026-07-31": 6.7894, // 7月收官日（末工作日）
     "2026-08-03": 6.7910, // 8月首交易日（首工作日；央行中间价仅交易日发布）
     "2026-08-04": 6.7917  // 今日（2026-08-04 央行中间价）
-  },
-  todayDate: "2026-08-04",
-  monthStartDate: "2026-08-03",
-  monthEndDate: "2026-07-31"
+  }
 };
 
 const qCode = $('qCode'), qName = $('qName'), qSpec = $('qSpec'), qModel = $('qModel');
@@ -729,7 +724,7 @@ results.addEventListener('keydown', function(e){
   }
   [up, qty].forEach(el => {
     el.addEventListener('input', () => {
-      if(el === qty){                     // 手动输入也钳制为负数（双保险）
+      if(el === qty){                     // 手动输入也钳制为非负下限 0（双保险）
         const v = numOf(qty);
         if(isFinite(v) && v < 0){ qty.value = '0'; }
       }
