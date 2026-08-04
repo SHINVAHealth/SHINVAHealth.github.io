@@ -79,14 +79,8 @@
   header.top .sub{ color:var(--muted); font-size:12px; margin-left:6px; }
   header.top .spacer{ flex:1; }
   /* 返回按钮：对标产品价格页 .back 的格式/大小/位置（白字半透白底、顶栏右上角） */
-  header.top a.back{
-    position:absolute; top:16px; right:16px; z-index:25;
-    display:inline-flex; align-items:center; gap:6px;
-    color:#fff; text-decoration:none; font-size:13px; font-family:inherit; font-weight:600;
-    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
-    padding:8px 14px; border-radius:10px; transition:.18s; white-space:nowrap;
-  }
-  header.top a.back:hover{ background:rgba(255,255,255,.2); transform:translateY(-1px); }
+  .back{ position:fixed; top:16px; right:calc(16px - var(--sbw, 0px)); z-index:60; display:inline-flex; align-items:center; gap:6px; height:36px; color:#fff; text-decoration:none; font-size:13px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",Roboto,Helvetica,Arial,sans-serif; font-weight:600; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); padding:0 14px; border-radius:10px; transition:.18s; white-space:nowrap; box-sizing:border-box; }
+  .back:hover{ background:rgba(255,255,255,.2); transform:translateY(-1px); }
 
   .layout{ flex:1; position:relative; }
   /* 地图容器：桌面端占让出左侧搜索栏后的右侧区域；移动端改为纵向流的上部区块 */
@@ -324,7 +318,7 @@
     header.top .brand{ gap:8px; min-width:0; }
     header.top .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; white-space:nowrap; }
     header.top .spacer{ flex:1 1 auto; }
-    header.top a.back{ top:12px; right:12px; padding:7px 11px; font-size:12px; }
+    .back{ top:12px; right:calc(12px - var(--sbw, 0px)); padding:7px 11px; font-size:12px; }
     .layout{
       display:flex; flex-direction:column; height:100%; overflow:hidden;
     }
@@ -387,7 +381,8 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadBeacon);
   else loadBeacon();
 })();
-</script></head>
+</script><script>;(function(){var d=document.documentElement;function u(){var w=window.innerWidth-d.clientWidth;d.style.setProperty('--sbw',(w>0?w:0)+'px');}u();window.addEventListener('resize',u);window.addEventListener('load',u);if(document.readyState!=='loading')u();})();</script>
+</head>
 <body>
   <header class="top">
     <div class="brand">
@@ -398,8 +393,8 @@
       <div class="chinaclock" id="chinaclock">--:--:--</div>
     </div>
     <span class="spacer"></span>
-    <a class="back" href="index.html">← 返回综合索引</a>
   </header>
+  <a class="back" href="index.html">← 返回综合索引</a>
   <div class="layout">
     <div class="mapbox" id="mapbox">
       <div class="banner" id="banner"></div>
