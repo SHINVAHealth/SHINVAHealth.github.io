@@ -451,9 +451,6 @@ window.addEventListener("error", function(e){
     return COUNTRY[name] || [name||'未知地区', '—', null, null];
   }
   // 联动高亮（台湾已不作为独立国家检索，故仅保留中国自身）
-  function partnerIso2(iso2){
-    return [];
-  }
 
   const features = topojson.feature(WORLD, WORLD.objects.countries).features;
   const width = () => document.getElementById('globe').clientWidth;
@@ -842,7 +839,7 @@ window.addEventListener("error", function(e){
   // 取悬停 path 所属 tile 的水平偏移（content 坐标；gZoom 之上叠加，故与国形共享同一坐标系）
   function tileOffsetOf(el){
     let n = el;
-    while (n && n !== gZoom.node && !(n.getAttribute && (n.getAttribute('class')||'').split(/\s+/).indexOf('tile') >= 0)){
+    while (n && n !== gZoom.node() && !(n.getAttribute && (n.getAttribute('class')||'').split(/\s+/).indexOf('tile') >= 0)){
       n = n.parentNode;
     }
     if (!n || n === gZoom.node) return 0;
@@ -1130,18 +1127,6 @@ window.addEventListener("error", function(e){
   }
   initWorld();
 
-  // —— 实时中国时间（页面左上角，SHINVA Health 下方）——
-  (function(){
-    const el = document.getElementById('chinaclock_engine');
-    if (!el) return;
-    function fmt(){
-      try { return new Intl.DateTimeFormat('zh-CN', { timeZone:'Asia/Shanghai', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).format(new Date()); }
-      catch(e){ return '--:--:--'; }
-    }
-    function tick(){ el.textContent = '中国时间 ' + fmt(); }
-    tick(); setInterval(tick, 1000);
-  })();
-
   // —— 跨国家检索：查找国家 + 搜索客户信息（覆盖录入的各个国家）——
   (function(){
     const input = document.getElementById('wmSearch');
@@ -1159,7 +1144,7 @@ window.addEventListener("error", function(e){
     function dismissSearchVisuals(){
       _searchActive = false;                    // 搜索浮雕结束，恢复悬停交互
       if (_hideEmboss) _hideEmboss();          // 取消浮雕（跨域桥接）
-      tip.classList.remove('show');            // 收起国家信息窗口，避免残留上一个检索国
+      const _tip = document.getElementById('tip'); if (_tip) _tip.classList.remove('show'); // 收起国家信息窗口（tip 声明于 initWorld 作用域，搜索 IIFE 在模块作用域，按 id 取）
       // 还原浮雕前的视图（尺寸 + 位置）
       if (_embossView && _svg && _zoom){
         const v = _embossView; _embossView = null;
