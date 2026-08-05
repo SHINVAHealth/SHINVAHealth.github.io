@@ -66,7 +66,18 @@
   @media (max-width: 600px) {
     .company-list { grid-template-columns: 1fr; }
     .summary-stats { flex-direction: column; }
-  }</style>
+  }  /* 客户搜索框 */
+  .search-box { background: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .search-box .s-ic { font-size: 18px; color: #2874a6; }
+  .search-box input { flex: 1; min-width: 220px; border: 2px solid #d6eaf8; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #2c3e50; outline: none; transition: border-color .2s, box-shadow .2s; background: #fbfdff; }
+  .search-box input:focus { border-color: #2874a6; box-shadow: 0 0 0 3px rgba(40,116,166,.15); }
+  .search-box input::placeholder { color: #95a5a6; }
+  .search-box .s-clear { border: none; background: #ebf5fb; color: #2874a6; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; transition: background .2s; }
+  .search-box .s-clear:hover { background: #d6eaf8; }
+  .search-box .s-count { font-size: 13px; color: #666; margin-left: auto; white-space: nowrap; }
+  .search-box .s-count b { color: #2874a6; }
+  .no-result { text-align: center; color: #95a5a6; padding: 40px; font-size: 14px; display: none; }
+</style>
 </head>
 <body>
 
@@ -86,14 +97,13 @@
     </div>
   </div>
 
-  <div class="note">
-    <strong>说明：</strong>
-    <br>• 本表由桌面《江洁客户尼日利亚260717.xlsx》原样生成，字段含公司名称 / 国家 / 电话 / 邮箱 / 网址 / 地址 / 备注。
-    <br>• 电话中的「有WA」= 该号码有 WhatsApp 可联系；「暂未联系」= 暂未接通；「WA留言」= 仅可 WhatsApp 留言。
-    <br>• 邮箱/网址为「无」或空白的，表示原表未提供，标注「未公开」，未作任何虚构补全。
-    <br>• 分类仅依据备注中的业务描述：含兽医/动物/Vet 等关键词归入「兽医诊所与服务商」，其余归入「医疗设备经销商」。
+  <div class="search-box">
+    <span class="s-ic">🔍</span>
+    <input id="custSearch" type="text" placeholder="搜索 公司名称 / 电话 / 官网 / 联系情况 …" autocomplete="off">
+    <button class="s-clear" id="custClear" type="button">清除</button>
+    <span class="s-count" id="custCount"></span>
   </div>
-
+  <div class="no-result" id="custNoResult">没有匹配的客户，试试别的关键词</div>
   <div class="tier tier-1">
     <div class="tier-header">
       <span class="tier-badge">重点开发</span>
@@ -251,5 +261,35 @@ Trading Company | Distributor Wholesaler | Retailer | Buying Office | Individual
   数据来源：用户《江洁客户尼日利亚260717.xlsx》（桌面，江洁提供）&nbsp;|&nbsp; 自动生成 &nbsp;|&nbsp; 共26家公司
 </div>
 
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var clearBtn=document.getElementById('custClear');
+  var countEl=document.getElementById('custCount');
+  var noResult=document.getElementById('custNoResult');
+  var cards=Array.prototype.slice.call(document.querySelectorAll('.company-card'));
+  var texts=cards.map(function(c){return c.textContent.toLowerCase();});
+  var tiers=Array.prototype.slice.call(document.querySelectorAll('.tier'));
+  function apply(){
+    var q=(input.value||'').trim().toLowerCase();
+    var shown=0;
+    cards.forEach(function(c,i){
+      var hit=!q||texts[i].indexOf(q)!==-1;
+      c.style.display=hit?'':'none';
+      if(hit)shown++;
+    });
+    tiers.forEach(function(t){
+      var any=false;
+      t.querySelectorAll('.company-card').forEach(function(c){if(c.style.display!=='none')any=true;});
+      t.style.display=any?'':'none';
+    });
+    if(countEl)countEl.innerHTML=q?('匹配 <b>'+shown+'</b> / '+cards.length+' 家'):('共 '+cards.length+' 家');
+    if(noResult)noResult.style.display=(q&&shown===0)?'block':'none';
+  }
+  if(input)input.addEventListener('input',apply);
+  if(clearBtn)clearBtn.addEventListener('click',function(){input.value='';apply();if(input.focus)input.focus();});
+  apply();
+})();
+</script>
 </body>
 </html>
