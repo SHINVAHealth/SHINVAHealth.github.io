@@ -13,7 +13,7 @@
   body{font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;background:#0f172a;}
   /* 登录遮罩：flex 容器 + 卡片 margin:auto → 窗口水平垂直居中（与 index.html 登录遮罩一致） */
   .login-mask{position:fixed;inset:0;z-index:9999;display:flex;background:#0f172a;padding:20px;overflow:auto;}
-  .login-mask .bg{position:absolute;inset:0;background:#0f172a url('/bg.jpg') center center / cover no-repeat;opacity:.5;transform:scale(1.12);z-index:0;}
+  .login-mask .bg{position:absolute;inset:0;background:#0f172a url('bg.jpg') center center / cover no-repeat;opacity:.5;transform:scale(1.12);z-index:0;}
   .login-mask .bg-overlay{position:absolute;inset:0;background:rgba(15,23,42,.38);z-index:1;}
   .login-card{position:relative;z-index:2;margin:auto;background:rgba(255,255,255,.96);border-radius:16px;padding:30px 28px;width:360px;max-width:100%;box-shadow:0 24px 60px rgba(15,23,42,.35);}
   .login-card .logo{display:block;margin:0 auto 16px;max-height:50px;max-width:240px;width:auto;height:auto;}
@@ -49,7 +49,7 @@
   <div class="bg"></div>
   <div class="bg-overlay"></div>
   <form class="login-card" id="f" autocomplete="off">
-    <img class="logo" src="/shinva_logo.png" alt="新华健康">
+    <img class="logo" src="shinva_logo.png" alt="新华健康">
     <div class="title">外贸客户管理系统</div>
     <label for="u">账号</label>
     <div class="field">
