@@ -104,6 +104,9 @@ window.addEventListener("unhandledrejection", function(e){
       // 所属地区：大洲 / 子区域（大致方向）
       const sub = (window.SUBREGION && window.SUBREGION[iso2]) || null;
       $('region').textContent = sub ? continent + '/' + sub : continent;
+      // 人均GDP（World Bank 名义，current US$）
+      if (facts && facts.gdp != null){ $('gdp').textContent = '约 ' + Number(facts.gdp).toLocaleString('en-US') + ' 美元' + (facts.gdpYear ? '（' + facts.gdpYear + '）' : ''); }
+      else { $('gdp').textContent = '—'; }
     })();
 
     // —— 2. 公休日（nager.at；仅显示今天之后；名称翻译为中文）——
@@ -174,41 +177,59 @@ window.addEventListener("unhandledrejection", function(e){
         }).catch(() => { $('holidayList').innerHTML = '<li class="err">公休日加载失败（网络受限）</li>'; });
     }
 
-    // —— 3. 汇率（er-api，CNY 基准；顺序：人民币→该国 / 当地→人民币 / 人民币→美元 / 美元→该国）——
-    function renderFX(j, code){
-      if (!code || !j.rates || j.rates[code] == null){ $('fxBody').innerHTML = '<span class="err">该国货币暂无汇率</span>'; return; }
-      const cnyToCur = j.rates[code];          // 1 人民币 = ? 该国货币
-      const cnyToUsd = j.rates.USD;            // 1 人民币 = ? 美元
-      const usdToCur = cnyToCur / cnyToUsd;     // 1 美元 = ? 该国货币
-      const curToCny = 1 / cnyToCur;           // 1 该国货币 = ? 人民币
-      const usdToCny = 1 / cnyToUsd;           // 1 美元 = ? 人民币
-      $('fxBody').innerHTML =
-        `<div class="row top"><span>1 元(人民币) ≈</span><b>${fmt(cnyToCur)} ${code}</b></div>` +
-        `<div class="row"><span>1 ${code} ≈</span><b>${fmt(curToCny)} 元(人民币)</b></div>` +
-        `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCny)} 元(人民币)</b></div>` +
-        `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCur)} ${code}</b></div>` +
-        `<span class="fx-update">更新：${j.time_last_update_utc}</span>`;
+    // —— 3. 汇率 ——
+    // 美元兑人民币：权威采用 fx_rate.json（央行中间价），与产品价格页同源同值（不回退市场源）。
+    // 当地货币汇率：fx_rate.json 不携带，故以 er-api 全币种为补充，并用「美元兑人民币」为桥接推导。
+    //   展示顺序按用户优先级：① 人民币兑当地货币 → ② 当地货币兑人民币 → ③ 美元兑当地货币 → ④ 美元兑人民币。
+    let _fxDate = '';
+    function renderFX(usdCny, local){
+      // 汇率展示顺序（用户指定优先级）：
+      //   ① 人民币兑当地货币 → ② 当地货币兑人民币 → ③ 美元兑当地货币 → ④ 美元兑人民币
+      const d = _fxDate || '';
+      let html = '';
+      if (local && local.cnyToCur != null){
+        const cnyToCur = local.cnyToCur;          // 1 元(人民币) ≈ ? 当地货币
+        const curToCny = 1 / cnyToCur;            // 1 当地货币 ≈ ? 元(人民币)
+        const usdToCur = usdCny * cnyToCur;       // 以美元兑人民币为桥接，与价格页数值自洽
+        html =
+          `<div class="row top"><span>1 元(人民币) ≈</span><b>${fmt(cnyToCur)} ${esc(local.code)}</b></div>` +
+          `<div class="row"><span>1 ${esc(local.code)} ≈</span><b>${fmt(curToCny)} 元(人民币)</b></div>` +
+          `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdToCur)} ${esc(local.code)}</b></div>` +
+          `<div class="row"><span>1 美元 ≈</span><b>${fmt(usdCny)} 元(人民币)</b></div>`;
+      } else {
+        // 无当地货币汇率时，仅显示美元兑人民币（与价格页同源同值）
+        html += `<div class="row top"><span>1 美元 ≈</span><b>${fmt(usdCny)} 元(人民币)</b></div>`;
+        if (cur && cur.code){
+          html += `<div class="row"><span>当地货币</span><b>${esc(cur.code)}（${esc(cur.symbol || '')}）</b></div>`;
+        }
+      }
+      html += `<span class="fx-update">来源：央行中间价(美元兑人民币)${d ? ' · ' + d : ''}</span>`;
+      $('fxBody').innerHTML = html;
     }
     function loadFX(){
-      const code = cur ? cur.code : null;
-      if (!code){ $('fxBody').innerHTML = '<span class="err">该国货币暂无汇率</span>'; return; }
-      // 当日汇率缓存（localStorage），重复访问秒开、同日内离线可用
-      const dayKey = 'fx_' + code;
-      try {
-        const cached = JSON.parse(localStorage.getItem(dayKey) || 'null');
-        const today = new Date().toISOString().slice(0,10);
-        if (cached && cached.date === today && cached.j && cached.j.rates){ renderFX(cached.j, code); return; }
-      } catch(e){}
-      fetch('https://open.er-api.com/v6/latest/CNY')
+      const code0 = cur ? cur.code : null;   // 页面级货币（country_meta 可能晚于本函数就绪，er-api 回调内再读一次 cur 兜底）
+      // 1) 美元兑人民币（权威 / 与产品价格页一致）：fx_rate.json
+      fetch('fx_rate.json', { cache: 'no-store' })
         .then(r => r.json()).then(j => {
-          try { localStorage.setItem(dayKey, JSON.stringify({ date: new Date().toISOString().slice(0,10), j })); } catch(e){}
-          renderFX(j, code);
+          const usdCny = (j && j.usdCny != null) ? j.usdCny : null;
+          if (usdCny == null){ $('fxBody').innerHTML = '<span class="err">汇率加载失败</span>'; return; }
+          _fxDate = j.date ? j.date : new Date().toISOString().slice(0,10);
+          renderFX(usdCny, null);   // 先渲染人民币兑美元（立即可见、与价格页一致；当地货币行待 er-api 回调补全）
+          // 2) 当地货币汇率（er-api 全币种补充）：以美元兑人民币为桥接推导，不破坏价格页一致性
+          const code = cur ? cur.code : code0;
+          if (!code){ return; }
+          fetch('https://open.er-api.com/v6/latest/CNY')
+            .then(r => r.json()).then(k => {
+              const cnyToCur = (k && k.rates && k.rates[code] != null) ? k.rates[code] : null;
+              renderFX(usdCny, cnyToCur != null ? { code, symbol: cur && cur.symbol, cnyToCur } : null);
+            }).catch(() => { /* 保留仅美元行渲染，不报错 */ });
         }).catch(() => { $('fxBody').innerHTML = '<span class="err">汇率加载失败（网络受限）</span>'; });
     }
     function fmt(n){ return (n==null || isNaN(n)) ? '—' : Number(n).toLocaleString('zh-CN', {maximumFractionDigits:4}); }
 
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
     let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=3.8, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _adm2Paths=[], _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
+    let _gHosp=null, _hospEls=[], _hospVisible=true, _hlHospIds=new Set(), _activeTab='cust', _hospLoaded=false;  // 医院位点图层状态（红点+红十字，区别于客户绿点）
     // 懒加载名单（方案 A）：这些大国 ADM2 体量大，进图不预载，点击"显示二级行政区域"时才拉（IndexedDB 缓存，二次秒开）
     const LAZY_ADM2 = new Set(['ru', 'au']);
     let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
@@ -217,16 +238,17 @@ window.addEventListener("unhandledrejection", function(e){
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
+  let _hideUnselectedHosp = false;   // 隐藏未选医院：默认关闭。开启 → 仅显示已选中(高亮)医院，隐藏其余所有红点
   let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「闭合最短」路线（Closed TSP）
   let _gRoute = null;            // 路线图层（置于 zoom 组 g 内、客户点之下，随地图同步变换）
   let _gDepot = null, _depotInner = null;  // 路线起点红旗图层 / 内部缩放抵消组
   let _depot = null;             // 用户选取的路线出发点 {geo:[lng,lat]}
-  let _selectDepotMode = false;  // 是否正在“选取计划位置”
+  let _selectDepotMode = false;  // 是否正在“设立出发点位”
   let _routePts = [];            // 当前参与路线的客户点（_custEls 元素快照）
   let _routeOrder = [];         // 闭合访问顺序（_routePts 下标数组；含 depot 时 depot 在顺序中排首位/末位）
   let _routeMode = 'tsp';       // 🔴 路线规划铁律：绘制的闭合路线「无论如何都是最短路径」（Closed TSP），不可改为其它顺序
   let _listMode = 'ccw';        // 清单名单阅读方向（仅控制名单遍历方向，不改绘制路线）：'ccw'=沿最短路线正向（默认）；'cw'=沿最短路线反向。🔴 清单顺序恒等于绘制路线实际途径顺序（复用 _routeOrder），不再用空间环形，确保「清单=路线途径顺序」
-  let _routeListOpen = false;   // 路线规划清单弹窗是否打开
+  let _routeListOpen = false;   // 路线轨迹清单弹窗是否打开
   let _routeSig = null;         // 可见点集签名：点集不变则复用已算顺序，避免每次选中都重跑 TSP（防卡）
   let _lastAdm2Feat = null, _lastAdm2Prov = null;   // ADM2 悬停省归属缓存：仅要素改变时重算 provinceAt
   let _saveT = null;              // 单点模式：点击客户行前的地图 transform（取消选中时恢复，相当于"返回"）
@@ -355,6 +377,7 @@ window.addEventListener("unhandledrejection", function(e){
       const gEmboss = g.append('g').attr('class','emboss-layer');
       _gEmboss = gEmboss;
       _gCust = g.append('g').attr('class','cust-layer');  // 客户点图层（顶层）：置于标志层之上，永不被机场/首都图标遮挡；随地图平移/缩放自动同步，绝不会漂移/消失
+      _gHosp = g.append('g').attr('class','hosp-layer');  // 医院点图层（最顶层）：红点+红十字，置于客户点之上，随地图同步（不漂移/不消失）
       _gMark = g.insert('g', '.cust-layer');  // 标志层（机场/首都）置于客户点之下、省图层之上：不遮挡客户点；随 g 变换自动跟随，尺寸由 updateMarkers 反向 scale 恒定屏幕大小
       reapplyRegionSel();
       drawMarkers();
@@ -364,6 +387,7 @@ window.addEventListener("unhandledrejection", function(e){
         .on('zoom', ev => {
           g.attr('transform', ev.transform);
           updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
+          updateHospZoom(ev.transform.k);  // 医院点（红点+红十字）同步随缩放变化：半径/铺开/红十字尺寸随之插值
           updateMarkers(ev.transform);
           updateDepotMarker(ev.transform); // 红旗图标恒定屏幕尺寸
           if (_routeOn) drawRoute(ev.transform.k);   // 路线端点随缩放铺开量同步，仅 O(n) 重拼路径，不重算 TSP 顺序（防卡）
@@ -408,7 +432,73 @@ window.addEventListener("unhandledrejection", function(e){
             const m = _routePts[hasDepot ? idx - 1 : idx];
             return routePos(m, k);
           });
-        }
+        },
+        // 回归测试钩子（路线随浮雕浮起同步）：断言路线每个顶点 ≡ 对应位点的 markerBase 显示坐标
+        // （经销商/医院点共用 markerBase）→ 悬停浮雕使位点浮起时路线顶点同步抬升，二者零偏移。
+        routeLiftConsistent(){
+          if (!_gRoute || !_routeOn) return { ok:true, note:'route-off' };
+          const path = _gRoute.select('path.route-line');
+          if (!path.node()) return { ok:true, note:'no-path' };
+          const d = path.attr('d') || '';
+          const nums = (d.match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+          const verts = [];
+          for (let i = 0; i + 1 < nums.length; i += 2) verts.push([nums[i], nums[i + 1]]);
+          const hasDepot = !!_depot;
+          const k = _curK || 1;
+          for (let vi = 0; vi < verts.length; vi++){
+            const oi = hasDepot ? (vi === 0 ? -1 : _routeOrder[vi] - 1) : _routeOrder[vi];
+            const m = oi < 0 ? null : _routePts[oi];
+            if (!m) continue;
+            const [bx, by] = markerBase(m, k);
+            const [vx, vy] = verts[vi];
+            if (Math.abs(bx - vx) > 0.5 || Math.abs(by - vy) > 0.5) return { ok:false, id:m.rec.__id, bx, by, vx, vy };
+          }
+          return { ok:true };
+        },
+        // 回归测试钩子：模拟搜索栏信息行点击 + 读取客户位点显隐状态（验证「关闭所有点位后点行仅显示选中」）
+        highlightCustomerById(id){ if (typeof highlightCustomer === 'function') highlightCustomer(id); return this; },
+        custState(){
+          const ct = document.querySelector('#custtoggle');
+          const hu = document.querySelector('#hideunsel');
+          let selVisible = null, otherHidden = null;
+          if (_gCust && _custEls.length){
+            const selEl = _gCust.selectAll('g.cust-pt-g').filter(function(){ return _hlIds.has(+this.getAttribute('data-id')); }).node();
+            const otherEl = _gCust.selectAll('g.cust-pt-g').filter(function(){ return !_hlIds.has(+this.getAttribute('data-id')); }).node();
+            selVisible = selEl ? (selEl.style.display !== 'none') : null;
+            otherHidden = otherEl ? (otherEl.style.display === 'none') : null;
+          }
+          const rowsHidden = Array.from(document.querySelectorAll('.cust-table tbody tr[data-id]')).filter(tr => tr.style.display === 'none').length;
+          return { visible:_custVisible, hideUnselected:_hideUnselected, custToggleActive: !!(ct&&ct.classList.contains('active')), hideunselActive: !!(hu&&hu.classList.contains('active')), custPoints:_custEls.length, selVisible, otherHidden, selCount:_hlIds.size, rowsHidden };
+        },
+        // 回归测试钩子（医院侧，镜像 custState / highlightCustomerById）：验证「关闭所有医院位点后点行仅显示选中、不自动进保留模式」
+        highlightHospitalById(id){ if (typeof highlightHospital === 'function') highlightHospital(id); return this; },
+        hospState(){
+          const ht = document.querySelector('#hosptoggle');
+          const hu = document.querySelector('#hideunselHosp');
+          let selVisible = null, otherHidden = null;
+          if (_gHosp && _hospEls.length){
+            const selEl = _gHosp.selectAll('g.hosp-pt-g').filter(function(){ return _hlHospIds.has(+this.getAttribute('data-id')); }).node();
+            const otherEl = _gHosp.selectAll('g.hosp-pt-g').filter(function(){ return !_hlHospIds.has(+this.getAttribute('data-id')); }).node();
+            selVisible = selEl ? (selEl.style.display !== 'none') : null;
+            otherHidden = otherEl ? (otherEl.style.display === 'none') : null;
+          }
+          const rowsHidden = Array.from(document.querySelectorAll('.cust-table tbody tr[data-id]')).filter(tr => tr.style.display === 'none').length;
+          return { visible:_hospVisible, hideUnselectedHosp:_hideUnselectedHosp, hospToggleActive: !!(ht&&ht.classList.contains('active')), hideunselHospActive: !!(hu&&hu.classList.contains('active')), hospPoints:_hospEls.length, selVisible, otherHidden, selCount:_hlHospIds.size, rowsHidden };
+        },
+        // 回归测试钩子：验证「经销商点 + 医院点共用同一套 markerBase 坐标逻辑」——相同 lifted/liftC/off 下，
+        // 两类点在 k=1 与 k=3 均返回完全一致显示坐标（即悬停浮雕/缩放时永远不会漂移不同步）。
+        markerBaseCheck(){
+          const base = [100, 200], liftC = [105, 195], off = [3, -2];
+          const mk = () => ({ base, liftC, off, lifted: true });
+          const r3 = (a) => [Math.round(a[0]*1000)/1000, Math.round(a[1]*1000)/1000];
+          return {
+            custK1: r3(markerBase(mk(), 1)), hospK1: r3(markerBase(mk(), 1)),
+            custK3: r3(markerBase(mk(), 3)), hospK3: r3(markerBase(mk(), 3))
+          };
+        },
+        // 回归测试钩子（静态锁图 + 浮起）：选中某行政区(使其下点位浮起)，用于验证开启静态锁图后浮起标记被清除、点位贴回基准坐标
+        liftRegion(name){ const f = findAdm1Feature(name); if (f) _embossAddOrToggle('region', name, f, 'region'); return this; },
+        anyLifted(){ return (_custEls||[]).some(m => m.lifted) || (_hospEls||[]).some(m => m.lifted); }
       };
 
       // 国家地图 LOL 小手（DOM 跟随，与世界地图地球完全一致）：规避 CSS 光标拒载 + d3.zoom 拖拽握拳
@@ -461,24 +551,30 @@ window.addEventListener("unhandledrejection", function(e){
       $('zreset').onclick = () => {
         svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);   // 缩放/平移归位（默认全览视图）
         clearCustomerHighlight();                                              // 清除客户黄点 + 行选中高亮
+        clearHospitalHighlight();                                             // 清除医院红点 + 行选中高亮（与上面对称；之前漏调导致重置后医院信息行仍高亮）
         _embossRegions.clear(); _hoverRegion = null; renderEmboss();           // 清空选中行政区域 3D 浮雕
         reapplyRegionSel();                                                    // 清空一级/二级行政区选中态
         const cs = $('custSearch'); if (cs) cs.value = '';                     // 清空搜索框
-        applyRegionFilter();                                                   // 区域筛选 + 搜索 → 重置为全部客户
+        applyListFilter();                                                     // 区域筛选 + 搜索 → 重置为全部（按当前标签：客户/医院）
         if (_hideUnselected){                                                  // 恢复「显示全部客户」
           _hideUnselected = false;
-          const hu = $('hideunsel'); if (hu){ hu.classList.remove('active'); hu.textContent = '隐藏未选客户'; }
+          const hu = $('hideunsel'); if (hu) hu.classList.remove('active');
           applyHideUnselected();
+        }
+        if (_hideUnselectedHosp){                                             // 恢复「显示全部医院」
+          _hideUnselectedHosp = false;
+          const hhu = $('hideunselHosp'); if (hhu) hhu.classList.remove('active');
+          applyHideUnselectedHosp();
         }
         if (_routeListOpen) closeRouteList();                                  // 关闭路线规划清单弹窗
         if (_routeOn || _depot){                                               // 关闭路线规划 + 清除出发点红旗
           _routeOn = false;
           if (_gRoute){ _gRoute.selectAll('*').remove(); _gRoute.style('display', 'none'); }
-          const rp = $('routeplan'); if (rp){ rp.classList.remove('active'); rp.textContent = '开启路线规划'; }
+          const rp = $('routeplan'); if (rp){ rp.classList.remove('active'); rp.textContent = '描绘路线轨迹'; }
         }
         if (_selectDepotMode || _depot){                                       // 退出选点模式 + 清除红旗
           _selectDepotMode = false;
-          const sd = $('selectDepot'); if (sd){ sd.classList.remove('active'); sd.textContent = '选取计划位置'; }
+          const sd = $('selectDepot'); if (sd){ sd.classList.remove('active'); sd.textContent = '设立出发点位'; }
           const ov = $('depotOverlay'); if (ov) ov.style.display = 'none';
           _depot = null; drawDepotMarker();
         }
@@ -494,22 +590,59 @@ window.addEventListener("unhandledrejection", function(e){
         }
         if (!_custVisible){                                                    // 恢复客户位点显示
           _custVisible = true;
-          const ct = $('custtoggle'); if (ct){ ct.classList.add('active'); ct.textContent = '隐藏客户位点'; }
+          const ct = $('custtoggle'); if (ct) ct.classList.add('active');
           if (_gCust) _gCust.style('display', null);
         }
+        if (!_hospVisible){                                                    // 恢复医院位点显示
+          _hospVisible = true;
+          const ht = $('hosptoggle'); if (ht) ht.classList.add('active');
+          if (_gHosp) _gHosp.style('display', null);
+        }
+        if (_hideUnselected){ _hideUnselected = false; const hu = $('hideunsel'); if (hu) hu.classList.remove('active'); }       // 重置：退出「保留已选客户」筛选，回到全显（维持与总开关互斥）
+        if (_hideUnselectedHosp){ _hideUnselectedHosp = false; const hu = $('hideunselHosp'); if (hu) hu.classList.remove('active'); }  // 重置：退出「保留已选医院」筛选
+        applyHideUnselected();                                                // 重置后按当前状态恢复客户点位可见性（总开关/选中/保留模式）
+        applyHideUnselectedHosp();                                            // 重置后同步恢复医院点位可见性（与上面同款，避免重置后医院红点全隐）
         if (showAdm2 !== _showAdm2Init && $('adm2toggle')){                    // 二级行政区域回到初始默认态
           $('adm2toggle').click();
         }
         _saveT = null;                                                         // 重置地图返回记忆
       };
       $('custtoggle').onclick = function(){
-        _custVisible = !_custVisible;
-        this.classList.toggle('active', _custVisible);
-        this.textContent = _custVisible ? '隐藏客户位点' : '显示客户位点';
-        if (_gCust) _gCust.style('display', _custVisible ? null : 'none');
-        if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
-        if (!_custVisible){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
+        if (_hideUnselected){
+          // 当前在「保留已选客户」模式（图层开、仅显选中）→ 点「所有客户位点」= 切回全显视图（图层保持开，二者互斥）
+          _hideUnselected = false;
+          const hu = $('hideunsel'); if (hu) hu.classList.remove('active');
+          _custVisible = true;
+          this.classList.add('active');
+        } else {
+          // 当前在全显/全关 → 切换图层总开关（开=全显，关=仅选中点亮起/隐藏其余，进入「关全部」模式，便于逐行点亮）
+          _custVisible = !_custVisible;
+          this.classList.toggle('active', _custVisible);
+          if (!_custVisible){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
+        }
+        if (_gRoute) _gRoute.style('display', (_routeOn && (_custVisible || _hospVisible)) ? null : 'none');
+        applyHideUnselected();   // 按"总开关+选中"逐个控制点位可见性：总开关关→仅选中点亮起；开→正常/保留模式
       };
+      // [医院位点]：默认显示。医院点 = 圆内红十字，区别于客户绿点
+      $('hosptoggle').onclick = function(){
+        if (_hideUnselectedHosp){
+          // 当前在「保留已选医院」模式（图层开、仅显选中红点）→ 点「所有医院位点」= 切回全显视图（图层保持开，二者互斥）
+          _hideUnselectedHosp = false;
+          const hu = $('hideunselHosp'); if (hu) hu.classList.remove('active');
+          _hospVisible = true;
+          this.classList.add('active');
+        } else {
+          // 当前在全显/全关 → 切换图层总开关（开=全显，关=仅选中点亮起/隐藏其余，进入「关全部」模式）
+          _hospVisible = !_hospVisible;
+          this.classList.toggle('active', _hospVisible);
+          if (!_hospVisible){ clearHospitalHighlight(); }
+        }
+        if (_gRoute) _gRoute.style('display', (_routeOn && (_custVisible || _hospVisible)) ? null : 'none');
+        applyHideUnselectedHosp();   // 按"总开关+选中"逐个控制医院点可见性：总开关关→仅选中点亮起；开→正常/保留模式
+      };
+      // [客户检索 / 医院检索 切换]
+      if ($('tabCust')) $('tabCust').onclick = () => setTab('cust');
+      if ($('tabHosp')) $('tabHosp').onclick = () => setTab('hosp');
       // [开启/关闭多点追踪]：默认关闭（单点）。开启 → 可同时保留多个客户黄点；关闭 → 点新行即清空上家。
       $('multitrack').onclick = function(){
         _multiTrack = !_multiTrack;
@@ -520,7 +653,7 @@ window.addEventListener("unhandledrejection", function(e){
           if (svg && zoom) svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
           clearCustomerHighlight();
           _embossRegions.clear(); _hoverRegion = null; renderEmboss();
-          reapplyRegionSel(); applyRegionFilter();
+          reapplyRegionSel(); applyListFilter();
         }
       };
       // [开启/关闭静态锁图]：默认关闭。开启 → 禁用悬停高亮 + 3D浮雕，并锁住地图（无滚轮缩放/拖拽/按钮缩放），冻结当前视图
@@ -539,15 +672,30 @@ window.addEventListener("unhandledrejection", function(e){
       $('hideunsel').onclick = function(){
         _hideUnselected = !_hideUnselected;
         this.classList.toggle('active', _hideUnselected);
-        this.textContent = _hideUnselected ? '显示全部客户' : '隐藏未选客户';
+        // 保留已选模式始终需要图层开启（仅显示选中点 + 收起未选行），故保持 _custVisible=true；
+        // 同时自动取消「所有客户位点」按钮（互斥视图：保留已选=仅显选中，所有=全显，二者不应同时挂起）
+        _custVisible = true;
+        const ct = $('custtoggle'); if (ct) ct.classList.toggle('active', !_hideUnselected);
+        if (_gRoute) _gRoute.style('display', (_routeOn && (_custVisible || _hospVisible)) ? null : 'none');
         applyHideUnselected();
       };
-      // [选取计划位置]：进入选点模式 → 用户在地图上点击任意位置生成一面小红旗，作为路线规划的固定出发点与返回点
+      // [未选医院]：默认关闭。开启 → 仅显示已选中(高亮)医院，隐藏其余所有红点
+      if ($('hideunselHosp')) $('hideunselHosp').onclick = function(){
+        _hideUnselectedHosp = !_hideUnselectedHosp;
+        this.classList.toggle('active', _hideUnselectedHosp);
+        // 保留已选模式始终需要图层开启（仅显示选中红点 + 收起未选行），故保持 _hospVisible=true；
+        // 同时自动取消「所有医院位点」按钮（互斥视图）
+        _hospVisible = true;
+        const ht = $('hosptoggle'); if (ht) ht.classList.toggle('active', !_hideUnselectedHosp);
+        if (_gRoute) _gRoute.style('display', (_routeOn && (_custVisible || _hospVisible)) ? null : 'none');
+        applyHideUnselectedHosp();
+      };
+      // [设立出发点位]：进入选点模式 → 用户在地图上点击任意位置生成一面小红旗，作为路线轨迹的固定出发点与返回点
       function setSelectDepotMode(active){
         _selectDepotMode = active;
         const btn = $('selectDepot');
         const overlay = $('depotOverlay');
-        if (btn){ btn.classList.toggle('active', active); btn.textContent = active ? '放置位置坐标' : (_depot ? '重新选取位置' : '选取计划位置'); }
+        if (btn){ btn.classList.toggle('active', active); btn.textContent = active ? '放置出发坐标' : (_depot ? '重新设立点位' : '设立出发点位'); }
         if (overlay) overlay.style.display = active ? 'block' : 'none';
       }
       function placeDepot(e){
@@ -574,21 +722,21 @@ window.addEventListener("unhandledrejection", function(e){
         setSelectDepotMode(!_selectDepotMode);
       };
       if ($('depotOverlay')) $('depotOverlay').onclick = placeDepot;
-      // [开启/关闭路线规划]：默认关闭。开启 → 按可见客户点 + 红旗（如有）的实际位置，用虚线连成一条闭合最短路线（TSP）
+      // [描绘/关闭路线轨迹]：默认关闭。开启 → 按可见客户点 + 红旗（如有）的实际位置，用虚线连成一条闭合最短路线（TSP）
       $('routeplan').onclick = function(){
         _routeOn = !_routeOn;
         this.classList.toggle('active', _routeOn);
-        this.textContent = _routeOn ? '关闭路线规划' : '开启路线规划';
+        this.textContent = _routeOn ? '关闭路线轨迹' : '描绘路线轨迹';
         rebuildRoute();   // 重算点集 + 顺序 + 绘制（_gRoute 图层在 rebuildRoute 内自愈，归属当前 zoom 组 g）
-        if (_gRoute) _gRoute.style('display', (_routeOn && _custVisible) ? null : 'none');
+        if (_gRoute) _gRoute.style('display', (_routeOn && (_custVisible || _hospVisible)) ? null : 'none');
       };
-      // [路线规划清单]：弹出小窗口，按当前路线顺序罗列 起点 → 各客户 → 回到起点
+      // [路线轨迹清单]：弹出小窗口，按当前路线顺序罗列 起点 → 各客户 → 回到起点
       // 修复：清单按钮应「读取并自动开启路线规划」——若路线规划未开，先开启（与 routeplan 同款逻辑）再弹窗，避免清单读到空态
       if ($('routelist')) $('routelist').onclick = function(){
         if (!_routeOn){
           _routeOn = true;
           const rp = $('routeplan');
-          if (rp){ rp.classList.add('active'); rp.textContent = '关闭路线规划'; }
+          if (rp){ rp.classList.add('active'); rp.textContent = '关闭路线轨迹'; }
           rebuildRoute();   // 重算点集 + 顺序 + 绘制
           if (_gRoute) _gRoute.style('display', _custVisible ? null : 'none');
         }
@@ -597,8 +745,8 @@ window.addEventListener("unhandledrejection", function(e){
       if ($('routeListClose')) $('routeListClose').onclick = closeRouteList;
       document.querySelectorAll('.rl-mode').forEach(b => { b.onclick = () => setRouteMode(b.dataset.mode); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && _routeListOpen) closeRouteList(); });
-      // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页
-      $('backSys').onclick = () => { window.location.href = 'index.html'; };
+      // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页（仅 worldmap 等含 backSys 的页面有效；country 无此元素，空值守卫避免崩溃）
+      if ($('backSys')) $('backSys').onclick = () => { window.location.href = 'index.html'; };
       // ADM2 默认开启时，初次渲染也禁用 ADM1 prov-fill 交互（与 adm2toggle 一致）
       if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); }
       if (insular.length) renderInsularInset(insular);
@@ -614,7 +762,16 @@ window.addEventListener("unhandledrejection", function(e){
     // 保证多区域选中时所有顶面处于同一高度平面、互不遮挡，绝不出现「一层叠一层」。
     function renderEmboss(){
       if (!_gEmboss || !_path) return;
-      if (_staticLock){ _gEmboss.selectAll('*').remove(); return; }  // 静态锁图：强制无浮雕（清除一切悬停/选中浮雕）
+      if (_staticLock){
+        _gEmboss.selectAll('*').remove();   // 静态锁图：强制无浮雕（清除一切悬停/选中浮雕）
+        // 关键修复：清掉位点浮起标记并立即按当前变换贴回真实基准坐标，
+        // 否则开启锁图时正悬停/选中区域(点位浮起态)会残留 lifted，点位悬半空 → 位置偏移
+        _custEls.forEach(m => { m.lifted = false; m.liftC = null; });
+        _hospEls.forEach(m => { m.lifted = false; m.liftC = null; });
+        if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); updateHospZoom(_curK || 1); }
+        if (_routeOn) drawRoute(_curK || 1);   // 路线同步贴回地面（与位点浮起标记一并清除）
+        return;
+      }
       _gEmboss.selectAll('*').remove();
       const k = (_curK && _curK > 0) ? _curK : 1;
       const H = 9 / k;            // 所有区域统一高度（屏幕 ~9px，随缩放反比）
@@ -626,10 +783,12 @@ window.addEventListener("unhandledrejection", function(e){
         if (!dup) regions.push(_hoverRegion);
       }
       _embossRegions.forEach(r => regions.push(r));
-      // 无区域：客点落回平面
+      // 无区域：客户点 + 医院点均落回平面
       if (!regions.length){
-        _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
-        if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); }
+        _custEls.forEach(m => { m.lifted = false; m.liftC = null; });
+        _hospEls.forEach(m => { m.lifted = false; m.liftC = null; });
+        if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); updateHospZoom(_curK || 1); }
+        if (_routeOn) drawRoute(_curK || 1);   // 路线随位点浮起状态同步重绘：无区域→路线贴回地面，与位点零偏移
         return;
       }
       // 预计算每区域的路径与质心（feature 保留用于客户点 d3.geoContains 判定）
@@ -660,7 +819,7 @@ window.addEventListener("unhandledrejection", function(e){
       });
       // 客户点抬升：先统一复位(仅属性赋值，零 geoContains)，再【仅测落在该区域自己的客户】
       // （按 assignRegions 预分组的 __adm2 → _adm2CustMap），彻底去掉逐区域对全部客户的 geoContains（零精度损失）
-      _custEls.forEach(m => { m.lifted = false; m.liftedBase = null; });
+      _custEls.forEach(m => { m.lifted = false; m.liftC = null; });
       items.forEach(it => {
         const nm = it.feature.properties ? (it.feature.properties.shapeName || it.feature.properties.name) : null;
         const list = (_adm2CustMap && nm) ? (_adm2CustMap.get(nm) || []) : _custEls;
@@ -668,11 +827,24 @@ window.addEventListener("unhandledrejection", function(e){
           const rec = m.rec;
           if (rec && rec.lng != null && rec.lat != null && d3.geoContains(it.feature, [+rec.lng, +rec.lat])){
             m.lifted = true;
-            m.liftedBase = [ it.c[0] + sTop*(m.base[0]-it.c[0]), (it.c[1]-H) + sTop*(m.base[1]-it.c[1]) ];
+            m.liftC = it.c;   // 仅记录区域质心；H 抬升量(屏幕恒定 9px → 内容 9/k)交给 markerBase 按当前 k 实时算，避免缩放时冻结 hover 时刻 k 导致点位“飞高”位移
           }
         });
       });
-      if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); }
+      // 医院点抬升：与客户点完全相同的逻辑（同一套 markerBase），悬停浮雕时两类点同步浮起、不再漂移不同步
+      _hospEls.forEach(m => { m.lifted = false; m.liftC = null; });
+      items.forEach(it => {
+        _hospEls.forEach(m => {
+          const rec = m.rec;
+          if (rec && rec.lng != null && rec.lat != null && d3.geoContains(it.feature, [+rec.lng, +rec.lat])){
+            m.lifted = true;
+            m.liftC = it.c;   // 仅记录区域质心；抬升量由 markerBase 按当前 k 实时算（与客户点同步）
+          }
+        });
+      });
+      if (_curT){ updateMarkers(_curT); updateCustZoom(_curK || 1); updateHospZoom(_curK || 1); }
+      if (_routeOn) drawRoute(_curK || 1);   // 关键修复：悬停/选中浮雕使位点浮起时，路线按 markerBase(=routePos)同步重绘，
+                                             // 路线顶点 ≡ 位点显示坐标(经销商/医院点共用同一 markerBase)→ 二者始终零偏移
     }
     // 瞬时悬停：设置悬停区域并刷新（选中区域仍保留）
     let _embossTimer = 0;
@@ -1095,7 +1267,7 @@ window.addEventListener("unhandledrejection", function(e){
         _topo = topo; renderProvinces(src);
         // ADM2：默认隐藏；懒加载国（ru/au 等大体量）进图不预载，点击按钮时才拉取（IndexedDB 缓存二次秒开）
         if (_adm2Lazy){
-          const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '点击加载二级行政区域';
+          const b = $('adm2toggle'); b.classList.remove('active');
           // 进图即显示说明栏的二级行政区域数量须等加载后补全；此处先留 ADM1 说明
         } else {
           // 非懒加载国：默认隐藏，加载完成预载数据（点击按钮即时显示）；无数据则回退按钮
@@ -1106,7 +1278,7 @@ window.addEventListener("unhandledrejection", function(e){
             const _fc2cnt = (_topo2.type === 'Topology') ? _topo2.objects[Object.keys(_topo2.objects)[0]].geometries.length : _topo2.features.length;
             setStatus(_fc2cnt);   // 始终在说明栏显示二级行政区域数量（即便默认隐藏）
               if (showAdm2) renderAdm2();
-              else { const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域';
+              else { const b = $('adm2toggle'); b.classList.remove('active');
                 _requestIdle(() => { if (!showAdm2 && !_lodAdm2 && _gAdm2 && _topo2 && !adm2IsBuilt()) buildAdm2LayerChunked(true); });  // 浏览器空闲预构建隐藏层（LOD 大体量国跳过，避免加载即建 2457 path 又隐藏）
               }
             } else if (_adm2Chunked){
@@ -1114,11 +1286,11 @@ window.addEventListener("unhandledrejection", function(e){
               assignRegions();
               const total = (_adm2Index && _adm2Index.states) ? _adm2Index.states.reduce((a, s) => a + s.count, 0) : 0;
               setStatus(total);   // 说明栏显示二级行政区域总数（即便尚未拉取）
-              const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域';
+              const b = $('adm2toggle'); b.classList.remove('active');
               if (showAdm2) updateChunks();   // 已默认开启 → 按当前视口拉取可见州细节（否则等放大触发）
               // 注意：分块国不空闲预载整文件（违背矢量瓦片初衷），仅放大到某州才拉该州 chunk
             } else {
-              const b = $('adm2toggle'); b.classList.remove('active'); b.textContent = '显示二级行政区域'; showAdm2 = false;
+              const b = $('adm2toggle'); b.classList.remove('active'); showAdm2 = false;
               setStatus('暂无');
             }
           });
@@ -1173,7 +1345,6 @@ window.addEventListener("unhandledrejection", function(e){
     $('adm2toggle').onclick = async function(){
       showAdm2 = !showAdm2;
       this.classList.toggle('active', showAdm2);
-      this.textContent = showAdm2 ? '隐藏二级行政区域' : '显示二级行政区域';
       if (!_gAdm2) return;
       if (showAdm2){
         // ADM2 开启时：禁用 ADM1 prov-fill 的指针事件，杜绝 ADM2 透明内部点击穿透到 ADM1 选中一级行政区域
@@ -1200,7 +1371,7 @@ window.addEventListener("unhandledrejection", function(e){
           }
           else {
             setStatus('暂无');
-            showAdm2 = false; this.classList.remove('active'); this.textContent = '显示二级行政区域';
+            showAdm2 = false; this.classList.remove('active');
             _provFill.forEach(n => n.style.pointerEvents = '');
           }
         }
@@ -1255,10 +1426,11 @@ window.addEventListener("unhandledrejection", function(e){
         applyPendingHl();               // 世界地图跳转带 hl 参数时，客户就绪即点亮该行（省份未就绪则由 renderProvinces 兜底触发）
         warnDupCoords(list);            // 自检：坐标撞车会导致圆点叠在一起看不见，立即暴露
         let _custSearchTimer = null;
-        $('custSearch').oninput = () => { clearTimeout(_custSearchTimer); _custSearchTimer = setTimeout(() => applyRegionFilter(), 120); };
+        $('custSearch').oninput = () => { clearTimeout(_custSearchTimer); _custSearchTimer = setTimeout(() => applyListFilter(), 120); };
       }).catch(() => { $('custEmpty').textContent = '客户数据加载失败'; $('custEmpty').style.display = 'block'; });
     }
     function renderCustomers(list){
+      const head = $('custHead'); if (head) head.innerHTML = '<tr><th>公司</th><th>电话</th><th>联系人</th><th>地址</th></tr>';  // 切回客户表头（医院检索会改成医院表头）
       const regions = _selectedRegions();
       const tag = regions.length ? ` · 📍 ${regions.map(r => r.label || r.name).join(' / ')}` : '';
       $('custCount').textContent = `共 ${list.length} 条` + tag;
@@ -1279,11 +1451,12 @@ window.addEventListener("unhandledrejection", function(e){
     // updateCustZoom(k) 按缩放插值：k=1 时 off·zf=0（像素粒堆叠于真实位置、绝无重叠错觉），半径=GRAIN_R；
     // k→ZOOM_FULL 时 off 全量铺开、半径=DOT_R，圆点逐一可见且不重叠。彻底取代「每帧重松弛」与「手动 layoutCust 易脱节」两类问题。
     const _GA = 2.399963229728653;            // 黄金角：重合点均匀扇开
-    // 一次性计算每点恒定屏幕空间偏移 off（参考系 k=1 / t=0 下去重叠），之后不再随缩放重算
-    function computeOffsets(){
-      const els = _custEls, n = els ? els.length : 0;
+    // 统一去重叠铺开：客户与医院共用同一算法，仅「圆点半径(rDot)」与「扇开黄金角(ga)」按 kind 区分。
+    // 参考系 k=1 / t=0，算出的恒定屏幕空间偏移 off 一次性写入各点，之后不再随缩放重算（与 markerBase 铺开量协同）。
+    function computeOffsets(els, rDot, ga){
+      const n = els ? els.length : 0;
       if (!n) return;
-      const minDist = _CUST_R * 2 + 2.0;      // 屏幕像素最小间距（含 2px 间隙）
+      const minDist = rDot * 2 + 2.0;      // 屏幕像素最小间距（含 2px 间隙）
       for (let i = 0; i < n; i++){ els[i].off = [0, 0]; }
       // 1) 按基准坐标分桶：完全/极近重合的点用向日葵螺旋均匀扇开
       const buckets = {};
@@ -1299,7 +1472,7 @@ window.addEventListener("unhandledrejection", function(e){
         for (let j = 0; j < m; j++){
           const i = grp[j];
           if (j === 0){ els[i].off = [0, 0]; continue; }
-          const ang = j * _GA, rad = R * Math.sqrt(j / m);
+          const ang = j * ga, rad = R * Math.sqrt(j / m);
           els[i].off = [Math.cos(ang) * rad, Math.sin(ang) * rad];
         }
       }
@@ -1314,7 +1487,7 @@ window.addEventListener("unhandledrejection", function(e){
             if (d2 < minDist * minDist){
               let d = Math.sqrt(d2), ux, uy;
               if (d > 0.01){ ux = dx / d; uy = dy / d; }
-              else { const a = i * _GA; ux = Math.cos(a); uy = Math.sin(a); d = 0; }
+              else { const a = i * ga; ux = Math.cos(a); uy = Math.sin(a); d = 0; }
               const push = (minDist - d) / 2 + 0.05;
               els[i].off[0] -= ux * push; els[i].off[1] -= uy * push;
               els[j].off[0] += ux * push; els[j].off[1] += uy * push;
@@ -1335,24 +1508,52 @@ window.addEventListener("unhandledrejection", function(e){
     const ZOOM_MAX  = 9;            // d3.zoom scaleExtent 上限 = 最大化尺寸地图（保留常量；清单排序现直接复用 _routeOrder，不再用它做基准）
     const CUST_HIT_PX = 10;         // 透明命中区：恒定屏幕尺寸(px)，不随缩放放大 → 放大到最大也不会出现超大盲区误触发 hover
     function zoomFactor(k){ return Math.max(0, Math.min(1, (k - 1) / (ZOOM_FULL - 1))); }
+    // —— 统一位点显示坐标（客户与医院共用同一套数学，仅各自 lifted/liftC/off 字段驱动）：
+    //    3D 浮雕抬升(屏幕恒定 9px → 内容 9/k，按当前 k 实时算，不冻结 hover 时刻 k) + 去重叠铺开偏移(随 k 同步)。
+    //    客户/医院点现在走完全相同的坐标逻辑，悬停浮雕或缩放时两类点永远同步、不再各自漂移。
+    function markerBase(m, k){
+      const zf = zoomFactor(k);
+      const sepF = Math.min(1, zf * 1.8);
+      const sK = sepF / k;
+      const LIFT_ST = 1.04;        // 与 renderEmboss 顶面缩放一致
+      const H = 9 / k;             // 屏幕恒定 9px → 内容坐标 9/k（随缩放反比），实时算
+      const b = (m.lifted && m.liftC)
+        ? [ m.liftC[0] + LIFT_ST*(m.base[0]-m.liftC[0]), (m.liftC[1]-H) + LIFT_ST*(m.base[1]-m.liftC[1]) ]
+        : m.base;
+      const ox = (m.off ? m.off[0] : 0) * sK;
+      const oy = (m.off ? m.off[1] : 0) * sK;
+      return [b[0] + ox, b[1] + oy];
+    }
+    // 统一位点缩放渲染：半径/铺开/抬升/命中区/（医院）红十字尺寸，全部按同一坐标逻辑 markerBase 驱动；
+    // 仅「外观常量」按 kind 区分（C = {rGrain, rDot, hitPx, cross, stroke}）。
+    function _applyMarkerZoom(m, k, C){
+      if (!m.el) return;
+      const zf = zoomFactor(k);
+      const rScreen = C.rGrain + (C.rDot - C.rGrain) * zf;   // 屏幕半径：k=1 粒 → k=ZOOM_FULL 圆点
+      const rContent = rScreen / k;                          // 内容坐标半径（在 g 内被 scale(k) 还原成屏幕 rScreen）
+      const [bx, by] = markerBase(m, k);
+      m.el.attr('transform', `translate(${bx.toFixed(2)},${by.toFixed(2)})`);
+      if (m.ptEl) m.ptEl.attr('r', rContent);                // 圆点/十字圆：半径随 k 插值
+      if (C.stroke) m.ptEl && m.ptEl.attr('stroke-width', 1.0 / k);   // 医院白底红框描边恒定屏幕 ~1px
+      if (C.cross){                                          // 红十字两臂尺寸严格在圆点内，随 k 同步
+        const hlCross = rContent * 0.60, hwCross = rContent * 0.30;
+        if (m.crossV) m.crossV.attr('x', -hwCross).attr('y', -hlCross).attr('width', 2*hwCross).attr('height', 2*hlCross);
+        if (m.crossH) m.crossH.attr('x', -hlCross).attr('y', -hwCross).attr('width', 2*hlCross).attr('height', 2*hlCross);
+      }
+      if (m.hitEl) m.hitEl.attr('r', C.hitPx / k);           // 命中区恒定屏幕尺寸，任意缩放下不放大成盲区
+    }
+    // 客户点缩放：复用统一逻辑，外观常量取自客户圆点（黄点、无描边、无红十字）
     function updateCustZoom(k){
       if (!_gCust || !_custEls || !_custEls.length) return;
-      const zf = zoomFactor(k);
-      const sepF = Math.min(1, zf * 1.8);                  // 铺开量比半径更快到满：保证任意缩放下都不重叠（半径尚小、铺开已足）
-      const rScreen = GRAIN_R + (DOT_R - GRAIN_R) * zf;   // 屏幕半径：k=1 粒 → k=ZOOM_FULL 圆点
-      const rContent = rScreen / k;                        // 内容坐标半径（在 g 内被 scale(k) 还原成屏幕 rScreen）
-      const sK = sepF / k;                                  // 去重叠偏移系数：屏幕 off * sepF，转内容坐标需 /k（g 变换会再 ×k 还原成屏幕 off·sepF）
-      const els = _custEls;
-      for (let i = 0; i < els.length; i++){
-        const m = els[i]; if (!m.el) continue;
-        const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;   // 3D 浮雕抬升时改用 liftedBase
-        const ox = (m.off ? m.off[0] : 0) * sK;
-        const oy = (m.off ? m.off[1] : 0) * sK;
-        m.el.attr('transform', `translate(${(b[0] + ox).toFixed(2)},${(b[1] + oy).toFixed(2)})`);
-        if (m.ptEl) m.ptEl.attr('r', rContent); else m.el.select('circle.cust-pt').attr('r', rContent);
-        // 命中区恒定屏幕尺寸：content 半径 = HIT_PX / k（在 zoom 组被 scale(k) 还原成屏幕 HIT_PX px），任意缩放下都是 10px，放大到最大也不会变成 54px 盲区
-        if (m.hitEl) m.hitEl.attr('r', CUST_HIT_PX / k); else m.el.select('circle.cust-hit').attr('r', CUST_HIT_PX / k);
-      }
+      const C = { rGrain: GRAIN_R, rDot: DOT_R, hitPx: CUST_HIT_PX, cross: false, stroke: false };
+      _custEls.forEach(m => _applyMarkerZoom(m, k, C));
+    }
+    // 医院点缩放：复用同一套 markerBase 抬升/铺开逻辑 —— 与经销商点完全同步（原实现医院从不抬升，导致悬停浮雕/放大时两类点漂移不同步）。
+    // 仅外观常量不同：红点(白底红框 + 红十字)、命中区略大。
+    function updateHospZoom(k){
+      if (!_gHosp || !_hospEls || !_hospEls.length) return;
+      const C = { rGrain: HOSP_GRAIN_R, rDot: HOSP_DOT_R, hitPx: HOSP_HIT_PX, cross: true, stroke: true };
+      _hospEls.forEach(m => _applyMarkerZoom(m, k, C));
     }
     function drawCustomerPointsOnMap(list){
       // 省份地图（PROJ / _gCust）异步加载，可能晚于客户数据到达；未就绪则短暂重试
@@ -1385,7 +1586,7 @@ window.addEventListener("unhandledrejection", function(e){
           .on('mouseenter', () => showCustTip(r)).on('mouseleave', hideTip);
         const ptEl = g.select('circle.cust-pt');   // 缓存子元素引用：避免放大动画每帧重复 d3.select 子查询（性能优化）
         const hitEl = g.select('circle.cust-hit');
-        _custEls.push({ el: g, base: p, rec: r, lifted: false, liftedBase: null, off: [0, 0], ptEl, hitEl });
+        _custEls.push({ el: g, base: p, rec: r, kind: 'cust', lifted: false, liftC: null, off: [0, 0], ptEl, hitEl });
       });
       assignRegions();
       // 分块国：客户晚于某些州 chunk 到达时，回填这些已建州的客户 ADM2 归属 + 预分组（增量，零精度损失）
@@ -1396,18 +1597,22 @@ window.addEventListener("unhandledrejection", function(e){
           if (_hlIds.has(+this.getAttribute('data-id'))) this.classList.add('cust-hl');
         });
       }
-      _gCust.style('display', _custVisible ? null : 'none');
-      computeOffsets();                                  // 一次性算出恒定屏幕空间去重叠偏移
+      applyHideUnselected();   // 重绘后按"总开关+选中"恢复各点可见性（总开关关且有点亮选→仅选中可见；否则按保留模式），避免整组隐藏把点亮选的点也吃掉
+      computeOffsets(_custEls, DOT_R, _GA);             // 一次性算出恒定屏幕空间去重叠偏移（统一算法）
       updateCustZoom(_curK || 1);  // 初始布局（与当前缩放一致：k=1 → 像素粒堆叠于真实位置）
+      updateHospZoom(_curK || 1);  // 医院点同步初始布局
       updateCustStat();   // 点位重绘后刷新右下角统计
     }
-    // —— 右下角统计：信息总计(录入客户总数) / 位置统计(地图绿色圆点数量)，用于对比计算空白地址个数 ——
+    // —— 右下角统计：客户总数/落点 + 医院总数/落点（同时展示两类数据，区分经销商与医院）——
     function updateCustStat(){
       const el = $('custStat'); if (!el) return;
-      const list = window.__custList || [];
-      const total = list.length;                                   // 信息总计：录入国家地图检索的客户总数
-      const located = list.filter(r => r.lat != null && r.lng != null).length;  // 位置统计：地图上有圆点的客户数
-      el.innerHTML = `信息总计 <b>${total}</b> 个 · 位置统计 <b>${located}</b> 个`;
+      const cl = window.__custList || [];
+      const hl = window.__hospList || [];
+      const custTotal = cl.length;
+      const custLoc = cl.filter(r => r.lat != null && r.lng != null).length;     // 位置统计：地图上有绿点的客户数
+      const hospTotal = hl.length;
+      const hospLoc = hl.filter(r => r.lat != null && r.lng != null).length;     // 位置统计：地图上有红点的医院数
+      el.innerHTML = `客户 <b>${custTotal}</b>(位${custLoc}) · 医院 <b>${hospTotal}</b>(位${hospLoc})`;
     }
     // —— 自检：多个客户共用同一经纬度 → 圆点完全叠在一起"看不见"，属定位数据不准。加载即报警，杜绝此类问题 ——
     function warnDupCoords(list){
@@ -1416,6 +1621,161 @@ window.addEventListener("unhandledrejection", function(e){
       const dups = Object.entries(seen).filter(([, v]) => v.length > 1);
       if (dups.length) console.warn('[客户定位自检] 以下客户经纬度完全重合（多为同落 Dhaka 市中心），数据已按真实坐标保留；地图端已做螺旋去重叠(declutter)，每个点仍可独立 hover。如需更精确街道级坐标可单独重编码：\n' + dups.map(([k, v]) => '  ' + k + ' => ' + v.join(' , ')).join('\n'));
     }
+    // —— 6. 医院位点（hospitals.json，达卡市私立医院，红点+红十字，区别于客户绿点）——
+    const _HOSP_GA = 2.399963229728653;     // 黄金角：重合点均匀扇开（与客户去重叠同款）
+    const HOSP_GRAIN_R = 1.8;               // 初始像素粒半径（屏幕 px）
+    const HOSP_DOT_R = 3.4;                 // 放大后清晰圆点半径（略大于客户圆点，给红十字留空间）
+    const HOSP_HIT_PX = 11;                 // 透明命中区：恒定屏幕尺寸(px)
+
+    function drawHospitalPointsOnMap(list){
+      if (!_gHosp || !PROJ){
+        if (drawHospitalPointsOnMap._tries == null) drawHospitalPointsOnMap._tries = 0;
+        if (drawHospitalPointsOnMap._tries < 40){ drawHospitalPointsOnMap._tries++; setTimeout(() => drawHospitalPointsOnMap(list), 200); }
+        return;
+      }
+      drawHospitalPointsOnMap._tries = 0;
+      _gHosp.selectAll('g.hosp-pt-g').remove();
+      _hospEls = [];
+      const pts = (list || []).filter(r => r.lat != null && r.lng != null);
+      const projAll = pts.map(r => { const p = PROJ([+r.lng, +r.lat]); return p ? { r, p } : null; }).filter(Boolean);
+      projAll.forEach((o) => {
+        const p = o.p, r = o.r;
+        const g = _gHosp.append('g').attr('class','hosp-pt-g').attr('data-id', r.__id)
+          .on('mouseenter', () => showHospTip(r))
+          .on('mouseleave', hideTip)
+          .on('click', (e) => { e.stopPropagation(); highlightHospital(r.__id, { doZoom: false, scroll: true }); });
+        // 可见圆点（白底红框）
+        g.append('circle').attr('class','hosp-pt').attr('r', HOSP_GRAIN_R).attr('cx',0).attr('cy',0)
+          .attr('fill','#ffffff').attr('stroke','#dc2626').attr('stroke-width', 1.0).style('cursor','pointer');
+        // 红十字（两个矩形，尺寸在 updateHospZoom 内随缩放更新；半长=0.6·半径，严格在圆点内，绝不超出）
+        const cv = g.append('rect').attr('class','hosp-cross').attr('x',0).attr('y',0).attr('width',0).attr('height',0).attr('fill','#dc2626').style('pointer-events','none');
+        const ch = g.append('rect').attr('class','hosp-cross').attr('x',0).attr('y',0).attr('width',0).attr('height',0).attr('fill','#dc2626').style('pointer-events','none');
+        // 透明命中区（提升 hover/点击命中率）
+        g.append('circle').attr('class','hosp-hit').attr('r', HOSP_HIT_PX).attr('cx',0).attr('cy',0).attr('fill','transparent').style('cursor','pointer')
+          .on('mouseenter', () => showHospTip(r)).on('mouseleave', hideTip);
+        const ptEl = g.select('circle.hosp-pt');
+        const hitEl = g.select('circle.hosp-hit');
+        _hospEls.push({ el:g, base:p, rec:r, kind:'hosp', lifted:false, liftC:null, off:[0,0], ptEl, crossV:cv, crossH:ch, hitEl });
+      });
+      // 重绘后恢复已有选中高亮（仅改 fill/stroke，尺寸/位置不变）
+      if (_hlHospIds.size){
+        _gHosp.selectAll('g.hosp-pt-g').each(function(){
+          if (_hlHospIds.has(+this.getAttribute('data-id'))) this.classList.add('hosp-hl');
+        });
+      }
+      // 图层容器始终可见（不再整组隐藏）；各医院点可见性交由下方 applyHideUnselectedHosp 按"总开关+选中"逐点控制
+      computeOffsets(_hospEls, HOSP_DOT_R, _HOSP_GA);   // 医院点去重叠铺开（与客户点共用同一算法）
+      updateHospZoom(_curK || 1);
+      applyHideUnselectedHosp();   // 重绘后重新应用「隐藏未选医院」：仅保留选中红点
+    }
+    function showHospTip(r){
+      const tip = $('mapTip');
+      tip.innerHTML = '<b style="color:#fca5a5">' + esc(r.hospital || r.cn) + '</b>'
+        + (r.cn && r.cn !== r.hospital ? '<br><span style="opacity:.85">' + esc(r.cn) + '</span>' : '')
+        + (r.area ? '<br><span style="opacity:.85">📍 ' + esc(r.area) + '</span>' : '')
+        + (r.beds != null ? '<br><span style="opacity:.85">床位 ' + esc(r.beds) + '</span>' : '')
+        + (r.phone ? '<br><span style="opacity:.7">' + esc(r.phone) + '</span>' : '');
+      tip.style.display = 'block';
+    }
+    function clearHospitalHighlight(){
+      if (_gHosp) _gHosp.selectAll('g.hosp-pt-g.hosp-hl').classed('hosp-hl', false);
+      _hlHospIds.clear();
+      const body = $('custBody'); if (body) body.querySelectorAll('tr.sel').forEach(tr => tr.classList.remove('sel'));
+    }
+    function highlightHospital(id, opts){
+      opts = opts || {};
+      const doZoom = (opts.doZoom !== false);
+      // 关闭「所有医院位点」后点击信息行：既不恢复全部，也不自动进入「保留已选医院」模式——
+      // 仅把该行加入选中集（高亮右侧信息行），所选医院红点自动点亮、其余红点仍隐藏，右侧检索栏仍显示全部医院行，便于继续多选；
+      // 待用户选好后再手动点「保留已选医院」才进入筛选（仅显选中红点 + 收起未选行）。
+      if (!_hospVisible && _gHosp){ _gHosp.style('display', null); }   // 仅确保图层容器可见，由下方 applyHideUnselectedHosp 按"选中"逐点点亮（不恢复全部、不进筛选）
+      const sel = (_gHosp) ? _gHosp.selectAll('g.hosp-pt-g').filter(function(){ return +this.getAttribute('data-id') === id; }) : d3.select(null);
+      const node = sel.node();
+      const nowHl = node ? node.classList.contains('hosp-hl') : false;
+      if (!nowHl){
+        if (!_multiTrack) clearHospitalHighlight();
+        if (!_multiTrack && doZoom) _saveT = d3.zoomTransform(_svg.node());
+      } else if (!_multiTrack && _saveT) {
+        if (doZoom && !_staticLock) _svg.transition().duration(620).call(_zoom.transform, _saveT);
+        _saveT = null;
+      }
+      if (node){
+        sel.classed('hosp-hl', !nowHl);
+        if (!nowHl) sel.raise();
+      }
+      if (!nowHl) _hlHospIds.add(id); else _hlHospIds.delete(id);
+      const row = document.querySelector('#custBody tr[data-id="'+id+'"]');
+      if (row){
+        row.classList.toggle('sel', !nowHl);
+        if (!nowHl && opts.scroll) row.scrollIntoView({ block:'nearest', behavior:'smooth' });
+      }
+      if (!nowHl && doZoom && !_staticLock){
+        const rec = (window.__hospList || []).find(x => x.__id === id);
+        if (rec && rec.lat != null && rec.lng != null) zoomToPoint(rec.lat, rec.lng);
+      }
+      applyHideUnselectedHosp();   // 选中态变化后同步“隐藏未选医院”：仅保留高亮红点，隐藏其余
+    }
+    function loadHospitals(){
+      // 医院数据仅限孟加拉达卡市：非孟加拉国家地图不加载、不绘制、不进检索栏、不进路线规划
+      if (iso2 !== 'bd'){
+        window.__hospList = [];
+        _hospLoaded = true;
+        if ($('hospCount')) $('hospCount').textContent = '0 家';
+        if (_activeTab === 'hosp') renderHospitals([]);
+        return;
+      }
+      fetch('hospitals.json').then(r => r.json()).then(data => {
+        const all = (data && data.records) || [];
+        const list = all.filter(r => (r.iso2 || '').toLowerCase() === iso2);   // 仅当前国（孟加拉达卡）医院落此国家地图
+        list.forEach((r, i) => { r.__id = i; });
+        window.__hospList = list;
+        _hospLoaded = true;
+        if ($('hospCount')) $('hospCount').textContent = list.length + ' 家';
+        drawHospitalPointsOnMap(list);
+        updateCustStat();
+        if (_activeTab === 'hosp') renderHospitals(list);
+      }).catch(() => { /* 无 hospitals.json 不影响客户功能（其它国家地图本就无医院数据） */ });
+    }
+    function renderHospitals(list){
+      const head = $('custHead'); if (head) head.innerHTML = '<tr><th>医院</th><th>区域</th><th>床位</th><th>电话</th></tr>';
+      const cnt = $('custCount'); if (cnt) cnt.textContent = `共 ${list.length} 家`;
+      const body = $('custBody'); if (!body) return;
+      if (!list.length){ body.innerHTML = ''; const e=$('custEmpty'); if(e){ e.style.display='block'; e.textContent='该国暂无医院数据（仅孟加拉达卡市已导入）。'; } return; }
+      const e=$('custEmpty'); if(e) e.style.display='none';
+      body.innerHTML = list.map(r =>
+        `<tr data-id="${r.__id}"><td>${esc(r.hospital)}</td><td>${esc(r.area)}</td><td>${esc(r.beds==null?'—':r.beds)}</td><td>${esc(r.phone)}</td></tr>`
+      ).join('');
+      body.querySelectorAll('tr').forEach(tr => { tr.onclick = () => highlightHospital(+tr.dataset.id); });
+      _hlHospIds.forEach(id => { const rr = body.querySelector('tr[data-id="'+id+'"]'); if (rr) rr.classList.add('sel'); });
+    }
+    // 列表筛选分发：客户 tab → 区域+搜索；医院 tab → 搜索（医院暂不做行政区筛选，因全部位于达卡）
+    function applyListFilter(){
+      if (_activeTab === 'hosp'){
+        const list = window.__hospList || [];
+        const q = ($('custSearch').value || '').trim().toLowerCase();
+        const flt = q ? list.filter(r => [r.hospital, r.cn, r.area, r.address, r.phone].some(v => (v||'').toLowerCase().includes(q))) : list;
+        renderHospitals(flt);
+      } else {
+        applyRegionFilter();
+      }
+    }
+    // 客户检索 / 医院检索 标签切换
+    function setTab(tab){
+      _activeTab = tab;
+      const tc=$('tabCust'), th=$('tabHosp');
+      if(tc) tc.classList.toggle('active', tab==='cust');
+      if(th) th.classList.toggle('active', tab==='hosp');
+      const ch=$('custHint'), hh=$('hospHint');
+      if(ch) ch.style.display = tab==='cust' ? '' : 'none';
+      if(hh) hh.style.display = tab==='hosp' ? '' : 'none';
+      const cw=$('custCountryWrap'), hw=$('hospCountryWrap');
+      if(cw) cw.style.display = tab==='cust' ? '' : 'none';
+      if(hw) hw.style.display = tab==='hosp' ? '' : 'none';
+      const ph=$('custSearch'); if(ph){ ph.value=''; ph.placeholder = tab==='hosp' ? '搜索 医院 / 区域 / 床位 / 电话…' : '搜索 公司 / 电话 / 姓名 / 地址…'; }
+      if (tab==='hosp') renderHospitals(window.__hospList || []);
+      else applyRegionFilter();
+    }
+
     // —— 客户按二级区域(__adm2 名称)预分组：renderEmboss 仅测“该区域自己的客户”，彻底去掉逐区域对全部客户的 geoContains（零精度损失）——
     function buildAdm2CustMap(){
       _adm2CustMap = new Map();
@@ -1519,7 +1879,7 @@ window.addEventListener("unhandledrejection", function(e){
       // 该区域 3D 浮雕显示（增/删切换；单点替换、多点追踪累积）—— 客户表筛选与描边均由 _embossRegions 派生，自动同步多区域
       if (feature) _embossAddOrToggle(type, name, feature, 'region');
       reapplyRegionSel();
-      applyRegionFilter();
+      applyListFilter();
     }
     function reapplyRegionSel(){
       _provFill.forEach(n => n.classList.remove('prov-sel'));
@@ -1547,15 +1907,41 @@ window.addEventListener("unhandledrejection", function(e){
       _custEls.forEach(m => {
         if (!m || !m.el || !m.rec) return;
         const isSel = isSelected(m.rec.__id);
-        m.el.style('display', (_hideUnselected && !isSel) ? 'none' : null);
+        // 总开关「所有客户位点」开启 → 正常显示（保留模式则仅选中）；总开关关闭 → 仅选中点亮起
+        // （关全部后点信息行=点亮所选客户点，不恢复全部；其余点仍隐藏）
+        const show = _custVisible ? !(_hideUnselected && !isSel) : isSel;
+        m.el.style('display', show ? null : 'none');
       });
-      // 检索栏信息行：未选中则隐藏（保留选中行）
+      // 检索栏信息行：仅当「保留已选客户」开启时才隐藏未选中行；否则全部显示（便于关全部后继续多选）
       document.querySelectorAll('.cust-table tbody tr').forEach(tr => {
         const idv = tr.getAttribute('data-id');
         const isSel = isSelected(idv);
         tr.style.display = (_hideUnselected && !isSel) ? 'none' : null;
       });
       if (_routeOn) rebuildRoute();   // 点集变化（隐藏/显示）→ 路线需重算
+    }
+    // [隐藏未选医院]：与 applyHideUnselected 同款，作用于医院红点(_hospEls / _hlHospIds)
+    function applyHideUnselectedHosp(){
+      if (!_gHosp || !_hospEls.length) return;
+      const isSelected = (idv) => _hlHospIds.has(idv) || _hlHospIds.has(+idv) || _hlHospIds.has(String(idv));
+      _hospEls.forEach(m => {
+        if (!m || !m.el || !m.rec) return;
+        const isSel = isSelected(m.rec.__id);
+        // 总开关「所有医院位点」开启 → 正常显示（保留模式则仅选中）；总开关关闭 → 仅选中点亮起
+        // （关全部后点信息行=点亮所选医院红点，不恢复全部；其余红点仍隐藏）
+        const show = _hospVisible ? !(_hideUnselectedHosp && !isSel) : isSel;
+        m.el.style('display', show ? null : 'none');
+      });
+      // 医院检索表行：未选中则隐藏（保留选中行）
+      if (_activeTab === 'hosp'){
+        const body = document.querySelector('#custBody');
+        if (body) body.querySelectorAll('tr').forEach(tr => {
+          const idv = tr.getAttribute('data-id');
+          const isSel = isSelected(idv);
+          tr.style.display = (_hideUnselectedHosp && !isSel) ? 'none' : null;
+        });
+      }
+      if (_routeOn) rebuildRoute();   // 点集变化（隐藏/显示）→ 路线需重算（与 applyHideUnselected 同款）
     }
     // —— 路线规划：在可见客户点间连成一条「闭合最短路线」——
     // 用户要求：去掉起终点，把所有点连成一个封闭图形，使总周长最短。
@@ -1781,16 +2167,8 @@ window.addEventListener("unhandledrejection", function(e){
       });
       return idx;
     }
-    // 客户点「当前显示坐标」= 真实基坐标 + 去重叠铺开偏移(与 updateCustZoom 完全一致)，保证虚线端点贴合圆点
-    function routePos(m, k){
-      const zf = zoomFactor(k);
-      const sepF = Math.min(1, zf * 1.8);
-      const sK = sepF / k;
-      const b = (m.lifted && m.liftedBase) ? m.liftedBase : m.base;
-      const ox = (m.off ? m.off[0] : 0) * sK;
-      const oy = (m.off ? m.off[1] : 0) * sK;
-      return [b[0] + ox, b[1] + oy];
-    }
+    // 客户/医院点「当前显示坐标」= 与地图点完全相同的 markerBase（抬升+铺开），保证路线虚线端点贴合圆点、且随浮雕/缩放与两类点同步
+    function routePos(m, k){ return markerBase(m, k); }
     // 重算参与路线的点集 + TSP 闭合顺序，再绘制（开启隐藏未选时仅用已选中点）
     function rebuildRoute(){
       // 自愈：resize 重绘会重建 zoom 组 g，旧的 _gRoute 节点脱离文档 → route 仍开启时重新挂到当前 g，避免路线在缩放/重绘后消失
@@ -1799,17 +2177,23 @@ window.addEventListener("unhandledrejection", function(e){
       if (!_gRoute) return;
       if (!_routeOn){ _gRoute.selectAll('*').remove(); if (_routeListOpen) renderRouteList(); return; }
       const pts = [];
-      _custEls.forEach(m => {
-        if (!m || !m.el || !m.rec) return;
-        if (_hideUnselected){
-          const idv = m.rec.__id;
-          const isSel = _hlIds.has(idv) || _hlIds.has(+idv) || _hlIds.has(String(idv));
-          if (!isSel) return;
-        }
-        if (_custVisible === false) return;            // 整层被隐藏（custtoggle）
-        if (m.el.style('display') === 'none') return;  // 被隐藏未选客户隐藏
-        pts.push(m);
-      });
+      // 🔴 路线规划统一收点：客户与医院「同一套逻辑」，仅圆点不同。
+      // 默认收「全部可见位点」，开启「隐藏未选」时只收「已选中(_hlIds / _hlHospIds)」位点。
+      const collect = (els, selSet, hideFlag, layerVisible) => {
+        if (!layerVisible) return;                      // 整层被隐藏（custtoggle / hosptoggle）
+        els.forEach(m => {
+          if (!m || !m.el || !m.rec) return;
+          if (hideFlag){
+            const idv = m.rec.__id;
+            const isSel = selSet.has(idv) || selSet.has(+idv) || selSet.has(String(idv));
+            if (!isSel) return;
+          }
+          if (m.el.style('display') === 'none') return;  // 被「隐藏未选」隐藏
+          pts.push(m);
+        });
+      };
+      collect(_custEls, _hlIds, _hideUnselected, _custVisible);
+      collect(_hospEls, _hlHospIds, _hideUnselectedHosp, _hospVisible);
       const hasDepot = !!_depot;
       const totalNodes = pts.length + (hasDepot ? 1 : 0);
       if (totalNodes < 2){ _routePts = []; _routeOrder = []; _routeSig = null; _gRoute.selectAll('*').remove(); if (_routeListOpen) renderRouteList(); return; }
@@ -1901,9 +2285,9 @@ window.addEventListener("unhandledrejection", function(e){
       const title = $('routeListTitle');
       const hasDepot = !!_depot;
       const totalNodes = _routePts.length + (hasDepot ? 1 : 0);
-      if (title) title.textContent = `路线规划清单（${_routePts.length} 个客户站点${hasDepot ? ' · 含计划起点' : ''}）`;
+      if (title) title.textContent = `路线轨迹清单（${_routePts.length} 个站点${hasDepot ? ' · 含计划起点' : ''}）`;
       if (!_routeOn || totalNodes < 2){
-        body.innerHTML = '<li class="rl-empty">尚未生成路线 — 请点击「开启路线规划」后查看顺序名单。</li>';
+        body.innerHTML = '<li class="rl-empty">尚未生成路线 — 请点击「描绘路线轨迹」后查看顺序名单。</li>';
         return;
       }
       const seq = routeListSeq();
@@ -1917,13 +2301,13 @@ window.addEventListener("unhandledrejection", function(e){
         }
         if (it.role === 'loop'){
           const fr = _routePts[it.firstCi] && _routePts[it.firstCi].rec;
-          return `<li class="rl-row rl-end"><span class="rl-badge">↺</span><span class="rl-main"><span class="rl-name">回到起点（${esc(fr ? (fr.company || '客户') : '客户')}）</span><span class="rl-sub">闭合回路，回到第 1 站</span></span></li>`;
+          return `<li class="rl-row rl-end"><span class="rl-badge">↺</span><span class="rl-main"><span class="rl-name">回到起点（${esc(fr ? (fr.company || fr.hospital || '站点') : '站点')}）</span><span class="rl-sub">闭合回路，回到第 1 站</span></span></li>`;
         }
         const m = _routePts[it.ci];
         const r = m.rec;
-        const region = r.__adm2 ? r.__adm2 : (r.__adm1 || '');
+        const region = r.__adm2 || r.__adm1 || r.area || '';
         const sub = [r.name, region].filter(Boolean).join(' · ');
-        return `<li class="rl-row ${it.isStart ? 'rl-start' : ''}" data-ci="${it.ci}" data-id="${r.__id}"><span class="rl-idx">${it.n}</span><span class="rl-main"><span class="rl-name">${esc(r.company || '未命名客户')}</span>${sub ? `<span class="rl-sub">${esc(sub)}</span>` : ''}</span></li>`;
+        return `<li class="rl-row ${it.isStart ? 'rl-start' : ''}" data-ci="${it.ci}" data-id="${r.__id}"><span class="rl-idx">${it.n}</span><span class="rl-main"><span class="rl-name">${esc(r.company || r.hospital || r.cn || '未命名站点')}</span>${sub ? `<span class="rl-sub">${esc(sub)}</span>` : ''}</span></li>`;
       });
       body.innerHTML = rows.join('');
     }
@@ -2045,7 +2429,10 @@ window.addEventListener("unhandledrejection", function(e){
     function highlightCustomer(id, opts){
       opts = opts || {};
       const doZoom = (opts.doZoom !== false);   // 默认 true：点击检索行 / 世界地图跳转时自动放大定位；点击地图黄点传 false（仅高亮+滚动，不强制放大）
-      if (!_custVisible && _gCust){ _custVisible = true; _gCust.style('display', null); const b=$('custtoggle'); if(b){ b.classList.add('active'); b.textContent='隐藏客户位点'; } }
+      // 关闭「所有客户位点」后点击信息行：既不恢复全部，也不自动进入「保留已选客户」模式——
+      // 仅把该行加入选中集（高亮右侧信息行），地图点位保持隐藏、右侧检索栏仍显示全部客户行，便于继续多选；
+      // 待用户选好后再手动点「保留已选客户」才进入筛选（点亮客户图层 + 仅显选中点 + 收起未选行）。
+      if (!_custVisible && _gCust){ /* 保持关闭：仅记录选中，不动可见性 */ }
       // 即便该客户没有地图圆点（无坐标），也允许“行选中”执行；无节点时仅做行高亮、不做圆点切换
       const sel = (_gCust) ? _gCust.selectAll('g.cust-pt-g').filter(function(){ return +this.getAttribute('data-id') === id; }) : d3.select(null);
       const node = sel.node();
@@ -2097,7 +2484,24 @@ window.addEventListener("unhandledrejection", function(e){
       tip.style.display = 'block';
     }
 
-    loadHolidays(); loadFX(); loadProvinces(); loadCustomers();
+    loadHolidays(); loadFX(); loadProvinces(); loadCustomers(); loadHospitals();
+    // 工具栏下拉分组：点一级按钮展开子按钮，点外部/其它分组收起；点子按钮不收起（便于连续切换）
+    (function bindToolbarMenus(){
+      const groups = Array.prototype.slice.call(document.querySelectorAll('.tb-group'));
+      if (!groups.length) return;
+      groups.forEach(g => {
+        const parent = g.querySelector('.tb-parent');
+        const menu = g.querySelector('.tb-menu');
+        if (parent) parent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const willOpen = !g.classList.contains('open');
+          groups.forEach(o => o.classList.remove('open'));
+          g.classList.toggle('open', willOpen);
+        });
+        if (menu) menu.addEventListener('click', (e) => { e.stopPropagation(); });   // 阻止冒泡到 document → 子按钮点击后菜单保持展开
+      });
+      document.addEventListener('click', () => { groups.forEach(o => o.classList.remove('open')); });
+    })();
 
     // —— 看门狗：若地图 SVG 被外部脚本意外移除（如预览平台重写 DOM），自动重建 ——
     (function wd(){
@@ -2105,6 +2509,7 @@ window.addEventListener("unhandledrejection", function(e){
       if (m && (!_svg || !_svg.node().isConnected) && _topo){
         try { renderProvinces(''); if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); } } catch(e){}
         if (window.__custList) drawCustomerPointsOnMap(window.__custList);
+        if (window.__hospList) drawHospitalPointsOnMap(window.__hospList);
       }
       setTimeout(wd, 1500);
     })();
