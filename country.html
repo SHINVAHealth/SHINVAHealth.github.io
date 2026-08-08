@@ -102,7 +102,7 @@
   }
   /* 功能按钮条：地图窗口顶部独立区域，普通流布局，不覆盖地图 */
   .map-toolbar{
-    flex:none; height:46px; display:flex; align-items:center; gap:8px; padding:0 12px;
+    flex:none; min-height:46px; display:flex; flex-wrap:wrap; align-items:center; align-content:flex-start; gap:8px; padding:6px 12px;
     border-bottom:1px solid var(--line); background:rgba(10,18,32,.55);
   }
   .map-toolbar button{
@@ -111,6 +111,27 @@
   }
   .map-toolbar button:hover{ border-color:var(--accent); }
   .map-toolbar button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  /* 工具栏下拉分组：一级按钮[位点显示]/[路线规划] → 点开显示子按钮；多点追踪/静态锁图为顶层独立按钮（路线规划置最右，缓解按钮过多拥挤） */
+  .tb-group{ position:relative; display:inline-flex; }
+  .tb-parent{ display:inline-flex; align-items:center; gap:6px; }
+  .tb-parent .chev{ font-size:10px; line-height:1; opacity:.7; transition:transform .2s; }
+  .tb-group.open .tb-parent{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
+  .tb-group.open .tb-parent .chev{ transform:rotate(180deg); }
+  .tb-menu{
+    position:absolute; top:calc(100% + 8px); left:0; z-index:60;
+    display:none; flex-direction:column; gap:4px; padding:6px; min-width:174px;
+    background:rgba(12,20,36,.97); border:1px solid var(--line); border-radius:12px;
+    backdrop-filter:blur(14px); box-shadow:0 14px 34px rgba(0,0,0,.45);
+  }
+  .tb-group.open .tb-menu{ display:flex; }
+  /* 顶层独立按钮：禁止被 flex 压缩，避免窄屏下被裁切而「看起来没独立显示」 */
+  .map-toolbar button.tb-standalone{ flex:none; }
+  .tb-menu button{
+    white-space:nowrap; text-align:left; justify-content:flex-start; padding:7px 11px; margin:0;
+    border:1px solid transparent; border-radius:8px; background:transparent; color:var(--txt); font-size:12px;
+  }
+  .tb-menu button:hover{ border-color:var(--accent); background:rgba(56,189,248,.14); }
+  .tb-menu button.active{ background:rgba(56,189,248,.32); border-color:var(--accent); color:#fff; }
   /* 静态锁图：区域 path 置为不可交互 → 无悬停高亮/点击；光标恢复默认，避免误以为可拖拽 */
   #map.static-locked .prov-fill, #map.static-locked .prov-line, #map.static-locked path.adm2{ pointer-events:none !important; }
   #map.static-locked{ cursor:url('assets/cursors/LoLNormal.png') 3 2, default; }  /* 静态锁图：光标维持 LOL 小手（DOM 图接管；此规则仅在光标图隐藏时兜底） */
@@ -214,6 +235,14 @@
   .prov-line.prov-sel{ stroke:#f59e0b !important; stroke-width:2.4 !important; }
   .adm2.adm2-sel{ stroke:#f59e0b !important; stroke-width:1.5 !important; stroke-dasharray:none !important; opacity:1 !important; }
   .cust-hint{ font-size:11.5px; color:var(--teal); background:rgba(13,148,136,.12); border:1px solid rgba(13,148,136,.3); border-radius:8px; padding:7px 10px; margin-bottom:10px; line-height:1.5; }
+  /* 客户检索 / 医院检索 标签切换 */
+  .tabbar{ display:flex; gap:6px; margin-bottom:10px; }
+  .tab{ flex:1; padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.05); color:var(--muted); font-size:13px; font-weight:600; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:.18s; }
+  .tab:hover{ border-color:var(--accent); color:#fff; }
+  .tab.active{ background:rgba(56,189,248,.30); border-color:var(--accent); color:#fff; }
+  /* 医院红点（圆内红十字）选中高亮：白底红框 → 琥珀底，红十字仍清晰 */
+  .hosp-pt-g.hosp-hl circle.hosp-pt{ fill:#f59e0b !important; stroke:#fbbf24 !important; }
+  #hospHint.cust-hint{ color:#fca5a5; background:rgba(220,38,38,.12); border-color:rgba(220,38,38,.3); }
   .cust-table-wrap{ max-height:420px; overflow:auto; border-radius:10px; border:1px solid var(--line); }
   .cust-table{ width:100%; border-collapse:collapse; font-size:12px; }
   .cust-table th, .cust-table td{ padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.06); vertical-align:top; }
@@ -244,7 +273,7 @@
     .cust-stat{ font-size:10px; padding:4px 8px; right:54px; }
     .map-status{ font-size:10px; padding:4px 8px; max-width:55%; }
   }
-  /* 路线规划清单弹窗（右上角浮动小窗，玻璃拟态） */
+  /* 路线轨迹清单弹窗（右上角浮动小窗，玻璃拟态） */
   .route-list-panel{
     position:absolute; top:64px; right:14px; width:300px; max-height:72vh; z-index:20;
     display:flex; flex-direction:column; overflow:hidden;
@@ -334,6 +363,7 @@
           <li><b>首都</b><span id="capital">—</span></li>
           <li><b>货币</b><span id="currency">—</span></li>
           <li><b>所属地区</b><span id="region">—</span></li>
+          <li><b>人均GDP</b><span id="gdp">—</span></li>
         </ul>
       </section>
       <section class="card">
@@ -348,14 +378,26 @@
 
     <section class="mapwrap">
       <div class="map-toolbar">
-        <button id="adm2toggle">显示二级行政区域</button>
-        <button id="custtoggle" class="active">隐藏客户位点</button>
-        <button id="multitrack">开启多点追踪</button>
-        <button id="staticlock">开启静态锁图</button>
-        <button id="hideunsel">隐藏未选客户</button>
-        <button id="selectDepot">选取计划位置</button>
-        <button id="routeplan">开启路线规划</button>
-        <button id="routelist">路线规划清单</button>
+        <div class="tb-group">
+          <button class="tb-parent" data-group="marker">位点显示 <span class="chev">▾</span></button>
+          <div class="tb-menu" data-group="marker">
+            <button id="custtoggle" class="active">所有客户位点</button>
+            <button id="hideunsel">保留已选客户</button>
+            <button id="hosptoggle" class="active">所有医院位点</button>
+            <button id="hideunselHosp">保留已选医院</button>
+            <button id="adm2toggle">二级行政区域展开</button>
+          </div>
+        </div>
+        <button id="multitrack" class="tb-standalone">开启多点追踪</button>
+        <button id="staticlock" class="tb-standalone">开启静态锁图</button>
+        <div class="tb-group">
+          <button class="tb-parent" data-group="route">路线规划 <span class="chev">▾</span></button>
+          <div class="tb-menu" data-group="route">
+            <button id="selectDepot">设立出发点位</button>
+            <button id="routeplan">描绘路线轨迹</button>
+            <button id="routelist">路线轨迹清单</button>
+          </div>
+        </div>
       </div>
       <div id="map"><div id="depotOverlay" style="display:none;position:absolute;inset:0;z-index:4;cursor:crosshair"></div></div>
       <div id="inset" class="map-inset" style="display:none;"></div>
@@ -368,7 +410,7 @@
       <div id="custStat" class="cust-stat">信息总计 <b>0</b> 个 · 位置统计 <b>0</b> 个</div>
       <div id="routeListPanel" class="route-list-panel" style="display:none;">
         <div class="rl-head">
-          <span id="routeListTitle" class="rl-title">路线规划清单</span>
+          <span id="routeListTitle" class="rl-title">路线轨迹清单</span>
           <button id="routeListClose" class="rl-close" title="关闭">×</button>
         </div>
         <div class="rl-modes">
@@ -381,13 +423,23 @@
 
     <aside class="custbar">
       <section class="card">
-        <h3>客户检索（<span id="custCountry">—</span>）</h3>
+        <div class="tabbar">
+          <button id="tabCust" class="tab active">客户检索</button>
+          <button id="tabHosp" class="tab">医院检索</button>
+        </div>
+        <div id="custCountryWrap">
+          <h3>客户检索（<span id="custCountry">—</span>）</h3>
+        </div>
+        <div id="hospCountryWrap" style="display:none">
+          <h3>达卡市医院（<span id="hospCount">—</span>）</h3>
+        </div>
         <input id="custSearch" class="search" placeholder="搜索 公司 / 电话 / 姓名 / 地址…">
         <div id="custCount" class="cust-count"></div>
-        <div class="cust-hint">🟢 地图上绿色圆点 = 按客户实际地址落点的分布（无地址者仅列于下方表格）</div>
+        <div id="custHint" class="cust-hint">🟢 地图上绿色圆点 = 按客户实际地址落点的分布（无地址者仅列于下方表格）</div>
+        <div id="hospHint" class="cust-hint" style="display:none">🏥 医院红点（圆内红十字）= 达卡市私立医院分布；点击可在地图定位</div>
         <div class="cust-table-wrap">
           <table class="cust-table">
-            <thead><tr><th>公司</th><th>电话</th><th>联系人</th><th>地址</th></tr></thead>
+            <thead id="custHead"><tr><th>公司</th><th>电话</th><th>联系人</th><th>地址</th></tr></thead>
             <tbody id="custBody"></tbody>
           </table>
         </div>
@@ -400,7 +452,7 @@
 
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
-  <script defer src="country_meta.js"></script>
-  <script defer src="app.js?v=202607281537"></script>
+  <script defer src="country_meta.js?v=202608061500"></script>
+  <script defer src="app.js?v=202608071529"></script>
 </body>
 </html>
