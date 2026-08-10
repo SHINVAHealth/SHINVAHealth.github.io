@@ -230,6 +230,12 @@
   mark{ background:rgba(250,204,21,.35); color:#fff; padding:0 2px; border-radius:3px; }
   /* 产品规格字段右侧小字提示（置于标签右侧） */
   .spec-hint{ font-size:11px; color:var(--muted); font-weight:400; white-space:nowrap; line-height:1.4; }
+  /* 产品名称右侧「精确搜寻」勾选框（样式参照 spec-hint） */
+  .field-head{ display:flex; align-items:center; gap:4px; }
+  /* 用 .field-head .exact-wrap 提高优先级，覆盖 .field label 的 flex/baseline/12px 样式 */
+  .field-head .exact-wrap{ display:inline-flex; align-items:center; gap:3px; cursor:pointer; user-select:none; }
+  .field-head .exact-wrap .exact-cb{ width:12px; height:12px; margin:0; padding:0; flex:none; accent-color:var(--sky); cursor:pointer; }
+  .field-head .exact-wrap .spec-hint{ font-size:11px; color:var(--muted); font-weight:400; white-space:nowrap; line-height:1; }
   .empty{ text-align:center; color:var(--muted); padding:48px 20px; font-size:14px; }
   .empty .big{ font-size:38px; margin-bottom:10px; }
   footer{ text-align:center; color:#5b6b85; font-size:12px; padding:10px 20px 30px; }
@@ -274,7 +280,13 @@
             </div>
           </div>
           <div class="field">
-            <label for="qName">产品名称</label>
+            <div class="field-head">
+              <label for="qName">产品名称</label>
+              <label class="exact-wrap" for="qNameExact">
+                <input type="checkbox" id="qNameExact" class="exact-cb" aria-label="精确搜寻：勾选后按产品名称精确匹配">
+                <span class="spec-hint">精确搜寻</span>
+              </label>
+            </div>
             <div class="input-wrap">
               <input id="qName" type="text" autocomplete="off">
               <button type="button" class="clear-x" data-clear="qName" title="清空产品名称" aria-label="清空产品名称">×</button>
@@ -443,7 +455,7 @@ const RATE_CFG = {
   }
 };
 
-const qCode = $('qCode'), qName = $('qName'), qSpec = $('qSpec'), qModel = $('qModel');
+const qCode = $('qCode'), qName = $('qName'), qSpec = $('qSpec'), qModel = $('qModel'), qNameExact = $('qNameExact');
 const results = $('results'), emptyEl = $('empty');
 
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -582,9 +594,11 @@ function filter(){
   const nq = qName.value.trim().toLowerCase();
   const sq = qSpec.value.trim().toLowerCase();
   const mq = qModel.value.trim().toLowerCase();
+  // 精确搜寻：勾选后，产品名称须与输入文字【逐字符完全一致】（多一个点少一个点都不行）
+  const exactName = qNameExact.checked;
   const list = DATA.filter(p =>
     (cq === '' || p._code.indexOf(cq) >= 0) &&
-    (nq === '' || p._name.indexOf(nq) >= 0) &&
+    (nq === '' || (exactName ? p._name === nq : p._name.indexOf(nq) >= 0)) &&
     (sq === '' || (p._spec||'').indexOf(sq) >= 0) &&
     (mq === '' || (p._model||'').indexOf(mq) >= 0)
   );
@@ -601,6 +615,7 @@ const _resetHooks = [];
 function _onReset(fn){ if (typeof fn === 'function') _resetHooks.push(fn); }
 function resetAll(){
   FIELDS.forEach(el => { el.value = ''; const f = el.closest('.field'); if (f) f.classList.remove('has-val'); });
+  qNameExact.checked = false;   // 重置时同步取消「精确搜寻」
   _resetHooks.forEach(fn => { try { fn(); } catch(e){} });
   filter();
   qCode.focus();
@@ -616,6 +631,8 @@ FIELDS.forEach(el => {
     if (e.key === 'Enter') filter();
   });
 });
+// 「精确搜寻」勾选框：状态变化即重新筛选
+qNameExact.addEventListener('change', filter);
 // [×] 按钮点击清空对应栏（仅搜索栏：带 data-clear；计算/汇率区各自绑定）
 document.querySelectorAll('.clear-x[data-clear]').forEach(btn => {
   btn.addEventListener('click', () => clearField(btn.dataset.clear));
