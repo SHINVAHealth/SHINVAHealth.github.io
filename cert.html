@@ -16,16 +16,23 @@
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
-  header.hero{ position:relative; background:#0f172a url('bg.jpg') center top / cover no-repeat; color:#fff; padding:36px 22px 54px; text-align:center; overflow:hidden; }
+  /* min-height 撑开与 index.html 一致的 hero 高度（index 有流内 h1 撑开 ~141px，cert 去重后无流内内容，故用 min-height 补偿，背景图区域两页像素级一致） */
+  header.hero{ position:relative; background:#0f172a url('bg.jpg') center top / cover no-repeat; color:#fff; padding:40px 24px 56px; text-align:center; overflow:hidden; min-height:141px; }
   header.hero::before{ content:''; position:absolute; inset:0; z-index:0; background:
     linear-gradient(180deg, rgba(15,23,42,.58) 0%, rgba(15,23,42,.12) 32%, rgba(15,23,42,.22) 68%, rgba(15,23,42,.62) 100%),
     linear-gradient(135deg, rgba(13,148,136,.34) 0%, rgba(14,165,233,.30) 100%); }
   header.hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:
     radial-gradient(78% 58% at 50% -8%, rgba(255,255,255,.16) 0%, transparent 60%),
     radial-gradient(150% 130% at 50% 45%, transparent 52%, rgba(0,0,0,.34) 100%); }
-  header.hero .brand-block{ position:absolute; top:16px; left:16px; z-index:2; display:flex; align-items:center; gap:12px; }
-  header.hero .brand-logo{ max-height:44px; max-width:220px; width:auto; height:auto; }
-  header.hero .brand-title{ font-size:22px; margin:0; letter-spacing:1px; font-weight:700; color:#fff; }
+  /* 左上角品牌块：与索引界面完全一致 —— logo + 标题(brand-row) 在上，实时 UTC+8 时钟(chinaclock)在正下方，左缘对齐、宽度锁定 logo 宽 */
+  header.hero .brand-block{ position:absolute; top:16px; left:16px; z-index:2; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+  header.hero .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
+  header.hero .brand-row{ display:flex; align-items:center; gap:10px; }
+  header.hero .brand-title{ font-size:28px; margin:0; letter-spacing:1px; font-weight:700; color:#fff; white-space:nowrap; }
+  header.hero .chinaclock{ font-size:26px; color:#fff; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1; width:100%; display:flex; align-items:center; white-space:nowrap; }
+  header.hero .chinaclock .seg{ display:inline-block; }
+  header.hero .chinaclock .colon{ font-weight:400; }
+  header.hero .chinaclock .tz{ margin-left:auto; padding-left:10px; }
   header.hero h1, header.hero p{ position:relative; z-index:1; }
   header.hero h1{ margin:0; font-size:28px; letter-spacing:2px; font-weight:700; }
   header.hero p{ margin:10px 0 0; opacity:.92; font-size:14px; }
@@ -35,10 +42,10 @@
   .back{ position:fixed; top:16px; right:calc(16px - var(--sbw, 0px)); z-index:60; display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 14px; box-sizing:border-box; color:var(--brand-dark); text-decoration:none; font-size:13px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",Roboto,Helvetica,Arial,sans-serif; font-weight:600; background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:10px; box-shadow:0 4px 16px var(--shadow); transition:.18s; white-space:nowrap; }
   .back:hover{ background:#fff; transform:translateY(-1px); border-color:var(--brand); }
 
-  .wrap{ max-width:1180px; margin:-28px auto 48px; padding:0 20px; }
+  .wrap{ max-width:1180px; margin:24px auto 48px; padding:0 20px; }
   /* 左侧竖向工具栏 + 右侧内容布局，对标 index.html 的 .layout */
   .layout{ display:flex; gap:18px; align-items:flex-start; }
-  .sidebar{ position:sticky; top:76px; flex:0 0 188px; display:flex; flex-direction:column; gap:10px; }
+  .sidebar{ position:sticky; top:24px; flex:0 0 188px; display:flex; flex-direction:column; gap:10px; }
   .cats{ flex:1 1 auto; min-width:0; }
   .nav-btn{ display:flex; align-items:center; gap:10px; text-decoration:none; color:#0f172a; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 14px; font-size:14px; font-weight:600; cursor:pointer; text-align:left; box-shadow:0 2px 8px rgba(15,23,42,.04); transition:.18s; line-height:1.25; }
   .nav-btn .ic{ font-size:20px; line-height:1; flex:none; }
@@ -78,12 +85,13 @@
   footer{ text-align:center; color:var(--muted); font-size:12px; padding:24px; }
 
   @media (max-width:760px){
-    header.hero{ padding:54px 18px 44px; }
+    header.hero{ padding:58px 18px 50px; }
     header.hero .brand-block{ top:12px; left:12px; }
-    header.hero .brand-logo{ max-height:36px; max-width:160px; }
-    header.hero .brand-title{ font-size:16px; }
-    header.hero h1{ font-size:22px; }
-    .wrap{ margin-top:-20px; }
+    header.hero .brand-logo{ max-height:40px; max-width:160px; }
+    header.hero .brand-title{ font-size:20px; }
+    header.hero h1{ font-size:20px; }
+    header.hero .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; }
+    .wrap{ margin-top:16px; }
     .layout{ flex-direction:column; }
     .sidebar{ position:static; flex:1 1 auto; flex-direction:row; flex-wrap:wrap; }
     .nav-btn{ flex:1 1 150px; }
@@ -98,11 +106,12 @@
 <body>
 <header class="hero">
   <div class="brand-block">
-    <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
-    <span class="brand-title">产品资质查询</span>
+    <div class="brand-row">
+      <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+      <span class="brand-title">产品资质查询</span>
+    </div>
+    <div class="chinaclock" id="chinaclock">--:--:--</div>
   </div>
-  <h1>产品资质查询</h1>
-  <p>新华健康 · 医疗器械 CE / MDR 认证声明与资质文件</p>
 </header>
 
 <a class="back" href="index.html">← 返回综合索引</a>
@@ -144,16 +153,6 @@
           <div class="doc-frame">
             <img src="cert_hf_esu_p1.png?v=202608081520" alt="高频电刀与能量平台 EU MDR 符合性声明">
           </div>
-
-          <div class="meta-grid">
-            <div class="meta-card"><div class="k">文件编号</div><div class="v">DECL.DOC No.EUDC08082026</div></div>
-            <div class="meta-card"><div class="k">制造商</div><div class="v">Shandong Xinhua Healthcare Industry Co., Ltd.</div></div>
-            <div class="meta-card"><div class="k">适用法规</div><div class="v">Regulation (EU) 2017/745 (MDR)</div></div>
-            <div class="meta-card"><div class="k">产品范围</div><div class="v">Electrosurgical unit XGP-D-Ⅰ / XGP-D-Ⅱ / XGP-Y-Ⅰ; Surgical energy platform XGP-L-300 / XGP-L-300A</div></div>
-            <div class="meta-card"><div class="k">医疗器械分类</div><div class="v">Class IIb（Rule 9 of Annex VIII）</div></div>
-            <div class="meta-card"><div class="k">符合性评估程序</div><div class="v">Annex IX of Regulation (EU) 2017/745</div></div>
-            <div class="meta-card" style="grid-column:1 / -1;"><div class="k">适用协调标准</div><div class="v">EN 60601-1:2006+A1:2013 · EN 60601-1-2:2015 · EN 60601-2-2:2021 · EN ISO 13485:2016+A11:2021 · EN ISO 14971:2019+A11:2021</div></div>
-          </div>
         </div>
       </div>
 
@@ -174,16 +173,6 @@
 
           <div class="doc-frame">
             <img src="cert_ortho_p1.png?v=202608081610" alt="骨科动力系统 EU MDR 符合性声明">
-          </div>
-
-          <div class="meta-grid">
-            <div class="meta-card"><div class="k">文件编号</div><div class="v">DECL.DOC No.EUDC10082026</div></div>
-            <div class="meta-card"><div class="k">制造商</div><div class="v">Shandong Xinhua Healthcare Industry Co., Ltd.</div></div>
-            <div class="meta-card"><div class="k">适用法规</div><div class="v">Regulation (EU) 2017/745 (MDR)</div></div>
-            <div class="meta-card"><div class="k">产品范围</div><div class="v">Orthopaedic Surgical Power System XGZ-ZX, XGZ-ZJ, XGZ-ZG</div></div>
-            <div class="meta-card"><div class="k">医疗器械分类</div><div class="v">Class IIb（Rule 9 of Annex VIII）</div></div>
-            <div class="meta-card"><div class="k">符合性评估程序</div><div class="v">Annex IX of Regulation (EU) 2017/745</div></div>
-            <div class="meta-card" style="grid-column:1 / -1;"><div class="k">适用协调标准</div><div class="v">EN 60601-1:2006+A1:2013 · EN 60601-1-2:2015 · EN 60601-2-2:2021 · EN ISO 13485:2016+A11:2021 · EN ISO 14971:2019+A11:2021</div></div>
           </div>
         </div>
       </div>
@@ -218,6 +207,39 @@
       panels.forEach(p => p.classList.toggle('active', p.dataset.idx === idx));
     });
   });
+</script>
+<script>
+  // 实时中国时间（与索引界面完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
+  (function(){
+    var el = document.getElementById('chinaclock');
+    if(!el) return;
+    function fmt(){
+      try { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()); }
+      catch(e){ return '--:--:--'; }
+    }
+    function sizeToLogo(){
+      var logo = document.querySelector('header.hero .brand-logo');
+      if(!logo) return;
+      var w = logo.offsetWidth;
+      if(!w){ var mw = parseFloat(getComputedStyle(logo).maxWidth); if(mw) w = mw; }
+      if(w) el.style.width = w + 'px';
+    }
+    function tick(){
+      var p = fmt().split(':');
+      if(p.length!==3){ el.textContent = fmt(); return; }
+      el.innerHTML = '<span class="seg">'+p[0]+'</span>'
+        + '<span class="colon">:</span>'
+        + '<span class="seg">'+p[1]+'</span>'
+        + '<span class="colon">:</span>'
+        + '<span class="seg">'+p[2]+'</span>'
+        + '<span class="tz">(UTC+8)</span>';
+      sizeToLogo();
+    }
+    tick(); setInterval(tick, 1000);
+    var logo = document.querySelector('header.hero .brand-logo');
+    if (logo){ if (logo.complete) sizeToLogo(); else logo.addEventListener('load', sizeToLogo); }
+    window.addEventListener('resize', sizeToLogo);
+  })();
 </script>
 </body>
 </html>
