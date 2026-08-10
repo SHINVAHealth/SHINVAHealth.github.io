@@ -71,6 +71,11 @@
   .doc-frame{ text-align:center; margin:14px 0 18px; }
   .doc-frame img{ max-width:min(900px,100%); height:auto; border-radius:10px; border:1px solid var(--line); box-shadow:0 12px 34px rgba(15,23,42,.12); background:#fff; }
 
+  /* 同一板块内的多个文档卡（如骨科动力系统 / 骨钻系列） */
+  .doc-card + .doc-card{ margin-top:24px; padding-top:20px; border-top:1px dashed var(--line); }
+  .doc-card-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+  .doc-card-head h3{ margin:0; font-size:16px; color:#0f172a; }
+
   .meta-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-top:18px; }
   .meta-card{ background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
   .meta-card .k{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
@@ -151,7 +156,7 @@
           </div>
 
           <div class="doc-frame">
-            <img src="cert_hf_esu_p1.png?v=202608081520" alt="高频电刀与能量平台 EU MDR 符合性声明">
+            <img src="cert_hf_esu_p1.png?v=202608101030" alt="高频电刀与能量平台 EU MDR 符合性声明">
           </div>
         </div>
       </div>
@@ -165,14 +170,28 @@
               <h2>骨科动力设备 &amp; 骨钻 · CE 认证声明</h2>
               <p>Declaration of Compliance with EU Quality Management System Certificate (MDR)</p>
             </div>
-            <span class="spacer"></span>
-            <a class="btn-download" href="cert_ortho.pdf" download title="下载原版 PDF">
-              <span>⬇</span><span>下载原版 PDF</span>
-            </a>
           </div>
 
-          <div class="doc-frame">
-            <img src="cert_ortho_p1.png?v=202608081610" alt="骨科动力系统 EU MDR 符合性声明">
+          <!-- 骨科动力系统 -->
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <h3>骨科动力系统</h3>
+              <a class="btn-download" href="cert_ortho.pdf" download title="下载原版 PDF"><span>⬇</span><span>下载原版 PDF</span></a>
+            </div>
+            <div class="doc-frame">
+              <img src="cert_ortho_p1.png?v=202608101030" alt="骨科动力系统 EU MDR 符合性声明">
+            </div>
+          </div>
+
+          <!-- 骨钻系列 -->
+          <div class="doc-card">
+            <div class="doc-card-head">
+              <h3>骨钻系列</h3>
+              <a class="btn-download" href="cert_ortho_drill.pdf" download title="下载原版 PDF"><span>⬇</span><span>下载原版 PDF</span></a>
+            </div>
+            <div class="doc-frame">
+              <img src="cert_ortho_drill_p1.png?v=202608101030" alt="骨钻系列 EU MDR 符合性声明">
+            </div>
           </div>
         </div>
       </div>
