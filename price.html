@@ -650,11 +650,12 @@ function filter(){
   const mq = qModel.value.trim().toLowerCase();
   // 精确搜寻：勾选后，产品名称须与输入文字【逐字符完全一致】（多一个点少一个点都不行）
   const exactName = qNameExact.checked;
+  // 搜索比较统一转小写（原数据 _name/_spec/_model 部分保留了原始大小写，须忽略大小写才能匹配拉丁字母，如 ZS011A）
   const list = DATA.filter(p =>
-    (cq === '' || p._code.indexOf(cq) >= 0) &&
-    (nq === '' || (exactName ? p._name === nq : p._name.indexOf(nq) >= 0)) &&
-    (sq === '' || (p._spec||'').indexOf(sq) >= 0) &&
-    (mq === '' || (p._model||'').indexOf(mq) >= 0)
+    (cq === '' || (p._code||'').toLowerCase().indexOf(cq) >= 0) &&
+    (nq === '' || (exactName ? (p._name||'').toLowerCase() === nq : (p._name||'').toLowerCase().indexOf(nq) >= 0)) &&
+    (sq === '' || (p._spec||'').toLowerCase().indexOf(sq) >= 0) &&
+    (mq === '' || (p._model||'').toLowerCase().indexOf(mq) >= 0)
   );
   render(list, cq, nq, sq, mq);
 }
