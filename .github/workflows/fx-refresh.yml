@@ -1,22 +1,24 @@
-name: FX Rate Daily Refresh (央行中间价自动同步)
+name: FX Rate Daily Refresh (央行在岸价自动同步)
 
-# 每日 09:30 北京时间(= 01:30 UTC)自动抓取当日人民币兑美元中间价，
-# 写回 fx_rate.json 并推送到仓库。GitHub Pages 静态托管，无后端，
-# 页面 price.html 每次打开即 fetch 同源 fx_rate.json(cache:no-store) 拿到最新中间价。
+# 每日 16:35 北京时间(= 08:35 UTC，在岸市场收盘后)抓取当日美元兑人民币
+# 在岸即期汇率（16:30 收盘价口径），写回 fx_rate.json 并推送。
+# GitHub Pages 静态托管，price.html 每次打开即 fetch 同源 fx_rate.json(cache:no-store)。
 #
-# 源：huilv.cc 按日期生成的中间价页面（境外服务器可直连，含「1美元对人民币X.XXXX元」）。
-# 失败/周末/节假日：保留上一次成功值，绝不回退到市场汇率。
+# 源（在岸价，非中间价）：
+#   1) huilv.cc「美元对人民币汇率」实时页 https://www.huilv.cc/USD_CNY/
+#   2) 备用：新浪财经 fx_susdcny（需 Referer 头，取最新价字段）
+# 失败/周末/节假日：保留上一次成功值，绝不写中间价或离岸价冒充在岸价。
 #
 # 首次部署注意：fine-grained PAT 默认无 Workflows:write，用 API 推送本文件会 403。
 #   两种解法任选其一：
-#   (a) 在 GitHub 网页仓库中手动新建 .github/workflows/fx-refresh.yml 粘贴本内容；或
+#   (a) 在 GitHub 网页仓库中手动编辑 .github/workflows/fx-refresh.yml 粘贴本内容；或
 #   (b) 给该 PAT 增加 Workflows:write 权限后重跑部署脚本。
 #   工作流建好后会用仓库自带的 GITHUB_TOKEN(contents:write) 自行提交 fx_rate.json，无需再管。
 
 on:
   schedule:
-    - cron: '30 1 * * *'        # 01:30 UTC = 09:30 Asia/Shanghai
-  workflow_dispatch:           # 允许在 Actions 页手动触发一次验证
+    - cron: '35 8 * * *'        # 08:35 UTC = 16:35 Asia/Shanghai（在岸收盘后取当日价）
+  workflow_dispatch:            # 允许在 Actions 页手动触发一次验证
 
 permissions:
   contents: write
@@ -27,36 +29,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch central parity & update fx_rate.json
+      - name: Fetch onshore USD/CNY & update fx_rate.json
         run: |
           python3 - <<'PY'
           import urllib.request, re, json, datetime, sys
 
-          # 北京时间今日（中国无夏令时，UTC+8 即可）
           bj = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
-          ymd = bj.strftime("%Y%m%d")
-          url = f"https://www.huilv.cc/rmbzjj/{ymd}.html"
+          rate = None
+
+          # 源1：huilv.cc 美元对人民币（在岸）页
           try:
-              req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+              req = urllib.request.Request("https://www.huilv.cc/USD_CNY/",
+                                            headers={"User-Agent": "Mozilla/5.0"})
               html = urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "ignore")
+              m = re.search(r'class=(?:back|huilv_pink)>\s*([678]\.\d{3,4})\s*<', html)
+              if m:
+                  rate = float(m.group(1))
           except Exception as e:
-              print("fetch failed, keep last value:", e)
-              sys.exit(0)
+              print("huilv.cc failed:", e)
 
-          m = re.search(r"1美元对人民币(\d+\.\d+)元", html)
-          if not m:
-              print("no central-parity found (weekend/holiday?), keep last value")
-              sys.exit(0)
+          # 源2（备用）：新浪财经 在岸 USD/CNY（取最新价字段）
+          if rate is None:
+              try:
+                  req = urllib.request.Request("https://hq.sinajs.cn/list=fx_susdcny",
+                                               headers={"User-Agent": "Mozilla/5.0",
+                                                        "Referer": "https://finance.sina.com.cn"})
+                  t = urllib.request.urlopen(req, timeout=25).read().decode("gbk", "ignore")
+                  parts = t.split('"')[1].split(",")
+                  if len(parts) > 3 and parts[3]:
+                      v = float(parts[3])
+                      if 6.0 <= v <= 8.0:
+                          rate = v
+              except Exception as e:
+                  print("sina failed:", e)
 
-          rate = float(m.group(1))
-          if not (6.0 <= rate <= 8.0):
-              print("rate out of sane range, abort:", rate)
+          if rate is None or not (6.0 <= rate <= 8.0):
+              print("no onshore rate fetched, keep last value")
               sys.exit(0)
 
           data = {
               "date": bj.strftime("%Y-%m-%d"),
               "usdCny": rate,
-              "src": "中国人民银行授权中国外汇交易中心公布 · 人民币汇率中间价（GitHub Action 自动同步 huilv.cc）"
+              "src": "中国人民银行授权中国外汇交易中心公布 · 美元兑人民币在岸即期汇率（央行在岸价，GitHub Action 每日自动同步）"
           }
           with open("fx_rate.json", "w", encoding="utf-8") as f:
               json.dump(data, f, ensure_ascii=False, indent=2)
@@ -72,6 +86,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "no change, skip commit"
           else
-            git commit -m "chore: auto-sync fx_rate.json to $(date +%F) central parity"
+            git commit -m "chore: auto-sync fx_rate.json to $(date +%F) onshore rate"
             git push
           fi
