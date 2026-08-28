@@ -178,7 +178,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
 
     // —— 3. 汇率 ——
-    // 美元兑人民币：权威采用 fx_rate.json（央行中间价），与产品价格页同源同值（不回退市场源）。
+    // 美元兑人民币：权威采用 fx_rate.json（央行在岸价），与产品价格页同源同值（不回退市场源）。
     // 当地货币汇率：fx_rate.json 不携带，故以 er-api 全币种为补充，并用「美元兑人民币」为桥接推导。
     //   展示顺序按用户优先级：① 人民币兑当地货币 → ② 当地货币兑人民币 → ③ 美元兑当地货币 → ④ 美元兑人民币。
     let _fxDate = '';
@@ -203,7 +203,7 @@ window.addEventListener("unhandledrejection", function(e){
           html += `<div class="row"><span>当地货币</span><b>${esc(cur.code)}（${esc(cur.symbol || '')}）</b></div>`;
         }
       }
-      html += `<span class="fx-update">来源：央行中间价(美元兑人民币)${d ? ' · ' + d : ''}</span>`;
+      html += `<span class="fx-update">来源：央行在岸价(美元兑人民币)${d ? ' · ' + d : ''}</span>`;
       $('fxBody').innerHTML = html;
     }
     function loadFX(){
