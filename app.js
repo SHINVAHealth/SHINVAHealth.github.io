@@ -179,18 +179,21 @@ window.addEventListener("unhandledrejection", function(e){
 
     // —— 3. 汇率 ——
     // 美元兑人民币：权威采用 fx_rate.json（央行在岸价），与产品价格页同源同值（不回退市场源）。
-    // 当地货币汇率：fx_rate.json 不携带，故以 er-api 全币种为补充，并用「美元兑人民币」为桥接推导。
-    //   展示顺序按用户优先级：① 人民币兑当地货币 → ② 当地货币兑人民币 → ③ 美元兑当地货币 → ④ 美元兑人民币。
+    // 当地货币汇率（央行优先 + 市场兜底，用户指定方案）：
+    //   ① 优先采用「欧洲央行 ECB」官方参考价（frankfurter.app，CORS 可用、央行口径），覆盖美元/欧元/日元/英镑/港币等约30种主要货币；
+    //   ② 若 ECB 未公布该币种（如孟加拉BDT、尼日利亚NGN、巴基斯坦PKR等小币种），再回退 er-api 市场参考价，
+    //      并明确标注「参考市场价」，绝不冒充央行价；
+    //   ③ 所有当地币种均经「央行在岸价 USD/CNY」桥接推导，与价格页数值自洽。
+    //   展示顺序：① 人民币兑当地货币 → ② 当地货币兑人民币 → ③ 美元兑当地货币 → ④ 美元兑人民币。
     let _fxDate = '';
-    function renderFX(usdCny, local){
-      // 汇率展示顺序（用户指定优先级）：
-      //   ① 人民币兑当地货币 → ② 当地货币兑人民币 → ③ 美元兑当地货币 → ④ 美元兑人民币
+    function renderFX(usdCny, local, localSrc){
+      // localSrc: 当地币种来源说明（央行参考价(欧洲央行 ECB) / 参考市场价(er-api) / null）
       const d = _fxDate || '';
       let html = '';
       if (local && local.cnyToCur != null){
         const cnyToCur = local.cnyToCur;          // 1 元(人民币) ≈ ? 当地货币
         const curToCny = 1 / cnyToCur;            // 1 当地货币 ≈ ? 元(人民币)
-        const usdToCur = usdCny * cnyToCur;       // 以美元兑人民币为桥接，与价格页数值自洽
+        const usdToCur = usdCny * cnyToCur;       // 以美元兑人民币(在岸价)为桥接，与价格页数值自洽
         html =
           `<div class="row top"><span>1 元(人民币) ≈</span><b>${fmt(cnyToCur)} ${esc(local.code)}</b></div>` +
           `<div class="row"><span>1 ${esc(local.code)} ≈</span><b>${fmt(curToCny)} 元(人民币)</b></div>` +
@@ -203,26 +206,54 @@ window.addEventListener("unhandledrejection", function(e){
           html += `<div class="row"><span>当地货币</span><b>${esc(cur.code)}（${esc(cur.symbol || '')}）</b></div>`;
         }
       }
-      html += `<span class="fx-update">来源：央行在岸价(美元兑人民币)${d ? ' · ' + d : ''}</span>`;
+      // 来源说明：USD/CNY 始终为央行在岸价；当地币种如实标注央行/市场
+      let srcLine = `来源：央行在岸价(美元兑人民币)${d ? ' · ' + d : ''}`;
+      if (localSrc){ srcLine += ` ｜ 当地币：${localSrc}`; }
+      html += `<span class="fx-update">${srcLine}</span>`;
       $('fxBody').innerHTML = html;
     }
     function loadFX(){
-      const code0 = cur ? cur.code : null;   // 页面级货币（country_meta 可能晚于本函数就绪，er-api 回调内再读一次 cur 兜底）
+      const code0 = cur ? cur.code : null;   // 页面级货币（country_meta 可能晚于本函数就绪，回调内再读一次 cur 兜底）
       // 1) 美元兑人民币（权威 / 与产品价格页一致）：fx_rate.json
       fetch('fx_rate.json', { cache: 'no-store' })
         .then(r => r.json()).then(j => {
           const usdCny = (j && j.usdCny != null) ? j.usdCny : null;
           if (usdCny == null){ $('fxBody').innerHTML = '<span class="err">汇率加载失败</span>'; return; }
           _fxDate = j.date ? j.date : new Date().toISOString().slice(0,10);
-          renderFX(usdCny, null);   // 先渲染人民币兑美元（立即可见、与价格页一致；当地货币行待 er-api 回调补全）
-          // 2) 当地货币汇率（er-api 全币种补充）：以美元兑人民币为桥接推导，不破坏价格页一致性
+          renderFX(usdCny, null, null);   // 先渲染美元兑人民币（立即可见、与价格页一致）
           const code = cur ? cur.code : code0;
           if (!code){ return; }
-          fetch('https://open.er-api.com/v6/latest/CNY')
-            .then(r => r.json()).then(k => {
-              const cnyToCur = (k && k.rates && k.rates[code] != null) ? k.rates[code] : null;
-              renderFX(usdCny, cnyToCur != null ? { code, symbol: cur && cur.symbol, cnyToCur } : null);
-            }).catch(() => { /* 保留仅美元行渲染，不报错 */ });
+          // 2) 当地货币汇率：央行优先（欧洲央行 ECB 官方参考价）→ 市场兜底（er-api）
+          const frankUrl = `https://api.frankfurter.app/latest?from=CNY&to=${encodeURIComponent(code)}`;
+          fetch(frankUrl, { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(k => {
+              const ecb = (k && k.rates && k.rates[code] != null) ? k.rates[code] : null;
+              if (ecb != null){
+                const ecbDate = (k && k.date) ? k.date : '';
+                renderFX(usdCny, { code, symbol: cur && cur.symbol, cnyToCur: ecb },
+                          `央行参考价(欧洲央行 ECB)${ecbDate ? ' · ' + ecbDate : ''}`);
+                return;
+              }
+              // ECB 未覆盖 → 回退 er-api 市场参考价（明确标注市场，不冒充央行价）
+              return fetch('https://open.er-api.com/v6/latest/CNY')
+                .then(r => r.json()).then(m => {
+                  const cnyToCur = (m && m.rates && m.rates[code] != null) ? m.rates[code] : null;
+                  if (cnyToCur != null){
+                    renderFX(usdCny, { code, symbol: cur && cur.symbol, cnyToCur }, `参考市场价(er-api)`);
+                  }
+                }).catch(() => { /* 保留仅美元行渲染，不报错 */ });
+            })
+            .catch(() => {
+              // frankfurter 不可达 → 直接 er-api 兜底（标注市场）
+              fetch('https://open.er-api.com/v6/latest/CNY')
+                .then(r => r.json()).then(m => {
+                  const cnyToCur = (m && m.rates && m.rates[code] != null) ? m.rates[code] : null;
+                  if (cnyToCur != null){
+                    renderFX(usdCny, { code, symbol: cur && cur.symbol, cnyToCur }, `参考市场价(er-api)`);
+                  }
+                }).catch(() => {});
+            });
         }).catch(() => { $('fxBody').innerHTML = '<span class="err">汇率加载失败（网络受限）</span>'; });
     }
     function fmt(n){ return (n==null || isNaN(n)) ? '—' : Number(n).toLocaleString('zh-CN', {maximumFractionDigits:4}); }
