@@ -82,21 +82,10 @@
   .cust-region{ margin:4px 0 14px; }
   .cust-region-h{ font-size:13px; font-weight:600; color:var(--muted); margin:2px 0 8px; padding-left:9px; border-left:3px solid var(--c-cust); }
   .cust-grid .card .go{ color:var(--c-cust); }
-  /* 重点国家高亮（孟加拉 / 尼日利亚）：黄色左边线 + 淡黄渐变底 + 金色徽标 */
-  .card.hot{ --accent:#f59e0b; background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%); border-color:#fcd34d; border-left-color:#f59e0b; box-shadow:0 4px 14px rgba(245,158,11,.20); }
-  .card.hot:hover{ box-shadow:0 8px 22px rgba(245,158,11,.30); }
-  .card.hot .go{ color:#b45309; }
-  .card.hot .badge{ position:absolute; top:10px; right:12px; font-size:11px; font-weight:700; color:#92400e; background:#fde68a; border:1px solid #fcd34d; padding:1px 9px; border-radius:999px; letter-spacing:.5px; }
   /* 国家节点下的「客户信息」子链接面板：跨整行、缩进、淡蓝左边线，形成层级感 */
   .cust-sub{ grid-column:1 / -1; margin:2px 0 8px; padding:6px 0 4px 16px; border-left:3px solid var(--c-cust); background:rgba(37,99,235,.04); border-radius:0 10px 10px 0; }
   .cust-sub .sub-card{ background:#f8fafc; border-left-color:#93c5fd; }
   .cust-sub .sub-card .go{ color:#2563eb; }
-  /* 置顶高亮子链接（如「孟加拉客户信息表」）：金色左边线 + 暖金渐变底 + 始终在上 + 置顶徽标 */
-  .cust-sub .sub-card.pin{ background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%); border-color:#fcd34d; border-left:3px solid #f59e0b; box-shadow:0 4px 14px rgba(245,158,11,.22); font-weight:600; }
-  .cust-sub .sub-card.pin:hover{ box-shadow:0 8px 22px rgba(245,158,11,.34); }
-  .cust-sub .sub-card.pin .t{ color:#92400e; }
-  .cust-sub .sub-card.pin .go{ color:#b45309; }
-  .cust-sub .sub-card.pin .pin-badge{ position:absolute; top:10px; right:12px; font-size:11px; font-weight:700; color:#92400e; background:#fde68a; border:1px solid #fcd34d; padding:1px 9px; border-radius:999px; letter-spacing:.5px; }
   /* 全站主题化光标：地图/贸易风格十字准星，进入页面即生效 */
   html, body{ cursor:default; }
   a, button, .card, .tool-btn, [role=button], .cat-head, .cust-region-h, .modal-bar button, .topbar button{ cursor:pointer; }
@@ -234,6 +223,10 @@
     regions: [
       { name:'亚洲', countries:[
         { iso2:'bd', name:'孟加拉' },
+        { iso2:'th', name:'泰国' },
+        { iso2:'vn', name:'越南' },
+        { iso2:'in', name:'印度' },
+        { iso2:'la', name:'老挝' },
         { iso2:'my', name:'马来西亚' },
         { iso2:'id', name:'印度尼西亚' },
         { iso2:'pk', name:'巴基斯坦' },
@@ -247,14 +240,17 @@
         { iso2:'mx', name:'墨西哥' },
         { iso2:'gt', name:'危地马拉' },
       ]},
+      { name:'欧洲', countries:[
+        { iso2:'ru', name:'俄罗斯' },
+      ]},
     ]
   };
   // 各国客户文件「子链接」：点击外贸客户树中对应国家后展开。
   // 原「孟加拉客户文件」版块的 9 份文件已全部迁移至此，作为 [孟加拉] 的「客户信息」子链接。
   const CUST_FILES = {
     bd: [
-      { file:'existing_customers.html', title:'孟加拉客户信息表', pin:true },
-      { file:'dhaka_private_hospitals.html', title:'达卡私立医院一览', pin:true },
+      { file:'existing_customers.html', title:'孟加拉客户信息表' },
+      { file:'dhaka_private_hospitals.html', title:'达卡私立医院一览' },
       { file:'bangladesh_bone_all.html', title:'孟加拉骨组织手术设备经销商·全量汇总' },
       { file:'bangladesh_esu.html', title:'孟加拉 ESU 电刀及外科设备经销商' },
       { file:'bangladesh_verified.html', title:'孟加拉已核实经销商名单' },
@@ -265,7 +261,22 @@
       { file:'report_multi.html', title:'电刀主机厂家外贸客户·多源交叉验证版' },
     ],
     ng: [
-      { file:'nigeria_customers.html', title:'尼日利亚客户信息表', pin:true },
+      { file:'nigeria_customers.html', title:'尼日利亚客户信息表' },
+    ],
+    th: [
+      { file:'thailand_customers.html', title:'泰国医疗器械经销商总表' },
+    ],
+    vn: [
+      { file:'vietnam_customers.html', title:'越南医疗器械经销商总表' },
+    ],
+    in: [
+      { file:'india_customers.html', title:'印度医疗器械经销商总表' },
+    ],
+    la: [
+      { file:'laos_customers.html', title:'老挝医疗器械经销商总表' },
+    ],
+    ru: [
+      { file:'russia_customers.html', title:'俄罗斯医疗器械经销商名录（合并版）' },
     ],
   };
   const CATS = [
@@ -429,9 +440,8 @@
       const grid = document.createElement('div'); grid.className='grid cust-grid';
       reg.countries.forEach(co => {
         const files = (CUST_FILES && CUST_FILES[co.iso2]) || co.files || null;
-        // 重点国家（孟加拉 / 尼日利亚）标黄高亮
-        const HOT = { bd:true, ng:true };
-        const hot = !!HOT[co.iso2];
+        // 重点国家标记已取消（孟加拉 / 尼日利亚不再标黄/置顶）
+        const hot = false;
         const card = document.createElement('div'); card.className='card cust'+(hot?' hot':'');
         card.innerHTML = '<span class="t"></span>'+(hot?'<span class="badge">★ 重点</span>':'')+'<span class="go">'+(files && files.length ? '客户信息 ▾' : '客户信息 ↗')+'</span>';
         card.querySelector('.t').textContent = co.name;
