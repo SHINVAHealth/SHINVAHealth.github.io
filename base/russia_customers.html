@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>俄罗斯医疗器械经销商名录（合并版）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI','Microsoft YaHei',sans-serif;background:#f5f7fa;color:#333;line-height:1.6;}
+.container{max-width:1400px;margin:0 auto;padding:20px;}
+h1{text-align:center;color:#1a3a6b;font-size:24px;margin-bottom:5px;padding:20px 0 10px;border-bottom:3px solid #1a3a6b;}
+.stats{display:flex;justify-content:center;gap:15px;margin-bottom:25px;flex-wrap:wrap;}
+.stat-card{background:#fff;border-radius:8px;padding:12px 24px;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center;min-width:130px;}
+.stat-card .num{font-size:26px;font-weight:700;color:#1a3a6b;}
+.stat-card .label{font-size:12px;color:#888;}
+.stat-card.total{border-top:3px solid #27ae60;}
+.stat-card.total .num{color:#27ae60;}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1);font-size:13px;margin-bottom:20px;}
+thead{background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%);color:#fff;}
+th{padding:12px 10px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;}
+td{padding:10px;border-bottom:1px solid #eee;vertical-align:top;}
+tr:hover{background:#f8f9fb;}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin:1px;}
+.badge-electro{background:#f39c12;color:#fff;}
+.badge-ortho{background:#3498db;color:#fff;}
+.badge-surgical{background:#2ecc71;color:#fff;}
+.badge-ot{background:#9b59b6;color:#fff;}
+a{color:#2c5aa0;text-decoration:none;}
+a:hover{text-decoration:underline;}
+.company-name{font-weight:600;color:#1a3a6b;}
+.company-name .ru{font-weight:400;font-size:11px;color:#7f8c8d;margin-top:2px;}
+.role{display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;background:#eef2f7;color:#455a64;margin-left:6px;white-space:nowrap;}
+.role-d{background:#e8f5e9;color:#2e7d32;}
+.role-m{background:#fff3e0;color:#e65100;}
+.role-e{background:#f3e5f5;color:#6a1b9a;}
+.role-o{background:#eceff1;color:#607d8b;}
+.ev{display:inline-block;font-size:10px;background:#fdeaea;color:#c0392b;padding:0 5px;border-radius:3px;margin-left:4px;}
+.contact-info{font-size:12px;color:#555;}
+.contact-info div{margin-bottom:2px;}
+.muted{color:#aaa;}
+h2{font-size:16px;color:#455a64;margin:26px 0 10px;padding-left:8px;border-left:4px solid #90a4ae;}
+.footer{text-align:center;margin-top:30px;padding:20px;color:#888;font-size:12px;}
+.footer p{margin-bottom:4px;}
+.searchbar{display:flex;align-items:center;gap:12px;max-width:640px;margin:0 auto 18px;}
+#custSearch{flex:1;padding:10px 14px;border:1px solid #cfd8e3;border-radius:8px;font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;}
+#custSearch:focus{border-color:#2c5aa0;box-shadow:0 0 0 3px rgba(44,90,160,.15);}
+.cust-count{font-size:12px;color:#888;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>俄罗斯医疗器械经销商名录（合并版）</h1>
+<div class="stats"><div class="stat-card total"><div class="num">172</div><div class="label">经销商/厂商总数</div></div><div class="stat-card"><div class="num">101</div><div class="label">综合外科设备</div></div><div class="stat-card"><div class="num">38</div><div class="label">电外科设备</div></div><div class="stat-card"><div class="num">30</div><div class="label">骨科·创伤器械</div></div><div class="stat-card"><div class="num">3</div><div class="label">骨科动力·骨钻</div></div><div class="stat-card"><div class="num">62</div><div class="label">参展商</div></div><div class="stat-card"><div class="num">52</div><div class="label">经销商·进口商</div></div><div class="stat-card"><div class="num">36</div><div class="label">厂商</div></div><div class="stat-card"><div class="num">5</div><div class="label">厂商（电外科本土制造）</div></div><div class="stat-card"><div class="num">4</div><div class="label">经销商/代理商</div></div><div class="stat-card"><div class="num">2</div><div class="label">俄B2B/电商平台上架(厂家直营)</div></div></div>
+<div class="searchbar">
+  <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off">
+  <span id="custCount" class="cust-count"></span>
+</div>
+<table>
+<thead><tr>
+<th style="width:30px;">#</th><th style="width:210px;">公司名称</th><th style="width:130px;">城市</th>
+<th style="width:200px;">联系方式</th><th style="width:170px;">官网</th>
+<th style="width:120px;">方向</th>
+</tr></thead>
+<tbody><tr>
+  <td>1</td>
+  <td class='company-name' title="Doctor Discount is the exclusive representative of the German brand Tontarra and official supplier of professional medical equipment and surgical instruments of the world-renowned ">DOCTOR DISCOUNT<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 748-0665</div></td>
+  <td><a href="http://www.dr-d.ru" target="_blank">http://www.dr-d.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>2</td>
+  <td class='company-name' title="Official distributor of electrosurgical devices, medical optics and instruments; supplies electrosurgery and high-frequency surgical units.">EMED（新星科技集团）<div class="ru">EMED (Группа «Новые Технологии»)</div><span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 268-04-70</div><div>📧 <a href="mailto:edj@nt-rt.ru">edj@nt-rt.ru</a></div></td>
+  <td><a href="http://www.nt-rt.ru" target="_blank">http://www.nt-rt.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>3</td>
+  <td class='company-name' title="Supplier of high-tech medical equipment and materials for medical centers. The exclusive distributor of the FRANKENMAN multinational manufacturer of surgical staplers, minimally in">FARMLIK<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 124-6249, +7 (905) 511-9150</div></td>
+  <td><a href="https://farmlik.ru" target="_blank">https://farmlik.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>4</td>
+  <td class='company-name' title="Distributor of Aesculap (incl. ELECTROSURGICAL equipment), B.Braun, Medtronic, Karl Storz, FOTEK (electrosurgical control units), DePuy Synthes (trauma/orthopedics), Ortho Invest (">Locus Cadaver (Локус Кадавер)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://en.locus-cadaver.ru/" target="_blank">https://en.locus-cadaver.ru/</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>5</td>
+  <td class='company-name' title="Official distributor of KLS Martin in Russia since 2007; supplies electrosurgical equipment, surgical instruments, implants.">MC STEPLIN<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 926 999-66-20</div><div>📧 <a href="mailto:s.v.martin-mcsteplin@mail.ru">s.v.martin-mcsteplin@mail.ru</a></div></td>
+  <td><a href="https://www.mcsteplin.ru" target="_blank">https://www.mcsteplin.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>6</td>
+  <td class='company-name' title="Since 2017, national supplier of BOWA (ARC / argon-plasma electrosurgery) and ERBE (VIO 3 electrosurgical units) systems, plus surgical & anesthesia equipment; Top-10 Mindray partn">MEDGRADE (Медгрейд)<span class="role role-d">经销商·进口商</span></td>
+  <td>未公开</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://medgrade.pro/" target="_blank">https://medgrade.pro/</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>7</td>
+  <td class='company-name' title="对应厂家：深圳迈瑞生物医疗电子股份有限公司">MEDICAL SYSTEMS &amp; TECHNOLOGIES LLC (MST Group)<span class="role role-d">经销商/代理商</span></td>
+  <td>圣彼得堡</td>
+  <td class='contact-info'><div>📞 8 800 500-9093 / yes@medsyst.ru</div></td>
+  <td><a href="https://icatalog.expocentr.ru/en/exhibitions/ac7d68d9-c129-11eb-80cc-a0d3c1fab97f/exhibitors/209799" target="_blank">https://icatalog.expocentr.ru/en/exhibitio</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>8</td>
+  <td class='company-name' title="Distributor of electrosurgical and ultrasonic surgical equipment.">MEGAMED 梅加医疗<div class="ru">MEGAMED CORPORATION LLC (ООО МегаМед)</div><span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 380-1130</div><div>📧 <a href="mailto:info@mgmed.ru">info@mgmed.ru</a></div></td>
+  <td><a href="http://www.mgmed.ru" target="_blank">http://www.mgmed.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>9</td>
+  <td class='company-name' title="Since 1998; nationwide distributor with 10+ regional branches (Ekaterinburg, Novosibirsk, Samara, SPb, Khabarovsk...); official distributor of Intuitive (da Vinci), Karl Storz etc.">M.P.A. Medical Partners (М.П.А.)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 921-3088</div><div>📧 <a href="mailto:info@mpamed.ru">info@mpamed.ru</a></div></td>
+  <td><a href="http://www.mpamed.ru" target="_blank">http://www.mpamed.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>10</td>
+  <td class='company-name' title="Russian supplier since 2013 of endoscopic, ELECTROSURGICAL, laparoscopic equipment and instruments; partners K.Storz, R.Wolf, Olympus, Pentax, etc.">NEAMED (НИАМЕД)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://nea-med.ru/" target="_blank">http://nea-med.ru/</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>11</td>
+  <td class='company-name' title="Official representative of Richard Wolf; authorized distributor of BOWA EURASIA (electrosurgical devices) in Russia. Supplies rigid/flexible endoscopes, laparoscopy, surgical equip">NEVA MEDICAL SYSTEMS (NMS)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 718-1318</div><div>📧 <a href="mailto:sales@nmsystems.ru">sales@nmsystems.ru</a></div></td>
+  <td><a href="http://www.nmsystems.ru" target="_blank">http://www.nmsystems.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>12</td>
+  <td class='company-name' title="Founded 1994; national distributor of BOWA-electronic (Germany) electrosurgical devices, plus B.Braun (Aesculap) surgical instruments, operating tables, sterilization. Supplies all">Rumex (Румекс)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://rumex.ru/" target="_blank">https://rumex.ru/</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>13</td>
+  <td class='company-name' title="Est. 2016; state-contract (44-FZ/223-FZ) supplier across RF; distributor of BOWA MEDICAL (surgical/electrosurgical equipment), Olympus (endoscopy), Brainlab (neurosurgery); sub-dis">SLC LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow Region</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://rcbc.ru/?p=7245/" target="_blank">https://rcbc.ru/?p=7245/</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>14</td>
+  <td class='company-name' title="Est. 2005, OEM manufacturer of surgical tables + complex equipper; supplies endosurgery, laser surgery, ELECTROSURGERY and orthopedics/traumatology/joint implants; partners Karl St">Startechmed (СтарТехМед)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://startechmed.ru/" target="_blank">http://startechmed.ru/</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>15</td>
+  <td class='company-name' title="25+ years in RF; distributor of KLS Martin (surgical instruments, OR lights, ELECTROSURGICAL units) and BOWA (electrosurgical units, ultrasonic scalpels); urology/gyn/endoscopy/onc">Uromed-M (Уромед М)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 783-6811</div><div>📧 <a href="mailto:info@uromed-m.ru">info@uromed-m.ru</a></div></td>
+  <td><a href="http://www.uromed-m.ru" target="_blank">http://www.uromed-m.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>16</td>
+  <td class='company-name' title="Supplier of neuro/orthopaedic power equipment (Medtronic, B.Braun, ChM, Osteomed); bone drills, surgical power tools, spine implants.">SpineMedics 脊柱医疗<div class="ru">SpineMedics (Спайнмедикс)</div><span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📧 <a href="mailto:web@spinemedics.ru">web@spinemedics.ru</a></div></td>
+  <td><a href="https://spinemedics.ru" target="_blank">https://spinemedics.ru</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  
+</tr>
+<tr>
+  <td>17</td>
+  <td class='company-name' title="Official distributor of Smith&Nephew and Johnson&Johnson; power tool, traumatology, orthopedics, neurosurgery. 13 regional divisions.">UMed 尤梅德<div class="ru">UMed (ГК ЮМед)</div><span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 784-06-17</div><div>📧 <a href="mailto:info@umed.ru">info@umed.ru</a></div></td>
+  <td><a href="https://www.umed.ru" target="_blank">https://www.umed.ru</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  
+</tr>
+<tr>
+  <td>18</td>
+  <td class='company-name' title="Analitica M is an innovative medical devices distributor. Our portfolio includes robotics for arthroplasty and rehabilitation, weight-bearing CT, automated uroflowmetery devices an">ANALITICA M<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 374-9411</div></td>
+  <td><a href="http://www.analitika-m.ru" target="_blank">http://www.analitika-m.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>19</td>
+  <td class='company-name' title="Novosibirsk, since 2007; official importer & distributor of MicroPort Orthopedics implants for endoprosthesis & reconstructive joint/bone surgery across Russia.">Current Medical Technology / GK CMT (СКТ)<span class="role role-d">经销商·进口商</span></td>
+  <td>Novosibirsk</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://gc-cmt.ru/" target="_blank">https://gc-cmt.ru/</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>20</td>
+  <td class='company-name' title="Official Russian representative of RZ-Medizintechnik (endoscopy, traumatology, orthopedics), Koenigsee Implantate (osteosynthesis implants & instruments), SBM (bone biomaterials), ">ENDOMEDPROEKT, LLC (Эндомедпроект)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 649-6347</div><div>📧 <a href="mailto:office@emp77.ru">office@emp77.ru</a></div></td>
+  <td><a href="http://www.emp77.ru" target="_blank">http://www.emp77.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>21</td>
+  <td class='company-name' title="Supplies and comprehensive service of equipment for radiation diagnostics from any manufacturer, and rehabilitation. Exclusive distributor of SUMSUNG, DRTECH, SRI, Perfint in Russi">McBrothers<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 296-1166</div></td>
+  <td><a href="https://swissspinesolution.ru" target="_blank">https://swissspinesolution.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>22</td>
+  <td class='company-name' title="Nationwide Russian distributor since 2006 of implants/materials for osteosynthesis and endoprosthesis (trauma & joint replacement); European & US manufacturers.">MedAlliance (МедАльянс)<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://medaliance.com/" target="_blank">http://medaliance.com/</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>23</td>
+  <td class='company-name' title="手术设备与手术室整体方案（含骨科相关外科设备），圣彼得堡+莫斯科双总部，覆盖全国医院">Medical Union 医疗联盟<div class="ru">Медицинский Союз (Med-SZ)</div><span class="role role-d">经销商·进口商</span></td>
+  <td>Санкт-Петербург / Москва</td>
+  <td class='contact-info'><div>📞 +7 (926) 768-21-00 / +7 (499) 325-39-39</div><div>📧 <a href="mailto:med.sz@mail.ru">med.sz@mail.ru</a></div></td>
+  <td><a href="https://med-sz.ru" target="_blank">https://med-sz.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>24</td>
+  <td class='company-name' title="The exclusive representative of Neurosoft LLC in Moscow and the Moscow region, the Republic of Tatarstan and the Republic of Bashkortostan, and the representative in the Republic o">MOSNEURO LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (929) 552-6245</div></td>
+  <td><a href="http://www.mosnerv.ru" target="_blank">http://www.mosnerv.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>25</td>
+  <td class='company-name' title="Authorized representative of ZZYLLS (China) — manufacturer of advanced surgical instruments for trauma and orthopedic treatment — in Russia.">PRIDE MED SERVICE (ZZYLLS 俄授权)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 415-8106</div><div>📧 <a href="mailto:sales@zzylls.ru">sales@zzylls.ru</a></div></td>
+  <td><a href="http://zzylls.ru" target="_blank">http://zzylls.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>26</td>
+  <td class='company-name' title="TRIOMED is the official representative of medical equipment manufacturers: — Victor Medical surgical staplers, — Chun Li endoprostheses of joints, — EON Meditech accessories for EN">TRIOMED LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Perm</td>
+  <td class='contact-info'><div>📞 +7 (912) 888-1019</div></td>
+  <td><a href="http://www.triomed.pro" target="_blank">http://www.triomed.pro</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>27</td>
+  <td class='company-name' title="Official importer and distributor of more than twenty brands of consumables for oncology, intensive care, neonatology and surgery from Europe, North America and Asia. We maintain t">AKTIMED PLUS LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 8 800 201-20-33</div></td>
+  <td><a href="http://www.aktimed.ru" target="_blank">http://www.aktimed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>28</td>
+  <td class='company-name' title="Siemens Healthineers official business partner (regional medical-equipment distributor, Southern RF). Confirms medical-equipment distribution; surgical/electrosurgical lines to be ">Ankon (Анкон)<span class="role role-d">经销商·进口商</span></td>
+  <td>Rostov-on-Don</td>
+  <td class='contact-info'><div>📞 +7 (863) 233-67-60</div><div>📧 <a href="mailto:info@ankonmed.ru">info@ankonmed.ru</a></div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>29</td>
+  <td class='company-name' title="Importer of goods from China and Malaysia. Distributor of high-quality products from Russian and European manufacturers. A wide range of medical supplies.">ARHIMED SEVERO-ZAPAD<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 317-1127</div></td>
+  <td><a href="https://arhimed.spb.ru" target="_blank">https://arhimed.spb.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>30</td>
+  <td class='company-name' title="Siemens Healthineers official business partner (regional medical-equipment distributor). Confirms medical-equipment distribution; surgical/electrosurgical lines to be confirmed.">AstroMed (АстроМЕД)<span class="role role-d">经销商·进口商</span></td>
+  <td>Rostov-on-Don</td>
+  <td class='contact-info'><div>📞 +7 (499) 350-26-51</div><div>📧 <a href="mailto:manager@astromed.biz">manager@astromed.biz</a></div></td>
+  <td><a href="http://astromed.biz" target="_blank">http://astromed.biz</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>31</td>
+  <td class='company-name' title="Wholesale supplier of equipment & single-use supplies for anaesthesiology, ICU, oncology, SURGERY and urology. Exclusive rep MEDAX (Italy), VIGEO (Italy), CURATIA (China), WESTMED ">BASIS MEDICAL LLC (Базис Медикал)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 605-9797</div><div>📧 <a href="mailto:basis@basismed.ru">basis@basismed.ru</a></div></td>
+  <td><a href="http://www.basismed.ru" target="_blank">http://www.basismed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>32</td>
+  <td class='company-name' title="Cordismed is a distributor of medical equipment. We equip operating rooms, ENT and gynecology departments, and endoscopy suites. We supply medical lighting. We work with leading cl">CORDISMED<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 110-0310</div></td>
+  <td><a href="https://cordismed.ru" target="_blank">https://cordismed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>33</td>
+  <td class='company-name' title="Leading distributor in the Russian healthcare market; 75 sales offices, deliveries to 1000+ localities, 30,000+ items in stock; equips hospitals, labs, blood banks. Official distri">Delrus (Делрус)<span class="role role-d">经销商·进口商</span></td>
+  <td>Yekaterinburg</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.delrus.ru" target="_blank">https://www.delrus.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>34</td>
+  <td class='company-name' title="Siemens Healthineers official business partner (regional medical-equipment distributor, Siberian RF). Confirms medical-equipment distribution; surgical/electrosurgical lines to be ">EuroStyle XXI (ЕвроСтиль XXI)<span class="role role-d">经销商·进口商</span></td>
+  <td>Kemerovo</td>
+  <td class='contact-info'><div>📞 +7 (3842) 58-82-75</div><div>📧 <a href="mailto:info@eurostylexxi.ru">info@eurostylexxi.ru</a></div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>35</td>
+  <td class='company-name' title="Official representative and service center: ZIEHM, LEISEGANG, MEDIFA, E.M.S., MIZUHOSI, ATOM, NEUROLOGICA, PENLON, SHIMADZU, PENTAX, FANEM, IMS GIOTTO, GMM, SAMSUNG.">EUROTECH<span class="role role-d">经销商·进口商</span></td>
+  <td>—</td>
+  <td class='contact-info'><div>📞 +7 (495) 967-3658</div></td>
+  <td><a href="https://eurotech.ru" target="_blank">https://eurotech.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>36</td>
+  <td class='company-name' title="Top-10 supplier in Russian public procurement; exclusive strategic partner of GE Healthcare. Distributor of Drager, Karl Storz, Olympus, MTL, BOWA (electrosurgery), Mindray, Adani ">INTELMED (Интелмед)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 8 800 777-9779</div><div>📧 <a href="mailto:intelmed@intelmed.ru">intelmed@intelmed.ru</a></div></td>
+  <td><a href="https://www.intelmed.ru" target="_blank">https://www.intelmed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>37</td>
+  <td class='company-name' title="Siemens Healthineers official business partner (regional medical-equipment distributor, Southern RF). Confirms medical-equipment distribution; surgical/electrosurgical lines to be ">Krasnodarskaya Medtekhnika (Краснодарская Медтехника)<span class="role role-d">经销商·进口商</span></td>
+  <td>Krasnodar</td>
+  <td class='contact-info'><div>📞 +7 (861) 221-53-12</div><div>📧 <a href="mailto:info@krdmt.ru">info@krdmt.ru</a></div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>38</td>
+  <td class='company-name' title="KV MEDICAL is a distributor of products from leading manufacturers across EAEU and BRICS countries. Specialisation includes technical aids for rehabilitation, medical devices, surg">KV MEDICAL<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (968) 895-0885</div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>39</td>
+  <td class='company-name' title="Comprehensive equipping of healthcare facilities with medical equipment. Official representative of the Merivaara corporation in Russia — we implement integrated systems for digita">MEDFARMA-SERVICE LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Vologda</td>
+  <td class='contact-info'><div>📞 +7 (8172) 54-64-54</div></td>
+  <td><a href="https://medfarma.net" target="_blank">https://medfarma.net</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>40</td>
+  <td class='company-name' title="Medimcom is a manufacturer and distributor of medical disposables and equipment from world vendors in Russia, with 20 years of expertise. Seamless supplies, fair pricing, services ">MEDIMCOM<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 334-3764</div></td>
+  <td><a href="http://www.medimcom.ru" target="_blank">http://www.medimcom.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>41</td>
+  <td class='company-name' title="Importer of CERTUS disposable medical supplies: scalpels, blades, urological Foley, Nelaton catheters, gloves.">MEDIRAMA<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 677-7002</div></td>
+  <td><a href="http://www.medirama.ru" target="_blank">http://www.medirama.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>42</td>
+  <td class='company-name' title="MEDLIGA is the official distributor of medical equipment in Russia, specializing in manufacturing, supply, specialist training, and certified service and warranty maintenance acros">MEDLIGA (ООО МЕДЛИГА)<span class="role role-d">经销商/代理商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 8 800 775-1098</div></td>
+  <td><a href="http://www.medliga.ru" target="_blank">http://www.medliga.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>43</td>
+  <td class='company-name' title="Surgical equipment and operating room solutions; distributor of surgical and orthopedic devices.">Med-SZ (Медицинские Системы)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (926) 768-21-00</div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>44</td>
+  <td class='company-name' title="HEINE partner operating for 16 years. Authorized importer, distributor, and certified HEINE service center in Russia. Direct shipments from Germany / available in stock now / showr">MEDTEHNIKA-STOLICA, LTD<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (967) 025-29-09, +7 (929) 646-55-05</div></td>
+  <td><a href="http://shop.heine-med.ru" target="_blank">http://shop.heine-med.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>45</td>
+  <td class='company-name' title="Distributor of medical equipment by leading manufacturers with over 15 years of experience! Authorized representative of Oricare and Aeonmed manufacturering companies in Russia.">NEW MEDICAL COMPANY<span class="role role-d">经销商·进口商</span></td>
+  <td>Serpukhov</td>
+  <td class='contact-info'><div>📞 +7 (499) 391-1161</div></td>
+  <td><a href="http://www.newmedcom.ru" target="_blank">http://www.newmedcom.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>46</td>
+  <td class='company-name' title="Distributor of equipment and consumables for hemodialysis, minimally invasive surgery, and intensive care. Close cooperation with industry leaders in China guarantees quality and u">PILOT GROUP LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (3012) 709-919</div></td>
+  <td><a href="http://www.pgmed.ru" target="_blank">http://www.pgmed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>47</td>
+  <td class='company-name' title="Siemens Healthineers official business partner (regional medical-equipment distributor, Volga RF). Confirms medical-equipment distribution; surgical/electrosurgical lines to be con">Rezon-Product (Резон-продукт)<span class="role role-d">经销商·进口商</span></td>
+  <td>Kazan</td>
+  <td class='contact-info'><div>📞 +7 (843) 268-68-86</div><div>📧 <a href="mailto:rezon-product@mail.ru">rezon-product@mail.ru</a></div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>48</td>
+  <td class='company-name' title="NORD-MEDICA is the official Russian distributor of medical equipment manufactured by KaWe (Germany). Has been operating in the market for 20 years.">Russian Medical Company (RMC)<div class="ru">NORD-MEDICA</div><span class="role role-d">经销商/代理商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 326-3006</div></td>
+  <td><a href="http://www.nordmedica.ru/kontakty" target="_blank">http://www.nordmedica.ru/kontakty</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>49</td>
+  <td class='company-name' title="The official distributor of medical equipment for contrast injection and radiology, ENT, arthroscopy, neurosurgery, PMLS and neonatology.">SANTE MEDICAL SYSTEMS<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 786-3547</div></td>
+  <td><a href="http://www.sante.ru" target="_blank">http://www.sante.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>50</td>
+  <td class='company-name' title="Since 1992; one of the largest Siberia/Far-East medical consumables & equipment distributors — 8,000+ SKUs from 300 manufacturers, sterilization centers, monitoring; dealer of J&J,">Shaklin (Шаклин)<span class="role role-d">经销商·进口商</span></td>
+  <td>Novosibirsk</td>
+  <td class='contact-info'><div>📞 +7 (383) 336-0123</div><div>📧 <a href="mailto:zakaz@shaklin.ru">zakaz@shaklin.ru</a></div></td>
+  <td><a href="https://www.shaklin.ru" target="_blank">https://www.shaklin.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>51</td>
+  <td class='company-name' title="Vascular Access is a leading Russian distributor of products for vascular access, endovascular surgery, and dialysis, supplying equipment from Europe, the USA, and China since 2006">VASCULAR ACCESS<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 8 800 300-8881</div></td>
+  <td><a href="http://www.vascularaccess.ru" target="_blank">http://www.vascularaccess.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>52</td>
+  <td class='company-name' title="VascularPro is the exclusive distributor of SIBNANOTECH manufacturing company. Specializes in the production of high-precision medical technically complex products for Endovascular">VASCULARPRO LLC<span class="role role-d">经销商·进口商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 142-5807</div></td>
+  <td><a href="https://vascularpro.ru" target="_blank">https://vascularpro.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>53</td>
+  <td class='company-name' title="Siemens Healthineers official business partner (regional medical-equipment distributor, NW RF). Confirms medical-equipment distribution; surgical/electrosurgical lines to be confir">VTS (ВТС)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 716-59-87</div><div>📧 <a href="mailto:info@vtsmedical.ru">info@vtsmedical.ru</a></div></td>
+  <td><a href="https://vtsmedical.ru/" target="_blank">https://vtsmedical.ru/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>54</td>
+  <td class='company-name' title="Founded 2002, SPb; supplies high-tech medical equipment/instruments/consumables for radiology, ultrasound, lab, minimally invasive SURGERY, endoscopy, ophthalmology across Russia (">Группа Медицинские Технологии (MedTG)<span class="role role-d">经销商·进口商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://medtg.ru" target="_blank">http://medtg.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>55</td>
+  <td class='company-name' title="Since 1991; among the largest medical equipment & consumables suppliers in the Southern Federal District; equips public/private clinics, sanatoriums; partnerships with foreign & Ru">ДАН (Krasnodar)<span class="role role-d">经销商·进口商</span></td>
+  <td>Krasnodar</td>
+  <td class='contact-info'><div>📞 +7 (861) 253-96-71</div><div>📧 <a href="mailto:dankrasnodar@mail.ru">dankrasnodar@mail.ru</a></div></td>
+  <td><a href="https://dankrasnodar.ru" target="_blank">https://dankrasnodar.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>56</td>
+  <td class='company-name' title="Est. 1994; nationwide medical equipment distributor + manufacturer (3 factories); 17 regional branches; official distributor of Philips, Mindray, Metrax, Zoll, GE, Draeger; own X-r">ООО Группа медицинских компаний Киль (GMC Kiel LLC)<span class="role role-d">经销商/代理商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.rstradehouse.com/company?id=100110126415" target="_blank">https://www.rstradehouse.com/company?id=10</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>57</td>
+  <td class='company-name' title="Aksioma is a leading Russian manufacturer with 37 years of experience. The company specializes in the development, production and sale of high-quality medical endoscopic and endovi">AKSIOMA<span class="role role-m">厂商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 429-4909</div></td>
+  <td><a href="https://aksioma.com" target="_blank">https://aksioma.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>58</td>
+  <td class='company-name' title="BTL is a global leader in the development and manufacture of medical and aesthetic equipment.">BTL<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 645-8737</div></td>
+  <td><a href="http://www.btlnet.com" target="_blank">http://www.btlnet.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>59</td>
+  <td class='company-name' title="Supply of equipment for transport intensive care for emergency services and ambulances. Manufacture of the Эlmedic medical first aid cases. Video laryngoscopes. Surgical and diagno">ELMEDICA<div class="ru">EL MEDICAL, LLC</div><span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 999-1510, +7 (495) 175-8254</div></td>
+  <td><a href="http://www.elmedica.ru" target="_blank">http://www.elmedica.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>60</td>
+  <td class='company-name' title="Russian manufacturer. Creating innovative compression products, listening to the opinion of doctors and patients. We've been taking care of public health since 1997. Join us up @tm">INTERTEKSTIL corp. LLC<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 528-8682</div></td>
+  <td><a href="http://www.bint.ru" target="_blank">http://www.bint.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>61</td>
+  <td class='company-name' title="MedMos is a Russian manufacturer and leading supplier of high-tech medical equipment, a resident of the Dubna Special Economic Zone since 2025. For 19 years, we have been creating ">MEDMOS<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 532-5015</div></td>
+  <td><a href="http://www.med-mos.ru" target="_blank">http://www.med-mos.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>62</td>
+  <td class='company-name' title="A Russian manufacturer of medical mattresses, medical bedding, medical clothing. The products are certified, has a conclusion from the Ministry of Industry and Trade (Minpromtorg),">SGMedical LTD<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 120-1067</div></td>
+  <td><a href="http://www.sgmedical.ru" target="_blank">http://www.sgmedical.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>63</td>
+  <td class='company-name' title="Armaline is a Russian manufactory producing surgical suture materials for all branches of medicine from general surgery to ophthalmology.">ARMALINE<span class="role role-m">厂商</span></td>
+  <td>Krasnodar</td>
+  <td class='contact-info'><div>📞 +7 (499) 579-8917</div></td>
+  <td><a href="http://www.armaline.ru" target="_blank">http://www.armaline.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>64</td>
+  <td class='company-name' title="Armed is one of the leading suppliers and manufacturers of medical and rehabilitation equipment. Over 30 years of expertise, the company has won the trust of medical institutions a">ARMED<span class="role role-m">厂商</span></td>
+  <td>Balashikha</td>
+  <td class='contact-info'><div>📞 +7 (495) 636-2825</div></td>
+  <td><a href="http://www.armed.ru" target="_blank">http://www.armed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>65</td>
+  <td class='company-name' title="BALUMED LLC is a Russian manufacturer of surgical suture materials for all branches of surgery. For over 20 years, we have been producing surgical suture materials and striving for">BALUMED, LLC<span class="role role-m">厂商</span></td>
+  <td>Rostov-on-Don</td>
+  <td class='contact-info'><div>📞 +7 (863) 218-3628</div></td>
+  <td><a href="http://www.balumed.su" target="_blank">http://www.balumed.su</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>66</td>
+  <td class='company-name' title="For 20 years, Bandek Medical Systems has been a recognized leader in the supply of equipment for automated disinfection, drying, and storage of flexible endoscopes. Holds the right">BANDEQ — MEDICAL SYSTEMS<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 775-6565</div></td>
+  <td><a href="http://www.bandeq.ru" target="_blank">http://www.bandeq.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>67</td>
+  <td class='company-name' title="CTC CAPITAL is a Russian distribution company founded in 1992. At the exhibition, we present medical monitors for various sectors of healthcare from the Belgian manufacturer BARCO.">CTC CAPITAL<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 363-4888</div></td>
+  <td><a href="https://ctccapital.ru" target="_blank">https://ctccapital.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>68</td>
+  <td class='company-name' title="DELEKSA LLC is a Russian manufacturer of disinfectants and cleaning products operating since 2011. Over 30 products, own facilities, laboratory, and modern production. Operating ac">DELEKSA<span class="role role-m">厂商</span></td>
+  <td>—</td>
+  <td class='contact-info'><div>📞 +7 (927) 236-9472</div></td>
+  <td><a href="https://deleksa.ru" target="_blank">https://deleksa.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>69</td>
+  <td class='company-name' title="We provide direct deliveries of medical products from foreign and domestic manufacturers, intended for use in various fields of medicine.">DELTA GROUP<span class="role role-m">厂商</span></td>
+  <td>Ufa</td>
+  <td class='contact-info'><div>📞 +7 (3472) 85-55-16</div></td>
+  <td><a href="http://deltaufa.ru" target="_blank">http://deltaufa.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>70</td>
+  <td class='company-name' title="Med-i-Drive actuators for medical furniture, manufactured by Jiecang.">DIGITAL WEB<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 762-0197</div></td>
+  <td><a href="http://www.medprivod.com" target="_blank">http://www.medprivod.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>71</td>
+  <td class='company-name' title="Elemaar LLC is a Russian manufacturer of surgical suture materials. Since 2019, we have been producing products in Moscow under our own brand, ELEMAAR. We strictly adhere to Europe">ELEMAAR<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 653-6566</div></td>
+  <td><a href="http://www.elemaar.ru" target="_blank">http://www.elemaar.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>72</td>
+  <td class='company-name' title="The company is a developer and manufacturer of a wide range of disinfectants, hygiene products and detergents for professional use. ESLANA has been cooperating with medical institu">ESLANA<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 142-6280</div></td>
+  <td><a href="http://www.eslana.ru" target="_blank">http://www.eslana.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>73</td>
+  <td class='company-name' title="InnoDrive is a reliable manufacturer and supplier of high-quality and high-tech drive solutions for medicine: dentistry, laboratory automation and manual instruments, pumps, microd">INNODRIVE, LLC<span class="role role-m">厂商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 317-7793</div></td>
+  <td><a href="https://innodrive.ru" target="_blank">https://innodrive.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>74</td>
+  <td class='company-name' title="INPREN LLC is an engineering company, Russian manufacturer of laboratory equipment.">INPREN<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 204-2806</div></td>
+  <td><a href="http://www.inpren.ru" target="_blank">http://www.inpren.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>75</td>
+  <td class='company-name' title="KRONT® is a leading manufacturer of medical products in Russia, operating on the market for more than 30 years. Produces DEZAR ultraviolet irradiators-recirculators. Advantages: qu">KRONT-M<span class="role role-m">厂商</span></td>
+  <td>Khimki</td>
+  <td class='contact-info'><div>📞 +7 (495) 500-4884</div></td>
+  <td><a href="http://www.kront.com" target="_blank">http://www.kront.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>76</td>
+  <td class='company-name' title="Russian manufacturer of UV equipment for air, surface and water disinfection, as well as laminar air flow ceilings with HEPA filtration. Design and equipment of clean rooms.">LIT<div class="ru">LIT NPO</div><span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 197-7658</div></td>
+  <td><a href="http://www.lit-uv.ru" target="_blank">http://www.lit-uv.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>77</td>
+  <td class='company-name' title="DAIHAN® biomedical freezers (South Korea) with a medical certificate (from -95°C, Wi-Fi, control via an Android and iOS app). Laboratory equipment and furniture from leading global">LKS<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 8 800 250-0909</div></td>
+  <td><a href="http://www.lks.ru" target="_blank">http://www.lks.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>78</td>
+  <td class='company-name' title="MedAim is a reliable manufacturer of syringes, infusion sets, butterfly needles and bandages operating for 14 years. We guarantee quality, dependable supply, and mutually beneficia">MedAim LLC<span class="role role-m">厂商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 507-0988</div></td>
+  <td><a href="http://medaim.ru" target="_blank">http://medaim.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>79</td>
+  <td class='company-name' title="Medlex is a Russian manufacturer of disinfectants, detergents for healthcare. Has been operating in the market for 20 years. The products are supplied to 5,900 medical organization">MEDLEXPROM, LLC<span class="role role-m">厂商</span></td>
+  <td>Krasnodar</td>
+  <td class='contact-info'><div>📞 +7 (861) 279-1000, 252-4806</div></td>
+  <td><a href="http://medlex.ru" target="_blank">http://medlex.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>80</td>
+  <td class='company-name' title="Med TeCo is a Russian developer and manufacturer of medical equipment operating since 2001. Three areas of focus: physical therapy, sterilization, and air disinfection. Its product">MED TECO<span class="role role-m">厂商</span></td>
+  <td>Mytishchi</td>
+  <td class='contact-info'><div>📞 +7 (495) 586-7300</div></td>
+  <td><a href="http://www.medteco.ru" target="_blank">http://www.medteco.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>81</td>
+  <td class='company-name' title="Manufacture of medical instruments and equipment.">MEDTEKHNOPROEKT<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (915) 138-4272</div></td>
+  <td><a href="http://medtp.ru" target="_blank">http://medtp.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>82</td>
+  <td class='company-name' title="For 30 years, MEGI factory has established itself as a reliable partner and manufacturer of a wide range of medical products: from simple screens to complex multifunctional beds an">MEGI<span class="role role-m">厂商</span></td>
+  <td>Ufa</td>
+  <td class='contact-info'><div>📞 +7 (347) 292-2600</div></td>
+  <td><a href="http://www.megi.ru" target="_blank">http://www.megi.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>83</td>
+  <td class='company-name' title="Manufacture of functional beds, gurneys, minor operating tables, medical furniture; turnkey comprehensive equipping of healthcare facilities; wholesale and retail trade of medical ">OMT<span class="role role-m">厂商</span></td>
+  <td>Ekaterinburg</td>
+  <td class='contact-info'><div>📞 +7 (343) 311-2219</div></td>
+  <td><a href="http://www.omt-ural.ru" target="_blank">http://www.omt-ural.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>84</td>
+  <td class='company-name' title="ORELMEDTEH is a developer and manufacturer of surgical instruments: SKM-1 reusable skin staplers, MEDSTEP Skiner disposable sterile skin staplers.">ORELMEDTEH<span class="role role-m">厂商</span></td>
+  <td>Orel</td>
+  <td class='contact-info'><div>📞 +7 (4862) 43-90-50, 8 800 100-0391</div></td>
+  <td><a href="http://med-step.com" target="_blank">http://med-step.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>85</td>
+  <td class='company-name' title="ORION MED introduces a new product: an alloying tool manufactured in China that provides safe and effective tissue coagulation. A reliable solution for veterinary surgeries. Learn ">ORION MED<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 123-4645</div></td>
+  <td><a href="https://orionmed.ru" target="_blank">https://orionmed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>86</td>
+  <td class='company-name' title="Orion-SI Company is a Russian manufacturer of medical equipment based on ozone technologies operating for more than 30 years. The main directions are the production of low-temperat">ORION-SI LLC<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 222-2274, +7 (495) 227-7475</div></td>
+  <td><a href="http://www.orion-si.ru" target="_blank">http://www.orion-si.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>87</td>
+  <td class='company-name' title="Manufacturer of medical products: colostomy and urinary bags, stoma care products, adhesive bandages, adhesive surgical films, napkins for ophthalmic operations, wound healing agen">PALMA GROUP OF COMPANIES LTD<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 921-3719</div></td>
+  <td><a href="http://www.palma-med.ru" target="_blank">http://www.palma-med.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>88</td>
+  <td class='company-name' title="The company is a developer and manufacturer of a wide range of disinfectants, hygiene products and detergents for professional use. SAMAROVO has been cooperating with medical insti">SAMAROVO<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 937-6956</div></td>
+  <td><a href="http://www.samarovo.ru" target="_blank">http://www.samarovo.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>89</td>
+  <td class='company-name' title="SENSAR LLC is a Russian developer and manufacturer. Our portfolio includes equipment for anesthesiology and resuscitation, video laryngoscopes, and solutions for urology and laparo">SENSAR<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 161-6021</div></td>
+  <td><a href="https://sensar.su" target="_blank">https://sensar.su</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>90</td>
+  <td class='company-name' title="We provide the services to medical device manufacturers and health care facilities: — Contract manufacturing of medical devices in our own cleanrooms of the ISO 7 class — Steriliza">STERIPACK SERVICE<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 728-1587</div></td>
+  <td><a href="http://steri-pack.ru" target="_blank">http://steri-pack.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>91</td>
+  <td class='company-name' title="STERN, Russian medical equipment manufacturer produces equipment for ophthalmology, ENT, and gynaecology offices: dermatoscopes, audiometers, otoscopes, ENT workstations, ophthalmo">STERN<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 110-9225</div></td>
+  <td><a href="http://www.medstern.ru" target="_blank">http://www.medstern.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>92</td>
+  <td class='company-name' title="VIT Medical LLC develops and manufactures domestic devices for vacuum and vacuum-instillation therapy of wounds with a wide range of consumables.">VIT MEDICAL<span class="role role-m">厂商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (926) 888-7740</div></td>
+  <td><a href="http://vit-medical.com" target="_blank">http://vit-medical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>93</td>
+  <td class='company-name' title="Alfa Mobili is an exclusive supplier of medical equipment for surgery, resuscitation, combustiology, rehabilitation. The company equips medical institutions of various profiles tur">ALFA MOBILI<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 326-5925</div></td>
+  <td><a href="http://med-nnz.ru" target="_blank">http://med-nnz.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>94</td>
+  <td class='company-name' title="Bipolar Radio Frequency Surgical Systems and Electrodes for arthroscopy, neurosurgery, ENT (tonsillectomy, adenoidectomy), resectoscopes, and electrodes for urology and gynecology.">BONSS RUSSIA<span class="role role-e">参展商</span></td>
+  <td>Smolensk</td>
+  <td class='contact-info'><div>📞 +7 (977) 825-5020</div></td>
+  <td><a href="http://www.bonss-russia.ru" target="_blank">http://www.bonss-russia.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>95</td>
+  <td class='company-name' title="DS. Med is an expert view on the supply and production of medical equipment. ENT units, endoscopic and video systems, X-ray machines, EHF devices, patient monitors.">DS. Med LTD<div class="ru">DS.Med</div><span class="role role-e">参展商</span></td>
+  <td>Serpukhov</td>
+  <td class='contact-info'><div>📞 +7 (495) 230-1155</div></td>
+  <td><a href="http://ds-med.ru" target="_blank">http://ds-med.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>96</td>
+  <td class='company-name' title="The company has been supplying medical equipment for 20 years, specializing in such areas as endoscopy, surgery, ophthalmology, functional diagnostics and medical furniture. Has a ">ENDOVIDEO GROUP LTD<span class="role role-e">参展商</span></td>
+  <td>Voronezh</td>
+  <td class='contact-info'><div>📞 +7 (473) 260-2063</div></td>
+  <td><a href="http://www.endo.video" target="_blank">http://www.endo.video</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>97</td>
+  <td class='company-name' title="FOTEK is a Russian engineering and manufacturing company specialized in electrosurgical and ultrasonic cavitation equipment for gynecology, urology, surgery, traumatology and ortho">FOTEK<div class="ru">FOTEK LLC</div><span class="role role-e">参展商</span></td>
+  <td>Ekaterinburg</td>
+  <td class='contact-info'><div>📞 +7 (343) 217-6340</div></td>
+  <td><a href="http://www.fotek.ru" target="_blank">http://www.fotek.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>98</td>
+  <td class='company-name' title="Radiation monitoring devices, equipment for testing radio measuring equipment, ultrahigh frequency devices, physiotherapy devices, air pollution monitoring systems.">KURSK PLANT MAYAK<span class="role role-e">参展商</span></td>
+  <td>Kursk</td>
+  <td class='contact-info'><div>📞 +7 (4712) 54640</div></td>
+  <td><a href="http://www.kursk-mayak.ru" target="_blank">http://www.kursk-mayak.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>99</td>
+  <td class='company-name' title="Development, production and supply of medical equipment and instruments designed for specialized branches of medicine, including arthroscopy, flexible endoscopy, gynecology, laparo">MEDFARMSERVICE IVF LLC<span class="role role-e">参展商</span></td>
+  <td>Kazan</td>
+  <td class='contact-info'><div>📞 +7 (843) 203-6263</div></td>
+  <td><a href="http://www.mfsendo.com" target="_blank">http://www.mfsendo.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>100</td>
+  <td class='company-name' title="Direct supply of medical products in the fields of traumatology, orthopedics, and neurosurgery. Supply of power surgical equipment (surgical saws and drills).">SIBEXPO LTD &amp; CO.<span class="role role-e">参展商</span></td>
+  <td>Tomsk</td>
+  <td class='contact-info'><div>📞 +7 (925) 346-0895</div></td>
+  <td><a href="http://www.nireda.ru" target="_blank">http://www.nireda.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>101</td>
+  <td class='company-name' title="TechnoMedGroup LLC represents a full range of medical equipment and consumables for neurosurgery, neurostimulation, ENT and urology, as well as medical diagnostics.">TECHNOMEDGROUP<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (921) 957-2170</div></td>
+  <td><a href="http://technomedgroup.ru" target="_blank">http://technomedgroup.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>102</td>
+  <td class='company-name' title="Development, production and maintenance of systems, software and hardware complexes and means of mobile radio communication for professional purposes, electronic equipment and medi">VEGA VSRI JSC<span class="role role-e">参展商</span></td>
+  <td>Voronezh</td>
+  <td class='contact-info'><div>📞 +7 (473) 262-2703</div></td>
+  <td><a href="https://vniivega.ru" target="_blank">https://vniivega.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>103</td>
+  <td class='company-name' title="The main activity of the company is the creation of individual titanium cranioplates and preparation for the mass production of implants for the replacement of bone-cartilage and c">BIODINAMIKA LTD<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (916) 517-6511</div></td>
+  <td><a href="http://биодинамика.сайт" target="_blank">http://биодинамика.сайт</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  
+</tr>
+<tr>
+  <td>104</td>
+  <td class='company-name' title="Production of medical devices for traumatology and surgery, including ALFACAST orthopedic polymer bandages, ALFACAST SOFT, ALFASPLINT polymer splints, and ALFAINCISE incision film.">ALFACHEM LTD<span class="role role-e">参展商</span></td>
+  <td>Krasnoyarsk</td>
+  <td class='contact-info'><div>📞 +7 (3912) 90-29-17</div></td>
+  <td><a href="http://www.alfachem.su" target="_blank">http://www.alfachem.su</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>105</td>
+  <td class='company-name' title="Development and production of high-tech X-ray diagnostic equipment, surgical navigation systems, robotic skeletons for rehabilitation.">ALMAZ-ANTEY CORP. JSC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 279-2975</div></td>
+  <td><a href="http://www.almaz-antey.ru" target="_blank">http://www.almaz-antey.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>106</td>
+  <td class='company-name' title="Anas Ltd has been supplying medical and dental units to the Russian market since 2000. We offer high quality certified products and services of our own service center.">ANAS MEDICAL<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 626-5455</div></td>
+  <td><a href="https://anas.ru" target="_blank">https://anas.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>107</td>
+  <td class='company-name' title="The company is working on the development and production of polyvinylidene fluoride filament, which allows creating individual and serial implants used in reconstructive surgery.">BIOIMPLAST<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (913) 820-5528</div></td>
+  <td><a href="http://www.bioimplast.com" target="_blank">http://www.bioimplast.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>108</td>
+  <td class='company-name' title="Cliff Medical provides comprehensive support for medical device registration in Russia. Your reliable partner on the path to obtaining the Registration Certificate!">CLIFF MEDICAL<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 430-0259</div></td>
+  <td><a href="https://cliffmedical.com" target="_blank">https://cliffmedical.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>109</td>
+  <td class='company-name' title="5 companies of Tatarstan are listed: — ARFEN OSNO LLC, www.arfen.ru, — NPF MEDKOM LLC, +7 (843) 537-10-46, — PO FOTON FLY LLC, www.fotonfly.ru, — VIPSON LLC +7 (843) 212-51-27, — E">EXPORT SUPPORT CENTER OF THE REPUBLIC OF TATARSTAN<span class="role role-e">参展商</span></td>
+  <td>Kazan</td>
+  <td class='contact-info'><div>📞 +7 (843) 222-9060</div></td>
+  <td><a href="https://export-rt.ru" target="_blank">https://export-rt.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>110</td>
+  <td class='company-name' title="Fakel MKB JSC presents own-produced 5-axis CNC machines for the production of high-precision dental prosthetics and implants at the exhibition. Reliable solutions for modern dentis">FAKEL MKB JSC<span class="role role-e">参展商</span></td>
+  <td>Khimki</td>
+  <td class='contact-info'><div>📞 +7 (495) 780-5410</div></td>
+  <td><a href="https://www.mkbfakel.ru" target="_blank">https://www.mkbfakel.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>111</td>
+  <td class='company-name' title="KARIPAIN NPK specializes in the development and production of enzyme preparations used for the restoration of the spine and joints, as well as for the elimination and reduction of ">KARIPAIN NPK<span class="role role-e">参展商</span></td>
+  <td>Podolsk</td>
+  <td class='contact-info'><div>📞 8 800 550-9900</div></td>
+  <td><a href="https://karipain.ru" target="_blank">https://karipain.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>112</td>
+  <td class='company-name' title="Wholesale of medical equipment for the operating room and diagnostic equipment.">MEDBUSINESSERVICE LTD<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (925) 376-2559</div></td>
+  <td><a href="http://www.rusmbs.ru" target="_blank">http://www.rusmbs.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>113</td>
+  <td class='company-name' title="Medical Industrial Consortium is a system of public-private partnership that promotes the development of the domestically produced high-tech medical equipment.">MEDICAL INDUSTRIAL CONSORTIUM<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 8 800 777-8238</div></td>
+  <td><a href="http://www.anokmt.ru" target="_blank">http://www.anokmt.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>114</td>
+  <td class='company-name' title="Since 2003, the UMETEX Group of Companies has been providing state-of-the-art equipment and supplies to public and private medical organizations.">MEDICAL TECHNIQUE PLUS<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 649-6353</div></td>
+  <td><a href="https://umetex.com/ru/" target="_blank">https://umetex.com/ru/</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>115</td>
+  <td class='company-name' title="Medin-N LLC is a Russian leading company in the production of surgical suture materials. It offers a full range of atraumatic surgical needles and threads for all types of surgery.">MEDIN-N LTD<span class="role role-e">参展商</span></td>
+  <td>Ekaterinburg</td>
+  <td class='contact-info'><div>📞 +7 (343) 234-37-33</div></td>
+  <td><a href="http://www.medin-n.ru" target="_blank">http://www.medin-n.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>116</td>
+  <td class='company-name' title="Licensing for medical clinics, registration of medical devices under the national and EAEU systems, registration and protection of intellectual property, legal support for clinic a">MOSREGISTRATOR<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 229-4782</div></td>
+  <td><a href="https://bigpravo.ru" target="_blank">https://bigpravo.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>117</td>
+  <td class='company-name' title="Our company's mission is to create conditions for the full integration of people with limited mobility into public and urban life. The best equipment from Europe! RehaTehnik — we m">RehaTehnik<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 968-9248</div></td>
+  <td><a href="http://www.reha-teh.ru" target="_blank">http://www.reha-teh.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>118</td>
+  <td class='company-name' title="4Clinic is an international company operating in Russia and the CIS, supplying rehabilitation equipment. It also has training center and organizes international medical events.">4Clinic<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 8 800 302-6837</div></td>
+  <td><a href="http://4Clinic.ru" target="_blank">http://4Clinic.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>119</td>
+  <td class='company-name' title="ADIABATICA is an innovative centralized air humidification system for high-rise residential, medical and public buildings.">ADIABATICA<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 642-2499</div></td>
+  <td><a href="http://www.adiabatica.ru" target="_blank">http://www.adiabatica.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>120</td>
+  <td class='company-name' title="Wholesale of medical products for surgery, urology, cardiology of famous world brands as Medico, Suru, ZAVI, Ribbel, Sterimed. MEDIN medical furniture and operating tables.">AKONIT LLC<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 244-7615</div></td>
+  <td><a href="http://www.akonit.ru" target="_blank">http://www.akonit.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>121</td>
+  <td class='company-name' title="Since 2012, Argus-DS LLC has been providing comprehensive equipment and integration of high-tech medical equipment, including its supply, installation, maintenance, and repair.">Argus-DS LLC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (499) 495-1224</div></td>
+  <td><a href="http://www.argus-ds.ru" target="_blank">http://www.argus-ds.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>122</td>
+  <td class='company-name' title="ASEPTICA is an engineering company specialising in four key areas: Production Facility Design, Cleanroom Validation/Qualification, Equipment Testing, and Furniture.">ASEPTICA<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 858-8815</div></td>
+  <td><a href="http://www.aseptica.biz" target="_blank">http://www.aseptica.biz</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>123</td>
+  <td class='company-name' title="AVIS LIFE SCIENCE MNPK LLC is the exclusive supplier of hemostatic agents based on Surgi-ORC oxidized regenerated cellulose, SURGISPON gelatin-based hemostatic agents, as well as B">AVIS LIFE SCIENCE MNPK LLC<span class="role role-e">参展商</span></td>
+  <td>Khimki</td>
+  <td class='contact-info'><div>📞 +7 (965) 120-2085</div></td>
+  <td><a href="http://www.mnpkavis.ru" target="_blank">http://www.mnpkavis.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>124</td>
+  <td class='company-name' title="Axion produces more than 25 types of medical devices in the following areas: resuscitation, cardiology, surgery, neonatology, and physiotherapy. The company provides a full cycle o">AXION CONCERN LTD<span class="role role-e">参展商</span></td>
+  <td>Izhevsk</td>
+  <td class='contact-info'><div>📞 +7 (3412) 72-43-29</div></td>
+  <td><a href="http://www.axion-med.ru" target="_blank">http://www.axion-med.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>125</td>
+  <td class='company-name' title="BioLine is one of the leading suppliers of products for laboratories and institutions of scientific and medical profile. — Cellriver flow cytometers (Russia). — Leica and Milestone">BIOLINE<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 320-4949</div></td>
+  <td><a href="http://www.bioline.ru" target="_blank">http://www.bioline.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>126</td>
+  <td class='company-name' title="Burr IFM supplies a complete range of equipment for the production and processing of absorbable suture threads: extrusion lines, coating application, thread pressing, granule dryin">BURR IFM BRANCH<span class="role role-e">参展商</span></td>
+  <td>Khimki</td>
+  <td class='contact-info'><div>📞 +7 (916) 925-9420</div></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>127</td>
+  <td class='company-name' title="DEALMED is not just a supplier, but a trusted partner that has been helding leading positions in the Russian market for medical equipment and expendable supplies for many years.">DEALMED<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 545-4140</div></td>
+  <td><a href="http://www.dealmed.ru" target="_blank">http://www.dealmed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>128</td>
+  <td class='company-name' title="DEZNET LLC has been operating since 2005. The company immediately set important goals for itself: availability of choice, high quality products, the wide range. For more than 10 ye">DEZNET<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 225-9559</div></td>
+  <td><a href="http://www.deznet.ru" target="_blank">http://www.deznet.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>129</td>
+  <td class='company-name' title="DIAKON-DS is a modern high-tech company operating in the field of production of medical products for in vitro diagnostics: reagents for clinical chemistry, hemostasis, hematology a">DIAKON-DS<span class="role role-e">参展商</span></td>
+  <td>Pushchino</td>
+  <td class='contact-info'><div>📞 +7 (495) 980-6339</div></td>
+  <td><a href="http://www.diakon-ds.ru" target="_blank">http://www.diakon-ds.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>130</td>
+  <td class='company-name' title="Divisy Group is the first Russian company to develop integrated solutions for diagnostic rooms, operating rooms, and intensive care units in Russia and CIS countries.">DIVISY GROUP LLC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 778-8558</div></td>
+  <td><a href="http://www.divisy.biz" target="_blank">http://www.divisy.biz</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>131</td>
+  <td class='company-name' title="NPF ELMED LTD is engaged in the production and sale of instruments, endoscopes, and equipment for endoscopic surgery: — Laparoscopy — ENT endoscopy — Hysteroresectoscopy — Urology ">ELMED LTD<span class="role role-e">参展商</span></td>
+  <td>Kazan</td>
+  <td class='contact-info'><div>📞 +7 (843) 204-0778</div></td>
+  <td><a href="http://www.elmed-kzn.ru" target="_blank">http://www.elmed-kzn.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>132</td>
+  <td class='company-name' title="IEK GROUP supplies comprehensive electrical equipment solutions for medical facilities: operating rooms, procedure rooms, and physiotherapy cabinets. It guarantees reliability and ">IEK<span class="role role-e">参展商</span></td>
+  <td>Podolsk</td>
+  <td class='contact-info'><div>📞 +7 (495) 542-2222</div></td>
+  <td><a href="http://www.iek.ru" target="_blank">http://www.iek.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>133</td>
+  <td class='company-name' title="Registration and AR services in the field of medical device certification in Russia and EAEU. On-site audit and QMS services, post-market support. Arrangement and of laboratory tes">KC-PROF LLC<span class="role role-e">参展商</span></td>
+  <td>Penza</td>
+  <td class='contact-info'><div>📞 +7 (950) 231-0103</div></td>
+  <td><a href="https://kc-prof.ru" target="_blank">https://kc-prof.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>134</td>
+  <td class='company-name' title="Supplier of medical equipment: audiological, ophthalmic, ENT, neonatal, surgical, phlebology, as well as medical furniture, etc. 2,000 items in the product range, own service and m">KRIPTOMED<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 795-9565</div></td>
+  <td><a href="http://www.kriptomed.ru" target="_blank">http://www.kriptomed.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>135</td>
+  <td class='company-name' title="Since 1994, GC Legion system integrator has been specializing in the supply of printing and AV equipment for various fields of application: in graphic arts, medicine, industrial an">LEGION<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 8 800 550-0740</div></td>
+  <td><a href="http://www.legion.ru" target="_blank">http://www.legion.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>136</td>
+  <td class='company-name' title="LOJER medical furniture (Finland). MERIVAARA surgical equipment, integration systems (Finland). MEDELA vacuum pumps (Switzerland). INSAUSTI medical carts (Spain).">LOJER MEDICAL LLC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 269-0695</div></td>
+  <td><a href="http://www.lojer.com" target="_blank">http://www.lojer.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>137</td>
+  <td class='company-name' title="Comprehensive provision of medical institutions with medical instruments, furniture, and equipment.">MARIA MK<span class="role role-e">参展商</span></td>
+  <td>Nizhny Novgorod</td>
+  <td class='contact-info'><div>📞 +7 (831) 252-05-43, 8 800 200-0904</div></td>
+  <td><a href="http://www.мкмария.рф" target="_blank">http://www.мкмария.рф</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>138</td>
+  <td class='company-name' title="Wholesale of laboratory and antistatic chairs, stools. Electric drives for medical beds, furniture components, wheel bearings, gas springs.">MBE-CENTER<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (925) 507-4849</div></td>
+  <td><a href="https://www.mbe-center.ru" target="_blank">https://www.mbe-center.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>139</td>
+  <td class='company-name' title="Since 2005, we have been producing equipment for surgery and resuscitation.">MEDIKO TPC LLC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 118-2048</div></td>
+  <td><a href="http://www.mediko.ru" target="_blank">http://www.mediko.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>140</td>
+  <td class='company-name' title="Equipment for prevention and treatment of hypothermia: heating of medical solutions and patients. Equipping of intensive care units, neonatology, intensive therapy, operational blo">MEDMARIN, LTD<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 970-6864</div></td>
+  <td><a href="http://www.medmarin.com" target="_blank">http://www.medmarin.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>141</td>
+  <td class='company-name' title="Manufacturing of single use medical devices: inflation devices, syringes for syringe pumps, infusion lines, kits for pleural drainage, devices for draining wounds, Jankauer aspirat">MIM<span class="role role-e">参展商</span></td>
+  <td>—</td>
+  <td class='contact-info'><div>📞 +7 3452591880</div></td>
+  <td><a href="http://www.ooo-mim.ru" target="_blank">http://www.ooo-mim.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>142</td>
+  <td class='company-name' title="Micromed is a reliable brand of microscopes and accessories operating since 2008. The microscopes meet all modern requirements; the service centre is licensed by the Russian Minist">NABLIUDATELNYJE PRIBORY LTD<span class="role role-e">参展商</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 498-4888</div></td>
+  <td><a href="https://micromed-spb.ru" target="_blank">https://micromed-spb.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>143</td>
+  <td class='company-name' title="NAPOLY develops and produces wound dressings: 1. Chitopran bioplastic materials and Gelechit hydrogels thant replace skin in the treatment of ulcers, burns, 2. Algipran alginate dr">NAPOLY LLC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 765-5692</div></td>
+  <td><a href="http://www.napoly.info" target="_blank">http://www.napoly.info</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>144</td>
+  <td class='company-name' title="Innovative medical equipment for controlled brain cooling, designed for neuroprotection and prevention of the development of neurodegeneration processes.">NeuroSafe<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 109-0062</div></td>
+  <td><a href="http://www.neurosafe.ru" target="_blank">http://www.neurosafe.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>145</td>
+  <td class='company-name' title="Medizdat's scientific and practical journals are published monthly. Readers can find answers to the most pressing questions facing medical science and healthcare.">PANORAMA PUBLISHING HOUSE<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 274-2222</div></td>
+  <td><a href="http://www.panor.ru" target="_blank">http://www.panor.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>146</td>
+  <td class='company-name' title="For 30 years PARITET has been successful in business and is developing its Partner Network. Expertise in the medical equipment market allows us to implement projects throughout the">PARITET<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 792-5090</div></td>
+  <td><a href="http://www.paritet-moscow.ru" target="_blank">http://www.paritet-moscow.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>147</td>
+  <td class='company-name' title="We protect human health by providing advanced and reliable X-ray protection solutions that help create safe working conditions in medical, scientific and industrial environments.">POLE TPF LTD<span class="role role-e">参展商</span></td>
+  <td>Ekaterinburg</td>
+  <td class='contact-info'><div>📞 +7 (343) 346-3858</div></td>
+  <td><a href="http://www.pole96.ru" target="_blank">http://www.pole96.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>148</td>
+  <td class='company-name'>POTOK INTER SPF<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>149</td>
+  <td class='company-name' title="Production of medical disposable syringes.">STK GROUP LLC<span class="role role-e">参展商</span></td>
+  <td>Samara</td>
+  <td class='contact-info'><div>📞 +7 (846) 373-0022</div></td>
+  <td><a href="https://gruppastk.ru" target="_blank">https://gruppastk.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>150</td>
+  <td class='company-name' title="STL is a supplier of medical personal use equipment aimed at the prevention and treatment of diseases of the musculoskeletal system, rehabilitation of patients after surgery.">STL COMPANY<div class="ru">THE COMPANY STL</div><span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 351-8372</div></td>
+  <td><a href="http://www.stl-comp.ru" target="_blank">http://www.stl-comp.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>151</td>
+  <td class='company-name' title="TION is a leading company dealing with air purification and disinfection of medical facilities. We design and produce cleanrooms and offer full cycle services.">TION TM (AEROSERVICE LLC)<span class="role role-e">参展商</span></td>
+  <td>Berdsk</td>
+  <td class='contact-info'><div>📞 +7 (495) 215-5664</div></td>
+  <td><a href="http://www.tion.info" target="_blank">http://www.tion.info</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>152</td>
+  <td class='company-name' title="We are developing perfusion technologies in Russia. We have developed Ex-Stream system, which makes saving life technology with perfusion available.">TransBioTech, LLC<span class="role role-e">参展商</span></td>
+  <td>—</td>
+  <td class='contact-info'><div>📞 +7 (915) 291-7519</div></td>
+  <td><a href="http://transbiotech.ru" target="_blank">http://transbiotech.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>153</td>
+  <td class='company-name' title="We create clean rooms: design, 3D modeling, production and installation. Medical air-conditioned module, installation of medical gas supply system, delivery of medical equipment.">UNITY-M LLC<span class="role role-e">参展商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 032-20-15</div></td>
+  <td><a href="http://www.unity-m.pro" target="_blank">http://www.unity-m.pro</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>154</td>
+  <td class='company-name' title="Yarward Electronics develops systems for healthcare. We focus on patient monitoring, process automation, and workload reduction for MP. Digital tech boost efficiency.">YARWARD ELECTRONICS<span class="role role-e">参展商</span></td>
+  <td>Odintsovo</td>
+  <td class='contact-info'><div>📞 +7 (495) 320-0570</div></td>
+  <td><a href="http://www.yarward.com.ru" target="_blank">http://www.yarward.com.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>155</td>
+  <td class='company-name' title="对应厂家：北京金恒威科技发展有限公司；官网联系方式：未查到独立佐证(平台卖家页为厂家)">allbuyshop.ru 上架卖家 Beijing Jinhengwei Technology Development Co.,Ltd(厂家直供)<span class="role role-o">俄B2B/电商平台上架(厂家直营)</span></td>
+  <td>未公开(俄语全俄电商平台)</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://allbuyshop.ru/goods/1600068591961" target="_blank">https://allbuyshop.ru/goods/1600068591961</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>156</td>
+  <td class='company-name' title="Everything you need for surgery. Reliable, safe, forever, BOWA.">BOWA 俄罗斯代表处<div class="ru">BOWA-electronic Representative Office (ТехМедЭКСПО)</div><div class="ru">BOWA-electronic Representative Office</div><span class="role role-m">厂商代表处（德国 BOWA）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 980-5313</div></td>
+  <td><a href="http://www.bowa-eurasia.com" target="_blank">http://www.bowa-eurasia.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>157</td>
+  <td class='company-name' title="Manufacturer of endovideo and electrosurgery equipment, radiocoagulators, coagulators, insufflators.">EFA 医疗<div class="ru">EFA / EFA Medica (ООО ЭФА Медика)</div><span class="role role-m">厂商（电外科本土制造）</span></td>
+  <td>Saint Petersburg</td>
+  <td class='contact-info'><div>📞 +7 (812) 428-7000</div><div>📧 <a href="mailto:efa@efa.ru">efa@efa.ru</a></div></td>
+  <td><a href="http://www.efa.ru" target="_blank">http://www.efa.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>158</td>
+  <td class='company-name' title="对应厂家：北京金恒威科技发展有限公司；官网联系方式：未查到独立佐证(平台卖家页为厂家)">goodvery.ru 上架卖家 Beijing Jinhengwei Technology Development Co.,Ltd(厂家直供)<span class="role role-o">俄B2B/电商平台上架(厂家直营)</span></td>
+  <td>未公开(俄语全俄比价/电商聚合)</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://tula.goodvery.ru/item/en/1600069835654" target="_blank">https://tula.goodvery.ru/item/en/160006983</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>159</td>
+  <td class='company-name' title="Russian manufacturer of electrosurgical and physiotherapy equipment.">NIKOR<div class="ru">АО НПО НИКОР</div><div class="ru">NIKOR SPA JSC</div><span class="role role-m">厂商（电外科本土制造）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (3822) 90-09-15</div></td>
+  <td><a href="http://www.nikor.ru" target="_blank">http://www.nikor.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>160</td>
+  <td class='company-name' title="对应厂家：上海力申科学仪器有限公司；官网联系方式：未查到独立俄方经销商">Nison Instrument (Shanghai) Limited(力康集团自营销售公司，经俄电商平台上架)<span class="role role-o">厂家自营线上销售(俄罗斯电商平台)</span></td>
+  <td>俄罗斯(线上销售)</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://yaroslavl.goodvery.ru/item/en/1600183195067" target="_blank">https://yaroslavl.goodvery.ru/item/en/1600</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>161</td>
+  <td class='company-name' title="Russian manufacturer of electrosurgical units and high-frequency surgical devices.">Proton M<div class="ru">ООО Протон М</div><span class="role role-m">厂商（电外科本土制造）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><span class='muted'>未公开</span></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>162</td>
+  <td class='company-name' title="对应厂家：北京索吉瑞科技有限公司；官网联系方式：未查到独立佐证">ROOCI.ru 平台供应商上架(Beijing Taktvoll Technology Co., Ltd.)<span class="role role-o">B2B平台供应商</span></td>
+  <td>线上平台(供应商为中国厂家)</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://rooci.ru/goods/ru/1600221331156" target="_blank">https://rooci.ru/goods/ru/1600221331156</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>163</td>
+  <td class='company-name' title="对应厂家：北京索吉瑞科技有限公司；官网联系方式：未查到独立佐证">Russian Health Care Week 2024 参展(展位8.1C30)<span class="role role-e">展会参展/厂家直展</span></td>
+  <td>莫斯科</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://taktvoll.com.cn/news/2024Russia" target="_blank">https://taktvoll.com.cn/news/2024Russia</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>164</td>
+  <td class='company-name' title="Trauma and spine full-line distributor; supplies electrosurgical units and orthopedic trauma/spine products.">ZDOROVIE 健康集团<div class="ru">ZDOROVIE LLC (ГК Здоровье)</div><div class="ru">ZDOROVIE LLC</div><span class="role role-d">厂商 + 官方经销商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 134-3442</div><div>📧 <a href="mailto:sales@trauma-msk.ru">sales@trauma-msk.ru</a></div></td>
+  <td><a href="http://www.gkzdorovie.ru" target="_blank">http://www.gkzdorovie.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>165</td>
+  <td class='company-name' title="对应厂家：湖南菁益医疗科技有限公司">ЗДРАВООХРАНЕНИЕ 2023 展商(自营展位 FG033)<span class="role role-e">展会参展/厂家直展</span></td>
+  <td>莫斯科(Expocentre展会)</td>
+  <td class='contact-info'><div>📞 +86 731 83168223 / bellapeng@jingyimed.com</div></td>
+  <td><a href="https://icatalog.expocentr.ru/en/exhibitions/ac7d68d9-c129-11eb-80cc-a0d3c1fab97f/exhibitors/210210?stand=FG033" target="_blank">https://icatalog.expocentr.ru/en/exhibitio</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>166</td>
+  <td class='company-name' title="German electrosurgery manufacturer (VIO series) Russian subsidiary; supplies electrosurgical generators, argon plasma coagulation, vessel sealing.">ООО ERBE Elektromedizin（erbe-russia.com）<span class="role role-d">厂家直营子公司/代理</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 256-00-52</div><div>📧 <a href="mailto:info@erbe-russia.com">info@erbe-russia.com</a></div></td>
+  <td><a href="http://www.erbe.ru" target="_blank">http://www.erbe.ru</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>167</td>
+  <td class='company-name' title="Russian manufacturer of orthopedic and trauma implants, bone fixation, surgical instruments.">ChM 创伤骨科<div class="ru">ChM / Конмет (ЧМ)</div><span class="role role-m">厂商（创伤骨科）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://chm.ru" target="_blank">https://chm.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>168</td>
+  <td class='company-name' title="Russian manufacturer of orthopedic implants, trauma and osteosynthesis products, surgical instruments.">Osteomed<div class="ru">Остеомед (Osteomed)</div><span class="role role-m">厂商（骨科植入与动力）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://osteomed.ru" target="_blank">https://osteomed.ru</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  
+</tr>
+<tr>
+  <td>169</td>
+  <td class='company-name' title="National distributor of medical equipment; direct partnerships with manufacturers including surgical and electrosurgical lines.">Aurum 金医疗<div class="ru">Aurum Medical (Аурум Медикал)</div><span class="role role-d">经销商·进口商（直连厂商）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://aurum-med.ru" target="_blank">https://aurum-med.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>170</td>
+  <td class='company-name' title="Russian manufacturer of medical optics, arthroscopes, insufflators, surgical instruments.">ElePS<div class="ru">ООО НПФ Элепс (ElePS)</div><span class="role role-m">厂商（电外科本土制造）</span></td>
+  <td>Kazan</td>
+  <td class='contact-info'><div>📞 +7 (495) 268-04-70</div><div>📧 <a href="mailto:1@nt-rt.ru">1@nt-rt.ru</a></div></td>
+  <td><a href="http://www.nt-rt.ru" target="_blank">http://www.nt-rt.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>171</td>
+  <td class='company-name' title="For over 15 years, Infomed-Neuro has been supplying medical equipment and consumables directly from US, South Korean, European manufacturers to the Russian market. The company's po">INFOMED (ООО ИНФОМЕД)<span class="role role-d">经销商/独家代理商</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><div>📞 +7 (495) 645-4700</div></td>
+  <td><a href="https://инфомед-нейро.рф" target="_blank">https://инфомед-нейро.рф</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr>
+<tr>
+  <td>172</td>
+  <td class='company-name' title="Russian medical holding / manufacturer of medical equipment including surgical and diagnostic devices.">MEDSI 医疗系统<div class="ru">ООО Медицинские Системы (MEDSI)</div><span class="role role-m">厂商（电外科本土制造）</span></td>
+  <td>Moscow</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://medsi.ru" target="_blank">https://medsi.ru</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  
+</tr></tbody>
+</table>
+
+<div class="footer">
+<p>📌 俄罗斯医疗器械经销商名录（合并版）· 共 172 家</p>
+</div>
+</div>
+<script>
+(function(){
+  var inp=document.getElementById('custSearch');
+  var cnt=document.getElementById('custCount');
+  var tbody=document.querySelector('table tbody');
+  if(!inp||!tbody) return;
+  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+  function apply(){
+    var q=inp.value.trim().toLowerCase();
+    var shown=0;
+    rows.forEach(function(tr){
+      var txt=tr.textContent.toLowerCase();
+      tr.querySelectorAll('[title]').forEach(function(el){txt+=' '+(el.getAttribute('title')||'').toLowerCase();});
+      var hit=!q||txt.indexOf(q)>=0;
+      tr.style.display=hit?'':'none';
+      if(hit) shown++;
+    });
+    cnt.textContent=q?('匹配 '+shown+' / '+rows.length+' 家'):'';
+  }
+  inp.addEventListener('input',apply);
+  apply();
+})();
+</script>
+</body>
+</html>
