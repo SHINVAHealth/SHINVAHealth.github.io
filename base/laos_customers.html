@@ -1,318 +1,862 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
+
 <head>
+
 <script data-xh-gate>
+
 (function(){
+
   var TTL=8*60*60*1000;
+
   try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+
   var seg=location.pathname.split('/').filter(Boolean).length;
+
   var prefix=seg>1?new Array(seg).join('../'):'./';
+
   var next=location.pathname+(location.search||'');
+
   location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+
 })();
+
 </script>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>老挝医疗器械经销商名录</title>
+
     <style>
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
         h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+
   .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+
   .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+
   .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+
   .search-count{font-size:13px;color:#666;white-space:nowrap;}
+
         .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+
         .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+
         .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+
         .stat-card .label { font-size: 12px; color: #888; }
+
         .stat-card.total { border-top: 3px solid #27ae60; }
+
         .stat-card.total .num { color: #27ae60; }
+
         table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+
         thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+
         th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+
         td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+
         tr:hover { background: #f8f9fb; }
+
         .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+
         .badge-electro { background: #f39c12; color: #fff; }
+
         .badge-ortho { background: #3498db; color: #fff; }
+
         .badge-surgical { background: #2ecc71; color: #fff; }
+
         .badge-ot { background: #9b59b6; color: #fff; }
+
+        .badge-hosp { background: #16a085; color: #fff; }
+
+        .badge-pharma { background: #95a5a6; color: #fff; }
+
         a { color: #2c5aa0; text-decoration: none; }
+
         a:hover { text-decoration: underline; }
+
         .company-name { font-weight: 600; color: #1a3a6b; }
+
         .contact-info { font-size: 12px; color: #555; }
+
         .contact-info div { margin-bottom: 2px; }
+
 .muted { color: #aaa; }
+
         .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+
         .footer p { margin-bottom: 4px; }
+
 </style>
+
 </head>
+
 <body>
+
 <div class="container">
+
     <h1>老挝医疗器械经销商名录</h1>
+
     <div class="stats">
-        <div class="stat-card total"><div class="num">27</div><div class="label">经销商总数</div></div><div class="stat-card"><div class="num">27</div><div class="label">综合外科设备</div></div>
+
+        <div class="stat-card total"><div class="num">68</div><div class="label">名录总数</div></div><div class="stat-card"><div class="num">35</div><div class="label">器械经销商</div></div><div class="stat-card"><div class="num">26</div><div class="label">医院终端客户</div></div><div class="stat-card"><div class="num">7</div><div class="label">非本行业（排尾）</div></div>
+
     </div>
 
+
+
       <div class="searchbar">
+
     <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off">
+
     <span class="search-count" id="custCount"></span>
+
   </div>
+
 <table>
+
         <thead>
+
             <tr>
+
                 <th style="width:30px;">#</th>
+
                 <th style="width:200px;">公司名称</th>
+
                 <th style="width:110px;">城市</th>
+
                 <th style="width:230px;">联系方式（电话/WhatsApp/邮箱/地址）</th>
+
                 <th style="width:170px;">官网 / 店铺</th>
+
                 <th style="width:120px;">方向</th>
+
                 </tr>
+
         </thead>
+
         <tbody>
+
 <tr>
-  <td>1</td>
+<td>1</td>
   <td class='company-name'>AI KEN Pharma (Laos) Company Limited</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 030 9974 999</div></td>
+  <td class='contact-info'><div>📞 +856 30 9974 999</div><div>📧 <a href="mailto:Info.la@aikenpharma.com">Info.la@aikenpharma.com</a></div></td>
   <td><a href="https://www.aikenpharma.com/" target="_blank">https://www.aikenpharma.com/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>2</td>
+<td>2</td>
   <td class='company-name'>Asalao Sole Co. Ltd</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td class='contact-info'><div>📞 +856 20 55 659 142</div><div>📍 Asa lao office, Chao Anou Road, Vientiane, Lao PDR</div><div>📧 <a href="mailto:info@asalao.com">info@asalao.com</a></div></td>
   <td><a href="http://asalao.com/" target="_blank">http://asalao.com/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>3</td>
+<td>3</td>
   <td class='company-name'>BBL Laos (Best Buy Laos)</td>
   <td>Vientiane</td>
   <td class='contact-info'><div>📧 <a href="mailto:BBLBESTBUYLAOS@GMAIL.COM">BBLBESTBUYLAOS@GMAIL.COM</a></div></td>
-  <td><a href="https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies" target="_blank">https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies</a></td>
+  <td><span class='muted'>未公开（无独立官网）</span></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>4</td>
-  <td class='company-name'>BigBear Pharmaceutical Lao Co., Ltd.</td>
-  <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies" target="_blank">https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
-  </tr>
-<tr>
-  <td>5</td>
+<td>4</td>
   <td class='company-name'>DKSH Laos Company Limited</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856 21 453 100</div></td>
+  <td class='contact-info'><div>📞 +856 21 453 100</div><div>📍 3rd Floor, Vientiane Center Office Building, Khouvieng Road, Nongchan Village, Sisattanak District, Vientiane Capital 01030, Laos</div></td>
   <td><a href="https://www.dksh.com/la-en/home/" target="_blank">https://www.dksh.com/la-en/home/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>6</td>
+<td>5</td>
   <td class='company-name'>Daiichi Denshi Laos</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856-21-737-001</div><div>📧 <a href="mailto:phonesavan@daiichidenshilao.com">phonesavan@daiichidenshilao.com</a></div></td>
+  <td class='contact-info'><div>📞 +856 21 737 001</div><div>📞 +856 20 5295 9688</div><div>📍 No.19 KM22, Vientiane Industry & Trade Area (VITA Park), Noonthong Village, Saithany District, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:phonesavan@daiichidenshilao.com">phonesavan@daiichidenshilao.com</a></div></td>
   <td><a href="https://daiichi-denshi.la" target="_blank">https://daiichi-denshi.la</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>7</td>
+<td>6</td>
   <td class='company-name'>INTER MEDICAL CO LTD</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856-21 21 5421</div></td>
-  <td><a href="https://www.laosyp.com/company/4774/INTER_MEDICAL_CO_LTD" target="_blank">https://www.laosyp.com/company/4774/INTER_MEDICAL_CO_LTD</a></td>
+  <td class='contact-info'><div>📧 <a href="mailto:Info@imdc.la">Info@imdc.la</a></div><div>📞 +856 20 5551 8913</div><div>📞 +856 21 252 570</div></td>
+  <td><a href="https://imdc.la" target="_blank">https://imdc.la</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>8</td>
-  <td class='company-name'>KPN Pharma Co., Ltd.</td>
-  <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies" target="_blank">https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
-  </tr>
-<tr>
-  <td>9</td>
+<td>7</td>
   <td class='company-name'>KSD Pharma (KSD Pharma Export-Import Sole Co., Ltd.)</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856 21 226 363</div><div>📧 <a href="mailto:info@ksd.la">info@ksd.la</a></div></td>
+  <td class='contact-info'><div>📞 +856 21 226 363</div><div>📍 Nongduang Thong Village, Sikhottabong District, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:info@ksd.la">info@ksd.la</a></div></td>
   <td><a href="https://www.ksd.la" target="_blank">https://www.ksd.la</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>10</td>
+<td>8</td>
   <td class='company-name'>Lao KBN Medical Products Co., Ltd.</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td class='contact-info'><div>📞 +856 21 260 999</div><div>📍 072 ASEAN Road, No.5 Sisavard Village, Chanthabouly District, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:info@laokbn.com">info@laokbn.com</a></div></td>
   <td><a href="https://laokbn.com" target="_blank">https://laokbn.com</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>11</td>
+<td>9</td>
   <td class='company-name'>Lao Medical Services Co., Ltd (LMS)</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856-21-314944</div><div>📧 <a href="mailto:contact@lms.la">contact@lms.la</a></div></td>
+  <td class='contact-info'><div>📞 +856 21 314 944</div><div>📍 66 Thadeua Rd, Ban Thaphalanxay, P.O.Box 4952, Vientiane, Lao PDR</div><div>📧 <a href="mailto:contact@lms.la">contact@lms.la</a></div></td>
   <td><a href="http://www.lms.la" target="_blank">http://www.lms.la</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>12</td>
+<td>10</td>
   <td class='company-name'>Lao Medical Supply</td>
   <td>Vientiane</td>
   <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://www.go4worldbusiness.com/member/view/3183828/lao-medical-supply.html" target="_blank">https://www.go4worldbusiness.com/member/view/3183828/lao-medical-supply.html</a></td>
+  <td><span class='muted'>未公开（无独立官网）</span></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>13</td>
-  <td class='company-name'>Laos Alliance Pharmaceutical Group Co., Ltd.</td>
-  <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://alliancepharmagroup.com/" target="_blank">https://alliancepharmagroup.com/</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
-  </tr>
-<tr>
-  <td>14</td>
+<td>11</td>
   <td class='company-name'>Lavi Company Limited</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td class='contact-info'><div>📞 +856 20 5586 6666</div><div>📍 Group 05, Kaysone Street, Sivilay Village, Saythany District, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:vananhlavitp@gmail.com">vananhlavitp@gmail.com</a></div></td>
   <td><a href="https://lavihc.com" target="_blank">https://lavihc.com</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>15</td>
+<td>12</td>
   <td class='company-name'>MEDICAL PRODUCTS SUPPLY CENTER (MPSC)</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856-21 21 2042</div></td>
-  <td><a href="https://www.laosyp.com/company/4777/MEDICAL_PRODUCTS_SUPPLY_CENTER_MPSC_" target="_blank">https://www.laosyp.com/company/4777/MEDICAL_PRODUCTS_SUPPLY_CENTER_MPSC_</a></td>
+  <td class='contact-info'><div>📞 +856 21 21 2042</div></td>
+  <td><span class='muted'>未公开（无独立官网）</span></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>16</td>
+<td>13</td>
   <td class='company-name'>Mekong Medical Joint Stock Company (Mekong Medical JSC)</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td class='contact-info'><div>📞 +84 82 222 3292</div><div>📧 <a href="mailto:info@mekong-medical.com">info@mekong-medical.com</a></div></td>
   <td><a href="http://mekong-medical.com/" target="_blank">http://mekong-medical.com/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>17</td>
+<td>14</td>
   <td class='company-name'>NNC Pharma Co., Ltd (CNC Pharmaceutical and Medical Equipment Co.)</td>
   <td>Vientiane</td>
   <td class='contact-info'><span class='muted'>未公开</span></td>
   <td><a href="http://www.nncpharma.com/" target="_blank">http://www.nncpharma.com/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>18</td>
+<td>15</td>
   <td class='company-name'>Online Medical Equipment (Huakua-Nonkhor)</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://www.healthandbeauty1.com/LA/Vientiane/149015/genre/1626402524354240/Pharmaceutical+Company" target="_blank">https://www.healthandbeauty1.com/LA/Vientiane/149015/genre/1626402524354240/Pharmaceutical+Company</a></td>
+  <td class='contact-info'><div>📍 180 Huakua-Nonkhor, Ban Nonkhon Nuea, Saysettha District, Vientiane, Lao PDR</div></td>
+  <td><span class='muted'>未公开（healthandbeauty1.com 为名录站，非其独立官网；地址经查证为真实）</span></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>19</td>
+<td>16</td>
   <td class='company-name'>Palamy Pharma</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies" target="_blank">https://www.findglocal.com/LA/Vientiane/149015-23/genre/1626402524354240/Pharmaceutical+Companies</a></td>
+  <td class='contact-info'><div>📞 +856 20 58884 114</div><div>📧 <a href="mailto:contact@palamypharma.com">contact@palamypharma.com</a></div></td>
+  <td><a href="https://www.palamypharma.com/" target="_blank">https://www.palamypharma.com/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>20</td>
+<td>17</td>
   <td class='company-name'>RxLibra Development (RxLibra.com)</td>
   <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="http://rxlibra.com" target="_blank">http://rxlibra.com</a></td>
+  <td class='contact-info'><div>📞 +856 20 9124 7348</div><div>📍 19 Saylom Road, Vientiane 0100, Lao PDR</div><div>📧 <a href="mailto:HR@rxlibra.com">HR@rxlibra.com</a></div></td>
+  <td><a href="https://rxlibra.com/" target="_blank">https://rxlibra.com/</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>21</td>
+<td>18</td>
   <td class='company-name'>SKN Trading Import-Export Sole Co., Ltd.</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856 21 451 657</div></td>
+  <td class='contact-info'><div>📞 +856 21 451 657</div><div>📍 No. 42, 23 Singha Road, Saysettha District, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:sales@sknlaos.com">sales@sknlaos.com</a></div></td>
   <td><a href="https://sknlaos.com" target="_blank">https://sknlaos.com</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>22</td>
+<td>19</td>
   <td class='company-name'>Scinest Global</td>
   <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856-20-54863917</div><div>📧 <a href="mailto:trade@scinestglobal.com">trade@scinestglobal.com</a></div></td>
+  <td class='contact-info'><div>📞 +856 20 5486 3917</div><div>📧 <a href="mailto:trade@scinestglobal.com">trade@scinestglobal.com</a></div></td>
   <td><a href="https://scinestglobal.com/about" target="_blank">https://scinestglobal.com/about</a></td>
   <td><span class='badge badge-ot'>综合外科设备</span></td>
   </tr>
+
 <tr>
-  <td>23</td>
+<td>20</td>
+  <td class='company-name'>Viengthong Med &amp; Pharma (Viengthong Pharmaceutical Import-Export Co., Ltd.)</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 240 350</div><div>📍 142, Nongduang Rd, Sikhottabong District, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:info@vtpharma.la">info@vtpharma.la</a></div></td>
+  <td><a href="https://vtmedpharma.la" target="_blank">https://vtmedpharma.la</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+<tr>
+<td>21</td>
+  <td class='company-name'>Vimpex Ltd (Vimpex Lao Co Ltd)</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 20 9311 4500</div><div>📍 Ban Nonsanga village, Unit 7, Xaysettha District, Vientiane, Lao PDR</div><div>📧 <a href="mailto:Vimpex.laos@online.com">Vimpex.laos@online.com</a></div></td>
+  <td><a href="https://vimpexltd.com/about-us" target="_blank">https://vimpexltd.com/about-us</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+<tr>
+<td>22</td>
+  <td class='company-name' title="来源：World Bank 项目 P178957 医疗设备授标方；老挝国家通讯社 KPL 报道其为 GE Healthcare 老挝授权经销商（kpl.gov.la/EN/detail.aspx?id=30607）">CBF Pharma Co.,Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📧 <a href="mailto:vchinda@cbfpharma.com">vchinda@cbfpharma.com</a></div><div>📍 Dongpaina Street, Phonsinuan Village, Sisattanack District, Vientiane Capital, Lao PDR</div></td>
+  <td><a href="https://cbfpharma.com" target="_blank">https://cbfpharma.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>23</td>
+  <td class='company-name' title="来源：公司官网 ddp.com.la/Healthcare.html 列骨科手术/影像/手术室设备，代理 Fujifilm、Chison、Sonoscape、DIRUI、Comen、Perlove、Orthomedic；另 LuxDev 省级医院设备中标商">DDP Chaleunxup Co., Ltd</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 Nongtha Nuea Village, House No.255/1, Unit 21, Chanthabuly District, Vientiane Capital, Lao PDR</div></td>
+  <td><a href="https://ddp.com.la" target="_blank">https://ddp.com.la</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>24</td>
+  <td class='company-name' title="来源：UNGM 授标 ITB/2024/54978 Lot 4 移动 C 臂 USD 222,600（ungm.org/Public/ContractAward/148698）；UNGM RFQ/2024/55178 Lot 8 Miller 喉镜；LuxDev A-LAO035-2025-0024 Khun Kham 医院授标">Lao Medical Solution Sole Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 House No. 377, Unit 16, Wat Nark Village, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>25</td>
+  <td class='company-name' title="来源：UNGM 授标 ITB/2024/54978 Lot 8 容积输液泵（ungm.org/Public/ContractAward/148701）；LuxDev A-LAO035-2025-0032 心血管设备授标 EUR 119,241">Saimangkorn Pharmacy Sole Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 No.316 Sithong Road, Dongnathong Village, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>26</td>
+  <td class='company-name' title="来源：Volk Optical 官网亚太授权经销商名录列 Laos → Lao Scitec Trading（volk.com/pages/asia-distributors），含电话/邮箱/地址">Lao Scitec Trading Import-Export Co., Ltd</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 319 038</div><div>📧 <a href="mailto:daisy.laoscitec@gmail.com">daisy.laoscitec@gmail.com</a></div><div>📍 No. 218 Lao-Thai Rd., Sisattanak District, Vientiane 01030, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>27</td>
+  <td class='company-name' title="来源：日本 MANI 集团官网子公司名录列出的万象子公司（mani-malaysia.com/?p=1262）；主营牙科与外科器械">MANI VIENTIANE SOLE CO., LTD.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 Vientiane Province, Lao PDR</div></td>
+  <td>未公开（无老挝本地独立站点）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>28</td>
+  <td class='company-name' title="来源：老挝招聘站 108.jobs 公司档案（加拿大 priMED 在老制造厂），官网 primed.ca；生产 PPE/手术衣/医用手套/伤口护理等手术室耗材">PRIMED Laos Medical Products Manufacturing Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 VITA Park (Vientiane Industry & Trade Area), Lot 73-75, KM 22, Nonhthong Village, Xaythany District, Vientiane Capital, Lao PDR</div></td>
+  <td><a href="https://www.primed.ca" target="_blank">https://www.primed.ca</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>29</td>
+  <td class='company-name' title="来源：企业数据库 coresignal 老挝医药类公司档案；官网 saysaath.la 自述进口分销药品与医疗器械">Saysaath Pharma Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 Chanthabouly District, Vientiane Capital, Lao PDR</div></td>
+  <td><a href="https://www.saysaath.la" target="_blank">https://www.saysaath.la</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>30</td>
+  <td class='company-name' title="来源：老挝国家通讯社 KPL 报道其与老挝人民军 103 医院签署体外碎石技术合作协议并落成碎石室（kpl.gov.la/asean2024/En/detail.aspx?id=106175）">Tahua International Trade Sole Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>31</td>
+  <td class='company-name' title="来源：公司自述页，2016-07-01 依老挝法律注册，供应分销药品、医疗产品、实验室设备及诊断液">Xupthavykhoun Sole Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://xupthavykhouncompanylimitedlao.blogspot.com/2020/06/about-us.html" target="_blank">https://xupthavykhouncompanylimitedlao.blogspot.com/2020/06/about-us.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>32</td>
+  <td class='company-name' title="来源：UNGM 授标 RFQ/2024/51820 Lot 2 双目显微镜（ungm.org/Public/ContractAward/142483）；UNGM RFQ/2020/14462 Lot 3 电灼 Cautery；LuxDev 医院设施授标">Lao Industrial Solution Sole Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>33</td>
+  <td class='company-name' title="来源：老挝黄页 laosyp.com 企业条目（公司/4105），分类为医疗进出口公司，含电话与地址">THAVIXAY MEDICAL IMPORT - EXPORT CO</td>
+  <td>Savannakhet</td>
+  <td class='contact-info'><div>📞 +856 41 21 2836</div><div>📍 444 27 Oudomsin St, Sounantha, Savannakhet Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>34</td>
+  <td class='company-name' title="来源：MedTrade 全球医疗器械 B2B 平台认证供应商页（medtrade.world/suppliers/pravon-health），万象医疗耗材分销商">Pravon Health</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 230 Central Road, Vientiane, Lao PDR</div></td>
+  <td>未公开（仅 B2B 平台页）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>35</td>
+  <td class='company-name' title="来源：医疗器械目录站 medicalsdir.com/listing/alienmedical，标注位于万象、2016 年成立，主营心血管/介入/血液透析器械">AlienMedical</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+
+
+<tr>
+<td>36</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；150+ 床国家级创伤/神经外科转诊中心">Mittaphab (Friendship) Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 710663</div><div>📧 <a href="mailto:amfatov@laotel.com">amfatov@laotel.com</a></div><div>📍 Phontong Road, Ban Phonsavang, Vientiane, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>37</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录（gov.uk 老挝 list of medical facilities）">Mahosot Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 214018</div><div>📍 Quai Fa Ngum, Ban KaoNyot, Sisattanak District, Vientiane, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>38</td>
+  <td class='company-name' title="来源：Phongsavanh 保险(APA)医院网络 2025 名录；英国大使馆名录亦列其国际门诊">Setthathirath Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 351158</div><div>📧 <a href="mailto:khamthavi@yahoo.fr">khamthavi@yahoo.fr</a></div><div>📍 Donkoy Village, Saysettha District, Vientiane, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>39</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录 + 官网 aimclao.com 联系页；私立国际医疗中心">Alliance International Medical Centre (AIMC)</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 513095</div><div>📧 <a href="mailto:info@aimclao.com">info@aimclao.com</a></div><div>📍 Honda Complex, Souphanuvong Road, Ban Wattayyaithong, Sikhottabong District, Vientiane Capital, Lao PDR</div></td>
+  <td><a href="http://aimclao.com" target="_blank">http://aimclao.com</a></td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>40</td>
+  <td class='company-name' title="来源：EuroCham Laos 会员目录 + 官网；泰国 Bangkok Chain International 老挝子公司运营，254 床，设骨科/神经外科/外科中心">Kasemrad International Hospital Vientiane (Bangkok Chain International (Lao) Ltd.)</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 455077</div><div>📞 +856 21 833333</div><div>📧 <a href="mailto:info@kasemradvientiane.com">info@kasemradvientiane.com</a></div><div>📍 No.999, 450 Years Road, Donnokkhoum Village, Sisattanak District, Vientiane Capital, Lao PDR</div></td>
+  <td><a href="https://kasemradvientiane.com" target="_blank">https://kasemradvientiane.com</a></td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>41</td>
+  <td class='company-name' title="来源：OnMend 医疗机构档案 + APA 保险医院网络；老越合资私立医院">Lao-Viet International Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 353493</div><div>📞 +856 20 58239555</div><div>📍 289/14 Rue Lao-Thai Rd, Ban Saphanthongtai, Sisattanak District, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>42</td>
+  <td class='company-name' title="来源：Phongsavanh 保险(APA)医院网络 2025 名录">Hanoi-Vientiane General Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 30 9966999</div><div>📍 Chommanee Tai Village, Saysettha District, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>43</td>
+  <td class='company-name' title="来源：Phongsavanh 保险(APA)医院网络 2025 名录；私立医院">Nakhonluang Grand Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 20 55401157</div><div>📞 +856 20 78858899</div><div>📍 Phonetongchommanee Village, Chanthabouly District, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>44</td>
+  <td class='company-name' title="来源：FigTree/Forte 保险医院网络 2023 名录，列 Vientiane International Poly Clinic 电话与邮箱">Vientiane International Clinic Sole Co., Ltd</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 21 316760</div><div>📧 <a href="mailto:SiwalalukPC@gmail.com">SiwalalukPC@gmail.com</a></div><div>📍 Thadeua Road, Ban Phanmanh, Sisattanak District, Vientiane, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>45</td>
+  <td class='company-name' title="来源：越南通讯社(VNA)2023-11-19 报道，50 床私立医院；APA 保险网络含地址">La Vie International Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 Nongnieng Village, Sysettha District, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>46</td>
+  <td class='company-name' title="来源：Phongsavanh 保险(APA)医院定位器列表（apa.com.la/hospital-locator），电话未公开">Sokdy Vientiane Hospital</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📍 Huai Hong Village, Chanthabouly District, Vientiane Capital, Lao PDR</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>47</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；占巴塞省公立医院（巴色）">Champasak Province Hospital</td>
+  <td>Pakse</td>
+  <td class='contact-info'><div>📞 +856 31 212018</div><div>📍 Route 1, Ban Lakmeuang, Pakse District, Champasak Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>48</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；琅勃拉邦省公立医院">Luang Prabang Provincial Hospital</td>
+  <td>Luang Prabang</td>
+  <td class='contact-info'><div>📞 +856 71 254027</div><div>📞 +856 20 55770842</div><div>📍 Ban Phoumok, Luang Prabang District, Luang Prabang Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>49</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；沙湾拿吉省公立医院">Savannakhet Province Hospital</td>
+  <td>Savannakhet</td>
+  <td class='contact-info'><div>📞 +856 41 212231</div><div>📍 Ban Thahae, Kaysone Phomvihane District, Savannakhet Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>50</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；琅南塔省公立医院">Luang Namtha Province Hospital</td>
+  <td>Luang Namtha</td>
+  <td class='contact-info'><div>📞 +856 86 211752</div><div>📍 Ban Nongbouavieng, Luang Namtha District, Luang Namtha Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>51</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；乌多姆赛省公立医院">Oudomxay Province Hospital</td>
+  <td>Oudomxay</td>
+  <td class='contact-info'><div>📞 +856 81 212505</div><div>📍 Ban Donkeo, Xay District, Oudomxay Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>52</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；波里坎赛省公立医院">Bolikhamxay Province Hospital</td>
+  <td>Paksan</td>
+  <td class='contact-info'><div>📞 +856 54 791050</div><div>📍 Ban Parksan Tai, Paksan District, Bolikhamxay Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>53</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；甘蒙省（他曲）公立医院">Khammouane Province Hospital</td>
+  <td>Thakhek</td>
+  <td class='contact-info'><div>📞 +856 51 212084</div><div>📍 Souphanouvong Ave, Ban Laophosay, Thakhek District, Khammouane Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>54</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；川圹省（丰沙湾）公立医院">Xieng Khouang Province Hospital</td>
+  <td>Phonsavan</td>
+  <td class='contact-info'><div>📞 +856 61 211228</div><div>📍 Ban Phonsa, Pek District, Xieng Khouang Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>55</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；沙耶武里省公立医院">Xayaboury Province Hospital</td>
+  <td>Xayaboury</td>
+  <td class='contact-info'><div>📞 +856 74 211919</div><div>📍 Ban Nalao, Xayaboury District, Xayaboury Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>56</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；沙拉湾省公立医院">Saravan Province Hospital</td>
+  <td>Saravan</td>
+  <td class='contact-info'><div>📞 +856 34 211106</div><div>📍 Ban Phonkeo, Saravane District, Saravane Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>57</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；色贡省公立医院">Sekong Province Hospital</td>
+  <td>Sekong</td>
+  <td class='contact-info'><div>📞 +856 38 211055</div><div>📍 Route 13, Ban MaiHouameuang, Lamarm District, Sekong Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>58</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；丰沙里省公立医院">Phongsaly Province Hospital</td>
+  <td>Phongsaly</td>
+  <td class='contact-info'><div>📞 +856 88 210103</div><div>📍 Ban Watkeo, Phongsaly District, Phongsaly Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>59</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；阿速坡省公立医院">Attapeu Province Hospital</td>
+  <td>Attapeu</td>
+  <td class='contact-info'><div>📞 +856 36 211246</div><div>📍 Ban Vernkhean, Samakkhixay District, Attapeu Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>60</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；华潘省（桑怒）公立医院">Houaphan Province Hospital</td>
+  <td>Xamneua</td>
+  <td class='contact-info'><div>📞 +856 64 312047</div><div>📍 Ban Misouk, Xamneua District, Houaphan Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>61</td>
+  <td class='company-name' title="来源：英国驻万象大使馆医疗机构名录；博胶省（会晒）公立医院">Bokeo Province Hospital</td>
+  <td>Houaysai</td>
+  <td class='contact-info'><div>📞 +856 84 211048</div><div>📍 Ban Yaihouaysaineya, Houaysai District, Bokeo Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-hosp'>医院终端客户</span></td>
+  </tr>
+
+
+<tr>
+<td>62</td>
+  <td class='company-name'>BigBear Pharmaceutical Lao Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>💬 WhatsApp: <a href="https://wa.me/8562052137046" target="_blank">+856 20 5213 7046</a></div><div>📍 Road13 South, 29km, Phonesavan Village, Xaythany District, Vientiane, Lao PDR</div><div>📧 <a href="mailto:info.bigbearpharma1@gmail.com">info.bigbearpharma1@gmail.com</a></div></td>
+  <td><a href="https://www.bigbearpharma.com/contact/" target="_blank">https://www.bigbearpharma.com/contact/</a></td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
+  </tr>
+
+<tr>
+<td>63</td>
+  <td class='company-name'>KPN Pharma Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 20 5949 8888</div><div>📞 +856 21 457 666</div><div>📍 Hom 20 Dongkhamxang Road, Ban Xiengd, Saysetha District, Vientiane 01000, Lao PDR</div></td>
+  <td><a href="https://kpn-pharma.com/home" target="_blank">https://kpn-pharma.com/home</a></td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
+  </tr>
+
+<tr>
+<td>64</td>
+  <td class='company-name'>Laos Alliance Pharmaceutical Group Co., Ltd.</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><div>📞 +856 20 9802 3882</div><div>📍 Vientiane Saysettha Development Zone, Vientiane Capital, Lao PDR</div><div>📧 <a href="mailto:eddy@alliancepharmagroup.com">eddy@alliancepharmagroup.com</a></div></td>
+  <td><a href="https://alliancepharmagroup.com/" target="_blank">https://alliancepharmagroup.com/</a></td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
+  </tr>
+
+<tr>
+<td>65</td>
   <td class='company-name'>The ENT Import-Export Sole Co., Ltd</td>
   <td>Vientiane</td>
   <td class='contact-info'><span class='muted'>未公开</span></td>
   <td><a href="https://mangkonthong.com/en/the-ent-import-export-sole-co-ltd/" target="_blank">https://mangkonthong.com/en/the-ent-import-export-sole-co-ltd/</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
   </tr>
+
 <tr>
-  <td>24</td>
-  <td class='company-name'>Viengthong Med &amp; Pharma (Viengthong Pharmaceutical Import-Export Co., Ltd.)</td>
-  <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://vtmedpharma.la" target="_blank">https://vtmedpharma.la</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
-  </tr>
-<tr>
-  <td>25</td>
-  <td class='company-name'>Viengthong Pharmaceutical Import-Export Co., Ltd. (Devex 记录)</td>
-  <td>Vientiane</td>
-  <td class='contact-info'><span class='muted'>未公开</span></td>
-  <td><a href="https://www.devex.com/organizations/viengthong-pharmaceutical-import-export-co-ltd-144604" target="_blank">https://www.devex.com/organizations/viengthong-pharmaceutical-import-export-co-ltd-144604</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
-  </tr>
-<tr>
-  <td>26</td>
-  <td class='company-name'>Vimpex Ltd (Vimpex Lao Co Ltd)</td>
-  <td>Vientiane</td>
-  <td class='contact-info'><div>📞 +856 20 93114500</div><div>📧 <a href="mailto:vimpex.laos@vimpexltd.com">vimpex.laos@vimpexltd.com</a></div></td>
-  <td><a href="http://vimpexltd.com/about-us" target="_blank">http://vimpexltd.com/about-us</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
-  </tr>
-<tr>
-  <td>27</td>
+<td>66</td>
   <td class='company-name'>Zuellig Pharma (Laos operation)</td>
   <td>Vientiane</td>
   <td class='contact-info'><span class='muted'>未公开</span></td>
   <td><a href="https://www.zuelligpharma.com" target="_blank">https://www.zuelligpharma.com</a></td>
-  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
   </tr>
+
+<tr>
+<td>67</td>
+  <td class='company-name' title="来源：善康医药新闻稿，纳曲酮植入剂在老挝注册并由该公司独家进口分销；纯药企">Mungmisai Pharmaceutical Sole Co., Ltd</td>
+  <td>Vientiane</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
+  </tr>
+
+
+<tr>
+<td>68</td>
+  <td class='company-name' title="来源：老挝黄页 laosyp.com 沙湾拿吉省企业列表；药品进出口公司">VIENGNAKHONE PHARMACEUTICAL IMPORT - EXPORT CO LTD</td>
+  <td>Savannakhet</td>
+  <td class='contact-info'><div>📞 +856 41 21 2623</div><div>📍 063/3 08 Khanthabouli St, Xainyaphoum, Savannakhet Province, Laos</div></td>
+  <td>未公开（无独立官网）</td>
+  <td><span class='badge badge-pharma'>药品（非本行业）</span></td>
+  </tr>
+
+
         </tbody>
+
     </table>
 
+
+
     <div class="footer">
-        <p>📌 老挝医疗器械经销商名录 · 共 27 家</p>
+
+        <p>📌 老挝医疗器械经销商名录 · 共 68 家</p>
+
         </div>
+
 </div>
+
 <script>
+
 (function(){
+
   var input=document.getElementById('custSearch');
+
   var count=document.getElementById('custCount');
+
   if(!input) return;
+
   function filter(){
+
     var q=input.value.trim().toLowerCase();
+
     var rows=document.querySelectorAll('table tbody tr');
+
     var n=0;
+
     rows.forEach(function(tr){
+
       var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+
       tr.style.display = hit ? '' : 'none';
+
       if(hit) n++;
+
     });
+
     if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+
   }
+
   input.addEventListener('input', filter);
+
 })();
+
 </script>
+
 </body>
+
 </html>
+
