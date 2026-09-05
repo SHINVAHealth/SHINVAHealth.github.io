@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰国医疗器械经销商名录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+        .badge-electro { background: #f39c12; color: #fff; }
+        .badge-ortho { background: #3498db; color: #fff; }
+        .badge-surgical { background: #2ecc71; color: #fff; }
+        .badge-ot { background: #9b59b6; color: #fff; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>泰国医疗器械经销商名录</h1>
+    <div class="stats">
+        <div class="stat-card total"><div class="num">143</div><div class="label">经销商总数</div></div><div class="stat-card"><div class="num">4</div><div class="label">电外科设备</div></div><div class="stat-card"><div class="num">1</div><div class="label">骨科动力·骨钻</div></div><div class="stat-card"><div class="num">2</div><div class="label">骨科·创伤器械</div></div><div class="stat-card"><div class="num">136</div><div class="label">综合外科设备</div></div>
+    </div>
+
+      <div class="searchbar">
+    <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off">
+    <span class="search-count" id="custCount"></span>
+  </div>
+<table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:200px;">公司名称</th>
+                <th style="width:110px;">城市</th>
+                <th style="width:230px;">联系方式（电话/WhatsApp/邮箱/地址）</th>
+                <th style="width:170px;">官网 / 店铺</th>
+                <th style="width:120px;">方向</th>
+                </tr>
+        </thead>
+        <tbody>
+<tr>
+  <td>1</td>
+  <td class='company-name'>AGS Medtech (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 +66 2 249 9249</div><div>📧 <a href="mailto:info@agsmedtech.com">info@agsmedtech.com</a></div></td>
+  <td><a href="https://www.agsmedtech.com" target="_blank">https://www.agsmedtech.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>2</td>
+  <td class='company-name'>JMF (T) Group Co., Ltd.</td>
+  <td>Pathum Thani</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.medicregister.com/JMF_T_Group_Co_Ltd" target="_blank">https://www.medicregister.com/JMF_T_Group_Co_Ltd</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>3</td>
+  <td class='company-name'>MESSCO (Medical Equipment Sale And Service Co., Ltd.)</td>
+  <td>Nonthaburi</td>
+  <td class='contact-info'><div>📞 (662) 9227025</div><div>📧 <a href="mailto:admin@messcoltd.com">admin@messcoltd.com</a></div></td>
+  <td><a href="https://messcoltd.com" target="_blank">https://messcoltd.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>4</td>
+  <td class='company-name'>SP Medical Services Co., Ltd.</td>
+  <td>Chon Buri</td>
+  <td class='contact-info'><div>📞 +669-5651-0183</div><div>📧 <a href="mailto:info@spmedicalservices.net">info@spmedicalservices.net</a></div></td>
+  <td><a href="https://spmedicalservices.com" target="_blank">https://spmedicalservices.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>5</td>
+  <td class='company-name'>Bangkok Unitrade Co., Ltd. (BUC)</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://bucmedi.com" target="_blank">https://bucmedi.com</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  </tr>
+<tr>
+  <td>6</td>
+  <td class='company-name'>MDC (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.mdcthailand.com" target="_blank">https://www.mdcthailand.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>7</td>
+  <td class='company-name'>PAMS Medical Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 +66 (0) 2102 3640</div><div>📧 <a href="mailto:info@pamsmed.com">info@pamsmed.com</a></div></td>
+  <td><a href="https://www.pamsmed.com" target="_blank">https://www.pamsmed.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>8</td>
+  <td class='company-name'>Abbott Laboratories Ltd. (Head Office)</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2697-2888</div></td>
+  <td><a href="http://www.abbott.com" target="_blank">http://www.abbott.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>9</td>
+  <td class='company-name'>Abbott Medical (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 027966555</div></td>
+  <td><a href="https://thaimed.co.th/en/member/abbott-medical-thailand-co-ltd" target="_blank">https://thaimed.co.th/en/member/abbott-medical-thailand-co-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>10</td>
+  <td class='company-name'>Accord Corporation Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 021194900</div><div>📧 <a href="mailto:accord@accordhenryschein.com">accord@accordhenryschein.com</a></div></td>
+  <td><a href="http://www.accorddental.com" target="_blank">http://www.accorddental.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>11</td>
+  <td class='company-name'>Advanced Sterilization Products (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-3084707</div></td>
+  <td><a href="https://www.asp.com" target="_blank">https://www.asp.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>12</td>
+  <td class='company-name'>Alcon Laboratories (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-26668999</div></td>
+  <td><a href="http://www.alcon.com" target="_blank">http://www.alcon.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>13</td>
+  <td class='company-name'>Amenie Technology co., ltd</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-3993217 Ext.26</div><div>📧 <a href="mailto:info@amenie-tech.com">info@amenie-tech.com</a></div></td>
+  <td><a href="https://amenietechnology.com/" target="_blank">https://amenietechnology.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>14</td>
+  <td class='company-name'>Andaman Medical (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-0749959</div></td>
+  <td><a href="https://andamanmed.com/" target="_blank">https://andamanmed.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>15</td>
+  <td class='company-name'>Askmight Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 025506869</div><div>📧 <a href="mailto:askmighthailand@gmail.com">askmighthailand@gmail.com</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/askmight-co-ltd" target="_blank">https://thaimed.co.th/en/member/askmight-co-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>16</td>
+  <td class='company-name'>B. Braun (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-6175000</div><div>📧 <a href="mailto:info.th@bbraun.com">info.th@bbraun.com</a></div></td>
+  <td><a href="http://www.bbraun.co.th" target="_blank">http://www.bbraun.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>17</td>
+  <td class='company-name'>Baker&amp;#038;McKenzie Limited.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 666 2824</div><div>📧 <a href="mailto:prim.uditananda@bakermckenzie.com">prim.uditananda@bakermckenzie.com</a></div></td>
+  <td><a href="http://www.bakermckenzie.com" target="_blank">http://www.bakermckenzie.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>18</td>
+  <td class='company-name'>Bausch &amp;#038; Lomb (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2643-7876</div></td>
+  <td><a href="http://www.bausch.com" target="_blank">http://www.bausch.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>19</td>
+  <td class='company-name'>Becton Dickinson (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2646-1800</div></td>
+  <td><a href="http://www.bd.com" target="_blank">http://www.bd.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>20</td>
+  <td class='company-name'>Berli Jucker Public Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-146-5999</div><div>📧 <a href="mailto:bjc@bjc.co.th">bjc@bjc.co.th</a></div></td>
+  <td><a href="http://www.bjc.co.th/" target="_blank">http://www.bjc.co.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>21</td>
+  <td class='company-name'>Better Life Medicare Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-438-3059</div><div>📧 <a href="mailto:support@betterlifemedicare.co.th">support@betterlifemedicare.co.th</a></div></td>
+  <td><a href="http://www.betterlifemedicare.co.th" target="_blank">http://www.betterlifemedicare.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>22</td>
+  <td class='company-name'>Bio-Rad Laboratories Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 +66 2 651 8300</div></td>
+  <td><a href="http://www.bio-rad.com" target="_blank">http://www.bio-rad.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>23</td>
+  <td class='company-name'>BioMerieux (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2661-5644</div></td>
+  <td><a href="http://www.biomerieux-asean.com" target="_blank">http://www.biomerieux-asean.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>24</td>
+  <td class='company-name'>Boston Scientific (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-0321888</div></td>
+  <td><a href="http://www.bostonscientific.com" target="_blank">http://www.bostonscientific.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>25</td>
+  <td class='company-name'>CTM Global CO.,LTD.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 089-1354135</div><div>📧 <a href="mailto:md.ctmglobal@gmail.com">md.ctmglobal@gmail.com</a></div></td>
+  <td><a href="https://www.ctmglobal.co.th" target="_blank">https://www.ctmglobal.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>26</td>
+  <td class='company-name'>CVP Medical Technology Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 038-575081-3 / 02-2497509-11</div><div>📧 <a href="mailto:info@cvpmed.co.th">info@cvpmed.co.th</a></div></td>
+  <td><a href="http://www.cvpmed.com" target="_blank">http://www.cvpmed.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>27</td>
+  <td class='company-name'>Camplas (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0384653947</div></td>
+  <td><a href="http://www.kkcam.co.jp/" target="_blank">http://www.kkcam.co.jp/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>28</td>
+  <td class='company-name'>Cardinal Health 222 (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 038640100</div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b8%84%e0%b8%b2%e0%b8%a3%e0%b9%8c%e0%b8%94%e0%b8%b4%e0%b9%81%e0%b8%99%e0%b8%a5-%e0%b9%80%e0%b8%ae%e0%b8%a5%e0%b8%97%e0%b9%8c-222-%e0%b8%9b" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b8%84%e0%b8%b2%e0%b8%a3%e0%b9%8c%e0%b8%94%e0%b8%b4%e0%b9%81%e0%b8%99%e0%b8%a5-%e0%b9%80%e0%b8%ae%e0%b8%a5%e0%b8%97%e0%b9%8c-222-%e0%b8%9b</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>29</td>
+  <td class='company-name'>Carestream Health Thailand Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 690 1410</div><div>📧 <a href="mailto:tipnapa.phu-anusornchai@carestream.com">tipnapa.phu-anusornchai@carestream.com</a></div></td>
+  <td><a href="http://www.carestream.com" target="_blank">http://www.carestream.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>30</td>
+  <td class='company-name'>Chumroen Medical Products Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-511-5699</div><div>📧 <a href="mailto:info@chumroenmedical.com">info@chumroenmedical.com</a></div></td>
+  <td><a href="http://www.chumroenmedical.com" target="_blank">http://www.chumroenmedical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>31</td>
+  <td class='company-name'>Connect Diagnostics Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2347-0109</div><div>📧 <a href="mailto:ariratb@connectdiagnostics.com">ariratb@connectdiagnostics.com</a></div></td>
+  <td><a href="https://www.connectdiagnostics.co.th" target="_blank">https://www.connectdiagnostics.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>32</td>
+  <td class='company-name'>Convatec (Thailand) Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2614-7000</div><div>📧 <a href="mailto:pramote.pungwattanapong@convatec.com">pramote.pungwattanapong@convatec.com</a></div></td>
+  <td><a href="http://www.convatec.com" target="_blank">http://www.convatec.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>33</td>
+  <td class='company-name'>Cook Medical (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2168-8630-1</div></td>
+  <td><a href="http://www.cookmedical.com" target="_blank">http://www.cookmedical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>34</td>
+  <td class='company-name'>DCH Auriga (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2257-3500</div></td>
+  <td><a href="http://www.dchauriga.com" target="_blank">http://www.dchauriga.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>35</td>
+  <td class='company-name'>DH DIAGNOSTICS (THAILAND) CO., LTD.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-207-2500</div></td>
+  <td><a href="https://www.danaher.com" target="_blank">https://www.danaher.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>36</td>
+  <td class='company-name'>DKSH (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2220-9000</div></td>
+  <td><a href="http://www.dksh.co.th" target="_blank">http://www.dksh.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>37</td>
+  <td class='company-name'>Devices Technologies (Thai) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 +66 2003 8350</div><div>📧 <a href="mailto:customers.th@devicetechnologies.asia">customers.th@devicetechnologies.asia</a></div></td>
+  <td><a href="https://devicetechnologies.asia/" target="_blank">https://devicetechnologies.asia/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>38</td>
+  <td class='company-name'>Double S Diagnostics Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7477-009 , 095-808-5838</div><div>📧 <a href="mailto:sales@doublesdiagnostics.com">sales@doublesdiagnostics.com</a></div></td>
+  <td><a href="http://www.doublesdiagnostics.com" target="_blank">http://www.doublesdiagnostics.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>39</td>
+  <td class='company-name'>Draeger Medical (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 095 2100-3</div><div>📧 <a href="mailto:chanapath.deecharoenkiat@draeger.com">chanapath.deecharoenkiat@draeger.com</a></div></td>
+  <td><a href="https://www.draeger.com/th_th/Home" target="_blank">https://www.draeger.com/th_th/Home</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>40</td>
+  <td class='company-name'>EMBECTA (THAILAND) LTD.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0614202111</div></td>
+  <td><a href="https://thaimed.co.th/en/member/embecta-thailand-ltd" target="_blank">https://thaimed.co.th/en/member/embecta-thailand-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>41</td>
+  <td class='company-name'>ENDOMED (1999) CO., LTD.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7315671-4</div></td>
+  <td><a href="https://www.endomedgroup.org/" target="_blank">https://www.endomedgroup.org/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>42</td>
+  <td class='company-name'>Edwards Lifesciences (Thailand) Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-4948080</div></td>
+  <td><a href="http://www.edwards.com" target="_blank">http://www.edwards.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>43</td>
+  <td class='company-name'>Eminence International Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0 2910 1255</div><div>📧 <a href="mailto:contact@eminence.co.th">contact@eminence.co.th</a></div></td>
+  <td><a href="https://www.eminence.co.th/" target="_blank">https://www.eminence.co.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>44</td>
+  <td class='company-name'>Enraf-Nonius Medical Equipment Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-20829971</div><div>📧 <a href="mailto:info@enraf.co.th">info@enraf.co.th</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%80%e0%b8%ad%e0%b9%87%e0%b8%99%e0%b8%a3%e0%b8%b2%e0%b8%9f-%e0%b9%82%e0%b8%99%e0%b9%80%e0%b8%99%e0%b8%b5%e0%b8%a2%e0%b8%aa-%e0%b9%80" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%80%e0%b8%ad%e0%b9%87%e0%b8%99%e0%b8%a3%e0%b8%b2%e0%b8%9f-%e0%b9%82%e0%b8%99%e0%b9%80%e0%b8%99%e0%b8%b5%e0%b8%a2%e0%b8%aa-%e0%b9%80</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>45</td>
+  <td class='company-name'>Equip Healthcare Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 319 3032 4</div><div>📧 <a href="mailto:somchai@equiphealthcare.co.th">somchai@equiphealthcare.co.th</a></div></td>
+  <td><a href="http://www.equiphealcare.co.th" target="_blank">http://www.equiphealcare.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>46</td>
+  <td class='company-name'>EssilorLuxottica Wholesale (Thailand) LTD.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 025060689</div></td>
+  <td><a href="http://www.essilor.co.th" target="_blank">http://www.essilor.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>47</td>
+  <td class='company-name'>Essity (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 512 5657-60</div><div>📧 <a href="mailto:chakriya.leelasiri@essity.com">chakriya.leelasiri@essity.com</a></div></td>
+  <td><a href="http://www.essity.com" target="_blank">http://www.essity.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>48</td>
+  <td class='company-name'>Euroscan Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 372 2245-6</div><div>📧 <a href="mailto:euroscan@ji-net.com">euroscan@ji-net.com</a></div></td>
+  <td><a href="http://www.euroscan.co.th" target="_blank">http://www.euroscan.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>49</td>
+  <td class='company-name'>FUJIFILM (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-270-6000 # 312</div><div>📧 <a href="mailto:medical_thailand@fujifilm.com">medical_thailand@fujifilm.com</a></div></td>
+  <td><a href="https://www.fujifilm.com/th/th" target="_blank">https://www.fujifilm.com/th/th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>50</td>
+  <td class='company-name'>Fastmed Innovation Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-360-5559</div><div>📧 <a href="mailto:sales@fastmed-innovation.com">sales@fastmed-innovation.com</a></div></td>
+  <td><a href="https://www.fastmed-innovation.com" target="_blank">https://www.fastmed-innovation.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>51</td>
+  <td class='company-name'>Formica Crystal Systems Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 026302115-6</div></td>
+  <td><a href="https://mss.in.th/" target="_blank">https://mss.in.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>52</td>
+  <td class='company-name'>Fresenius Medical Care Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2483-9681-5</div></td>
+  <td><a href="https://Freseniusmedicalcare.co.th" target="_blank">https://Freseniusmedicalcare.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>53</td>
+  <td class='company-name'>GALDERMA (Thailand) Limited.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 020231800</div></td>
+  <td><a href="https://www.galderma.com" target="_blank">https://www.galderma.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>54</td>
+  <td class='company-name'>GE Medical Systems (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2624-8488</div><div>📧 <a href="mailto:serviceopsaseancsc@ge.com">serviceopsaseancsc@ge.com</a></div></td>
+  <td><a href="https://www.gehealthcare.com/en-th/" target="_blank">https://www.gehealthcare.com/en-th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>55</td>
+  <td class='company-name'>Gateway Healthcare Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 187 0508-9</div></td>
+  <td><a href="http://www.gatewayhealthcare.co.th" target="_blank">http://www.gatewayhealthcare.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>56</td>
+  <td class='company-name'>Getinge (Thailand) Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2704-4388</div></td>
+  <td><a href="http://www.getinge.com" target="_blank">http://www.getinge.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>57</td>
+  <td class='company-name'>Giant Med Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 958 3629</div><div>📧 <a href="mailto:gian.med.c@gmail.com">gian.med.c@gmail.com</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/giant-med-co-ltd" target="_blank">https://thaimed.co.th/en/member/giant-med-co-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>58</td>
+  <td class='company-name'>Gize Company Limited.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-22752411</div><div>📧 <a href="mailto:sale@giss.co.th">sale@giss.co.th</a></div></td>
+  <td><a href="http://www.gize.co.th Email" target="_blank">http://www.gize.co.th Email</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>59</td>
+  <td class='company-name'>Global Medical Solutions (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2559-2740-5</div><div>📧 <a href="mailto:gmsbkk2011@gmail.com">gmsbkk2011@gmail.com</a></div></td>
+  <td><a href="http://www.globalmedicalsolutions.com" target="_blank">http://www.globalmedicalsolutions.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>60</td>
+  <td class='company-name'>Herbert (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 043 379 335-6</div><div>📧 <a href="mailto:info@herbert.co.th">info@herbert.co.th</a></div></td>
+  <td><a href="http://www.herbert.co.th" target="_blank">http://www.herbert.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>61</td>
+  <td class='company-name'>Infus Medical (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2709-4119</div></td>
+  <td><a href="http://www.infus.com" target="_blank">http://www.infus.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>62</td>
+  <td class='company-name'>Innobic (Asia) Company Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📧 <a href="mailto:benjawan.c@pttplc.com">benjawan.c@pttplc.com</a></div></td>
+  <td><a href="https://www.innobicasia.com/" target="_blank">https://www.innobicasia.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>63</td>
+  <td class='company-name'>International Healthcare Products Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-586-5555#9</div></td>
+  <td><a href="https://ihpmedlab.com" target="_blank">https://ihpmedlab.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>64</td>
+  <td class='company-name'>Intimex Hearing Aid Services Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2279-3030</div><div>📧 <a href="mailto:preecha@intimexhearing.com">preecha@intimexhearing.com</a></div></td>
+  <td><a href="http://www.intimexhearing.com" target="_blank">http://www.intimexhearing.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>65</td>
+  <td class='company-name'>Johnson &amp;#038; Johnson MedTech (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7253000</div></td>
+  <td><a href="https://www.jnj.com" target="_blank">https://www.jnj.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>66</td>
+  <td class='company-name'>Kosin Medical Supply Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2249-1986-7</div><div>📧 <a href="mailto:manager@kosinmedicalsupply.com">manager@kosinmedicalsupply.com</a></div></td>
+  <td><a href="http://www.kosinmedicalsupply.com" target="_blank">http://www.kosinmedicalsupply.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>67</td>
+  <td class='company-name'>Livanova (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 022538385</div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b8%a5%e0%b8%b5%e0%b8%a7%e0%b8%b2%e0%b9%82%e0%b8%99%e0%b8%a7%e0%b8%b2-%e0%b9%84%e0%b8%97%e0%b8%a2%e0%b9%81%e0%b8%a5%e0%b8%99%e0%b8%94" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b8%a5%e0%b8%b5%e0%b8%a7%e0%b8%b2%e0%b9%82%e0%b8%99%e0%b8%a7%e0%b8%b2-%e0%b9%84%e0%b8%97%e0%b8%a2%e0%b9%81%e0%b8%a5%e0%b8%99%e0%b8%94</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>68</td>
+  <td class='company-name'>M.E. Nikkiso Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 033-050581-4</div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%80%e0%b8%ad%e0%b9%87%e0%b8%a1-%e0%b8%ad%e0%b8%b5-%e0%b8%99%e0%b8%b4%e0%b8%84%e0%b8%84%e0%b8%b4%e0%b9%82%e0%b8%8b-%e0%b8%88%e0%b8%b3" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%80%e0%b8%ad%e0%b9%87%e0%b8%a1-%e0%b8%ad%e0%b8%b5-%e0%b8%99%e0%b8%b4%e0%b8%84%e0%b8%84%e0%b8%b4%e0%b9%82%e0%b8%8b-%e0%b8%88%e0%b8%b3</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>69</td>
+  <td class='company-name'>M.E.Meditek Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-742-4900</div></td>
+  <td><a href="http://www.meditek-thailand.com" target="_blank">http://www.meditek-thailand.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>70</td>
+  <td class='company-name'>MEDIGO 29 COMPANY LIMITED</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 097-9365-942, 081-394-6298, 080-939-5961</div><div>📧 <a href="mailto:Medigo29group@hotmail.com">Medigo29group@hotmail.com</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/medigo-29-company-limited" target="_blank">https://thaimed.co.th/en/member/medigo-29-company-limited</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>71</td>
+  <td class='company-name'>Martha Group</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 (035)881052 , 095-3728207</div><div>📧 <a href="mailto:ploy@martha-group.com">ploy@martha-group.com</a></div></td>
+  <td><a href="https://marthagroup.co.th/" target="_blank">https://marthagroup.co.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>72</td>
+  <td class='company-name'>Maxim Inter-Corporation Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2656-6670-4</div><div>📧 <a href="mailto:service@maxim.co.th">service@maxim.co.th</a></div></td>
+  <td><a href="http://www.maxim.co.th" target="_blank">http://www.maxim.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>73</td>
+  <td class='company-name'>MedLab Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 029677919</div></td>
+  <td><a href="https://www.medlab.co.th" target="_blank">https://www.medlab.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>74</td>
+  <td class='company-name'>Medfocus Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 029617981-3</div><div>📧 <a href="mailto:contact@medfocus.co.th">contact@medfocus.co.th</a></div></td>
+  <td><a href="http://www.medfocus.co.th" target="_blank">http://www.medfocus.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>75</td>
+  <td class='company-name'>Medical Equipment Sale and Service Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-9227025</div><div>📧 <a href="mailto:admin@messcoltd.com">admin@messcoltd.com</a></div></td>
+  <td><a href="http://www.messcoltd.com" target="_blank">http://www.messcoltd.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>76</td>
+  <td class='company-name'>Medisci Healthcare Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 088 416 1161</div><div>📧 <a href="mailto:yada@mediscihc.com">yada@mediscihc.com</a></div></td>
+  <td><a href="https://www.medscicenter.com/" target="_blank">https://www.medscicenter.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>77</td>
+  <td class='company-name'>Meditime Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 718 3582 3</div><div>📧 <a href="mailto:kanda.t@meditime.co.th">kanda.t@meditime.co.th</a></div></td>
+  <td><a href="https://www.meditimethailand.com" target="_blank">https://www.meditimethailand.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>78</td>
+  <td class='company-name'>Meditop Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://meditopthailand.com" target="_blank">http://meditopthailand.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>79</td>
+  <td class='company-name'>Medtronic (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2232-7400</div><div>📧 <a href="mailto:pailada.laohakul@medtronic.com">pailada.laohakul@medtronic.com</a></div></td>
+  <td><a href="http://www.medtronic.com" target="_blank">http://www.medtronic.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>80</td>
+  <td class='company-name'>Merck Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2667-8000</div><div>📧 <a href="mailto:Sarayuth.kitimlap@merckgroup.com">Sarayuth.kitimlap@merckgroup.com</a></div></td>
+  <td><a href="https://www.sigmaaldrich.com/" target="_blank">https://www.sigmaaldrich.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>81</td>
+  <td class='company-name'>Merge Companion (Thailand ) Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-9374888</div><div>📧 <a href="mailto:sirocha.k@vetproducts.co.th">sirocha.k@vetproducts.co.th</a></div></td>
+  <td><a href="https://www.vetproductsgroup.com/new-merge-companion/" target="_blank">https://www.vetproductsgroup.com/new-merge-companion/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>82</td>
+  <td class='company-name'>Mid-West Dental Group Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-21870597-9</div><div>📧 <a href="mailto:midwestdental@hotmail.com">midwestdental@hotmail.com</a></div></td>
+  <td><a href="http://www.midwestdentalgroup.com" target="_blank">http://www.midwestdentalgroup.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>83</td>
+  <td class='company-name'>Mindray Medical (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 169 8257-58</div><div>📧 <a href="mailto:parichar.p@mindray.com">parichar.p@mindray.com</a></div></td>
+  <td><a href="https://www.mindray.com" target="_blank">https://www.mindray.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>84</td>
+  <td class='company-name'>NIPRO SALES (THAILAND) CO.,LTD</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-5512000</div><div>📧 <a href="mailto:sales@niprosales.com">sales@niprosales.com</a></div></td>
+  <td><a href="https://www.niprosales.com" target="_blank">https://www.niprosales.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>85</td>
+  <td class='company-name'>Nexaso Medical Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 020175766</div><div>📧 <a href="mailto:admin@nexasomedical.com">admin@nexasomedical.com</a></div></td>
+  <td><a href="https://www.nexasomedical.com" target="_blank">https://www.nexasomedical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>86</td>
+  <td class='company-name'>Nihon Kohden (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📧 <a href="mailto:nksb_admin@nihonkohden.co.th">nksb_admin@nihonkohden.co.th</a></div></td>
+  <td><a href="https://www.nihonkohden.com" target="_blank">https://www.nihonkohden.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>87</td>
+  <td class='company-name'>Novamedic Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-21380478-80</div><div>📧 <a href="mailto:information@novamedic.co.th">information@novamedic.co.th</a></div></td>
+  <td><a href="http://www.novamedic.co.th" target="_blank">http://www.novamedic.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>88</td>
+  <td class='company-name'>Official Equipment Manufacturing Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 024205999 ต่อ889</div><div>📧 <a href="mailto:foreign_affair@official.co.th">foreign_affair@official.co.th</a></div></td>
+  <td><a href="https://www.official.co.th" target="_blank">https://www.official.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>89</td>
+  <td class='company-name'>Olympus (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-0007700</div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%82%e0%b8%ad%e0%b8%a5%e0%b8%b4%e0%b8%a1%e0%b8%9b%e0%b8%b1%e0%b8%aa-%e0%b8%9b%e0%b8%a3%e0%b8%b0%e0%b9%80%e0%b8%97%e0%b8%a8%e0%b9%84" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%82%e0%b8%ad%e0%b8%a5%e0%b8%b4%e0%b8%a1%e0%b8%9b%e0%b8%b1%e0%b8%aa-%e0%b8%9b%e0%b8%a3%e0%b8%b0%e0%b9%80%e0%b8%97%e0%b8%a8%e0%b9%84</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>90</td>
+  <td class='company-name'>Orex Trading Co., Ltd</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 029779444</div><div>📧 <a href="mailto:orex@orex.co.th">orex@orex.co.th</a></div></td>
+  <td><a href="https://www.orex.co.th" target="_blank">https://www.orex.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>91</td>
+  <td class='company-name'>Organon (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-257-2500</div></td>
+  <td><a href="https://www.organon.com" target="_blank">https://www.organon.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>92</td>
+  <td class='company-name'>Ortho-Clinical Diagnostics (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-017-0710</div></td>
+  <td><a href="https://go.orthoclinicaldiagnostics.com/global/en/home" target="_blank">https://go.orthoclinicaldiagnostics.com/global/en/home</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>93</td>
+  <td class='company-name'>Orthopeasia Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7301791</div><div>📧 <a href="mailto:contact@orthope.com">contact@orthope.com</a></div></td>
+  <td><a href="https://www.orthope.com" target="_blank">https://www.orthope.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>94</td>
+  <td class='company-name'>PCL Holding Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-8810650-57</div></td>
+  <td><a href="http://www.pclholding.com" target="_blank">http://www.pclholding.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>95</td>
+  <td class='company-name'>PNS Medical International</td>
+  <td>Pathum Thani</td>
+  <td class='contact-info'><div>📞 +662-157-3694 / +6682-198-5462</div></td>
+  <td><a href="https://www.pns-medical.com" target="_blank">https://www.pns-medical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>96</td>
+  <td class='company-name'>Pacific Healthcare (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-8812488</div></td>
+  <td><a href="https://www.phc.co.th" target="_blank">https://www.phc.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>97</td>
+  <td class='company-name'>Peters Surgical International Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2739-7364-9</div><div>📧 <a href="mailto:s.munnok@peters-surgical.com">s.munnok@peters-surgical.com</a></div></td>
+  <td><a href="http://www.peters-surgical.com" target="_blank">http://www.peters-surgical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>98</td>
+  <td class='company-name'>Philips Thailand Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://www.philips.co.th" target="_blank">http://www.philips.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>99</td>
+  <td class='company-name'>PiXAMED Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-0289439</div><div>📧 <a href="mailto:pixamed.th@gmail.com">pixamed.th@gmail.com</a></div></td>
+  <td><a href="http://www.pixamed.co.th" target="_blank">http://www.pixamed.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>100</td>
+  <td class='company-name'>QIAGEN (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-1177500</div><div>📧 <a href="mailto:thanida.roekwararak@qiagen.com">thanida.roekwararak@qiagen.com</a></div></td>
+  <td><a href="http://www.qiagen.com" target="_blank">http://www.qiagen.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>101</td>
+  <td class='company-name'>Rapid Diagnostics Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-1388812</div><div>📧 <a href="mailto:thongchai65@msn.com">thongchai65@msn.com</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%81%e0%b8%a3%e0%b8%9e%e0%b8%b4%e0%b8%94-%e0%b9%84%e0%b8%94%e0%b9%81%e0%b8%ad%e0%b8%81%e0%b8%99%e0%b8%ad%e0%b8%aa%e0%b8%97%e0%b8%b4%e0%b8%81" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%81%e0%b8%a3%e0%b8%9e%e0%b8%b4%e0%b8%94-%e0%b9%84%e0%b8%94%e0%b9%81%e0%b8%ad%e0%b8%81%e0%b8%99%e0%b8%ad%e0%b8%aa%e0%b8%97%e0%b8%b4%e0%b8%81</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>102</td>
+  <td class='company-name'>Reckitt Benckiser (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7251000</div></td>
+  <td><a href="https://www.reckitt.com/offices/thailand/" target="_blank">https://www.reckitt.com/offices/thailand/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>103</td>
+  <td class='company-name'>Rehab Medical Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-5592429 - 31</div></td>
+  <td><a href="https://thaimed.co.th/en/member/rehab-medical-co-ltd" target="_blank">https://thaimed.co.th/en/member/rehab-medical-co-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>104</td>
+  <td class='company-name'>Roche Diagnostics (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-791-2200</div><div>📧 <a href="mailto:pichetpong.srisuwankul@roche.com">pichetpong.srisuwankul@roche.com</a></div></td>
+  <td><a href="http://www.rochediagnostics.co.th" target="_blank">http://www.rochediagnostics.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>105</td>
+  <td class='company-name'>S.D. Tantavade 1988 Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-952-4815-18</div><div>📧 <a href="mailto:apipone1@sdt1988.com">apipone1@sdt1988.com</a></div></td>
+  <td><a href="http://www.sdt1988.com" target="_blank">http://www.sdt1988.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>106</td>
+  <td class='company-name'>S.K. Polymer Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 892 1092</div><div>📧 <a href="mailto:peerut@skthai.com">peerut@skthai.com</a></div></td>
+  <td><a href="https://www.skpolymer.com" target="_blank">https://www.skpolymer.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>107</td>
+  <td class='company-name'>Samaphan Health Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 020182100</div><div>📧 <a href="mailto:mys@samh.co.th">mys@samh.co.th</a></div></td>
+  <td><a href="https://www.samh.co.th/" target="_blank">https://www.samh.co.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>108</td>
+  <td class='company-name'>SiS Medical Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02 5296430-1</div><div>📧 <a href="mailto:y.sirimanee@mahe-med.co.th">y.sirimanee@mahe-med.co.th</a></div></td>
+  <td><a href="http://mahe-med.co.th/" target="_blank">http://mahe-med.co.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>109</td>
+  <td class='company-name'>Siemens Healthcare Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2079-1140</div></td>
+  <td><a href="https://www.siemens-healthineers.com/en-th" target="_blank">https://www.siemens-healthineers.com/en-th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>110</td>
+  <td class='company-name'>Skipa Med Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-165-6120-23</div><div>📧 <a href="mailto:skipa@skipagroup.com">skipa@skipagroup.com</a></div></td>
+  <td><a href="http://www.skipagroup.com/" target="_blank">http://www.skipagroup.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>111</td>
+  <td class='company-name'>Smart Technology and Products Co.,Ltd</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-082-9971</div><div>📧 <a href="mailto:info@stpc.co.th">info@stpc.co.th</a></div></td>
+  <td><a href="http://stpc.co.th/" target="_blank">http://stpc.co.th/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>112</td>
+  <td class='company-name'>Smith &amp;#038; Nephew Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2116-5581</div></td>
+  <td><a href="http://www.smith-nephew.com" target="_blank">http://www.smith-nephew.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>113</td>
+  <td class='company-name'>Solventum (Thailand) Limited.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0845554044</div></td>
+  <td><a href="https://www.solventum.com" target="_blank">https://www.solventum.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>114</td>
+  <td class='company-name'>Straumann Group (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-1091238</div></td>
+  <td><a href="https://www.straumanngroup.com" target="_blank">https://www.straumanngroup.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>115</td>
+  <td class='company-name'>Stryker (Thailand) Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2937-1189</div></td>
+  <td><a href="http://www.stryker.com" target="_blank">http://www.stryker.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>116</td>
+  <td class='company-name'>Summit Healthcare Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2961-0909</div><div>📧 <a href="mailto:summit_hc@hotmail.com">summit_hc@hotmail.com</a></div></td>
+  <td><a href="http://www.summit-hc.com" target="_blank">http://www.summit-hc.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>117</td>
+  <td class='company-name'>Surgical Instrument (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2741-4662-3, 0-2741-4617</div><div>📧 <a href="mailto:mail@s-i-t-l.com">mail@s-i-t-l.com</a></div></td>
+  <td><a href="http://www.s-i-t-l.com" target="_blank">http://www.s-i-t-l.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>118</td>
+  <td class='company-name'>Sysmex (Thailand) Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-0322536</div><div>📧 <a href="mailto:sysmex@sysmex.co.th">sysmex@sysmex.co.th</a></div></td>
+  <td><a href="http://www.sysmex.co.th" target="_blank">http://www.sysmex.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>119</td>
+  <td class='company-name'>TDD Trading Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 091-596-5966</div></td>
+  <td><a href="https://thaimed.co.th/en/member/tdd-trading-co-ltd" target="_blank">https://thaimed.co.th/en/member/tdd-trading-co-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>120</td>
+  <td class='company-name'>TMGI Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-3936953</div><div>📧 <a href="mailto:info@t-mgi.com">info@t-mgi.com</a></div></td>
+  <td><a href="http://www.tmgi.co.th" target="_blank">http://www.tmgi.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>121</td>
+  <td class='company-name'>TRB Chemedica (Thailand) Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2264-2010-4</div><div>📧 <a href="mailto:info@trbchemedica.co.th">info@trbchemedica.co.th</a></div></td>
+  <td><a href="http://www.trbchemedica.com" target="_blank">http://www.trbchemedica.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>122</td>
+  <td class='company-name'>Taiki Healthcare Co., ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 063-2056964</div><div>📧 <a href="mailto:purchasing@taikithailand.com">purchasing@taikithailand.com</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/taiki-healthcare-co-ltd" target="_blank">https://thaimed.co.th/en/member/taiki-healthcare-co-ltd</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>123</td>
+  <td class='company-name'>Taise Group Co., LTD</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 028771788</div></td>
+  <td><a href="https://www.taisegroup.com" target="_blank">https://www.taisegroup.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>124</td>
+  <td class='company-name'>Techno Medical Public Company Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2933-6112, 0-2933-6119</div><div>📧 <a href="mailto:soonthree@technomedical.co.th">soonthree@technomedical.co.th</a></div></td>
+  <td><a href="https://Website	http://www.technomedical.co.th" target="_blank">https://Website	http://www.technomedical.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>125</td>
+  <td class='company-name'>Teo Hong Silom Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2312-0045-69</div><div>📧 <a href="mailto:med@teohong.com">med@teohong.com</a></div></td>
+  <td><a href="http://www.teohong.com" target="_blank">http://www.teohong.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>126</td>
+  <td class='company-name'>Thai Hospital Products Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02674 9700</div><div>📧 <a href="mailto:tmarket1@titgroup.com">tmarket1@titgroup.com</a></div></td>
+  <td><a href="https://www.thaihospitalproducts.com" target="_blank">https://www.thaihospitalproducts.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>127</td>
+  <td class='company-name'>Thai Medical Engineer Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2719-9142-50</div><div>📧 <a href="mailto:tme@loxinfo.co.th">tme@loxinfo.co.th</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%84%e0%b8%97%e0%b8%a2%e0%b9%80%e0%b8%a1%e0%b8%94%e0%b8%b4%e0%b8%84%e0%b8%ad%e0%b8%a5%e0%b9%80%e0%b8%ad%e0%b8%99%e0%b8%88%e0%b8%b4%e0%b9%80" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%84%e0%b8%97%e0%b8%a2%e0%b9%80%e0%b8%a1%e0%b8%94%e0%b8%b4%e0%b8%84%e0%b8%ad%e0%b8%a5%e0%b9%80%e0%b8%ad%e0%b8%99%e0%b8%88%e0%b8%b4%e0%b9%80</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>128</td>
+  <td class='company-name'>Thai Otsuka Pharmaceutical Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-401-9560</div></td>
+  <td><a href="http://www.thai-otsuka.com" target="_blank">http://www.thai-otsuka.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>129</td>
+  <td class='company-name'>Thai Parkerizing Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-3246600</div><div>📧 <a href="mailto:mkt.mg@thaiparker.co.th">mkt.mg@thaiparker.co.th</a></div></td>
+  <td><a href="https://www.thaiparker.co.th" target="_blank">https://www.thaiparker.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>130</td>
+  <td class='company-name'>Thaicare Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 +66 2 354 2603-4</div><div>📧 <a href="mailto:info@thaicare.co.th">info@thaicare.co.th</a></div></td>
+  <td><a href="https://www.thaicare.co.th" target="_blank">https://www.thaicare.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>131</td>
+  <td class='company-name'>Thanes Development Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2791-4500</div><div>📧 <a href="mailto:thanes@thanesgroup.com">thanes@thanesgroup.com</a></div></td>
+  <td><a href="http://www.thanesgroup.com" target="_blank">http://www.thanesgroup.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>132</td>
+  <td class='company-name'>Thermo Fisher Scientific (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7147835-6</div></td>
+  <td><a href="https://www.thermofisher.com/th/en/home.html" target="_blank">https://www.thermofisher.com/th/en/home.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>133</td>
+  <td class='company-name'>Tigermed (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0806569416</div></td>
+  <td><a href="https://www.tigermedgrp.com/en/global-locations" target="_blank">https://www.tigermedgrp.com/en/global-locations</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>134</td>
+  <td class='company-name'>Transmedic(Thailand) Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-2550405-8</div></td>
+  <td><a href="http://www.transmedicgroup.com/" target="_blank">http://www.transmedicgroup.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>135</td>
+  <td class='company-name'>Unitech Healthcare Co., Ltd.</td>
+  <td>Samut Prakan</td>
+  <td class='contact-info'><div>📞 02-748-3535</div><div>📧 <a href="mailto:sales@unitechhealthcare.com">sales@unitechhealthcare.com</a></div></td>
+  <td><a href="http://www.unitechhealthcare.com" target="_blank">http://www.unitechhealthcare.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>136</td>
+  <td class='company-name'>Valor Health Co.,Ltd</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-6785150</div><div>📧 <a href="mailto:valorhealth@valorhealth.co.th">valorhealth@valorhealth.co.th</a></div></td>
+  <td><a href="https://www.valorhealthglobal.com" target="_blank">https://www.valorhealthglobal.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>137</td>
+  <td class='company-name'>Vantive Healthcare (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2667-0505</div></td>
+  <td><a href="https://www.vantive.com/" target="_blank">https://www.vantive.com/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>138</td>
+  <td class='company-name'>Vascular Innovations Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2598-2361</div><div>📧 <a href="mailto:Info@vascularinnovations.com">Info@vascularinnovations.com</a></div></td>
+  <td><a href="http://www.vascularinnovations.com" target="_blank">http://www.vascularinnovations.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>139</td>
+  <td class='company-name'>Viktas Aeternum Co.,LTD</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-000-5959</div><div>📧 <a href="mailto:Viktasaeternum@gmail.com">Viktasaeternum@gmail.com</a></div></td>
+  <td><a href="https://www.viktas.com" target="_blank">https://www.viktas.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>140</td>
+  <td class='company-name'>Winnergy Medical Public Company Limited</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-7250888</div><div>📧 <a href="mailto:interco@winnergy.co.th">interco@winnergy.co.th</a></div></td>
+  <td><a href="http://www.winnergymedical.co.th" target="_blank">http://www.winnergymedical.co.th</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>141</td>
+  <td class='company-name'>Worldco Co.,Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 02-4340130-5</div><div>📧 <a href="mailto:worldco@truemail.co.th">worldco@truemail.co.th</a></div></td>
+  <td><a href="https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%80%e0%b8%a7%e0%b8%b4%e0%b8%a5%e0%b8%94%e0%b9%8c%e0%b9%82%e0%b8%81%e0%b9%89-%e0%b8%88%e0%b8%b3%e0%b8%81%e0%b8%b1%e0%b8%94" target="_blank">https://thaimed.co.th/en/member/%e0%b8%9a%e0%b8%a3%e0%b8%b4%e0%b8%a9%e0%b8%b1%e0%b8%97-%e0%b9%80%e0%b8%a7%e0%b8%b4%e0%b8%a5%e0%b8%94%e0%b9%8c%e0%b9%82%e0%b8%81%e0%b9%89-%e0%b8%88%e0%b8%b3%e0%b8%81%e0%b8%b1%e0%b8%94</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>142</td>
+  <td class='company-name'>Zimmer Biomet (Thailand) Co., Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2638-1900</div></td>
+  <td><a href="http://www.zimmerbiomet.com" target="_blank">http://www.zimmerbiomet.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>143</td>
+  <td class='company-name'>Zuellig Pharma Ltd.</td>
+  <td>Bangkok</td>
+  <td class='contact-info'><div>📞 0-2656-9800</div><div>📧 <a href="mailto:laksamanc@zuelligpharma.com">laksamanc@zuelligpharma.com</a></div></td>
+  <td><a href="http://www.zuelligpharma.com" target="_blank">http://www.zuelligpharma.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>📌 泰国医疗器械经销商名录 · 共 143 家</p>
+        </div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+</body>
+</html>
