@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>越南医疗器械经销商名录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+        .badge-electro { background: #f39c12; color: #fff; }
+        .badge-ortho { background: #3498db; color: #fff; }
+        .badge-surgical { background: #2ecc71; color: #fff; }
+        .badge-ot { background: #9b59b6; color: #fff; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>越南医疗器械经销商名录</h1>
+    <div class="stats">
+        <div class="stat-card total"><div class="num">138</div><div class="label">经销商总数</div></div><div class="stat-card"><div class="num">10</div><div class="label">电外科设备</div></div><div class="stat-card"><div class="num">5</div><div class="label">骨科动力·骨钻</div></div><div class="stat-card"><div class="num">77</div><div class="label">骨科·创伤器械</div></div><div class="stat-card"><div class="num">46</div><div class="label">综合外科设备</div></div>
+    </div>
+
+      <div class="searchbar">
+    <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off">
+    <span class="search-count" id="custCount"></span>
+  </div>
+<table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:200px;">公司名称</th>
+                <th style="width:110px;">城市</th>
+                <th style="width:230px;">联系方式（电话/WhatsApp/邮箱/地址）</th>
+                <th style="width:170px;">官网 / 店铺</th>
+                <th style="width:120px;">方向</th>
+                </tr>
+        </thead>
+        <tbody>
+<tr>
+  <td>1</td>
+  <td class='company-name'>Hoang Long Equipment Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 837103456</div><div>📧 <a href="mailto:hoanglong@hoanglongmed.com">hoanglong@hoanglongmed.com</a></div></td>
+  <td><a href="https://www.hoanglongmed.com" target="_blank">https://www.hoanglongmed.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>2</td>
+  <td class='company-name'>Huong Son Medical Equipment Company Limited</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 62978333</div><div>📧 <a href="mailto:info.hs64@gmail.com">info.hs64@gmail.com</a></div></td>
+  <td><a href="https://www.tbythuongson.com" target="_blank">https://www.tbythuongson.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>3</td>
+  <td class='company-name'>MT Med (MT Medical Equipment)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://mtmed.com.vn" target="_blank">https://mtmed.com.vn</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>4</td>
+  <td class='company-name'>Meditop International JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 35402732 / +84 963923329</div><div>📧 <a href="mailto:meditopjsc@gmail.com">meditopjsc@gmail.com</a></div></td>
+  <td><a href="https://www.meditop.com.vn" target="_blank">https://www.meditop.com.vn</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>5</td>
+  <td class='company-name'>Nguyen Tung Medical Equipment Co., Ltd (NGUYEN TUNG MEDICAL EQUIPMENT COMPANY LTD)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📧 <a href="mailto:nguyentungmed@gmail.com">nguyentungmed@gmail.com</a></div></td>
+  <td><a href="https://www.nguyentungmed.com.vn" target="_blank">https://www.nguyentungmed.com.vn</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>6</td>
+  <td class='company-name'>Tat Thanh Medical Equipment Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.medicalsdir.com/listing/tat-thanh-medical-equipment-co-ltd" target="_blank">https://www.medicalsdir.com/listing/tat-thanh-medical-equipment-co-ltd</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>7</td>
+  <td class='company-name'>Thanh An Technology Development And Trading Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 35595588</div><div>📧 <a href="mailto:info@thanhanmedical.com.vn">info@thanhanmedical.com.vn</a></div></td>
+  <td><a href="https://www.thanhanmedical.com.vn" target="_blank">https://www.thanhanmedical.com.vn</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>8</td>
+  <td class='company-name'>Thu Thuy Medical Equipment And Supplies Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84-24 35740537</div><div>📧 <a href="mailto:tbytthuthuy@gmail.com">tbytthuthuy@gmail.com</a></div></td>
+  <td><a href="https://thietbiytethuthuy.com.vn" target="_blank">https://thietbiytethuthuy.com.vn</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>9</td>
+  <td class='company-name'>VMED Group Joint Stock Company</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📧 <a href="mailto:anh.nguyen1@vmedgroup.com">anh.nguyen1@vmedgroup.com</a></div></td>
+  <td><a href="https://vmedgroup.com" target="_blank">https://vmedgroup.com</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>10</td>
+  <td class='company-name'>Vietnamgroup (Medtronic distributor)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vietnamgroup.vn/healthcare" target="_blank">https://vietnamgroup.vn/healthcare</a></td>
+  <td><span class='badge badge-electro'>电外科设备</span></td>
+  </tr>
+<tr>
+  <td>11</td>
+  <td class='company-name'>Hai Duong Technology Co.,Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.haiduongtech.com.vn" target="_blank">https://www.haiduongtech.com.vn</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  </tr>
+<tr>
+  <td>12</td>
+  <td class='company-name'>Hoang Nam Import Export Company Limited</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 37542403</div></td>
+  <td><a href="https://www.hoang5med.com.vn" target="_blank">https://www.hoang5med.com.vn</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  </tr>
+<tr>
+  <td>13</td>
+  <td class='company-name'>Thanh Phuong Co., Ltd.</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 62646751</div><div>📧 <a href="mailto:tpc9813@gmail.com">tpc9813@gmail.com</a></div></td>
+  <td><a href="https://www.thanhphuongco.com.vn" target="_blank">https://www.thanhphuongco.com.vn</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  </tr>
+<tr>
+  <td>14</td>
+  <td class='company-name'>VIETSING Medical Devices Joint Stock Company (CÔNG TY CỔ PHẦN THIẾT BỊ Y TẾ VIỆT SING)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 (84.4) 3556 3418</div><div>📧 <a href="mailto:tuongnt@vietsingmedical.com">tuongnt@vietsingmedical.com</a></div></td>
+  <td><a href="https://dauthau.asia/en/businesslistings/detail/VIETSING-MEDICAL-DEVICES-JOINT-STOCK-COMPANY-76429/" target="_blank">https://dauthau.asia/en/businesslistings/detail/VIETSING-MEDICAL-DEVICES-JOINT-STOCK-COMPANY-76429/</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  </tr>
+<tr>
+  <td>15</td>
+  <td class='company-name'>WEX Medical</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="http://www.wexmedical.com/local/total-knee-replacement-tkr-manufacturer-supplier-in-ho-chi-minh-city" target="_blank">http://www.wexmedical.com/local/total-knee-replacement-tkr-manufacturer-supplier-in-ho-chi-minh-city</a></td>
+  <td><span class='badge badge-ortho'>骨科动力·骨钻</span></td>
+  </tr>
+<tr>
+  <td>16</td>
+  <td class='company-name'>2A Medical Equipment Co., Ltd (2A MEDICAL EQUIPMENT COMPANY LIMITED)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html" target="_blank">https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>17</td>
+  <td class='company-name'>A &amp; I Vietnam Medical Equipment Co., Ltd</td>
+  <td>Ba Ria - Vung Tau</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>18</td>
+  <td class='company-name'>An Binh Medical Equipment Investment &amp; Development Co., Ltd (AN BINH MEDICAL EQUIPMENT INVESTMENT AND DEVELOPMENT COMPANY LIMITED)</td>
+  <td>Kien Giang</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/result/awarded-contractor/procurement-of-specialized-medical-equipment-used-in-orthopedic-surgery-2705188.html" target="_blank">https://dauthau.asia/en/result/awarded-contractor/procurement-of-specialized-medical-equipment-used-in-orthopedic-surgery-2705188.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>19</td>
+  <td class='company-name'>An Phat Medical Equipment Co., Ltd</td>
+  <td>Nam Dinh</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>20</td>
+  <td class='company-name'>Anh Em Investment Development Joint Stock Company</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.volza.com/p/surgical-implants/buyers/buyers-in-vietnam/hsn-code-90184900/" target="_blank">https://www.volza.com/p/surgical-implants/buyers/buyers-in-vietnam/hsn-code-90184900/</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>21</td>
+  <td class='company-name'>B.M.S Medical Equipment Co., Ltd (B.M.S MEDICAL EQUIPMENT COMPANY LIMITED)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html" target="_blank">https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>22</td>
+  <td class='company-name'>Benh Vien Chinh Hinh Da Nang (Orthopedic Hospital Da Nang)</td>
+  <td>Da Nang</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>23</td>
+  <td class='company-name'>Branch of Schmidt VietNam (NTNN) JSC</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>24</td>
+  <td class='company-name'>Cao Minh Medical Equipment Service Trading Co., Ltd (CAO MINH MEDICAL EQUIPMENT SERVICE TRADING COMPANY LIMITED)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-number-5-orthopedic-surgery-group-IB2600079868-00.html" target="_blank">https://dauthau.asia/en/openresult/package-number-5-orthopedic-surgery-group-IB2600079868-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>25</td>
+  <td class='company-name'>Carnation Medical Equipment And Trading JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 4 3 576 3223 / +84 4 3576 3243</div></td>
+  <td><a href="https://www.carnation.com.vn" target="_blank">https://www.carnation.com.vn</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>26</td>
+  <td class='company-name'>Chinh Hinh Phuc Hoi Chuc Nang Center</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>27</td>
+  <td class='company-name'>CÔNG TY CỔ PHẦN TRANG THIẾT BỊ Y TẾ ĐẠI DƯƠNG (Dai Duong Medical Equipment JSC)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide" target="_blank">https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>28</td>
+  <td class='company-name'>DKSH Vietnam (DKSH Healthcare Vietnam)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 3910 5555 (Bitexco Financial Tower, HCMC)</div><div>📧 <a href="mailto:vietnam@dksh.com">vietnam@dksh.com</a></div></td>
+  <td><a href="https://www.dksh.com/vn-en/home/healthcare/medical-devices" target="_blank">https://www.dksh.com/vn-en/home/healthcare/medical-devices</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>29</td>
+  <td class='company-name'>DONG KUK Viet Nam Co., Ltd</td>
+  <td>Phu Tho</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>30</td>
+  <td class='company-name'>Dai Duc Trading Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>31</td>
+  <td class='company-name'>Dong Duong Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>32</td>
+  <td class='company-name'>Dong Loi Medical Equipment Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>33</td>
+  <td class='company-name'>Duc Hai Medical Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>34</td>
+  <td class='company-name'>Duc Minh Long Trade Co., Ltd (Duc Minh Long Trade Company Limited)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 36205008</div><div>📧 <a href="mailto:longthu1707@gmail.com">longthu1707@gmail.com</a></div></td>
+  <td><a href="https://www.ducminhlong.com" target="_blank">https://www.ducminhlong.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>35</td>
+  <td class='company-name'>Duong Sinh Medical Equipment JSC (DUONG SINH MEDICAL EQUIPMENT COMPANY JOINT STOCK)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/shopping-for-medical-supplies-used-in-joint-replacement-surgery-for-patients-in-12-months-of-2025-2026-of-IB2500267828-00.html" target="_blank">https://dauthau.asia/en/openresult/shopping-for-medical-supplies-used-in-joint-replacement-surgery-for-patients-in-12-months-of-2025-2026-of-IB2500267828-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>36</td>
+  <td class='company-name'>Duy Anh Trading Pharmacy Co., Ltd (CÔNG TY TNHH THƯƠNG MẠI DƯỢC PHẨM DUY ANH)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-number-5-orthopedic-surgery-group-IB2600079868-00.html" target="_blank">https://dauthau.asia/en/openresult/package-number-5-orthopedic-surgery-group-IB2600079868-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>37</td>
+  <td class='company-name'>Forte Grow Medical (Vietnam) Co., Ltd</td>
+  <td>Binh Duong</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>38</td>
+  <td class='company-name'>Getz Healthcare Vietnam</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>39</td>
+  <td class='company-name'>Gia Khanh Hung Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>40</td>
+  <td class='company-name'>Greencare Technology Development JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://greencare.vn" target="_blank">https://greencare.vn</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>41</td>
+  <td class='company-name'>H.B Medical</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>42</td>
+  <td class='company-name'>HAI AU MEDTECH JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://haiaumedical.com/home.html" target="_blank">https://haiaumedical.com/home.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>43</td>
+  <td class='company-name'>Hai Thuc Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>44</td>
+  <td class='company-name'>Hameco Hung Yen Co., Ltd</td>
+  <td>Hung Yen</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>45</td>
+  <td class='company-name'>Hao Nam Medical Equipment Service Trading Co., Ltd (CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ HÀO NAM)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-number-5-orthopedic-surgery-group-IB2600079868-00.html" target="_blank">https://dauthau.asia/en/openresult/package-number-5-orthopedic-surgery-group-IB2600079868-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>46</td>
+  <td class='company-name'>Ho Chi Minh City Medical Technical Services JSC</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>47</td>
+  <td class='company-name'>Hoa Binh Medical Equipment Co., Ltd</td>
+  <td>Hung Yen</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>48</td>
+  <td class='company-name'>Hoang Loc M.E Medical Equipment Co., Ltd (HOANG LOC M.E MEDICAL EQUIPMENT COMPANY LIMITED)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html" target="_blank">https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>49</td>
+  <td class='company-name'>Hong Ha Co-operative</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>50</td>
+  <td class='company-name'>Hong Ha Medical Equipment Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>51</td>
+  <td class='company-name'>IMI Medical (International Medical Commerce &amp; Investment JSC)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 38 26 36 46</div><div>📧 <a href="mailto:emily@imimedical.vn">emily@imimedical.vn</a></div></td>
+  <td><a href="https://www.medicalsdir.com/listing/imi-medical" target="_blank">https://www.medicalsdir.com/listing/imi-medical</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>52</td>
+  <td class='company-name'>KANEKA PHARMA VietNam Co., Ltd</td>
+  <td>Binh Duong</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>53</td>
+  <td class='company-name'>KAOS VietNam Co., Ltd</td>
+  <td>Thai Binh</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>54</td>
+  <td class='company-name'>Ka Chi Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>55</td>
+  <td class='company-name'>Kao VietNam Co., Ltd</td>
+  <td>Bac Ninh</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>56</td>
+  <td class='company-name'>Khai Ca Co., Ltd (KHAI CA COMPANY LIMITED)</td>
+  <td>未公开</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html" target="_blank">https://dauthau.asia/en/result/awarded-contractor/bidding-package-no-37-2025-vt-supply-of-medical-equipment-consumable-medical-supplies-specializing-in-2697652.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>57</td>
+  <td class='company-name'>Khang Nguyen Medical Equipment JSC</td>
+  <td>Lang Son</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>58</td>
+  <td class='company-name'>Kien Cuong Medical Equipment Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.sourceready.com/supplier/detail/kien-cuong-medical-equipment-co-ltd" target="_blank">https://www.sourceready.com/supplier/detail/kien-cuong-medical-equipment-co-ltd</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>59</td>
+  <td class='company-name'>Lagi Medical Equipment Corporation</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.sourceready.com/supplier/detail/lagi-medequip-corporation" target="_blank">https://www.sourceready.com/supplier/detail/lagi-medequip-corporation</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>60</td>
+  <td class='company-name'>Le Loi Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>61</td>
+  <td class='company-name'>Lien Nha Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38632570</div><div>📧 <a href="mailto:le-xuan-vinh@hcm.vnn.vn">le-xuan-vinh@hcm.vnn.vn</a></div></td>
+  <td><a href="https://www.liennha.vn" target="_blank">https://www.liennha.vn</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>62</td>
+  <td class='company-name'>MEDENT Medical Equipment Co., Ltd (CÔNG TY TNHH THIẾT BỊ Y TẾ MEDENT)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 3849 4060</div></td>
+  <td><a href="https://medent.vn/?p=13634" target="_blank">https://medent.vn/?p=13634</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>63</td>
+  <td class='company-name'>Medical Tools Co., Ltd</td>
+  <td>Long An</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>64</td>
+  <td class='company-name'>Medikit Vietnam Co., Ltd</td>
+  <td>Hai Phong</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>65</td>
+  <td class='company-name'>Mediplast Medical Plastic JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>66</td>
+  <td class='company-name'>Meditronic JSC (MEDITRONIC JOINT STOCK COMPANY)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/procurement-of-water-lines-used-in-endoscopic-spine-surgery-for-inpatients-for-03-months-at-da-nang-IB2400406412-00.html" target="_blank">https://dauthau.asia/en/openresult/procurement-of-water-lines-used-in-endoscopic-spine-surgery-for-inpatients-for-03-months-at-da-nang-IB2400406412-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>67</td>
+  <td class='company-name'>Nam Tien Thanh Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>68</td>
+  <td class='company-name'>Nikkiso VietNam Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>69</td>
+  <td class='company-name'>OMIGA Co., Ltd</td>
+  <td>Hung Yen</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>70</td>
+  <td class='company-name'>PMAS Co., Ltd</td>
+  <td>Binh Duong</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>71</td>
+  <td class='company-name'>PVAGROUP (PVA Group JSC)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://pvagroup.com.vn/en/orthopedic/" target="_blank">https://pvagroup.com.vn/en/orthopedic/</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>72</td>
+  <td class='company-name'>Pha Na Corporation</td>
+  <td>Long An</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>73</td>
+  <td class='company-name'>Phu Ngo Nguyen Co., Ltd (PHU NGO NGUYEN COMPANY LIMITED)</td>
+  <td>Da Nang</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/shopping-for-medical-supplies-used-in-joint-replacement-surgery-for-patients-in-12-months-of-2025-2026-of-IB2500267828-00.html" target="_blank">https://dauthau.asia/en/openresult/shopping-for-medical-supplies-used-in-joint-replacement-surgery-for-patients-in-12-months-of-2025-2026-of-IB2500267828-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>74</td>
+  <td class='company-name'>Phuc Dai Hung Co., Ltd</td>
+  <td>Quang Ninh</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>75</td>
+  <td class='company-name'>REMINGTON SROUFE INTERNATIONAL Co., Ltd</td>
+  <td>Binh Duong</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>76</td>
+  <td class='company-name'>Sun Medical Viet Nam Trading International Co., Ltd.</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.medicalsdir.com/listing/sun-medical-viet-nam-trading-international-company-limited" target="_blank">https://www.medicalsdir.com/listing/sun-medical-viet-nam-trading-international-company-limited</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>77</td>
+  <td class='company-name'>TNT Medical</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>78</td>
+  <td class='company-name'>TRIDENTA Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>79</td>
+  <td class='company-name'>TVT Medical Equipment Co., Ltd (TVT MEDICAL EQUIPMENT COMPANY LIMITED)</td>
+  <td>未公开</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/shopping-for-medical-supplies-used-in-joint-replacement-surgery-for-patients-in-12-months-of-2025-2026-of-IB2500267828-00.html" target="_blank">https://dauthau.asia/en/openresult/shopping-for-medical-supplies-used-in-joint-replacement-surgery-for-patients-in-12-months-of-2025-2026-of-IB2500267828-00.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>80</td>
+  <td class='company-name'>Tam Viet Medical JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>81</td>
+  <td class='company-name'>Tan Son Trading And Production Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>82</td>
+  <td class='company-name'>Thien My Technology Services And Equipment Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>83</td>
+  <td class='company-name'>Tin Nha Co., Ltd (Viet Nha Medical Equipment Co., Ltd / Vident)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 35151012</div></td>
+  <td><a href="https://yellowpages.com.vn/tagclass/20077160/vietnam-dental-supplies.html" target="_blank">https://yellowpages.com.vn/tagclass/20077160/vietnam-dental-supplies.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>84</td>
+  <td class='company-name'>Trang Dong Duong Medical Equipment Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>85</td>
+  <td class='company-name'>Trang Thi Medical JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://trangthimedical.com.vn/" target="_blank">https://trangthimedical.com.vn/</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>86</td>
+  <td class='company-name'>Trang Thien Long Medical Equipment</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>87</td>
+  <td class='company-name'>Tuan Viet Trading And Production Co., Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>88</td>
+  <td class='company-name'>Vat Tu Y Te Vinh Phuc (Vinh Phuc Medical)</td>
+  <td>Vinh Phuc</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>89</td>
+  <td class='company-name'>Viet Nam - Korea Medical Corporation</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>90</td>
+  <td class='company-name'>VietNam AIECO Co., Ltd</td>
+  <td>Da Nang</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>91</td>
+  <td class='company-name'>Vu Van De</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vncommerce.com/en/company/C32502" target="_blank">https://vncommerce.com/en/company/C32502</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>92</td>
+  <td class='company-name'>idsMED Vietnam (IDS Medical Systems Vietnam Ltd.)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 3830 3072 (HCMC) / +84 24 3388 0808 (Hanoi)</div><div>📧 <a href="mailto:InfoVNM@idsMed.com">InfoVNM@idsMed.com</a></div></td>
+  <td><a href="https://www.idsmed.com/vn-id/regional.html" target="_blank">https://www.idsmed.com/vn-id/regional.html</a></td>
+  <td><span class='badge badge-surgical'>骨科·创伤器械</span></td>
+  </tr>
+<tr>
+  <td>93</td>
+  <td class='company-name'>AV Biotech Joint Stock Company</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38297879</div><div>📧 <a href="mailto:nhatd@av-biotech.vn">nhatd@av-biotech.vn</a></div></td>
+  <td><a href="https://www.sourceready.com/supplier/detail/av-biotech-jsc" target="_blank">https://www.sourceready.com/supplier/detail/av-biotech-jsc</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>94</td>
+  <td class='company-name'>An Thinh Medical Equipment Company Limited</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38385065</div><div>📧 <a href="mailto:anthinhmedical@vnn.vn">anthinhmedical@vnn.vn</a></div></td>
+  <td><a href="https://yellowpages.com.vn/listings/1033863/an-thinh-medical-equipment-company-limited.html" target="_blank">https://yellowpages.com.vn/listings/1033863/an-thinh-medical-equipment-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>95</td>
+  <td class='company-name'>Auviet Medical Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 54068606</div></td>
+  <td><a href="https://www.auviet-medical.com" target="_blank">https://www.auviet-medical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>96</td>
+  <td class='company-name'>BMS Medical Technology JSC (BMS MEDICAL TECHNOLOGY JOINT STOCK COMPANY)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-3-procurement-of-shared-arthroscopic-surgery-supplies-IB2600220060-00.html" target="_blank">https://dauthau.asia/en/openresult/package-3-procurement-of-shared-arthroscopic-surgery-supplies-IB2600220060-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>97</td>
+  <td class='company-name'>Bach Viet Technical Trading Service Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 35265986</div></td>
+  <td><a href="https://www.yellowpages.com.vn/tagclass/70484624/vietnam-surgical-equipment-for-sale.html" target="_blank">https://www.yellowpages.com.vn/tagclass/70484624/vietnam-surgical-equipment-for-sale.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>98</td>
+  <td class='company-name'>Central Pharmaceutical CPC1 JSC (CÔNG TY CỔ PHẦN DƯỢC TRUNG ƯƠNG CPC1)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/goods-procurement-of-medical-equipment-for-the-department-of-neurosurgery-and-spine-in-2026-IB2600026303-01.html" target="_blank">https://dauthau.asia/en/openresult/goods-procurement-of-medical-equipment-for-the-department-of-neurosurgery-and-spine-in-2026-IB2600026303-01.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>99</td>
+  <td class='company-name'>Chau Minh Quyen Health Equipment Company Limited</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38624707</div><div>📧 <a href="mailto:cmq1206@yahoo.com">cmq1206@yahoo.com</a></div></td>
+  <td><a href="https://yellowpages.com.vn/listings/986346/chau-minh-quyen-health-equipment-company-limited.html" target="_blank">https://yellowpages.com.vn/listings/986346/chau-minh-quyen-health-equipment-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>100</td>
+  <td class='company-name'>CÔNG TY CP DƯỢC - THIẾT BỊ Y TẾ ĐÀ NẴNG (Da Nang Pharma-Medical JSC)</td>
+  <td>Da Nang</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide" target="_blank">https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>101</td>
+  <td class='company-name'>CÔNG TY CỔ PHẦN THIẾT BỊ Y TẾ VIỆT HÀN (Viet Han Medical Equipment JSC)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide" target="_blank">https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>102</td>
+  <td class='company-name'>CÔNG TY CỔ PHẦN TRANG THIẾT BỊ Y NHA KHOA VIỆT ĐĂNG (Viet Dang Dental Medical JSC)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide" target="_blank">https://chinamedglobal.com/blog/vietnam-medical-device-distributor-profile-contract-guide</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>103</td>
+  <td class='company-name'>DG Medical Vietnam Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://ensun.io/search/medical-equipment/vietnam" target="_blank">https://ensun.io/search/medical-equipment/vietnam</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>104</td>
+  <td class='company-name'>DHK Hightech Equipment And Investment JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 35659319</div></td>
+  <td><a href="https://www.dhkjsc.vn" target="_blank">https://www.dhkjsc.vn</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>105</td>
+  <td class='company-name'>DPL Medical Pty Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38417432</div><div>📧 <a href="mailto:dplmedical@hcm.fpt.vn">dplmedical@hcm.fpt.vn</a></div></td>
+  <td><a href="https://www.yellowpages.com.vn/listings/962949/van-phong-dai-dien-cong-ty-dpl-medical.html" target="_blank">https://www.yellowpages.com.vn/listings/962949/van-phong-dai-dien-cong-ty-dpl-medical.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>106</td>
+  <td class='company-name'>Dai Loc Med (Dailocmed)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 868374777</div></td>
+  <td><a href="https://www.dailocmed.vn" target="_blank">https://www.dailocmed.vn</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>107</td>
+  <td class='company-name'>Drager Medical Vietnam Company Limited</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 35172720</div></td>
+  <td><a href="https://yellowpages.com.vn/listings/969120/drager-medical-vietnam-company-limited.html" target="_blank">https://yellowpages.com.vn/listings/969120/drager-medical-vietnam-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>108</td>
+  <td class='company-name'>Duy Ngoc Medical Equipment Co., Ltd (DUY NGOC MEDICAL EQUIPMENT COMPANY LIMITED)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-no-02-procurement-of-spinal-stretching-machine-spinal-decompression-treatment-machine-IB2600114888-00.html" target="_blank">https://dauthau.asia/en/openresult/package-no-02-procurement-of-spinal-stretching-machine-spinal-decompression-treatment-machine-IB2600114888-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>109</td>
+  <td class='company-name'>Gold Life Vietnam Pte Ltd</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 39421499</div></td>
+  <td><a href="https://www.yellowpages.com.vn/tagclass/60152560/medical-equipment-distributor.html?page=12" target="_blank">https://www.yellowpages.com.vn/tagclass/60152560/medical-equipment-distributor.html?page=12</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>110</td>
+  <td class='company-name'>Ha Noi Pharmaceutical And Medical Equipment Joint Stock Company (Hapharco)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 38256548</div></td>
+  <td><a href="https://www.yellowpages.com.vn/tagclass/60152560/medical-equipment-distributor.html?page=12" target="_blank">https://www.yellowpages.com.vn/tagclass/60152560/medical-equipment-distributor.html?page=12</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>111</td>
+  <td class='company-name'>Hai Phong Medical Equipment Joint Stock Company</td>
+  <td>Hai Phong</td>
+  <td class='contact-info'><div>📞 +84 225 3838110</div></td>
+  <td><a href="https://www.yellowpages.com.vn/tagclass/60152560/medical-equipment-distributor.html?page=12" target="_blank">https://www.yellowpages.com.vn/tagclass/60152560/medical-equipment-distributor.html?page=12</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>112</td>
+  <td class='company-name'>Hanoi Medical Equipment Technology Development JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 62811268</div></td>
+  <td><a href="https://www.hanmedvn.com" target="_blank">https://www.hanmedvn.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>113</td>
+  <td class='company-name'>Health Development Group JSC (HDG / HDGMED)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://ensun.io/search/medical-equipment/vietnam" target="_blank">https://ensun.io/search/medical-equipment/vietnam</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>114</td>
+  <td class='company-name'>Hiep Viet Long Joint Stock Company</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38655570</div></td>
+  <td><a href="https://www.yellowpages.com.vn/tagclass/20152560/medical-equipment-companies.html?page=25" target="_blank">https://www.yellowpages.com.vn/tagclass/20152560/medical-equipment-companies.html?page=25</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>115</td>
+  <td class='company-name'>Hoang Minh Equipment Material JSC (HOANG MINH EQUIPMENT MATERIAL JOINT STOCK COMPANY)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-number-03-procurement-of-medical-supplies-and-medical-instruments-IB2500111983-00.html" target="_blank">https://dauthau.asia/en/openresult/package-number-03-procurement-of-medical-supplies-and-medical-instruments-IB2500111983-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>116</td>
+  <td class='company-name'>Hong Loc Company Limited</td>
+  <td>Da Nang</td>
+  <td class='contact-info'><div>📞 +84 236 3550907</div><div>📧 <a href="mailto:lochong@yahoo.com.vn">lochong@yahoo.com.vn</a></div></td>
+  <td><a href="https://www.yellowpages.com.vn/listings/1062144/hong-loc-company-limited.html" target="_blank">https://www.yellowpages.com.vn/listings/1062144/hong-loc-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>117</td>
+  <td class='company-name'>Life Technology Transfer Development Company Limited</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 35762007</div><div>📧 <a href="mailto:cuocsongct@vnn.vn">cuocsongct@vnn.vn</a></div></td>
+  <td><a href="https://yellowpages.com.vn/listings/1290330/life-technology-transfer-development-company-limited.html" target="_blank">https://yellowpages.com.vn/listings/1290330/life-technology-transfer-development-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>118</td>
+  <td class='company-name'>MediExpress Vietnam JSC (CÔNG TY CỔ PHẦN CÔNG NGHỆ MEDIEXPRESS VIỆT NAM)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://ensun.io/search/medical-equipment/vietnam" target="_blank">https://ensun.io/search/medical-equipment/vietnam</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>119</td>
+  <td class='company-name'>Medical Equipment Company Limited</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 39717047</div></td>
+  <td><a href="https://yellowpages.com.vn/listings/1073562/medical-equipment-company-limited.html" target="_blank">https://yellowpages.com.vn/listings/1073562/medical-equipment-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>120</td>
+  <td class='company-name'>Medical Equipment Development Investment Co., Ltd (MEDICAL EQUIPMENT DEVELOPMENT INVESTMENT COMPANY LIMITED)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-3-procurement-of-shared-arthroscopic-surgery-supplies-IB2600220060-00.html" target="_blank">https://dauthau.asia/en/openresult/package-3-procurement-of-shared-arthroscopic-surgery-supplies-IB2600220060-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>121</td>
+  <td class='company-name'>Medical Path Company Limited</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 38329075</div></td>
+  <td><a href="https://yellowpages.com.vn/listings/1317483/medical-path-company-limited.html" target="_blank">https://yellowpages.com.vn/listings/1317483/medical-path-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>122</td>
+  <td class='company-name'>Medniet Co., Ltd.</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>123</td>
+  <td class='company-name'>Mien Nam Medical Equipment Service Trading Co., Ltd (MIEN NAM MEDICAL EQUIPMENT SERVICE TRADING COMPANY LIMITED)</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-no-02-procurement-of-spinal-stretching-machine-spinal-decompression-treatment-machine-IB2600114888-00.html" target="_blank">https://dauthau.asia/en/openresult/package-no-02-procurement-of-spinal-stretching-machine-spinal-decompression-treatment-machine-IB2600114888-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>124</td>
+  <td class='company-name'>NDent (CÔNG TY TNHH NHA KHOA SỐ Ndent)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 901 894 194</div></td>
+  <td><a href="https://ndent.vn/en/san-pham/" target="_blank">https://ndent.vn/en/san-pham/</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>125</td>
+  <td class='company-name'>Sinh JSC (SINH JOINT STOCK COMPANY)</td>
+  <td>Son La</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-number-03-procurement-of-medical-supplies-and-medical-instruments-IB2500111983-00.html" target="_blank">https://dauthau.asia/en/openresult/package-number-03-procurement-of-medical-supplies-and-medical-instruments-IB2500111983-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>126</td>
+  <td class='company-name'>Sinh Nam Medical &amp; Scientific Equipment Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 22146147</div></td>
+  <td><a href="https://www.sinhnam.com.vn" target="_blank">https://www.sinhnam.com.vn</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>127</td>
+  <td class='company-name'>Tan Mai Thanh Medical Equipment-Medicines Instrument Co., Ltd</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><div>📞 +84 28 38632933</div></td>
+  <td><a href="https://www.tmt-medical.com" target="_blank">https://www.tmt-medical.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>128</td>
+  <td class='company-name'>Thang Long Health Equipment Company Limited</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 62811212</div></td>
+  <td><a href="https://www.yellowpages.com.vn/listings/1295460/thang-long-health-equipment-company-limited.html" target="_blank">https://www.yellowpages.com.vn/listings/1295460/thang-long-health-equipment-company-limited.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>129</td>
+  <td class='company-name'>Trang Vinh Pharmaceuticals JSC (TRANG VINH PHARAMACEUTICALS JOINT STOCK COMPANY)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/package-number-03-procurement-of-medical-supplies-and-medical-instruments-IB2500111983-00.html" target="_blank">https://dauthau.asia/en/openresult/package-number-03-procurement-of-medical-supplies-and-medical-instruments-IB2500111983-00.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>130</td>
+  <td class='company-name'>Tuan Ngoc Minh Investment JSC (TUAN NGOC MINH INVESTMENT JOINT STOCK COMPANY)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/result/awarded-contractor/procurement-of-arthroscopic-surgery-supplies-in-2024-2025-2129990.html" target="_blank">https://dauthau.asia/en/result/awarded-contractor/procurement-of-arthroscopic-surgery-supplies-in-2024-2025-2129990.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>131</td>
+  <td class='company-name'>VT Healthcare</td>
+  <td>Ho Chi Minh City</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>132</td>
+  <td class='company-name'>Van Nien Co., Ltd.</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>133</td>
+  <td class='company-name'>Viet Thai Company Limited</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><div>📞 +84 24 39761454</div><div>📧 <a href="mailto:teo.vthn@hn.vnn.vn">teo.vthn@hn.vnn.vn</a></div></td>
+  <td><a href="https://www.yellowpages.com.vn/listings/1305528/viet-thai-cong-ty-tnhh-thuong-mai-dich-vu-ky-thuat-viet-thai.html" target="_blank">https://www.yellowpages.com.vn/listings/1305528/viet-thai-cong-ty-tnhh-thuong-mai-dich-vu-ky-thuat-viet-thai.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>134</td>
+  <td class='company-name'>VietMedical</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://vietmedical.com.vn" target="_blank">https://vietmedical.com.vn</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>135</td>
+  <td class='company-name'>Vietnam Medical Equipment JSC</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>136</td>
+  <td class='company-name'>Vimepharco Vietnam</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://www.6wresearch.com" target="_blank">https://www.6wresearch.com</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>137</td>
+  <td class='company-name'>Vinh Khang Medical Equipment JSC (CÔNG TY CỔ PHẦN THIẾT BỊ Y TẾ VINH KHANG)</td>
+  <td>Hanoi</td>
+  <td class='contact-info'><span class='muted'>未公开</span></td>
+  <td><a href="https://dauthau.asia/en/openresult/goods-procurement-of-medical-equipment-for-the-department-of-neurosurgery-and-spine-in-2026-IB2600026303-01.html" target="_blank">https://dauthau.asia/en/openresult/goods-procurement-of-medical-equipment-for-the-department-of-neurosurgery-and-spine-in-2026-IB2600026303-01.html</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+<tr>
+  <td>138</td>
+  <td class='company-name'>quangtrungmedical Company Limited</td>
+  <td>Da Nang</td>
+  <td class='contact-info'><div>📞 +84 236 3889254</div><div>📧 <a href="mailto:qtrungvtyt@viettel.vn">qtrungvtyt@viettel.vn</a></div></td>
+  <td><a href="https://dauthau.asia/en/businesslistings/detail/CONG-TY-TNHH-DUOC-PHAM-VA-THIET-BI-Y-TE-QUANG-TRUNG-44489" target="_blank">https://dauthau.asia/en/businesslistings/detail/CONG-TY-TNHH-DUOC-PHAM-VA-THIET-BI-Y-TE-QUANG-TRUNG-44489</a></td>
+  <td><span class='badge badge-ot'>综合外科设备</span></td>
+  </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>📌 越南医疗器械经销商名录 · 共 138 家</p>
+        </div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+</body>
+</html>
