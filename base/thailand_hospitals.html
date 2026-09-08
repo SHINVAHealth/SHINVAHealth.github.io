@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="CaDgVjdXEsOyoK8jQ0QzyQ">
+<head data-page-node-id="8eypKDMLL67IqCu0V34uWx">
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8" data-page-node-id="yLATCDvaqG4iw69vn1rLQ0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="uFidxKbIF6lSdzcvcCTmwG">
+    <title>泰国医院信息表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:hover { background: #f8f9fb; }
+
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; color:#fff; }
+        .badge-public { background: #2ecc71; }
+        .badge-private { background: #3498db; }
+        .badge-teaching { background: #f39c12; }
+        .badge-international { background: #9b59b6; }
+        .badge-military { background: #e74c3c; }
+        .badge-ngo { background: #1abc9c; }
+        .badge-joint { background: #e67e22; }
+
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body data-page-node-id="TRpffSwdP1axfSwR6ADFne">
+<div class="container" data-page-node-id="nrXACw7qM8XqnAuCwZkwZB">
+    <h1 data-page-node-id="b21W26G6jyvHXQSqdUhG60">泰国医院信息表</h1>
+    <div class="stats" data-page-node-id="Xdbdvzvu6uErh83g5NiB37">
+      <div class="stat-card total" data-page-node-id="hTthr1n8nlxFQ0QtcT9U9L"><div class="num" data-page-node-id="JGTDZjdWnmOkqRiOwJfHlk">47</div><div class="label" data-page-node-id="GNCvnvEwLyHA6YyHrFgtSr">医院总数</div></div>
+    </div>
+
+      <div class="searchbar" data-page-node-id="97It7EDArKXDrUfyB4nvxn">
+    <input id="custSearch" type="text" placeholder="🔍 搜索医院名称 / 城市 / 电话 / 官网 / 性质…" autocomplete="off" data-page-node-id="41yNqh7V3JZidXRixoSZuw">
+    <span class="search-count" id="custCount" data-page-node-id="9waDb9yIIRkF6RcvnFQMyO"></span>
+  </div>
+<table data-page-node-id="WXzpGhMEIW1rLDffsXW05B">
+        <thead data-page-node-id="KsVJ1qpNTsAzaceWvZpnpB">
+            <tr data-page-node-id="tBcC0qKPJNnq40pSA6m1mE">
+                <th style="width:30px;" data-page-node-id="zGDKCvXfeOtJ9vV7p6TwNc">#</th>
+                <th style="width:230px;" data-page-node-id="rqMQwuJPKhENeITq5rEoQK">医院名称</th>
+                <th style="width:110px;" data-page-node-id="8qFqqxyTTJSAEIl9aqCzK5">城市</th>
+                <th style="width:250px;" data-page-node-id="IjEJyKew0feKDMAqkAJ6Gq">联系方式（电话/邮箱/地址）</th>
+                <th style="width:170px;" data-page-node-id="5DZxduRdEk61wJlEOVTa8a">官网</th>
+                <th style="width:120px;" data-page-node-id="ACOcl7w0wIVxfnzytFPmnN">性质</th>
+                </tr>
+        </thead>
+        <tbody data-page-node-id="nRrr4F4OQdeobGQ9g0o3wM">
+<tr data-page-node-id="NXSKbllKi1jlc2yxtUpQcw">
+  <td data-page-node-id="4nLvnFjTAuspdJdXqLPc6m">1</td>
+  <td class='company-name' data-page-node-id="FBb5LSNYCvXV1T2O21VQQD">Bumrungrad International Hospital（康民国际医院）</td>
+  <td data-page-node-id="we2ikG8SkLUOx7rUbF6ht4">Bangkok</td>
+  <td class='contact-info' data-page-node-id="0EGCstBjFCLz6Pf5YvALsT"><div data-page-node-id="BKpTMLH0HJOaDVp8sysfBf">📞 +66 2 066 8888</div><div data-page-node-id="hZTcnTkxElPUSHFsdx8OQL">📧 <a href="mailto:info@bumrungrad.com" data-page-node-id="6yR0dhtgGodAmEuP6VMZIy">info@bumrungrad.com</a></div><div data-page-node-id="23Sa2PDXueRcKpbxOLebaV">📍 33 Soi Sukhumvit 3, Watthana, Bangkok 10110</div></td>
+  <td data-page-node-id="BC8h3dfWOC2Z4l4eUHQo16"><a href="https://www.bumrungrad.com" target="_blank" data-page-node-id="RbYrAenimaYFqxDPMXJcDG">https://www.bumrungrad.com</a></td>
+  <td data-page-node-id="fQg8YKugeQC2f83Nl0anLM"><span class='badge badge-international' data-page-node-id="4VirPv4S6KvcwAmgQx83Ky">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="gJD2D27pSMKXAqJaGyFBL2">
+  <td data-page-node-id="vmy0dygR68xVkGMwDntune">2</td>
+  <td class='company-name' data-page-node-id="OgIUqG6WPgSfTP88F6lZzQ">Siriraj Hospital（西里拉医院）</td>
+  <td data-page-node-id="CaO0RnLpKqo3KEZirgZJgg">Bangkok</td>
+  <td class='contact-info' data-page-node-id="g4bOq9IkNyDwrCUjc2BhJR"><div data-page-node-id="PeIJWGnUTvOdQx5ZDyFDlh">📞 +66 2 419 7000</div><div data-page-node-id="eKL3z392YTbrsH1nVcNk1Y">📍 2 Prannok Road, Bangkok Noi, Bangkok 10700</div></td>
+  <td data-page-node-id="NNdGoo6YcKIT80hTn0rjNT"><a href="https://www.si.mahidol.ac.th" target="_blank" data-page-node-id="AHJfLpui1Y86ydbHfvR72m">https://www.si.mahidol.ac.th</a></td>
+  <td data-page-node-id="doqRAU3GkPf0LSvPp1FT9C"><span class='badge badge-teaching' data-page-node-id="2wyNrCbCGDTq5OucTlhFWH">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="tRd43yU405yUH73IUA1Sqx">
+  <td data-page-node-id="4d1fEykxrxOESQoc2YDYjL">3</td>
+  <td class='company-name' data-page-node-id="1MX32piavWuBLsqtUOM13J">Ramathibodi Hospital（拉玛蒂博迪医院）</td>
+  <td data-page-node-id="2CRRUk8BZysUy8inbvZ9M7">Bangkok</td>
+  <td class='contact-info' data-page-node-id="XRbMIt7PG22WsqTRW7SDJA"><div data-page-node-id="BiugJ3LNAjOq5UbA4mDfq1">📞 +66 2 201 1000</div><div data-page-node-id="5fGjQmXmm8AXyLUo0uSkpR">📧 <a href="mailto:saraban-ra-ramahosp@mahidol.ac.th" data-page-node-id="JDJeHgvm8YlnxFkTVAxsF4">saraban-ra-ramahosp@mahidol.ac.th</a></div><div data-page-node-id="AQBxV9ov0BWiCzzKv1GPQJ">📍 270 Rama VI Road, Ratchathewi, Bangkok 10400</div></td>
+  <td data-page-node-id="pCZoypLSpsvBLGB6rJSfpD"><a href="https://www.rama.mahidol.ac.th" target="_blank" data-page-node-id="rjUKtNFImt2ps2ys7s9fb7">https://www.rama.mahidol.ac.th</a></td>
+  <td data-page-node-id="NJImechtU7a6mV875lniXP"><span class='badge badge-teaching' data-page-node-id="n4bD1m6H3jzVUPuryOJ0Ab">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="ZggKUmjXoXLgSyVtPqNKbg">
+  <td data-page-node-id="0I6bY4I68Z8MTUkUG7PPQF">4</td>
+  <td class='company-name' data-page-node-id="U91yCGwuWZqCQJ1cwGgdjJ">King Chulalongkorn Memorial Hospital（朱拉隆功纪念医院）</td>
+  <td data-page-node-id="uayjWAhVAYLOrOlmRMk4m0">Bangkok</td>
+  <td class='contact-info' data-page-node-id="kVwsvCXDHKMONOf62DbPU6"><div data-page-node-id="ddBU57JsBpYj6yOJxOeyXs">📞 +66 2 256 4000</div><div data-page-node-id="PTG4F23P0gLqor9HcvvKUU">📧 <a href="mailto:emchula@gmail.com" data-page-node-id="I8NplnNEbNpWNgZeNrjcNP">emchula@gmail.com</a></div><div data-page-node-id="k37QrzRbHksFDYyyLrYh0d">📍 1873 Rama IV Road, Pathum Wan, Bangkok 10330</div></td>
+  <td data-page-node-id="SOUgsnsWB8IwvFqPDP0e2X"><a href="https://www.chulalongkornhospital.go.th" target="_blank" data-page-node-id="o4bSRQ9VxSW4VJbZo02nDz">https://www.chulalongkornhospital.go.th</a></td>
+  <td data-page-node-id="rkrzlGu9kP2GJXxRkOGooE"><span class='badge badge-teaching' data-page-node-id="sWujauM99JA5KuwnDr7KHV">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="gJN68pWUfHLcu3Wpb7zXJC">
+  <td data-page-node-id="oJ0yXWgtdgDlGI6j2Ka99k">5</td>
+  <td class='company-name' data-page-node-id="6lqea4yBZoMi154qAUq33t">Phramongkutklao Hospital（普拉蒙固克拉奥医院）</td>
+  <td data-page-node-id="W89yq12SbINN4ZlSOYv8xY">Bangkok</td>
+  <td class='contact-info' data-page-node-id="cpYCPVBTUaQGE6MfRAMb4I"><div data-page-node-id="XaLSygs5pGT0QcCHO14PRb">📞 +66 2 354 7600</div><div data-page-node-id="8UxRjKmrP5l7yOTB1RTfAD">📍 315 Rajvithee Road, Ratchathewi, Bangkok 10400</div></td>
+  <td data-page-node-id="TkEcnj4i9BO5eZRnbLXm1o"><a href="https://www.pmk.ac.th" target="_blank" data-page-node-id="6QxRq68S3L9asHGiPSD7gr">https://www.pmk.ac.th</a></td>
+  <td data-page-node-id="Vs1Cjlxn2o6nvPVeAVUyIV"><span class='badge badge-military' data-page-node-id="xwqIzCY9E14jioJ5VwSobl">军方教学</span></td>
+  </tr>
+
+<tr data-page-node-id="3yl9jo2YdK76uCY9CjpfFL">
+  <td data-page-node-id="MMEMno1dSXLhFUPyrNQgSW">6</td>
+  <td class='company-name' data-page-node-id="VAT7rIFjZEsXILkzvdzk4T">Maharaj Nakorn Chiang Mai Hospital / Suan Dok（玛哈拉吉·纳空清迈医院）</td>
+  <td data-page-node-id="cWPa9CnHEZM6Gq4b3VCdXa">Chiang Mai</td>
+  <td class='contact-info' data-page-node-id="zpkJifp5Ycf8vxpni7zhJQ"><div data-page-node-id="beB2Lt5Ll683yHkeJdEe4E">📞 +66 53 936 150</div><div data-page-node-id="fnMbFtONfO34nmknQqtRAu">📍 110 Inthawarorot Rd, Sri Phum, Mueang Chiang Mai 50200</div></td>
+  <td data-page-node-id="i4mSJbd6GV6DZKtVs3PDvK"><a href="https://www.suandok.med.cmu.ac.th" target="_blank" data-page-node-id="Z1B7LlgUJiSCU4ImlzKUcG">https://www.suandok.med.cmu.ac.th</a></td>
+  <td data-page-node-id="MSPRA6blzcUY4bklFft3LX"><span class='badge badge-teaching' data-page-node-id="msdPXk96TzLRtjfp7Ya1Zr">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="ffZ38ohURCLBCObK4WD78Q">
+  <td data-page-node-id="wpSOp1UNqbXQqsvsTTwuMu">7</td>
+  <td class='company-name' data-page-node-id="22zSrbNyROLChb1ulrmSS6">Srinagarind Hospital（诗丽吉医院）</td>
+  <td data-page-node-id="XA5gQMZAoi1MV3z5DfFf57">Khon Kaen</td>
+  <td class='contact-info' data-page-node-id="o2pZnhu1j3lFAKffQF3m8X"><div data-page-node-id="jnUVNghpjTskn7Uc6RPBWP">📞 +66 43 363 031</div><div data-page-node-id="vxxjwTcHUpSVPGhvPNw1Ge">📍 123 Mittraphap Road, Nai Mueang, Mueang Khon Kaen 40002</div></td>
+  <td data-page-node-id="cPqQR5A9hT1TyHlrhJZdz7"><a href="https://srinagarind.md.kku.ac.th" target="_blank" data-page-node-id="cZIGA5spHV6z39z3A9SPBO">https://srinagarind.md.kku.ac.th</a></td>
+  <td data-page-node-id="Vjyqt626GkkIdMCIIfpYwy"><span class='badge badge-teaching' data-page-node-id="SB4AHYqoc7a1P9eRdtKDdL">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="0NudLjSiV588y4y8fKkgUs">
+  <td data-page-node-id="cTMRRoHMtyhy7TFlim7bS7">8</td>
+  <td class='company-name' data-page-node-id="VCT9XjbQO280SCkWkfFDin">Songklanagarind Hospital（宋卡纳卡林医院）</td>
+  <td data-page-node-id="TWKEKeiA4WluHOuvnWp5lz">Hat Yai, Songkhla</td>
+  <td class='contact-info' data-page-node-id="b9YW1b7oWsMMfxnPGYDJF2"><div data-page-node-id="EMZShOHqTfLTWVHpLwqe23">📞 +66 74 429 999</div><div data-page-node-id="BnJmyJLSrRxZvc5nJL6gsM">📍 15 Karnjanavanich Rd, Hat Yai, Songkhla 90110</div></td>
+  <td data-page-node-id="hPqjCaA7iw5wFUgJrDJGww"><a href="https://hospital.psu.ac.th" target="_blank" data-page-node-id="vVV56e0ZpFzjO3B2chWQgl">https://hospital.psu.ac.th</a></td>
+  <td data-page-node-id="ixIGiSCnFISmjEDq4AN700"><span class='badge badge-teaching' data-page-node-id="LpZYYbQxWNN7J4DrT2iwyj">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="Up4RT1i7VuOntdCbIbLNrj">
+  <td data-page-node-id="5nGTenJ13gKsYlUMRK3EhY">9</td>
+  <td class='company-name' data-page-node-id="PjfNVipp9g5Wv4SUTPb3wW">Nopparat Rajathanee Hospital（诺帕拉·拉乍替尼医院）</td>
+  <td data-page-node-id="LSYqFwPa20D710iyZagwUw">Bangkok</td>
+  <td class='contact-info' data-page-node-id="P5XvDZLYRUNvaAy35U6ZjJ"><div data-page-node-id="d3fMFuwVTh2SRLNiQfsgeg">📞 +66 2 534 1000</div><div data-page-node-id="4PqNOTv9OS9aMKEF6cnkWQ">📍 151 Srinakarin Rd, Nong Bon, Prawet, Bangkok 10250</div></td>
+  <td data-page-node-id="bKSm6te73tfTuSM4w0Z1JS"><a href="https://www.nopparat.go.th" target="_blank" data-page-node-id="GiD1MR8tHA0agcgaPskXah">https://www.nopparat.go.th</a></td>
+  <td data-page-node-id="JR5Zad8tSJUC3z6UGbM3Le"><span class='badge badge-public' data-page-node-id="FjrvEFWGGB9uK3PRbosMRt">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="WwtY1ANql2GmxzkiFDtTdU">
+  <td data-page-node-id="mRyhmLh3ouYwdlljUwnQ2e">10</td>
+  <td class='company-name' data-page-node-id="IfI94R4aoEN3chuLmIDDtz">Phuket Hospital（普吉医院·公立）</td>
+  <td data-page-node-id="1N8cS0CoyUMHncnsLQAahV">Phuket</td>
+  <td class='contact-info' data-page-node-id="Md8bhKHLtFkVIaE2hvq6B0"><div data-page-node-id="vYOhI4uyVrwtsvBwc4lz2C">📞 +66 76 361 234</div><div data-page-node-id="Jdk5l5BEZkkdLsuSkwa7Xk">📍 94 Chalermprakiat Ror 9 Rd, Phuket 83000</div></td>
+  <td data-page-node-id="FpTDxKqqzusi1mqKIgtvTC"><a href="https://phuket.hospital.go.th" target="_blank" data-page-node-id="smLAnYW3QavFHejlu2pSmc">https://phuket.hospital.go.th</a></td>
+  <td data-page-node-id="e4Bbu6gzriyZbmd0llarM3"><span class='badge badge-public' data-page-node-id="wbywWINfQBJRlW0vaMNmeP">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="TKjeuMBhjaHMNGaXFYMPzI">
+  <td data-page-node-id="JPJtkNvDJpbVDrojrE1Pao">11</td>
+  <td class='company-name' data-page-node-id="YhWnfyEMJcCHAjwt7mYQUU">Bangkok Hospital（曼谷医院·总院）</td>
+  <td data-page-node-id="i23trfWCw8d7KBKDfAgM4M">Bangkok</td>
+  <td class='contact-info' data-page-node-id="e2hVcqW6FBqnKvBPnm2ulb"><div data-page-node-id="EFaBJ05d9xYyt4QnUY2KNn">📞 +66 2 310 3000</div><div data-page-node-id="nKM13lUzwCtSCp4r23BMPR">📧 <a href="mailto:info@bangkokhospital.com" data-page-node-id="LsKZO4RBpD0a7arzvcfUSj">info@bangkokhospital.com</a></div><div data-page-node-id="NzcOplM5Bgbw7xIJu5Xbll">📍 2 Soi Soonvijai 7, New Petchburi Road, Huay Kwang, Bangkok 10310</div></td>
+  <td data-page-node-id="OsCCs2cY7UKwqUDz55x31X"><a href="https://www.bangkokhospital.com" target="_blank" data-page-node-id="WCZBQnoP58dvwWMa415i6z">https://www.bangkokhospital.com</a></td>
+  <td data-page-node-id="rDwSRqLchoN3Ly4sevu0gy"><span class='badge badge-private' data-page-node-id="FqbKaDLdO9GhdRQZoOoACM">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="FULz8Xi8wQFWCzhy6piVvE">
+  <td data-page-node-id="WrBlo9C9YHtyktBtgimBFy">12</td>
+  <td class='company-name' data-page-node-id="edq2RCpKU0AbGBXsw00KEV">Samitivej Sukhumvit Hospital（三美泰素坤逸医院）</td>
+  <td data-page-node-id="qgZpqQOFYvNHkA6rTjidxw">Bangkok</td>
+  <td class='contact-info' data-page-node-id="sDum1VNSk3rSbsTz4UGaTw"><div data-page-node-id="LdtNV7bSi6tJ7aRbxVEB0i">📞 +66 2 022 2222</div><div data-page-node-id="MEuaXYwhXelbTymPnNmsmF">📧 <a href="mailto:info@samitivej.co.th" data-page-node-id="tqoyHAfVUVxeMqjQ0JKkqR">info@samitivej.co.th</a></div><div data-page-node-id="2IkCjP34AnhsWVDT7B0IoT">📍 133 Sukhumvit 49, Watthana, Bangkok 10110</div></td>
+  <td data-page-node-id="gnSqNBTFfItApzeWbqyrBB"><a href="https://www.samitivejhospitals.com" target="_blank" data-page-node-id="0AXNBmWSPnDhN3QUXSNZ7M">https://www.samitivejhospitals.com</a></td>
+  <td data-page-node-id="78mJP2l4dSnQDxpo2Bt6WH"><span class='badge badge-private' data-page-node-id="wHgcBZa3aepxyHGFkxRdoZ">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="OmIBYoFyHDtnNmpDbna580">
+  <td data-page-node-id="e81vsKmWRsvQrrmxSy9xlm">13</td>
+  <td class='company-name' data-page-node-id="4OJHEmZK0CDsPTgY5oFwdh">Bangkok Hospital Chiang Mai（曼谷医院清迈）</td>
+  <td data-page-node-id="Sm4wH2T3w56IHJqMBUoyRJ">Chiang Mai</td>
+  <td class='contact-info' data-page-node-id="YrTtCqz0zDa2HQRPdn6ZCa"><div data-page-node-id="Rm2jKt1TPAiPH7lcRnA8Ab">📞 +66 52 089 999</div><div data-page-node-id="LGVQii0g2vgKEA8VAC9BKC">📍 79/9 Moo 1, Nong Pa Khrang, Mueang Chiang Mai 50000</div></td>
+  <td data-page-node-id="44VJFvAi7D2JYqXe4dpnCm"><a href="https://www.bangkokhospitalchiangmai.com" target="_blank" data-page-node-id="hQ63UmlC9c5mNWSvpMDawm">https://www.bangkokhospitalchiangmai.com</a></td>
+  <td data-page-node-id="4EgqzJtAEIedBvUTewkeRL"><span class='badge badge-private' data-page-node-id="3HEeWlCMuyexFXK0kYrURq">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="8yAgFubdnYFNi1jPSFzW6N">
+  <td data-page-node-id="vjY4Q4wSXvNuzYbo5I35Nr">14</td>
+  <td class='company-name' data-page-node-id="bbryrMmBC4Eheina25rtAw">Bangkok Hospital Phuket（曼谷医院普吉）</td>
+  <td data-page-node-id="cbFEtkVfIX5tCN74MlaSe2">Phuket</td>
+  <td class='contact-info' data-page-node-id="cZw6fmLghIN9VAlBp5UnvY"><div data-page-node-id="BckFX3Pp0hErzCMWP7RTlJ">📞 +66 76 254 425</div><div data-page-node-id="gW5dG2hr8Fa6UtBajHod0y">📍 2/1 Vichit, Mueang Phuket 83000</div></td>
+  <td data-page-node-id="LTd6BWclEWwvJYi7sF3LRS"><a href="https://www.phukethospital.com" target="_blank" data-page-node-id="w1VRiZaiOPcou9QFrUt6ae">https://www.phukethospital.com</a></td>
+  <td data-page-node-id="Ub1lH4zXSYwFLSaR1rULbZ"><span class='badge badge-private' data-page-node-id="9FiWDGkmdqXxQAdn8fwmps">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="fTAsOxI3OmRnQVL3YCm6di">
+  <td data-page-node-id="GCauL6OKuacoMqcPuLEtyP">15</td>
+  <td class='company-name' data-page-node-id="tdHTG3cHPfDbm6OKfU7QUq">Vejthani Hospital（威它尼医院）</td>
+  <td data-page-node-id="qR1xqwZji58Ve8CG0calwy">Bangkok</td>
+  <td class='contact-info' data-page-node-id="CQMFj1rnLsYBtSI8Yv0Fzm"><div data-page-node-id="HJDN9AYcZ5YXHJoo8THTde">📞 +66 2 734 0000</div><div data-page-node-id="Je457zsTVcLM9zF4UAchdc">📍 1 Soi Lat Phrao 111, Khlong Chan, Bang Kapi, Bangkok 10240</div></td>
+  <td data-page-node-id="QXE7TqyvR1slwEwRMt07eH"><a href="https://www.vejthani.com" target="_blank" data-page-node-id="c9Kv5iG0UeJf9xXZSbbd78">https://www.vejthani.com</a></td>
+  <td data-page-node-id="s1yRfT3O11IFBUr2mywbbm"><span class='badge badge-private' data-page-node-id="YyLULHO5fdCYRU4C331arL">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="74GjDF570rcI45QFWgzTmw">
+  <td data-page-node-id="Nn8RIuQgULoQg1fd4sw94g">16</td>
+  <td class='company-name' data-page-node-id="Xmk3YyWeqpcZ5GrTVHtOsE">BNH Hospital（BNH医院）</td>
+  <td data-page-node-id="7a2Rij2HmJT4zPe7SmuDIG">Bangkok</td>
+  <td class='contact-info' data-page-node-id="YGJaYjuqrEKcFu3Wfknxog"><div data-page-node-id="zzwnh7oCU1WSSltlmUYp4t">📞 +66 2 022 0700</div><div data-page-node-id="Rkha7ksbqoG3IcZzQOUXS9">📧 <a href="mailto:bnhinfo@bnh.co.th" data-page-node-id="PkPi3dGX22iCQ2nBcGgkqC">bnhinfo@bnh.co.th</a></div><div data-page-node-id="S3b6f26fC2Z0FsLE64QYEr">📍 9/1 Convent Road, Silom, Bang Rak, Bangkok 10500</div></td>
+  <td data-page-node-id="UoKUMhitG4SmCihIeilFbf"><a href="https://www.bnhhospital.com" target="_blank" data-page-node-id="iPzZYXaG6qPOh8ecxYiugL">https://www.bnhhospital.com</a></td>
+  <td data-page-node-id="d8bUD8wlFhcIUC7kNFurnT"><span class='badge badge-private' data-page-node-id="2GX9cPBBwTJCcETjj5WdsN">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="Q5yPMcGZoYQTfTGLKRHmlW">
+  <td data-page-node-id="hVdmpQLRrkrWtfvYhx7EZK">17</td>
+  <td class='company-name' data-page-node-id="R1b52g86NpwJ4LrMbp0OUR">MedPark Hospital（麦德派克医院）</td>
+  <td data-page-node-id="hd3yEuG9hLQbKJ8Rm9oNI1">Bangkok</td>
+  <td class='contact-info' data-page-node-id="aesegYDSiNmUCZkvts3pxp"><div data-page-node-id="fRjtPEsu4iWKrBe5sutJYp">📞 +66 2 023 3333</div><div data-page-node-id="yH5IQi1RD7i3fi3wEwExX0">📍 3333 Rama IV Road, Khlong Toei, Bangkok 10110</div></td>
+  <td data-page-node-id="oiohcUPJLErP5WydY8Qxth"><a href="https://www.medparkhospital.com" target="_blank" data-page-node-id="LDu6dmSJ5ZX4gVNxYWXIZb">https://www.medparkhospital.com</a></td>
+  <td data-page-node-id="pZwLEFlivrjjhQZx50Jn6B"><span class='badge badge-private' data-page-node-id="hEGTRI8Fxi5ORMQcDzHIpj">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="sHPeEfOMrzaPHNOjassXuY">
+  <td data-page-node-id="oBbjWYgfrkPXCdEyQi3lnZ">18</td>
+  <td class='company-name' data-page-node-id="31jX9luYN2eng3nJXnWn79">Thonburi Hospital（吞武里医院）</td>
+  <td data-page-node-id="tBwfH0ugvvpAK0vW3E4ssj">Bangkok</td>
+  <td class='contact-info' data-page-node-id="gU1Tdev0yNMm1hWQgSW30I"><div data-page-node-id="29FvLQMrFaxpoq3w4wGbvG">📞 +66 2 487 2000</div><div data-page-node-id="JzGW1x3aQFz1AaUKu4L38c">📍 34/1 Soi Itsaraphap 44, Ban Chang Lo, Bangkok Noi, Bangkok 10700</div></td>
+  <td data-page-node-id="RlgNZrUWOJlMu9QsRlQmFe"><a href="https://www.thonburihospital.com" target="_blank" data-page-node-id="OQlQrbt8pAfIvKzlQZVQXv">https://www.thonburihospital.com</a></td>
+  <td data-page-node-id="NqfjukHP3f4qHXUEeefwIe"><span class='badge badge-private' data-page-node-id="NLEn21faYDwf6nw76RGXha">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="u86qcjIeExK6jNDuaXkBdL">
+  <td data-page-node-id="g6YaT7CMETBxEnQbkPwAld">19</td>
+  <td class='company-name' data-page-node-id="bca3YXRzr16YaVtIiZ7UDV">Bangkok Hospital Pattaya（曼谷医院芭提雅）</td>
+  <td data-page-node-id="zuWouCplVPle4tJOVaHyQj">Pattaya, Chon Buri</td>
+  <td class='contact-info' data-page-node-id="WAjsdCxVBHvegNI6rqgq1J"><div data-page-node-id="lxCmbi1PNPvJB1ODMwrQHg">📞 +66 38 259 999</div><div data-page-node-id="hOaepV5fjbzWPRUEolBNiw">📍 301 Moo 3, Nong Prue, Bang Lamung, Chon Buri 20150</div></td>
+  <td data-page-node-id="fJ2dhuUdwwHpnPXUrnBulD"><a href="https://www.bangkokhospitalpattaya.com" target="_blank" data-page-node-id="UJnFLa8hJI4VGiqykyfAUU">https://www.bangkokhospitalpattaya.com</a></td>
+  <td data-page-node-id="boxaxll7QKToD1ZVla8rgx"><span class='badge badge-private' data-page-node-id="FfygWLfKKzeADFmU7OlqcH">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="TqFf4qbe6hCggBiw9sBv8G">
+  <td data-page-node-id="Rxvyr7b1MzIksCezBxCPA4">20</td>
+  <td class='company-name' data-page-node-id="2EixfAAOjupnwwSvTs5eQu">Rajavithi Hospital（拉查维蒂医院）</td>
+  <td data-page-node-id="ubsGFxy9xQOyXfL9K21ibs">Bangkok</td>
+  <td class='contact-info' data-page-node-id="CeqKreFS9qULMoQ2oYoRbM"><div data-page-node-id="jabL6NcbRDXU2fakP0hEvk">📞 +66 2 354 8108</div><div data-page-node-id="LzFG4OKhYpuohbOlR0hodF">📧 <a href="mailto:crm@rajavithi.go.th" data-page-node-id="3tt0L5QmeMiyEOZDQx2gR7">crm@rajavithi.go.th</a></div><div data-page-node-id="6kWExbZqrovKeTMYHwgSdK">📍 2 Phayathai Road, Ratchathewi, Bangkok 10400</div></td>
+  <td data-page-node-id="Go7411nChwtCHas53MKtWZ"><a href="https://www.rajavithi.go.th" target="_blank" data-page-node-id="jP90eLLWeCxtk2venX3USM">https://www.rajavithi.go.th</a></td>
+  <td data-page-node-id="bD7RX3qOQ8qxQuz5t8Uvcx"><span class='badge badge-public' data-page-node-id="9UwMVYwRP0kImoIclzRlan">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="Fyu4SB51S8QdsXOVAdQ8z6">
+  <td data-page-node-id="lL3QmMpTUmnSl6kD654wEn">21</td>
+  <td class='company-name' data-page-node-id="TpLOFFGOrO7eSH0OnkJw6M">Samitivej Srinakarin Hospital（三美泰诗纳卡琳医院）</td>
+  <td data-page-node-id="LidarlvHDyaWJIr8QqlGU4">Bangkok</td>
+  <td class='contact-info' data-page-node-id="uSvjWeRO5fzdMWSI2EZie9"><div data-page-node-id="HVWnGKdgbpxYYBPU6RgQ5f">📞 +66 2 022 2222</div><div data-page-node-id="KaNPP7mtI57vdHjme1iUJC">📧 <a href="mailto:info@samitivej.co.th" data-page-node-id="sbApLWEChZrAJb8FZQBUtb">info@samitivej.co.th</a></div><div data-page-node-id="EKlzqCEMZd01WDeBSIfm7e">📍 488 Srinakarin Rd, Suan Luang, Bangkok 10250</div></td>
+  <td data-page-node-id="gekjBOy4nuTOo09E3WVMbi"><a href="https://www.samitivejhospitals.com" target="_blank" data-page-node-id="MKmiWwZaYqExvVGE21mJbo">https://www.samitivejhospitals.com</a></td>
+  <td data-page-node-id="L4eAfBbUwQWxLj5swS7Rsg"><span class='badge badge-private' data-page-node-id="3zvgZragAlQke38dt5V1Dl">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="kK1rL77CWMYhZRhpMsOzmn">
+  <td data-page-node-id="4X9BcBKgJdKoMGMBVaDhre">22</td>
+  <td class='company-name' data-page-node-id="hbBBcXrpYyIVgqnbwpuSsE">Samitivej Thonburi Hospital（三美泰吞武里医院）</td>
+  <td data-page-node-id="FcLztaHvNr76EwVJO24W1V">Bangkok</td>
+  <td class='contact-info' data-page-node-id="dbDWbNuR2gIBTBvU6cktAU"><div data-page-node-id="klYBjYwrLYxgwcqOzNPYc9">📞 +66 2 438 9000</div><div data-page-node-id="GjRI5G0AbXBS27AfqoMWMa">📍 337 Somdet Phra Chao Tak Sin Rd, Samre, Thon Buri, Bangkok 10600</div></td>
+  <td data-page-node-id="sgHzzDYxVfPRcgYypMarKv"><a href="https://www.samitivejhospitals.com" target="_blank" data-page-node-id="cW9zggog0rKKwKk0hTREUv">https://www.samitivejhospitals.com</a></td>
+  <td data-page-node-id="9dLhmzciZuHkZmCJdodSCE"><span class='badge badge-private' data-page-node-id="978yjgOdFPOAZojSuc0pFa">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="QlmKXCB0USd1eoMel3Pwcw">
+  <td data-page-node-id="ZxtUKcJqBdRux4sECYLL61">23</td>
+  <td class='company-name' data-page-node-id="oTTI03V1hJhGQ0RRcXYMaB">Phyathai 1 Hospital（帕亚泰1医院）</td>
+  <td data-page-node-id="YPzrmfomVwgQp9PuSUNAQn">Bangkok</td>
+  <td class='contact-info' data-page-node-id="TF1Pu1n9hJq8EnmVCWIVVB"><div data-page-node-id="5KkfvCltQwuNAgQl0CKpdG">📞 +66 2 201 4600</div><div data-page-node-id="7N6YTclTMrPNFlKALzpNMT">📧 <a href="mailto:1772@phyathai.com" data-page-node-id="k9y8izNIAeRwTmiF26nd9N">1772@phyathai.com</a></div><div data-page-node-id="iKGsYAFikRzinEXHMhEYqr">📍 364/1 Si Ayutthaya Rd, Phaya Thai, Bangkok 10400</div></td>
+  <td data-page-node-id="NxLLvKptVui39sku8ti3yQ"><a href="https://phyathai1international.com" target="_blank" data-page-node-id="O4NwjU0Gt4vAYGv4QmvKNF">https://phyathai1international.com</a></td>
+  <td data-page-node-id="MhV2lDdgiX60wN95rj4cpl"><span class='badge badge-private' data-page-node-id="KOMRACiKmQWTp1RH54Spyn">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="zqP08DiHLBLd9xxLTftHRB">
+  <td data-page-node-id="lJ9zrHId7NHRSoApC8h8fW">24</td>
+  <td class='company-name' data-page-node-id="RlsCDu8b8YXwL4uDfKICul">Phyathai 2 Hospital（帕亚泰2医院）</td>
+  <td data-page-node-id="1vztjXkQMT2iVyrVftWyad">Bangkok</td>
+  <td class='contact-info' data-page-node-id="E9lUbfZbyAVS1BwE7dJrJl"><div data-page-node-id="YlF4r0yTYBkgDzy8JklOl9">📞 +66 2 271 6700</div><div data-page-node-id="ZB4k1IJM4LoaL3KPgAj9qn">📧 <a href="mailto:1772@phyathai.com" data-page-node-id="Oojh1IlvNIU0oAJ2iYRZ3H">1772@phyathai.com</a></div><div data-page-node-id="BusrZIYGUbGrtM5m9pS3UG">📍 943 Phahonyothin Rd, Phaya Thai, Bangkok 10400</div></td>
+  <td data-page-node-id="UKgMh7aw55QNOsdgtFvX3l"><a href="https://www.phyathai.com" target="_blank" data-page-node-id="GsxBvITBuAo9D37yH6n8xZ">https://www.phyathai.com</a></td>
+  <td data-page-node-id="M8hIijJO7HfYHhZQkjnGFF"><span class='badge badge-private' data-page-node-id="XDDYdAOjvZXr5ZX2rSiRDq">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="wkRSfGdq7hkoh7gima2E8e">
+  <td data-page-node-id="KbHgUFUcPwmaUcdiPG36sb">25</td>
+  <td class='company-name' data-page-node-id="av8GwedIUQMlItyVrLcgbK">Phyathai 3 Hospital（帕亚泰3医院）</td>
+  <td data-page-node-id="hrSKAbDq81mmakwFRVkBfm">Bangkok</td>
+  <td class='contact-info' data-page-node-id="rbLedbZExY2jAaJ4NCiszB"><div data-page-node-id="eDGdDXL4MmOT46Fr5FNGUl">📞 +66 2 467 1111</div><div data-page-node-id="Rk3795TzShXaxS4v973r4M">📧 <a href="mailto:onestop@phyathai.com" data-page-node-id="r2r7x1aJ8dD4p07D3rf7Lq">onestop@phyathai.com</a></div><div data-page-node-id="CgawJASsJlnv1m4bHL3xF6">📍 111 Phet Kasem Rd, Pak Khlong Phasi Charoen, Bangkok 10160</div></td>
+  <td data-page-node-id="XyiQrHtGu3SERhvgWdbX4w"><a href="https://www.phyathai.com" target="_blank" data-page-node-id="cA8hXq1it8PUXpxS75cCKM">https://www.phyathai.com</a></td>
+  <td data-page-node-id="wb3JqNdKhtA6vCV9Us0eCv"><span class='badge badge-private' data-page-node-id="Eb6O9vq5DDBlmriUtlxNkI">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="LYqKPfuLcZEQfCZIaOCa9W">
+  <td data-page-node-id="zizP6Pl3mhgy2nvNTUmwGy">26</td>
+  <td class='company-name' data-page-node-id="BiAvWaF6poEVv0oJH3xegz">Paolo Kaset Hospital（保罗·卡塞特医院）</td>
+  <td data-page-node-id="ZAlf1YdBtPKHkCvuGWMIth">Bangkok</td>
+  <td class='contact-info' data-page-node-id="pQe6JVLYoN24JeOmAlJMmj"><div data-page-node-id="aWChhUCuLw43MWc41E2G7y">📞 +66 2 511 1100</div><div data-page-node-id="tSG75v5yTtE9wCRLUkxW2g">📍 5-6 Phahonyothin Rd, Sena Nikhom, Chatuchak, Bangkok 10900</div></td>
+  <td data-page-node-id="kO3sBLDcaxNXvPw9yG4Vom"><a href="https://www.paolohospital.com" target="_blank" data-page-node-id="mUZROyOFe6D3n9GK9s86Yj">https://www.paolohospital.com</a></td>
+  <td data-page-node-id="Byj1fXFrwN0iVoYtLacvdv"><span class='badge badge-private' data-page-node-id="h7vyDsbthU7pC1dReI2DqQ">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="RrYZqTFo4rtDSzPtYb56J6">
+  <td data-page-node-id="uvISOheJLswuedBGQi6bTv">27</td>
+  <td class='company-name' data-page-node-id="5nPPQwjOLNkn5lUlG7PwpL">Vibhavadi Hospital（威帕瓦迪医院）</td>
+  <td data-page-node-id="Tdx7d5xeX4WCKbgND7P5pJ">Bangkok</td>
+  <td class='contact-info' data-page-node-id="kwfspVGurMLQPul62sZqdM"><div data-page-node-id="KB77Dp0lwTtbXouPjtRUtx">📞 +66 2 561 1111</div><div data-page-node-id="skZW2DYQkLOMDhTnmMll6r">📍 51/3 Ngamwongwan Rd, Lat Yao, Chatuchak, Bangkok 10900</div></td>
+  <td data-page-node-id="85ScodTW5yf99SrFyWM6kC"><a href="https://www.vibhavadi.com" target="_blank" data-page-node-id="ZUWeGjLhHYaiQQFkEq71qi">https://www.vibhavadi.com</a></td>
+  <td data-page-node-id="mNrcAua5IHmpOm645I7NYc"><span class='badge badge-private' data-page-node-id="fDOoXCuUCv5lOGGCMEyooE">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="T42vx6HcABgGRITymV93UR">
+  <td data-page-node-id="sGulRLlxBIoS7rUHVfUO0V">28</td>
+  <td class='company-name' data-page-node-id="HtJ8w5wHYMonOKptOCmHLv">Sikarin Hospital（希卡林医院）</td>
+  <td data-page-node-id="sCMgVAS4smo3jDXRdwApPG">Bangkok</td>
+  <td class='contact-info' data-page-node-id="EeZLLhU1sPANraz0gaCt2g"><div data-page-node-id="j1bzG3mVFlhU9gjcExI10R">📞 +66 2 366 9900</div><div data-page-node-id="IwdJtUWm9tgINUtVyklzga">📍 1988 Srinakarin Rd, Bang Na, Bangkok 10260</div></td>
+  <td data-page-node-id="lWRVNGksdEqRBClt7wZlS0"><a href="https://www.sikarin.com" target="_blank" data-page-node-id="eiUFvKzPo9SFWIAp8QIuwO">https://www.sikarin.com</a></td>
+  <td data-page-node-id="TglIaGB0tjeob2QCN4Awuz"><span class='badge badge-private' data-page-node-id="LT37gojSRelMMuNGx9ZYdi">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="FEpH7ptDU3zpxwCBYAAznR">
+  <td data-page-node-id="x5V02UazobUgURxfA1sCSp">29</td>
+  <td class='company-name' data-page-node-id="MRQh56ymGvzteSnHioiSnF">Piyavate Hospital（比亚瓦特医院）</td>
+  <td data-page-node-id="Q5mhcNSssF2XRiYEevEZa3">Bangkok</td>
+  <td class='contact-info' data-page-node-id="vAyzIZj8dR0fqNs1DTlOJN"><div data-page-node-id="mTt3wMG0VrlRGCnvh3Mlen">📞 +66 2 625 6500</div><div data-page-node-id="tyJrT5YazFZ4dFsZzvRkOV">📍 998 Rim Klong Samsen Rd, Bang Kapi, Huai Khwang, Bangkok 10310</div></td>
+  <td data-page-node-id="zCbmyE1WunwCHmv6UIZWyW"><a href="https://www.piyavate.com" target="_blank" data-page-node-id="VMnoMfWUvfUrkMbR4xsKBn">https://www.piyavate.com</a></td>
+  <td data-page-node-id="fznS0Ly8oSAsfxFdZoHiIx"><span class='badge badge-private' data-page-node-id="cLNo6rIMWoOuyVb6mkdqSD">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="a3H8UlvFsDekaMZ2ovqQxO">
+  <td data-page-node-id="y9euYa4c6kZViAfqNit2LJ">30</td>
+  <td class='company-name' data-page-node-id="boFrJPXNKMLYt9WbR4jVpO">Bangpakok 9 International Hospital（万巴谷9国际医院）</td>
+  <td data-page-node-id="4lD3hMZOlyD8XbcBPZaxrj">Samut Prakan</td>
+  <td class='contact-info' data-page-node-id="ikT8wmTPZSCCFZaciK3jYx"><div data-page-node-id="w9skm9yF4xprhytomcUqBH">📞 +66 2 109 9111</div><div data-page-node-id="6xplzQjTEqGd12vk5eweVz">📍 1 Bangna-Trat Rd, Bang Kaew, Bang Phli, Samut Prakan 10540</div></td>
+  <td data-page-node-id="6zS7HSJD0DVpCfGYYEI5W7"><a href="https://www.bpk9internationalhospital.com" target="_blank" data-page-node-id="G0h4qQDXrokRd3Vy5ewe31">https://www.bpk9internationalhospital.com</a></td>
+  <td data-page-node-id="9ClKitzaYSSN5OBt9SCx3N"><span class='badge badge-international' data-page-node-id="wWNP5Bzr2ceYm6PDi2gocT">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="xOYKKelE9K61HHmgMXWApK">
+  <td data-page-node-id="DMTgkqpALx2O0SKiS318wh">31</td>
+  <td class='company-name' data-page-node-id="Og4Xa7Mp5WKkQyUh3dr6B0">Praram 9 Hospital（帕拉姆9医院）</td>
+  <td data-page-node-id="F8rYd0xR6PV512qlGmRKxW">Bangkok</td>
+  <td class='contact-info' data-page-node-id="R19fUMR92yqDXfUIuEV2hq"><div data-page-node-id="jIANFtsgytUTmfOzxdA9L1">📞 +66 2 202 9999</div><div data-page-node-id="5z940bJ1Xo9Puofcl3W49W">📍 99 Rama IX Rd, Bang Kapi, Huai Khwang, Bangkok 10320</div></td>
+  <td data-page-node-id="5VzZ4IbgFwAxJzQBC5FF2e"><a href="https://www.praram9.com" target="_blank" data-page-node-id="aDLMcVS5BuO99ti04iI2md">https://www.praram9.com</a></td>
+  <td data-page-node-id="USY16zEoTQT2KMZEmWIsgY"><span class='badge badge-private' data-page-node-id="NSONcvJCbAmR928x5CMLtZ">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="FUXcZOoiSeDmnujfSC7sTc">
+  <td data-page-node-id="JkVlomlVDH358bv45sEnQp">32</td>
+  <td class='company-name' data-page-node-id="kynEuds6avDQzlfHMKmcvr">Chaophya Hospital（昭披耶医院）</td>
+  <td data-page-node-id="UO89Hd6ggmslhrf03G1Vzj">Bangkok</td>
+  <td class='contact-info' data-page-node-id="cWF8n0o6FrkUs4XfsUB6j3"><div data-page-node-id="RjL7VrogOpjWY3FD2nRbP4">📞 +66 2 433 5666</div><div data-page-node-id="5lNqsuc4wmlkAe1JNvLB2p">📍 113 Charansanitwong Rd, Bang Phlat, Bangkok 10700</div></td>
+  <td data-page-node-id="JQtLLjSSF5e392BJwZM15m"><a href="https://www.chaophya.com" target="_blank" data-page-node-id="VtNMbgCxoFi3ltLNqHAg9D">https://www.chaophya.com</a></td>
+  <td data-page-node-id="Ixq8RxZX5CCIsNE8PjLcSr"><span class='badge badge-private' data-page-node-id="Y1wvjp5s64o0vr6xbtSt0V">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="GfUjj0o00ftDTbFYKeMymX">
+  <td data-page-node-id="j8ih4uaUekrCAAsXvJFJ1q">33</td>
+  <td class='company-name' data-page-node-id="WzXgJN0n35Q7zSIb05fN2f">Ramkhamhaeng Hospital（兰甘亨医院）</td>
+  <td data-page-node-id="PocRaTqPNqIQxRteke5elS">Bangkok</td>
+  <td class='contact-info' data-page-node-id="TdznPOI76ahUUkixkG1ZC1"><div data-page-node-id="NsQbTc3sWNm2qsQxQTyu9e">📞 +66 2 743 9999</div><div data-page-node-id="BqBqN9xeSVmj71jZ91OH2H">📍 436 Ramkhamhaeng Rd, Bang Kapi, Bangkok 10240</div></td>
+  <td data-page-node-id="QUeO3LMH7OFFRfWjCS0GFu"><a href="https://www.ram-hosp.com" target="_blank" data-page-node-id="QUQOKDSRsAYNaxemOVna4d">https://www.ram-hosp.com</a></td>
+  <td data-page-node-id="pSoMdOZJwUtUqF0nBYf3aT"><span class='badge badge-private' data-page-node-id="t8vgzKmaav5WNbPPeDLpHK">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="ELgc4k1uNyFg2PLBLrokcr">
+  <td data-page-node-id="gRbANcTl48prxXS0Ps45Uf">34</td>
+  <td class='company-name' data-page-node-id="MHaLB9dDITE7Hjiz0eF2df">Saint Louis Hospital（圣路易斯医院）</td>
+  <td data-page-node-id="eFdh1laHdLZKVy8EQbwpYE">Bangkok</td>
+  <td class='contact-info' data-page-node-id="3KoVbONyMQMRX70iOA1MGH"><div data-page-node-id="O118zYnE2z0wNVuAeWWBBb">📞 +66 2 838 5555</div><div data-page-node-id="psUdXC789bMNTGcYK4EmoW">📍 27 South Sathorn Rd, Yan Nawa, Sathon, Bangkok 10120</div></td>
+  <td data-page-node-id="09QtOxJu86mZNV2hkwICZB"><a href="https://www.saintlouis.or.th" target="_blank" data-page-node-id="jDCRvh6hO2YDTjUZY5Lqt2">https://www.saintlouis.or.th</a></td>
+  <td data-page-node-id="KxAFM0eazRomXdAoGXSjlg"><span class='badge badge-private' data-page-node-id="IbdsKS1KJXKVC1xQaPaEtC">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="QFeJh01TScbkFeAhqwrHFZ">
+  <td data-page-node-id="ShNSMsotJfsC9qhqun8F3T">35</td>
+  <td class='company-name' data-page-node-id="OaEbp42aUinbMI59lAEP6i">Mission Hospital Bangkok（曼谷宣道医院）</td>
+  <td data-page-node-id="G0p1zuYU9GBx6uyoWfiXTB">Bangkok</td>
+  <td class='contact-info' data-page-node-id="BxgygkNzxZ7ChWg5mNFYyY"><div data-page-node-id="quxsngxKTVLPgYIW9564Iq">📞 +66 2 282 1100</div><div data-page-node-id="ViXoYa7DCUGJBrdV2N14Ci">📍 430 Phitsanulok Rd, Dusit, Bangkok 10300</div></td>
+  <td data-page-node-id="cIA3nHbbga9oquvU5vdVhb"><a href="https://www.mission-hospital.org" target="_blank" data-page-node-id="6R4OS62HmmgQ5TVwEllhoz">https://www.mission-hospital.org</a></td>
+  <td data-page-node-id="mQF3l8Ot1heTjNf0pRsb5j"><span class='badge badge-private' data-page-node-id="HMPnhLxChUmCPoBUB6Y5Yh">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="iUFdi12vxPZFxGp6mlCap0">
+  <td data-page-node-id="qhw1BYT2BgkQhJQuGp3ekV">36</td>
+  <td class='company-name' data-page-node-id="qpUoaJnmaXrQsmxpIqBJ2x">Camillian Hospital（卡米利安医院）</td>
+  <td data-page-node-id="SiijfG3DcsXzAuxbYXN7rV">Bangkok</td>
+  <td class='contact-info' data-page-node-id="gpX3bk9coLwUCVbWOZHiar"><div data-page-node-id="Tb7MzXM1iFkO4WO4y5Nr2s">📞 +66 2 185 1444</div><div data-page-node-id="U5i8IKUOSM6ok76rLSPzpC">📍 423 Soi Thonglor, Sukhumvit 55 Rd, Watthana, Bangkok 10110</div></td>
+  <td data-page-node-id="dDxVXZbxUqKa2yI6JPia82"><a href="https://www.camillianhospital.com" target="_blank" data-page-node-id="ofx8sCoPVYYOSOHbHyr3uZ">https://www.camillianhospital.com</a></td>
+  <td data-page-node-id="AoXG2m23G16jyQGltKLsT3"><span class='badge badge-private' data-page-node-id="bAPkLCUIx5ZEEFLe90mK0F">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="YAJznF6T8ekGCl0QKq5VJj">
+  <td data-page-node-id="1GFED5VGccmE6GbJFeA4fr">37</td>
+  <td class='company-name' data-page-node-id="vFMSjE4izsNwoybQPnRxFK">Sukhumvit Hospital（素坤逸医院）</td>
+  <td data-page-node-id="uBGYpFji4LYJx1XJ097ib1">Bangkok</td>
+  <td class='contact-info' data-page-node-id="rUuVZugnQ3jzxP0e5aUgFc"><div data-page-node-id="LwJrYQOwuD0BIszCeSpYcK">📞 +66 2 391 0011</div><div data-page-node-id="ddcEH1f8BDTQiqrNgQp0vf">📍 1411 Sukhumvit Rd, Phra Khanong Nuea, Watthana, Bangkok 10110</div></td>
+  <td data-page-node-id="4hwCoa486DR8eSUjHCkFjP"><a href="https://www.sukumvithospital.com" target="_blank" data-page-node-id="zLtLiswJIqjLanbadGWjVz">https://www.sukumvithospital.com</a></td>
+  <td data-page-node-id="RB2lbDylgUY8hYVYJzt38I"><span class='badge badge-private' data-page-node-id="u7E4RLyjOYsTTP8miwFF1p">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="RJifNDPfftBzJcXd51ErJd">
+  <td data-page-node-id="eNOrgKpF4GjVpRWlHm2q6A">38</td>
+  <td class='company-name' data-page-node-id="xZRL9defMwisMNqiDxvCRi">Synphaet Hospital（辛帕特医院）</td>
+  <td data-page-node-id="NRtAIfW1mKqP46Q8R7B2TA">Bangkok</td>
+  <td class='contact-info' data-page-node-id="wsHuxK9Xnm5wjSxCz7MX3j"><div data-page-node-id="ac225yJu8eflxBBv0kpTR6">📞 +66 2 793 5099</div><div data-page-node-id="xtUgLKwH9WTrK7riqU4Rk4">📍 9/99 Ram Intra Rd, Khan Na Yao, Bangkok 10230</div></td>
+  <td data-page-node-id="RwcIaqdU2E5qxGhuU9q2Ai"><a href="https://www.synphaet.co.th" target="_blank" data-page-node-id="KMaerGuvLBM6Nk2gwTppps">https://www.synphaet.co.th</a></td>
+  <td data-page-node-id="y8yn5fHW03aRtJawBjVvBg"><span class='badge badge-private' data-page-node-id="r20sKNDG3uJALoY7XFoUjr">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="9AdF4zBarucweS0qvudFw6">
+  <td data-page-node-id="mzuyBNxakHgPof55lmqUYD">39</td>
+  <td class='company-name' data-page-node-id="ciO0JU93JVsNUp6IwidZaj">Thai Nakarin Hospital（泰纳卡林医院）</td>
+  <td data-page-node-id="V1G4uZKXGzQ2fKUT2s8aHt">Bangkok</td>
+  <td class='contact-info' data-page-node-id="FaXP3fx9zmggC4mWKQDcJd"><div data-page-node-id="QaunzLnnLlsMFfquRF43FU">📞 +66 2 361 2727</div><div data-page-node-id="Osbflv6K0uFAsSL9nr5TKr">📍 345 Bang Na-Trat Rd, Bang Na, Bangkok 10260</div></td>
+  <td data-page-node-id="gncRPz5Y5ilWMq21sXOXhB"><a href="https://www.thainakarin.co.th" target="_blank" data-page-node-id="hhEZT54azZoHEgkPPx4xGL">https://www.thainakarin.co.th</a></td>
+  <td data-page-node-id="4nnbh6Bg4Gks2AbDB6nSRK"><span class='badge badge-private' data-page-node-id="2aAshT65K8foNMVDc1WfKT">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="m2GxdMsWpZtQncCjLHHgF3">
+  <td data-page-node-id="UYgTTU3UiRFWtlRYeXbACW">40</td>
+  <td class='company-name' data-page-node-id="JYIYNZo5nTMHYt3boshAd5">Theptarin Hospital（特帕林医院）</td>
+  <td data-page-node-id="gsDp5KlP9u1NKU3CsgZrLW">Bangkok</td>
+  <td class='contact-info' data-page-node-id="lXTPT0AP2RtK90easZOoBW"><div data-page-node-id="gxXc4HTU0aJPk8HpZ7YeMa">📞 +66 2 348 7000</div><div data-page-node-id="zueLSAxebTbWUmoudJzjbo">📍 3850 Rama IV Rd, Khlong Toei, Bangkok 10110</div></td>
+  <td data-page-node-id="yjsk2oD4ZqbWF1vTVSPsqM"><a href="https://www.theptarin.com" target="_blank" data-page-node-id="XnLcE2GirWVz03o9Sm38mD">https://www.theptarin.com</a></td>
+  <td data-page-node-id="Rsfev7mHAxaVCywksRjLY3"><span class='badge badge-private' data-page-node-id="CGMqEogYzIarVBFiMCegcB">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="fY1GtAQQa1Ha7YMXZgNBZp">
+  <td data-page-node-id="g06WH9o9JipGHgefBOY4ly">41</td>
+  <td class='company-name' data-page-node-id="1Ks7q1uIxcqXoiejqatWE2">Lanna Hospital（兰纳医院）</td>
+  <td data-page-node-id="3MMqkdZgBUn9uA80PyCVP6">Chiang Mai</td>
+  <td class='contact-info' data-page-node-id="wguYFlowOEw7b9WqpWGvOa"><div data-page-node-id="NnMMBxNIEhrnc8WUo3PcMF">📞 +66 52 134 777</div><div data-page-node-id="EpbvKKmv2qa1Y4RvuLJ11M">📧 <a href="mailto:crd@lanna-hospital.com" data-page-node-id="8ZtY6MSEZCsxsixQhmvKlB">crd@lanna-hospital.com</a></div><div data-page-node-id="36bzf5wWvzj75LUZTEH3zA">📍 1 Sookasam Rd, Chang Phueak, Mueang Chiang Mai 50200</div></td>
+  <td data-page-node-id="RkklHBWFse25Rf5kkDZKwp"><a href="https://www.lanna-hospital.com" target="_blank" data-page-node-id="YiKEroTuxuQQ3g7lUrsmcT">https://www.lanna-hospital.com</a></td>
+  <td data-page-node-id="KkHLiiEST9ZmmoYeU5tzFz"><span class='badge badge-private' data-page-node-id="J5G1PTOMFcpgTlrqTSHcgx">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="MNZJh0Ue91rjBoopCY7oqq">
+  <td data-page-node-id="CLMImWDZIWZlmYJgqv7a14">42</td>
+  <td class='company-name' data-page-node-id="ymN3pD7Runq4p1gOdUy1Gs">Bangkok Hospital Hat Yai（曼谷医院合艾）</td>
+  <td data-page-node-id="Qq6qblptyLxcZjSp8UVy5k">Hat Yai, Songkhla</td>
+  <td class='contact-info' data-page-node-id="508yhdFMlpPq2R0furKKZ0"><div data-page-node-id="oKqIj1TtcWaxS1I2e7ey4J">📞 +66 74 292 222</div><div data-page-node-id="jZxukH5u9GoVwkFgGmszpv">📍 118 Moo 4, Khlong Rian, Hat Yai, Songkhla 90110</div></td>
+  <td data-page-node-id="hfuhFlfnRaWnOC3EsLLDyd"><a href="https://www.bangkokhospital.com" target="_blank" data-page-node-id="FCFxaKfRYjY477mrgMgXfm">https://www.bangkokhospital.com</a></td>
+  <td data-page-node-id="daMZnVMJcvZoI1Y4jWgiSh"><span class='badge badge-private' data-page-node-id="S4SdH8t8TMXanYcZbfvDuG">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="nbhz9yCIsL09bzEtsU5byb">
+  <td data-page-node-id="UAz6uGajAoPI3AJf6URdOC">43</td>
+  <td class='company-name' data-page-node-id="SYGpReGevkBz0HQil2xmMs">Bangkok Hospital Udon Thani（曼谷医院乌隆）</td>
+  <td data-page-node-id="6I4XRticKkxm8S66Auwvyl">Udon Thani</td>
+  <td class='contact-info' data-page-node-id="gCtAuGDHJ3EAdLNnbVD5aB"><div data-page-node-id="8HkcERttRDRaQjHxTvIxib">📞 +66 42 188 999</div><div data-page-node-id="7KmS7ttRArjamSD6pHd1e4">📍 184/4 Prajak Rd, Mak Khaeng, Mueang Udon Thani 41000</div></td>
+  <td data-page-node-id="NuyUcXmN3T5B3W8vyi32jd"><a href="https://www.bangkokhospital.com" target="_blank" data-page-node-id="IseyW89CdUqYKhj1TkSC2g">https://www.bangkokhospital.com</a></td>
+  <td data-page-node-id="KTVAmwHnTEddz0W9jTcPTe"><span class='badge badge-private' data-page-node-id="tny1uwn4ZalIe7uVT0YIoo">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="WaSfGnzJD0A33Vy81KPyFX">
+  <td data-page-node-id="sFRyk7A9s6YBIKNcnrbKtD">44</td>
+  <td class='company-name' data-page-node-id="IKTK6q0KMprb0XcJqZJ542">Bangkok Hospital Hua Hin（曼谷医院华欣）</td>
+  <td data-page-node-id="ZZRFsCynGJDjHAQUWuBb2v">Hua Hin, Prachuap Khiri Khan</td>
+  <td class='contact-info' data-page-node-id="YsnY2Ich3cuweSNDOlVFuZ"><div data-page-node-id="zKBpwisFhFwv14QH0NNV5Y">📞 +66 32 520 999</div><div data-page-node-id="JZ50fI5ZZcKASvEhjP8pi9">📍 111/1 Damri Rd, Hua Hin, Prachuap Khiri Khan 77110</div></td>
+  <td data-page-node-id="1NSk1lsuj67ChwC6fkiUj6"><a href="https://www.bangkokhospital.com" target="_blank" data-page-node-id="9V7qpnGk1OJYNMToNiXgxu">https://www.bangkokhospital.com</a></td>
+  <td data-page-node-id="f3xZXCYl7H9dr5jvkwHuGX"><span class='badge badge-private' data-page-node-id="mXisR5QeCBmPbC9RoraM0r">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="Nz0360kJQSTYvIcPB9ACbp">
+  <td data-page-node-id="VRUjGKCNhm2Od4IvbJ2UVU">45</td>
+  <td class='company-name' data-page-node-id="W6ev3WdAoiygIHb3aB0uJQ">Bangkok Hospital Samui（曼谷医院苏梅）</td>
+  <td data-page-node-id="OILHuevmJ4RiBkncE7yLnS">Ko Samui, Surat Thani</td>
+  <td class='contact-info' data-page-node-id="XFPKMDiwEcMsXPB8MAD18A"><div data-page-node-id="rigbJL308N4TrDS7s0Ky21">📞 +66 77 429 999</div><div data-page-node-id="IPABjBenxmJIX7ylYm46Bo">📍 10/4 Moo 3, Ang Thong, Ko Samui, Surat Thani 84140</div></td>
+  <td data-page-node-id="xcc9ZoiJHCBlvI4C8Touuj"><a href="https://www.samuihospital.com" target="_blank" data-page-node-id="WThCOi4FQ2Aj3hjTEaJaGb">https://www.samuihospital.com</a></td>
+  <td data-page-node-id="PQ4BWtFXbP7afvRCPUOsvN"><span class='badge badge-private' data-page-node-id="SOSoLfEA7Wc69Gq4bYmbWr">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="C9c1ocCu1FxLBTh9cHUzaF">
+  <td data-page-node-id="Nzi4gGtEf7Jz3v9IAdVyue">46</td>
+  <td class='company-name' data-page-node-id="GGdMQBCdX4bu4cQquAwAcp">Pattaya International Hospital（芭提雅国际医院）</td>
+  <td data-page-node-id="sI9XKiB1qqQTUxUbB7a2P1">Pattaya, Chon Buri</td>
+  <td class='contact-info' data-page-node-id="pjzSojuAon56bksKh9j098"><div data-page-node-id="wcF0hlcjOwBCngdHNgIyCa">📞 +66 38 429 999</div><div data-page-node-id="YmPJKZWXsXMA7S82QZgaD4">📍 555/15 Moo 5, Pattaya-Naklua Rd, Bang Lamung, Chon Buri 20150</div></td>
+  <td data-page-node-id="KRvQORnfVQq7d2OpPDiOEL"><a href="https://www.pih-inter.com" target="_blank" data-page-node-id="tSIcBUfyxnp7CH5ELK135a">https://www.pih-inter.com</a></td>
+  <td data-page-node-id="R4tQ0ZzGamosCJNGkUvT4X"><span class='badge badge-international' data-page-node-id="tCbzmjG2uWgSsB23C2mOrM">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="PhCrJR6UbZ33ObdxOrqaNq">
+  <td data-page-node-id="MMmdEBB8BlG0Df2wT6o0r7">47</td>
+  <td class='company-name' data-page-node-id="s81vyPe7BHA2h063LJVx3s">Kasemrad Ramkhamhaeng Hospital（开塞姆拉·兰甘亨医院）</td>
+  <td data-page-node-id="EbR4GhKjdJI4UkTFPH6NwN">Bangkok</td>
+  <td class='contact-info' data-page-node-id="nc7cxSvcjae1sQQ1XyN7on"><div data-page-node-id="8ZDhn9ajZaazHz8UIdLYSE">📞 +66 2 339 0000</div><div data-page-node-id="Kf16JEpILLnu49LjLjn3b6">📍 99/9 Ramkhamhaeng Rd, Saphan Sung, Bangkok 10240</div></td>
+  <td data-page-node-id="cGaq6NlByHAXD0kIw5N072"><a href="https://www.kasemrad.com" target="_blank" data-page-node-id="45sjR5YcrrYIpaA6HvbeZx">https://www.kasemrad.com</a></td>
+  <td data-page-node-id="50qDVfhopwsz5BzxkYVVHo"><span class='badge badge-private' data-page-node-id="KulHrt2tFgmmzrb4w5gIgS">私立</span></td>
+  </tr>
+    </tbody>
+    </table>
+
+    <div class="footer" data-page-node-id="ywKgbTX7kQScjpKIV3AzCB">
+        <p data-page-node-id="tfF9fn5MkOsnZjKnoTEvdb">📌 泰国医院信息表 · 共 47 家</p>
+        </div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">医院总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 泰国医院信息表 · 共 '+total+' 家';
+})();
+</script>
+</body>
+</html>
