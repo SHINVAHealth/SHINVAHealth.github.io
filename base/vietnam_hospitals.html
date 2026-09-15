@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="KolrZ66eDxscMKxU4zmw3u">
+<head data-page-node-id="9vhbio8i8Od8nf6n6r3g8z">
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8" data-page-node-id="YDKqXDXLostDkkYI9jFkcf">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="AF7gwc3X9gBiaAKwlZ9Pbh">
+    <title>越南医院信息表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:hover { background: #f8f9fb; }
+
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; color:#fff; }
+        .badge-public { background: #2ecc71; }
+        .badge-private { background: #3498db; }
+        .badge-teaching { background: #f39c12; }
+        .badge-international { background: #9b59b6; }
+        .badge-military { background: #e74c3c; }
+        .badge-ngo { background: #1abc9c; }
+        .badge-joint { background: #e67e22; }
+
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body data-page-node-id="1KnrS0dJ6YA0CcB1Bi4FSH">
+<div class="container" data-page-node-id="Da5mCosAA6b0bqdbA8t6xZ">
+    <h1 data-page-node-id="nLwDHx8ICiHYhHgjlA11ny">越南医院信息表</h1>
+    <div class="stats" data-page-node-id="1kf1vVP9qy9uIq0VGMzNAU">
+      <div class="stat-card total" data-page-node-id="3T6MsNXWJMrInVo0b7HrCf"><div class="num" data-page-node-id="yooSTcxbEoVsgRuPXO3NGG">20</div><div class="label" data-page-node-id="gT2yG0t0jwIoxnRtT8gwUD">医院总数</div></div>
+    </div>
+
+      <div class="searchbar" data-page-node-id="gyYkRs0K0nq1K6ZQnPmGl9">
+    <input id="custSearch" type="text" placeholder="🔍 搜索医院名称 / 城市 / 电话 / 官网 / 性质…" autocomplete="off" data-page-node-id="EjUuimeJwR8BuYdFlq8Ega">
+    <span class="search-count" id="custCount" data-page-node-id="aQ80GsaIbp6jcvmZR0iKSf"></span>
+  </div>
+<table data-page-node-id="rylw0CSUdF4tXa3a7dMwR5">
+        <thead data-page-node-id="WVo9KAJwOCuvCZiPyAB3as">
+            <tr data-page-node-id="ukwAvqhV4P1wZNxLJiUfqV">
+                <th style="width:30px;" data-page-node-id="AWzBvwCZhsVRcU4poS1nOU">#</th>
+                <th style="width:230px;" data-page-node-id="tkg4StQl7ibnJP5kkJJzBs">医院名称</th>
+                <th style="width:110px;" data-page-node-id="eTqPixZhsxeMWq7mkG0taL">城市</th>
+                <th style="width:250px;" data-page-node-id="sO3gfupWBBGnUCzIIJzdQ9">联系方式（电话/邮箱/地址/床位）</th>
+                <th style="width:170px;" data-page-node-id="rEsIdGFurKzrMP022q8K4I">官网</th>
+                <th style="width:120px;" data-page-node-id="OfXoeBTeShFP1dP619cvfo">性质</th>
+                </tr>
+        </thead>
+        <tbody data-page-node-id="4hXBBIPtG4cdI3B2tEXFCH">
+<tr data-page-node-id="vnr1">
+  <td data-page-node-id="vnc1">1</td>
+  <td class='company-name' data-page-node-id="vnh1">Bach Mai Hospital（白梅医院）</td>
+  <td data-page-node-id="vcc1">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc1"><div data-page-node-id="vd1">📞 1900 888 866</div><div data-page-node-id="ve1">📧 <a href="mailto:Vanphongbvbm.vt@bachmai.edu.vn" data-page-node-id="vf1">Vanphongbvbm.vt@bachmai.edu.vn</a></div><div data-page-node-id="va1">📍 78 Giai Phong, Dong Da, Hanoi</div><div data-page-node-id="vb1">🛏 床位：1900（来源 bachmai.gov.vn）</div></td>
+  <td data-page-node-id="vw1"><a href="https://bachmai.gov.vn" target="_blank" data-page-node-id="vx1">https://bachmai.gov.vn</a></td>
+  <td data-page-node-id="vt1"><span class='badge badge-public' data-page-node-id="bp1">公立</span><span class='badge badge-teaching' data-page-node-id="bt1">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr2">
+  <td data-page-node-id="vnc2">2</td>
+  <td class='company-name' data-page-node-id="vnh2">Viet Duc University Hospital（越德医院 / 越南-德国医院）</td>
+  <td data-page-node-id="vcc2">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc2"><div data-page-node-id="vd2">📞 +84 24 3825 3531</div><div data-page-node-id="va2">📍 40 Trang Thi, Hoan Kiem, Hanoi</div><div data-page-node-id="vb2">🛏 床位：1500+（来源 benhvienvietduc.org）</div></td>
+  <td data-page-node-id="vw2"><a href="https://benhvienvietduc.org" target="_blank" data-page-node-id="vx2">https://benhvienvietduc.org</a></td>
+  <td data-page-node-id="vt2"><span class='badge badge-public' data-page-node-id="bp2">公立</span><span class='badge badge-teaching' data-page-node-id="bt2">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr3">
+  <td data-page-node-id="vnc3">3</td>
+  <td class='company-name' data-page-node-id="vnh3">Cho Ray Hospital（大水镬医院）</td>
+  <td data-page-node-id="vcc3">Ho Chi Minh City</td>
+  <td class='contact-info' data-page-node-id="vc3"><div data-page-node-id="vd3">📞 028 3855 4137</div><div data-page-node-id="ve3">📧 <a href="mailto:truyenthong@bvchoray.com" data-page-node-id="vf3">truyenthong@bvchoray.com</a></div><div data-page-node-id="va3">📍 201B Nguyen Chi Thanh, District 5, HCMC</div><div data-page-node-id="vb3">🛏 床位：3200+（来源 vietnam.vn，2026）</div></td>
+  <td data-page-node-id="vw3"><a href="https://choray.vn" target="_blank" data-page-node-id="vx3">https://choray.vn</a></td>
+  <td data-page-node-id="vt3"><span class='badge badge-public' data-page-node-id="bp3">公立</span><span class='badge badge-teaching' data-page-node-id="bt3">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr4">
+  <td data-page-node-id="vnc4">4</td>
+  <td class='company-name' data-page-node-id="vnh4">Hue Central Hospital（顺化中央医院）</td>
+  <td data-page-node-id="vcc4">Hue</td>
+  <td class='contact-info' data-page-node-id="vc4"><div data-page-node-id="va4">📍 Hue, Thua Thien Hue</div><div data-page-node-id="vb4">🛏 床位：5334（来源 vietnam.vn，2025）</div></td>
+  <td data-page-node-id="vw4"><a href="https://bvtwhue.com.vn" target="_blank" data-page-node-id="vx4">https://bvtwhue.com.vn</a></td>
+  <td data-page-node-id="vt4"><span class='badge badge-public' data-page-node-id="bp4">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr5">
+  <td data-page-node-id="vnc5">5</td>
+  <td class='company-name' data-page-node-id="vnh5">108 Central Military Hospital（108军中央医院）</td>
+  <td data-page-node-id="vcc5">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc5"><div data-page-node-id="vd5">📞 +84 24 6275 7240</div><div data-page-node-id="va5">📍 Tran Hung Dao St., Hanoi</div><div data-page-node-id="vb5">🛏 床位：2000（应急可扩 4000，来源 benhvien108.vn）</div></td>
+  <td data-page-node-id="vw5"><a href="https://www.benhvien108.vn" target="_blank" data-page-node-id="vx5">https://www.benhvien108.vn</a></td>
+  <td data-page-node-id="vt5"><span class='badge badge-military' data-page-node-id="bm5">军队</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr6">
+  <td data-page-node-id="vnc6">6</td>
+  <td class='company-name' data-page-node-id="vnh6">National Hospital of Pediatrics（国家儿童医院）</td>
+  <td data-page-node-id="vcc6">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc6"><div data-page-node-id="va6">📍 18/879 La Thanh, Dong Da, Hanoi</div><div data-page-node-id="vb6">🛏 床位：2000+（来源 vietnam.vn）</div></td>
+  <td data-page-node-id="vw6"><a href="https://benhviennhitrunguong.gov.vn" target="_blank" data-page-node-id="vx6">https://benhviennhitrunguong.gov.vn</a></td>
+  <td data-page-node-id="vt6"><span class='badge badge-public' data-page-node-id="bp6">公立</span><span class='badge badge-teaching' data-page-node-id="bt6">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr7">
+  <td data-page-node-id="vnc7">7</td>
+  <td class='company-name' data-page-node-id="vnh7">K Hospital / National Cancer Institute（K医院 / 国家癌症院）</td>
+  <td data-page-node-id="vcc7">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc7"><div data-page-node-id="va7">📍 9 Pham Huu Lau, Phu Thuong, Tay Ho, Hanoi</div><div data-page-node-id="vb7">🛏 床位：2400（来源 nhandan.vn）</div></td>
+  <td data-page-node-id="vw7"><a href="https://benhvienk.vn" target="_blank" data-page-node-id="vx7">https://benhvienk.vn</a></td>
+  <td data-page-node-id="vt7"><span class='badge badge-public' data-page-node-id="bp7">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr8">
+  <td data-page-node-id="vnc8">8</td>
+  <td class='company-name' data-page-node-id="vnh8">National Hospital of Tropical Diseases（国家热带病医院）</td>
+  <td data-page-node-id="vcc8">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc8"><div data-page-node-id="va8">📍 78 Giai Phong, Dong Da, Hanoi</div><div data-page-node-id="vb8">🛏 床位：约200（估算，来源 myhospitalnow）</div></td>
+  <td data-page-node-id="vw8"><a href="http://benhnhietdoi.vn" target="_blank" data-page-node-id="vx8">http://benhnhietdoi.vn</a></td>
+  <td data-page-node-id="vt8"><span class='badge badge-public' data-page-node-id="bp8">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr9">
+  <td data-page-node-id="vnc9">9</td>
+  <td class='company-name' data-page-node-id="vnh9">National Hospital of Endocrinology（国家内分泌医院）</td>
+  <td data-page-node-id="vcc9">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc9"><div data-page-node-id="va9">📍 80 Giai Phong, Dong Da, Hanoi</div><div data-page-node-id="vb9">🛏 床位：1079（来源 nhandan.vn；2025 另记 1109）</div></td>
+  <td data-page-node-id="vw9"><a href="https://benhviennoitiet.vn" target="_blank" data-page-node-id="vx9">https://benhviennoitiet.vn</a></td>
+  <td data-page-node-id="vt9"><span class='badge badge-public' data-page-node-id="bp9">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr10">
+  <td data-page-node-id="vnc10">10</td>
+  <td class='company-name' data-page-node-id="vnh10">Hanoi Medical University Hospital（河内医科大学医院）</td>
+  <td data-page-node-id="vcc10">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc10"><div data-page-node-id="vd10">📞 1900 6422</div><div data-page-node-id="ve10">📧 <a href="mailto:benhviendaihocyhanoi@hmuh.vn" data-page-node-id="vf10">benhviendaihocyhanoi@hmuh.vn</a></div><div data-page-node-id="va10">📍 1 Ton That Tung, Dong Da, Hanoi</div><div data-page-node-id="vb10">🛏 床位：840（估算，来源 myhospitalnow）</div></td>
+  <td data-page-node-id="vw10"><a href="https://hmuh.vn" target="_blank" data-page-node-id="vx10">https://hmuh.vn</a></td>
+  <td data-page-node-id="vt10"><span class='badge badge-public' data-page-node-id="bp10">公立</span><span class='badge badge-teaching' data-page-node-id="bt10">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr11">
+  <td data-page-node-id="vnc11">11</td>
+  <td class='company-name' data-page-node-id="vnh11">Vinmec International Hospital（Vinmec国际医院）</td>
+  <td data-page-node-id="vcc11">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc11"><div data-page-node-id="vd11">📞 +84 24 3974 3556</div><div data-page-node-id="va11">📍 458 Minh Khai, Hai Ba Trung, Hanoi</div><div data-page-node-id="vb11">🛏 床位：约600（开业报道，来源 news.gov.vn；myhospitalnow 另记 222）</div></td>
+  <td data-page-node-id="vw11"><a href="https://vinmec.com" target="_blank" data-page-node-id="vx11">https://vinmec.com</a></td>
+  <td data-page-node-id="vt11"><span class='badge badge-international' data-page-node-id="bi11">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr12">
+  <td data-page-node-id="vnc12">12</td>
+  <td class='company-name' data-page-node-id="vnh12">FV Hospital（法国-越南医院 / Franco-Vietnamese Hospital）</td>
+  <td data-page-node-id="vcc12">Ho Chi Minh City</td>
+  <td class='contact-info' data-page-node-id="vc12"><div data-page-node-id="vd12">📞 (028) 35 11 33 33</div><div data-page-node-id="ve12">📧 <a href="mailto:information@fvhospital.com" data-page-node-id="vf12">information@fvhospital.com</a></div><div data-page-node-id="va12">📍 6 Nguyen Luong Bang, District 7, HCMC</div><div data-page-node-id="vb12">🛏 床位：220（来源 fvhospital.com）</div></td>
+  <td data-page-node-id="vw12"><a href="https://www.fvhospital.com" target="_blank" data-page-node-id="vx12">https://www.fvhospital.com</a></td>
+  <td data-page-node-id="vt12"><span class='badge badge-international' data-page-node-id="bi12">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr13">
+  <td data-page-node-id="vnc13">13</td>
+  <td class='company-name' data-page-node-id="vnh13">Da Nang Hospital（岘港医院）</td>
+  <td data-page-node-id="vcc13">Da Nang</td>
+  <td class='contact-info' data-page-node-id="vc13"><div data-page-node-id="vd13">📞 0236 3821 118</div><div data-page-node-id="va13">📍 124 Hai Phong, Thach Thang, Hai Chau, Da Nang</div><div data-page-node-id="vb13">🛏 床位：2000（来源 vietnam.vn，2025）</div></td>
+  <td data-page-node-id="vw13"><a href="http://dananghospital.org.vn" target="_blank" data-page-node-id="vx13">http://dananghospital.org.vn</a></td>
+  <td data-page-node-id="vt13"><span class='badge badge-public' data-page-node-id="bp13">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr14">
+  <td data-page-node-id="vnc14">14</td>
+  <td class='company-name' data-page-node-id="vnh14">Can Tho Central General Hospital（芹苴中央综合医院）</td>
+  <td data-page-node-id="vcc14">Can Tho</td>
+  <td class='contact-info' data-page-node-id="vc14"><div data-page-node-id="vd14">📞 0292 3 820 071</div><div data-page-node-id="ve14">📧 <a href="mailto:info@bvtwct.vn" data-page-node-id="vf14">info@bvtwct.vn</a></div><div data-page-node-id="va14">📍 315 Nguyen Van Linh, Ninh Kieu, Can Tho</div><div data-page-node-id="vb14">🛏 床位：1000（来源 myhospitalnow）</div></td>
+  <td data-page-node-id="vw14"><a href="https://bvtwct.vn" target="_blank" data-page-node-id="vx14">https://bvtwct.vn</a></td>
+  <td data-page-node-id="vt14"><span class='badge badge-public' data-page-node-id="bp14">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr15">
+  <td data-page-node-id="vnc15">15</td>
+  <td class='company-name' data-page-node-id="vnh15">Hanoi French Hospital（河内法国医院）</td>
+  <td data-page-node-id="vcc15">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc15"><div data-page-node-id="vd15">📞 (84-24) 3577 1100</div><div data-page-node-id="va15">📍 1 Phuong Mai, Dong Da, Hanoi</div><div data-page-node-id="vb15">🛏 床位：170（来源 hfh.com.vn）</div></td>
+  <td data-page-node-id="vw15"><a href="https://hfh.com.vn" target="_blank" data-page-node-id="vx15">https://hfh.com.vn</a></td>
+  <td data-page-node-id="vt15"><span class='badge badge-international' data-page-node-id="bi15">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr16">
+  <td data-page-node-id="vnc16">16</td>
+  <td class='company-name' data-page-node-id="vnh16">National Hospital of Ophthalmology（国家眼科医院 / 中央眼科医院）</td>
+  <td data-page-node-id="vcc16">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc16"><div data-page-node-id="vd16">📞 +84 24 3826 3966</div><div data-page-node-id="va16">📍 85 Ba Trieu, Hai Ba Trung, Hanoi</div><div data-page-node-id="vb16">🛏 床位：约500（来源 vietnamplus.vn，2019；WHO 另记 600）</div></td>
+  <td data-page-node-id="vw16"><a href="https://vnio.vn" target="_blank" data-page-node-id="vx16">https://vnio.vn</a></td>
+  <td data-page-node-id="vt16"><span class='badge badge-public' data-page-node-id="bp16">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr17">
+  <td data-page-node-id="vnc17">17</td>
+  <td class='company-name' data-page-node-id="vnh17">People's Hospital 115（115人民医院）</td>
+  <td data-page-node-id="vcc17">Ho Chi Minh City</td>
+  <td class='contact-info' data-page-node-id="vc17"><div data-page-node-id="vd17">📞 028 3865 2368</div><div data-page-node-id="va17">📍 527 Su Van Hanh, District 10, HCMC</div><div data-page-node-id="vb17">🛏 床位：1600（来源 siemens-healthineers.com）</div></td>
+  <td data-page-node-id="vw17"><a href="https://benhvien115.com.vn" target="_blank" data-page-node-id="vx17">https://benhvien115.com.vn</a></td>
+  <td data-page-node-id="vt17"><span class='badge badge-public' data-page-node-id="bp17">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr18">
+  <td data-page-node-id="vnc18">18</td>
+  <td class='company-name' data-page-node-id="vnh18">National Hospital of Odonto-Stomatology（国家口腔颌面医院）</td>
+  <td data-page-node-id="vcc18">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc18"><div data-page-node-id="vd18">📞 +84 24 3826 9723</div><div data-page-node-id="va18">📍 40B Trang Thi, Hoan Kiem, Hanoi</div><div data-page-node-id="vb18">🛏 床位：未公开（公开来源未列床位；以门诊/日诊手术为主）</div></td>
+  <td data-page-node-id="vw18"><a href="http://ranghammat.org.vn" target="_blank" data-page-node-id="vx18">http://ranghammat.org.vn</a></td>
+  <td data-page-node-id="vt18"><span class='badge badge-public' data-page-node-id="bp18">公立</span><span class='badge badge-teaching' data-page-node-id="bt18">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr19">
+  <td data-page-node-id="vnc19">19</td>
+  <td class='company-name' data-page-node-id="vnh19">University Medical Center of Ho Chi Minh City（胡志明市医药大学附属医院）</td>
+  <td data-page-node-id="vcc19">Ho Chi Minh City</td>
+  <td class='contact-info' data-page-node-id="vc19"><div data-page-node-id="vd19">📞 028 3855 4269</div><div data-page-node-id="va19">📍 215 Hong Bang, District 5, HCMC</div><div data-page-node-id="vb19">🛏 床位：1000（来源 bvdaihoc.com.vn 官网；myhospitalnow 另记 1300）</div></td>
+  <td data-page-node-id="vw19"><a href="https://bvdaihoc.com.vn" target="_blank" data-page-node-id="vx19">https://bvdaihoc.com.vn</a></td>
+  <td data-page-node-id="vt19"><span class='badge badge-public' data-page-node-id="bp19">公立</span><span class='badge badge-teaching' data-page-node-id="bt19">教学</span></td>
+  </tr>
+
+<tr data-page-node-id="vnr20">
+  <td data-page-node-id="vnc20">20</td>
+  <td class='company-name' data-page-node-id="vnh20">National Hospital of Obstetrics and Gynecology（国家妇产科医院）</td>
+  <td data-page-node-id="vcc20">Hanoi</td>
+  <td class='contact-info' data-page-node-id="vc20"><div data-page-node-id="vd20">📞 +84 24 3825 9281</div><div data-page-node-id="va20">📍 4 Trieu Quoc Dat, Dong Da, Hanoi</div><div data-page-node-id="vb20">🛏 床位：885（主院区，来源 hanoiportal，2023；分院另设 300 床）</div></td>
+  <td data-page-node-id="vw20"><a href="http://benhvienphusantrunguong.org.vn" target="_blank" data-page-node-id="vx20">http://benhvienphusantrunguong.org.vn</a></td>
+  <td data-page-node-id="vt20"><span class='badge badge-public' data-page-node-id="bp20">公立</span><span class='badge badge-teaching' data-page-node-id="bt20">教学</span></td>
+  </tr>
+    </tbody>
+    </table>
+
+    <div class="footer" data-page-node-id="c3ZWi7gLTiVW7UbuAnEX4S">
+        <p data-page-node-id="PUA0aHDokjW3w8ohEMPSyF">📌 越南医院信息表 · 共 20 家</p>
+        <p data-page-node-id="srcnote">来源：各医院官网（bachmai.gov.vn、benhvienvietduc.org、choray.vn、bvtwhue.com.vn、benhvien108.vn、benhviennhitrunguong.gov.vn、benhvienk.vn、benhnhietdoi.vn、benhviennoitiet.vn、hmuh.vn、vinmec.com、fvhospital.com、dananghospital.org.vn、bvtwct.vn、hfh.com.vn、vnio.vn、benhvien115.com.vn、ranghammat.org.vn、bvdaihoc.com.vn、benhvienphusantrunguong.org.vn）及越南政府/使馆公开医疗名录交叉核实；电话、邮箱、地址以官网与公开名录为准，未公开字段已标注。</p>
+        </div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">医院总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 越南医院信息表 · 共 '+total+' 家';
+})();
+</script>
+</body>
+</html>
