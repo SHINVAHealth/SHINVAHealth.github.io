@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="JPUUYaex2viJ1rNUmwbmL8">
+<head data-page-node-id="YUunkkguNk4CGZyqyud71k">
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8" data-page-node-id="K6Y9zALVouyq6MDZGg2cB5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="keeVlFhseEF9K4MIps4GQ9">
+    <title>韩国医疗器械经销商名录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Yu Gothic', 'Meiryo', 'Malgun Gothic', 'Leelawadee UI', 'Noto Sans CJK SC', 'Noto Sans Thai', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.55; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+        .badge-electro { background: #f39c12; color: #fff; }
+        .badge-ortho { background: #3498db; color: #fff; }
+        .badge-surgical { background: #2ecc71; color: #fff; }
+        .badge-ot { background: #9b59b6; color: #fff; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; line-height: 1.4; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; line-height: 1.5; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body data-page-node-id="vjXqpoCaFRDK0d4lDwBDu3">
+<div class="container" data-page-node-id="0aIqI3loxuTIp8ZEB8V81s">
+    <h1 data-page-node-id="nqrPmuDIArqhX3LOhqPX35">韩国医疗器械经销商名录</h1>
+    <div class="stats" data-page-node-id="st_wrap"><div class="stat-card total" data-page-node-id="st_total"><div class="num" data-page-node-id="st_total_n">23</div><div class="label" data-page-node-id="st_total_l">经销商总数</div></div><div class="stat-card" data-page-node-id="st_c"><div class="num" data-page-node-id="st_c_n">23</div><div class="label" data-page-node-id="st_c_l">综合外科设备</div></div></div>
+
+      <div class="searchbar" data-page-node-id="thI272NKjARNE2yFrefGWK">
+    <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off" data-page-node-id="y9KduI1SlD470YxZeWMPuM">
+    <span class="search-count" id="custCount" data-page-node-id="Fugc8E1gOX7QrBsMhZKuTW"></span>
+  </div>
+<table data-page-node-id="h1LwzRqBxHm7JVrYO1WQxN">
+        <thead data-page-node-id="8NURbfGQoYN9dMFLa4SxHi">
+            <tr data-page-node-id="epzbx1pm3QQyyFDHkcBWb3">
+                <th style="width:30px;" data-page-node-id="4IVKB7UfgFJVI61hdzkGmm">#</th>
+                <th style="width:200px;" data-page-node-id="6sPCbOeBAWyFsztok6T2yT">公司名称</th>
+                <th style="width:110px;" data-page-node-id="70sFq1ho9jSvPUiZQ9W0HC">城市</th>
+                <th style="width:230px;" data-page-node-id="3WcC6hD8QmbcVtaUC7eSPw">联系方式（电话/WhatsApp/邮箱/地址）</th>
+                <th style="width:170px;" data-page-node-id="X53DS1rZ9CNWKPhr9X7DhT">官网 / 店铺</th>
+                <th style="width:120px;" data-page-node-id="JP5qwG99PSyU3vvJaBJzX3">方向</th>
+                </tr>
+        </thead>
+        <tbody data-page-node-id="Xa9v3VxxshjxjKEED7dW8G"><tr data-page-node-id="pFVIxvOelCbjxHVnCp6fF"><td data-page-node-id="G2TcfCwQ7TPp10oVG3yJI">1</td><td class='company-name' data-page-node-id="6KKO7Hv6qzWy2Xd7H436c">DKSH Korea Ltd.（DKSH코리아）</td><td data-page-node-id="PGdPXgEhz721JVs4rUUmu">Seoul</td><td class='contact-info' data-page-node-id="5k1vBgYLUQAgz6lmat0j2"><div>📞 +82 2 2192 9500</div><div>📍 首尔特别市（详细地址未公开）</div><div>综合医疗设备分销（心血管/骨科/外科/眼科等，覆盖手术室）</div><div>📧 <a href="mailto:elin.sim@dksh.com">elin.sim@dksh.com</a></div></td><td data-page-node-id="KYWrQxn3fot7YeKcMcnbt"><a href="https://www.dksh.com/kr-en/home/healthcare/medical-devices" target="_blank" data-page-node-id="ejXxKYIBzqYCOcEpNYUzv">https://www.dksh.com/kr-en/home/healthcare/medical-devices</a></td><td data-page-node-id="9LJtZznTT6q4cLlvMgHpZ"><span class='badge badge-ot' data-page-node-id="ojX8gn0SqhBItEOOB5kOi">综合外科设备</span></td></tr>
+<tr data-page-node-id="VAHQqyndA1dDWUQBoDcLQ"><td data-page-node-id="625HkYDtKpD4KCVWqtXEv">2</td><td class='company-name' data-page-node-id="0Q60NnUSECRBBmEvU6Ljf">Dongbang Health Dine Co., Ltd.（동방헬스다인(주)）</td><td data-page-node-id="gXJnIUY03XL0cRsXQpG7B">Seoul</td><td class='contact-info' data-page-node-id="qAAt3e5WDJzJF8X8Z2HH8"><div>📞 02-566-9966</div><div>📍 首尔特别市（详细地址未公开）</div><div>MFDS 수입업 进口业登记（64 项品目记录），多品牌进口经销商</div></td><td data-page-node-id="tZSkL3PrfhOxSgpvgzWhO">未公开</td><td data-page-node-id="TrKZX4huCrCGbSLBH5QhD"><span class='badge badge-ot' data-page-node-id="iR2qeJuhrbPwfy4ONNkVU">综合外科设备</span></td></tr>
+<tr data-page-node-id="cN1LNs6hB4d48mcQYl4m9"><td data-page-node-id="LCTwrBuUvpMWnHnZNySoU">3</td><td class='company-name' data-page-node-id="5PA3YwgjokEVh4NzyH5mg">Dongjin International MB Trading Co., Ltd.（동진국제엠비무역(주)）</td><td data-page-node-id="YVC0zGopoRxqDrpu1Iuk8">Seoul</td><td class='contact-info' data-page-node-id="UuG7T3aOUp74F921k1Hze"><div>📍 首尔特别市（详细地址未公开）</div><div>MFDS 수입업 进口业登记（46 项品目记录），综合进口经销商</div></td><td data-page-node-id="XeeFHOFYgclSOTexWfHIG">未公开</td><td data-page-node-id="xX2orBn0MTzrYA4Ns9a65"><span class='badge badge-ot' data-page-node-id="KMJH3YfVop3SPS2GAyeMg">综合外科设备</span></td></tr>
+<tr data-page-node-id="2YAVGx4xLpbcrFUdV625f"><td data-page-node-id="BKRwN1umXLF8fEX9zzAkH">4</td><td class='company-name' data-page-node-id="EZZMqHsQfHlSKGHuLuG4S">E&amp;L Medical (이앤엘메디칼)</td><td data-page-node-id="WoLePwCd1VDeUe61rYmzm">Seoul</td><td class='contact-info' data-page-node-id="E9RlYLcVkBwuGfPa5UVv8"><div>📍 3F, Gana Building 64-16, Nonhyun-dong, Gangnam-gu, Seoul</div></td><td data-page-node-id="tikIe802eC6iujHtUM2bu"><span class="muted">未公开（无独立官网）</span></td><td data-page-node-id="SF5AQQ3DpIeHr86h8WiLa"><span class='badge badge-ot' data-page-node-id="HLGZzy5H73Yjif9E5CEWz">综合外科设备</span></td></tr>
+<tr data-page-node-id="c9RocnUsgBinNNoDaWpPP"><td data-page-node-id="mxC0QLu2kegtwyiDiFnFI">6</td><td class='company-name' data-page-node-id="QF7vPZgCFB0YDNZ36xAIK">Genopy Korea Co., Ltd.（제노피코리아）</td><td data-page-node-id="JJ6EZG9pOB4yhQIpFfQM1">Seoul</td><td class='contact-info' data-page-node-id="kyOllRkUhmkSsDtkorDfd"><div>📞 +82-31-8027-6750</div><div>📍 首尔特别市（详细地址未公开）</div><div>医疗器械进口与分销（连接全球厂商与韩国医院）</div><div>📧 <a href="mailto:sales@genopy.com">sales@genopy.com</a></div></td><td data-page-node-id="9j11Rbb3b8EBUWrDmcy3r"><a href="https://www.genopy.com/en/about" target="_blank" data-page-node-id="ytvBgxAelnZy0pvq19owb">https://www.genopy.com/en/about</a></td><td data-page-node-id="mvdYhYuDEpjKHAQUJj4NC"><span class='badge badge-ot' data-page-node-id="XbmtgMgWOCIVktRA3nTGV">综合外科设备</span></td></tr>
+<tr data-page-node-id="tDtxQFN7H4Uo05MBwgwEv"><td data-page-node-id="URf9IQ9pnKX9xbHTPjfKd">7</td><td class='company-name' data-page-node-id="BXxHDs3GuDMIAOl6rJNk0">Insung Medical Co., Ltd. (인성메디칼)</td><td data-page-node-id="oQODXh9qVTHogV1BQTkIx">Seoul</td><td class='contact-info' data-page-node-id="ONCET5ATNcBfibkUxxr9t"><div>📞 +82 33 812 3800</div><div>📧 <a href="mailto:samuel@insungmedical.co.kr">samuel@insungmedical.co.kr</a></div><div>📍 162-59, Insung B/D 584, Domgil-Ro, Jungnang-Gu, Seoul</div><div>📧 <a href="mailto:info@insungmedical.co.kr">info@insungmedical.co.kr</a></div></td><td data-page-node-id="QbsRAxtA2utv7ILvj46qY"><a href="http://www.insungmedical.co.kr" target="_blank">http://www.insungmedical.co.kr</a></td><td data-page-node-id="RcclFEGfa2QjL0WKQLcHs"><span class='badge badge-ot' data-page-node-id="BeXOydGzeltVoK0fcsYQK">综合外科设备</span></td></tr>
+<tr data-page-node-id="tSSG2vNqyglWmDE37wYfu"><td data-page-node-id="3gNO8thr6y6HcWKdRE3oK">8</td><td class='company-name' data-page-node-id="XjYLzQA8i6wWmwi9RFu9m">Join Medical Co., Ltd. (조인메디칼)</td><td data-page-node-id="7P5XLWaRtELKhhRRxyKAZ">Seoul</td><td class='contact-info' data-page-node-id="Qpf9p5G8Fs7RC8doNdOKf"><div>📞 +82-2-485-3747</div><div>📍 400-8, Pungnap 2-dong, Songpa-gu, Seoul</div><div>📧 <a href="mailto:joinmedical@yahoo.co.kr">joinmedical@yahoo.co.kr</a></div></td><td data-page-node-id="Bi7lz91jEW11QuEXxhAXK"><a href="http://www.joinmedical.co.kr" target="_blank">http://www.joinmedical.co.kr</a></td><td data-page-node-id="rqtWK5XJH3VHufRUDQdBU"><span class='badge badge-ot' data-page-node-id="KP7PJIs4nhD4ekxyagub7">综合外科设备</span></td></tr>
+<tr data-page-node-id="LqbbEgEpHDl2MQHVQmMKB"><td data-page-node-id="1fgKRkikg4bRyLnZ7dVP6">9</td><td class='company-name' data-page-node-id="2Z4sveAbS2ShaNXRjU8mJ">JW Medical (JW메디칼)</td><td data-page-node-id="O02Ok5d273aKKtYp11QCN">Seoul</td><td class='contact-info' data-page-node-id="tn1GTZ5L3MHo6GG9fDsrz"><div>📞 +82-2-2109-7700</div><div>📍 2477, Nambusunhwan-ro, Seocho-gu, Seoul</div></td><td data-page-node-id="gRC9BbpHuHGCwQxEBNKyH"><a href="https://www.jw-medical.co.kr/medical/en/intro/medical.jsp" target="_blank">https://www.jw-medical.co.kr/medical/en/intro/medical.jsp</a></td><td data-page-node-id="B4k1mjCbE7fDoaUwanTVH"><span class='badge badge-ot' data-page-node-id="k7PE5zGBbUwRkIsLO33n6">综合外科设备</span></td></tr>
+<tr data-page-node-id="m4AKNNXXDlrSdX4lD6eAJ"><td data-page-node-id="3ZaiPe0zeyFmjOLomhxem">10</td><td class='company-name' data-page-node-id="eAjxfkmCvdxEXpZ7vOASf">Krosia Co., Ltd. (크로시아)</td><td data-page-node-id="WEvTM9UeNOZO0tF08Yne6">Seoul</td><td class='contact-info' data-page-node-id="pUcuku0RsZ8UY8ADXywWT"><div>📍 4F, 978-32, Bangbae2-dong, Seocho-gu, Seoul</div></td><td data-page-node-id="20EHxm7Hej2nAnQ1i5jCM"><span class="muted">未公开（无独立官网）</span></td><td data-page-node-id="oaA19avsOQcszFQDONwf0"><span class='badge badge-ot' data-page-node-id="nWLgsqYOTbzcn5gAY9sm9">综合外科设备</span></td></tr>
+<tr data-page-node-id="hu2ajS0dmScvnk3WChsNB"><td data-page-node-id="pNckKFTETOzgq5sNsqtBv">11</td><td class='company-name' data-page-node-id="rnzpORcQEJBRiI1SmF4bP">Kwangmyung Daicom Co., Ltd.（(주)광명데이콤）</td><td data-page-node-id="62BW7ZQg9ezc1MtmuH262">Seoul</td><td class='contact-info' data-page-node-id="AbD5b1quYuAU1wpyKdGUS"><div>📍 首尔特别市（详细地址未公开）</div><div>MFDS 수입업 进口业登记（87 项品目记录），多品牌进口经销商</div></td><td data-page-node-id="HlK6A0w3FXjSATmdMitl9">未公开</td><td data-page-node-id="jhSeDsZ2pZqJhywTZ5EVc"><span class='badge badge-ot' data-page-node-id="tSl64Owq4hKqZA3O0oOl4">综合外科设备</span></td></tr>
+<tr data-page-node-id="RjbBu0Mv5G70ymNfTXAkT"><td data-page-node-id="Jrc3oJ4hrrmQakWssAeZP">12</td><td class='company-name' data-page-node-id="YbyHnwbC52deS60cUZxMg">Mediabsol Co., Ltd.（(주)메디앱솔）</td><td data-page-node-id="lKergpL5PDdZdccLUUQfa">Gyeonggi-do</td><td class='contact-info' data-page-node-id="DUB78iJAaXmSmiIwMJda4"><div>📍 京畿道（详细地址未公开）</div><div>MFDS 수입업 进口业登记（72 项品目记录），多品牌进口经销商</div></td><td data-page-node-id="c6OQ1t5aSPfUzRltXVK0P">未公开</td><td data-page-node-id="Akcj0zvjHWl99LPanAhSu"><span class='badge badge-ot' data-page-node-id="Q0hQehlJKTGDiIuAUkCxE">综合外科设备</span></td></tr>
+<tr data-page-node-id="yJ6rrb7X2EBGZz5H7EVHW"><td data-page-node-id="rozg76z7zygK26TCj0KN6">13</td><td class='company-name' data-page-node-id="AQNn2oyn0LcXnfvZEAri9">Medipos Co., Ltd.（(주)메디포스）</td><td data-page-node-id="FfOtCmmJgQkhQPAth2sp4">Seoul</td><td class='contact-info' data-page-node-id="KH3Lz0sWu7sxws6jzIxXP"><div>📍 首尔特别市（详细地址未公开）</div><div>MFDS 수입업 进口业登记（89 项品目记录），多品牌进口经销商</div></td><td data-page-node-id="2s3XeBs3Vc4fEutnjOFrs">未公开</td><td data-page-node-id="Q8VKyeHE0ZFs2eQ19zF4O"><span class='badge badge-ot' data-page-node-id="Gd944D80UxIwwlrEbdCN3">综合外科设备</span></td></tr>
+<tr data-page-node-id="DInWcQWtYUh2fy4gu3RzU"><td data-page-node-id="sO8zxLErxMO8oZElRhs7v">14</td><td class='company-name' data-page-node-id="JnnWqS6c80g4RLxEE6ZJt">PENTAS Korea (펜타스코리아)</td><td data-page-node-id="ejcrZtUGKWVjyJI5G8xqv">Busan</td><td class='contact-info' data-page-node-id="gWCqHegurpH3yzOKuitV3"><div>📍 Rm 402, 27-1 Gonghangap-gil 221beon-gil, Gangseo-gu, Busan</div></td><td data-page-node-id="81mA6bDd608CYW8ImFIYK"><span class="muted">未公开（无独立官网）</span></td><td data-page-node-id="XqvT0A3JO39prmGs0cKGV"><span class='badge badge-ot' data-page-node-id="Li2bg2P6Ky9WOoZ4Rt0ME">综合外科设备</span></td></tr>
+<tr data-page-node-id="k5M5Bs8iKPR7bhvgltNgB"><td data-page-node-id="Vi1FFbN3IOCSNlbvQIwWM">16</td><td class='company-name' data-page-node-id="7QpeP7ePZjdRVTQH37hBP">Sogu Co., Ltd.（주식회사 소구）</td><td data-page-node-id="RCQhNaJ9nXC6zVC8Ftr7J">Seoul</td><td class='contact-info' data-page-node-id="34AkL1n2AsFSbv3tubQl4"><div>📍 首尔特别市（详细地址未公开）</div><div>MFDS 수입업 进口业登记（84 项品目记录），多品牌进口经销商</div></td><td data-page-node-id="iQXbZ7NmLmUyJGcP1yBI9">未公开</td><td data-page-node-id="X7w3jGlyfhDST3h5lOP8x"><span class='badge badge-ot' data-page-node-id="ym1RB1EjSYwvQubw1qZvs">综合外科设备</span></td></tr>
+<tr data-page-node-id="llRx3vEkRdx4k2Si2EAnK"><td data-page-node-id="Ifj35oj0mAuWEbClYr97S">17</td><td class='company-name' data-page-node-id="wHcGGBbzMs9Dd4oZLuHHo">Sooin Trading Co., Ltd. (수인트레이딩)</td><td data-page-node-id="sp3d5UhmDAlOK6ifbvrmI">Seoul</td><td class='contact-info' data-page-node-id="GS1XKoBg6HSulNQNUZLcl"><div>📞 02-595-0857</div><div>📍 #107-46, Banpo4-Dong, Seocho-Gu, Seoul</div></td><td data-page-node-id="DfEHT3k3FeveiQs48raBn"><span class="muted">未公开（无独立官网）</span></td><td data-page-node-id="MOTdnOAkDeBm6J9A2Epj1"><span class='badge badge-ot' data-page-node-id="IPivjzBNAuZVIbVwm0JNf">综合外科设备</span></td></tr>
+<tr data-page-node-id="OtQtHjaD0id6gXJl8IR1r"><td data-page-node-id="nWRH60cQvYCduPqKACNBp">18</td><td class='company-name' data-page-node-id="iGOA6slsd4fzSZnF9ebt8">Suseong Hygiene Materials（수성위생재료공업사）</td><td data-page-node-id="CRwUnYAYysHmWCLwBOthE">Gyeongsangnam-do</td><td class='contact-info' data-page-node-id="IeNvldktWYWQe57ey7hFc"><div>📍 庆尚南道（详细地址未公开）</div><div>MFDS 수입업 进口业登记（67 项品目记录），多品牌进口经销商</div></td><td data-page-node-id="UvBVLgpXLNBaI8P35Jizv">未公开</td><td data-page-node-id="eCszigMzpwSa2ghjZcOwp"><span class='badge badge-ot' data-page-node-id="ZddzIAWDGA2xCzJcyayVi">综合外科设备</span></td></tr>
+<tr data-page-node-id="eNTHAmUMcWPHxEtmKKO2Q"><td data-page-node-id="0MRwOi5Z4EHTUPakNUEG1">21</td><td class='company-name' data-page-node-id="I110WD0zRPS6B1m5SKYTW">Woojin Meditech (우진메디텍코리아)</td><td data-page-node-id="oMH9BctPFA9NKBaoZgGXE">Seoul</td><td class='contact-info' data-page-node-id="kCP3G0huoXLBbsYQvMwvo"></td><td data-page-node-id="Loi5N0KiJNK4V3sOnBdpa"><span class="muted">未公开（无独立官网）</span></td><td data-page-node-id="5xZdNxiN6dE41EXMBbQsN"><span class='badge badge-ot' data-page-node-id="7Ib0MgsmLiMVncWxL0vA2">综合外科设备</span></td></tr>
+<tr data-page-node-id="o49Vzo7a3BMzEPrqdbNaL"><td data-page-node-id="4btDo6XGzRvomFZoBqGN6">22</td><td class='company-name' data-page-node-id="PnTDBimbWNHY731MX6uA9">Young In Lab Plus Co., Ltd.（영인랩플러스 주식회사）</td><td data-page-node-id="Wce3j9K1H09NEdZ0N4zTh">Seoul</td><td class='contact-info' data-page-node-id="M09MJWv8dS03vu5bza6lh"><div>📍 首尔特别市（详细地址未公开）</div><div>MFDS 수입업 进口业登记（93 项品目记录），多品牌进口经销商</div><div>🏢 官方公示电话：02-2140-5404｜FAX 02-2140-5405</div><div>🏢 서울 강남구 압구정로28길 22 구정빌딩（영인그룹）</div><div>⚠️ 官网 SSL 为老旧加密套件，若浏览器拦截可改用 http 访问</div></td><td data-page-node-id="XnrT16nBAvSkFYYh9SY3N"><a href="https://www.younginlabplus.co.kr/" target="_blank">https://www.younginlabplus.co.kr/</a></td><td data-page-node-id="OFBgL6E6odTFUSOhubZl1"><span class='badge badge-ot' data-page-node-id="9hiqqJUtZaa01HlPfPOOH">综合外科设备</span></td></tr>
+<tr data-page-node-id="1mI67kqx5cCkpdHiBQRja"><td data-page-node-id="Rhzoyqb4FaC6YS1G7YxSa">23</td><td class='company-name' data-page-node-id="zZRTbpjX1kg8m2YgHrarq">Yujin Medical Electronics Co., Ltd.（(주)유진의료전자）</td><td data-page-node-id="xhMI2Hk6ZFvoRoA7IgBIr">Gyeonggi-do</td><td class='contact-info' data-page-node-id="773KPUCe4vQXJNSimDPrS"><div>📞 82-2-332-9300</div><div>📍 京畿道（详细地址未公开）</div><div>MFDS 수입업 进口业登记（23 项品目记录），综合进口经销商</div></td><td data-page-node-id="RTXV4QdzSICyvm4IJxEYs">未公开</td><td data-page-node-id="4tl1oT6xzjVAuWYGhXQeo"><span class='badge badge-ot' data-page-node-id="kBK9N91eThAYYCYiju61W">综合外科设备</span></td></tr>
+<tr data-page-node-id="XCMXLhlkKfI5KKnEGwYBh"><td data-page-node-id="pIVPvwkGyM4enZMZC6BV6">1</td><td class='company-name' data-page-node-id="gxQBdPvWOQAqMdYPxoBkt">Erbe Korea (에르베메디칼코리아)</td><td data-page-node-id="FN4bsH3eOz9sFzgGjY4jD">Seoul</td><td class='contact-info' data-page-node-id="kriGMz58o6ZZLLX3E98t9"><div>📞 +82 2 6475 1883</div><div>📍 서울특별시 송파구 올림픽로 35다길 42 4층</div><div>德国 Erbe Elektromedizin 全资子公司，电外科/等离子手术/血管闭合设备韩国经销</div><div>📧 <a href="mailto:info.kr@erbegroup.com">info.kr@erbegroup.com</a></div></td><td data-page-node-id="X1wDEULDs7Pyx6OwzWfpf"><a href="https://erbe-korea.com/" target="_blank">https://erbe-korea.com/</a></td><td data-page-node-id="DLaNKGgqyNsmGSLHHfDdy"><span class='badge badge-electro' data-page-node-id="eWB17ROJVt6aOFemLQJmS">电外科设备</span></td></tr>
+<tr data-page-node-id="TKWTlzofrcxX4J2tfUO4t"><td data-page-node-id="WNF6s4Jnjom6gSmaMaqg6">1</td><td class='company-name' data-page-node-id="gAKZKSDaWSoU1WvP3qHfm">APRO KOREA (아프로코리아)</td><td data-page-node-id="f4MzGif7B3YyH2FRkIzL3">Gunpo-si, Gyeonggi-do</td><td class='contact-info' data-page-node-id="zopbpAnO4EANMdP1vAr3Y"><div>📞 +82 31 477 7377</div><div>📍 경기도 군포시 당정동 342 3F</div><div>高频（RF）电外科 / 射频消融系统制造商与经销商</div><div>📧 <a href="mailto:global@apro-korea.co.kr">global@apro-korea.co.kr</a></div></td><td data-page-node-id="ty6NDULbn5t4pvPVhG6Dr"><a href="http://www.apro-korea.co.kr" target="_blank">http://www.apro-korea.co.kr</a></td><td data-page-node-id="nZUw0MNY7gAdoQiy7yAjI"><span class='badge badge-electro' data-page-node-id="RoU3WYRF6dulSdVOEhRE3">电外科设备</span></td></tr>
+<tr data-page-node-id="awJPM4QlHZ14CD0GWniMe"><td data-page-node-id="XfzkwzJkSzUAqnoL8MEME">1</td><td class='company-name' data-page-node-id="oBYUimblfFLtsVtYayDS7">DynaMedic Co., Ltd.（다이나메딕）</td><td data-page-node-id="iSCDIhwGr4d2ToyKohT9N">Cheongju, Chungcheongbuk-do</td><td class='contact-info' data-page-node-id="98dKCYkItg2V0K8R7rThj"><div>📞 043-904-7531</div><div>📍 충청북도 청주시 흥덕구 오송생명2로 125 KUBIT #406/#506</div><div>骨科动力工具系统（钻 / 锯 / 螺丝刀）制造商与出口经销</div><div>📧 <a href="mailto:Sales@dynamedic.co.kr">Sales@dynamedic.co.kr</a></div></td><td data-page-node-id="fBZfOGgSjDPK1RvnA945v"><a href="http://www.dynamedic.co.kr" target="_blank">http://www.dynamedic.co.kr</a></td><td data-page-node-id="Jtz8sKShYzGxa9jGmZnaZ"><span class='badge badge-ortho' data-page-node-id="dLJTa9JUq26YWXdBAdA0o">骨科·创伤器械</span></td></tr>
+<tr data-page-node-id="nREuI2UPfFBSfiUHYUIqy"><td data-page-node-id="2OrQHjB9U6S2LRYqKcYm4">1</td><td class='company-name' data-page-node-id="YX20qSbOAjpVNqENVNfRK">IMEDICOM Co., Ltd.（아이메디컴）</td><td data-page-node-id="1KJwSnwGtDXFMkKCwHLPG">Gunpo-si, Gyeonggi-do</td><td class='contact-info' data-page-node-id="rND0oAaTMg3MvskLHkTE0"><div>📞 +82 31 479 1156</div><div>📍 경기도 군포시 LS로 172 #612</div><div>电池 / 气动骨科动力手件（Zaguar / Leopard）、骨锯、髋臼杯取出系统</div><div>📧 <a href="mailto:leejames@imedicom.co.kr">leejames@imedicom.co.kr</a></div></td><td data-page-node-id="uSarumX5whmw9uVF8dtiz"><a href="http://www.imedicom.co.kr" target="_blank">http://www.imedicom.co.kr</a></td><td data-page-node-id="8WYXzYp73ONO8h7J6GVaz"><span class='badge badge-ortho' data-page-node-id="X8vcOmD2g7KBTzbtnnIok">骨科·创伤器械</span></td></tr>
+</tbody>
+    </table>
+
+    <div class="footer" data-page-node-id="tDmmuLumuLLmnKcjcehbTs">
+        <p data-page-node-id="dafzqSGd1YQenyNHdaOOFo">📌 韩国医疗器械经销商名录 · 共 23 家</p>
+        </div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">经销商总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 韩国医疗器械经销商名录 · 共 '+total+' 家';
+})();
+</script>
+</body>
+</html>
