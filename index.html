@@ -16,16 +16,16 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>新华健康外贸客户管理系统</title>
+<title>新华健康外贸信息查询</title>
 <style>
   :root{
     --bg:#eef2f6; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --brand:#0d9488;
-    --c-bd:#059669; --c-cust:#2563eb; --c-fac:#d97706; --c-pop:#7c3aed; --danger:#dc2626;
+    --c-bd:#059669; --c-cust:#0d9488; --c-fac:#d97706; --c-pop:#7c3aed; --danger:#dc2626;
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
-  header.hero{ position:relative; background:#0f172a url('bg.jpg') center top / cover no-repeat; color:#fff; padding:40px 24px 56px; text-align:center; overflow:hidden; }
+  header.hero{ position:relative; background:#0f172a url('bg.jpg') center top / cover no-repeat; color:#fff; padding:40px 24px 56px; text-align:center; overflow:hidden; min-height:141px; }
   /* 品牌色调统一 + 上下暗化：顶部护 LOGO/标题清晰，底部与白色内容区自然过渡 */
   header.hero::before{ content:''; position:absolute; inset:0; z-index:0; background:
     linear-gradient(180deg, rgba(15,23,42,.58) 0%, rgba(15,23,42,.12) 32%, rgba(15,23,42,.22) 68%, rgba(15,23,42,.62) 100%),
@@ -78,14 +78,86 @@
   .bd{ --accent:var(--c-bd); } .cust{ --accent:var(--c-cust); } .fac{ --accent:var(--c-fac); } .pop{ --accent:var(--c-pop); } .mine{ --accent:var(--brand); }
   /* 外贸客户分级导航 */
   .cust-tree{ margin-top:4px; }
-  .cust-g1{ font-size:15px; font-weight:700; color:#1e3a8a; margin:8px 0 4px; padding-left:2px; }
+  .cust-g1{ font-size:15px; font-weight:700; color:#0f766e; margin:8px 0 4px; padding-left:2px; }
   .cust-region{ margin:4px 0 14px; }
-  .cust-region-h{ font-size:13px; font-weight:600; color:var(--muted); margin:2px 0 8px; padding-left:9px; border-left:3px solid var(--c-cust); }
+  .cust-region-h{ display:flex; align-items:center; font-size:13px; font-weight:600; color:var(--muted); margin:2px 0 8px; padding-left:9px; border-left:3px solid var(--c-cust); }
   .cust-grid .card .go{ color:var(--c-cust); }
-  /* 国家节点下的「客户信息」子链接面板：跨整行、缩进、淡蓝左边线，形成层级感 */
-  .cust-sub{ grid-column:1 / -1; margin:2px 0 8px; padding:6px 0 4px 16px; border-left:3px solid var(--c-cust); background:rgba(37,99,235,.04); border-radius:0 10px 10px 0; }
-  .cust-sub .sub-card{ background:#f8fafc; border-left-color:#93c5fd; }
-  .cust-sub .sub-card .go{ color:#2563eb; }
+  /* 国家节点下的「经销商总表」子链接面板：跨整行、缩进、淡蓝左边线，形成层级感 */
+  .cust-sub{ grid-column:1 / -1; margin:2px 0 8px; padding:6px 0 4px 16px; border-left:3px solid var(--c-cust); background:rgba(13,148,136,.04); border-radius:0 10px 10px 0; }
+  .cust-sub .sub-card{ background:#f8fafc; border-left-color:#5eead4; }
+  .cust-sub .sub-card .go{ color:#0f766e; }
+  /* 国家版块「成行」版式：行首国家名 + 紧跟可单独点选的子链接；排不开则折叠为「+N」，点击国家名向下延展成纵向列表 */
+  .cust-rows{ display:flex; flex-direction:column; gap:9px; }
+  .cust-region-h .tri{ margin-left:7px; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid var(--c-cust); transition:transform .2s ease; }
+  .cust-region.collapsed .cust-rows{ display:none; }
+  .cust-region.collapsed .cust-region-h .tri{ transform:rotate(-90deg); }
+  .cust-row{ cursor:pointer; }
+  .cust-row.selected{ background:#ecfdf5; border-color:#0d9488; box-shadow:0 6px 18px rgba(13,148,136,.20); transform:translateY(-1px); }
+  .cust-row{
+    display:flex; flex-wrap:nowrap; align-items:center; gap:12px 14px;
+    padding:8px 16px 8px 14px;
+    background:var(--panel);
+    border:1px solid var(--c-cust);
+    border-left:4px solid var(--c-cust);
+    border-radius:14px;
+    box-shadow:0 2px 10px rgba(15,23,42,.05);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .cust-row:hover{ background:#f0fdfa; border-color:#0d9488; border-left-color:#0d9488; box-shadow:0 8px 20px rgba(13,148,136,.12); transform:translateY(-2px); }
+  .cust-name{
+    flex:0 0 auto; display:inline-flex; flex-direction:column; align-items:flex-start; gap:0;
+    font:inherit; font-size:14.5px; font-weight:700; color:#0f172a; line-height:1.25;
+    background:linear-gradient(135deg, rgba(13,148,136,.07), rgba(15,118,110,.07));
+    border:1px solid #99f6e4; border-radius:11px;
+    padding:5px 14px; cursor:pointer; white-space:nowrap; text-align:left;
+    transition:background .18s, box-shadow .18s;
+  }
+  .cust-name .cn-row{ display:inline-flex; align-items:center; gap:8px; }
+  .cust-name .en-row{ font-size:10.5px; line-height:1.15; font-weight:600; color:#0f766e; opacity:.8; letter-spacing:.2px; }
+  /* 国家名占位容器：宽度由 JS 统一为「最宽国家名按钮」→ 子链接起点固定成一条竖线（按钮框本身不被拉伸，保持自然宽） */
+  .cust-name-cell{ flex:0 0 auto; display:inline-flex; align-items:center; }
+  .cust-name .flag{ width:22px; height:15px; margin-left:0; border-radius:2px; box-shadow:0 1px 2px rgba(15,23,42,.25); vertical-align:middle; object-fit:cover; flex:none; }
+  .cust-name:hover{ background:linear-gradient(135deg, rgba(13,148,136,.14), rgba(15,118,110,.14)); box-shadow:0 4px 14px rgba(15,118,110,.18); }
+  .cust-name:focus-visible{ outline:2px solid #0d9488; outline-offset:2px; }
+  /* 子链接全部可见（无需展开）的行：国家名不参与展开交互，去掉可点提示与 hover 效果 */
+  .cust-row.no-expand .cust-name{ cursor:default; }
+  .cust-row.no-expand .cust-name:hover{ background:linear-gradient(135deg, rgba(13,148,136,.07), rgba(15,118,110,.07)); box-shadow:none; }
+  .cust-links{ flex:1 1 0; min-width:0; display:flex; flex-wrap:nowrap; overflow:hidden; gap:9px; align-items:center; }
+  .cust-row.expanded{ flex-wrap:wrap; }
+  .cust-row.expanded .cust-links{ flex:1 1 100%; flex-wrap:wrap; overflow:visible; align-items:flex-start; gap:8px; }
+  .cust-link{
+    font-size:13px; font-weight:600; color:#0f766e;
+    background:#fff; border:1px solid #99f6e4; border-radius:999px;
+    padding:7px 15px; text-decoration:none; cursor:pointer; white-space:nowrap;
+    display:inline-flex; flex:none; align-items:center; justify-content:center; gap:6px;
+    transition:background .18s, border-color .18s, color .18s, transform .18s, box-shadow .18s;
+  }
+  .cust-link::before{ content:'↗'; font-size:12px; opacity:.55; }
+  .cust-link:hover{ background:linear-gradient(135deg,#14b8a6,#0d9488); color:#fff; border-color:transparent; transform:translateY(-1px); box-shadow:0 6px 16px rgba(15,118,110,.32); }
+  .cust-link:hover::before{ opacity:1; }
+  @media (max-width:600px){
+    .cust-row{ flex-direction:column; align-items:stretch; gap:10px; }
+    .cust-name{ align-self:flex-start; }
+    .cust-row.expanded .cust-links{ flex:1 1 100%; }
+  }
+  /* 扁平版块（国产厂家/发展史一览/上传）行式：每行 = 标题 + 可点「打开↗」，视觉对齐国家行 */
+  .row-item{
+    display:flex; align-items:center; gap:14px;
+    padding:13px 16px; background:var(--panel);
+    border:1px solid var(--accent,#0d9488); border-left:4px solid var(--accent,#0d9488);
+    border-radius:14px; text-decoration:none; color:var(--text); cursor:pointer;
+    box-shadow:0 2px 10px rgba(15,23,42,.05);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .row-item:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(15,23,42,.10); border-left-color:var(--accent,#0d9488); }
+  .row-item .t{ font-size:15px; font-weight:600; line-height:1.4; }
+  .row-item .sub{ font-size:12px; color:var(--muted); margin-left:8px; }
+  .row-item .go{ margin-left:auto; font-size:13px; font-weight:600; color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 10%, #fff);
+    border:1px solid color-mix(in srgb, var(--accent) 32%, transparent); border-radius:999px; padding:7px 15px; white-space:nowrap;
+    transition:background .18s, color .18s, box-shadow .18s; }
+  .row-item:hover .go{ background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent); }
+  @media (max-width:600px){ .row-item{ flex-direction:column; align-items:flex-start; gap:8px; } .row-item .go{ margin-left:0; } }
   /* 全站主题化光标：地图/贸易风格十字准星，进入页面即生效 */
   html, body{ cursor:default; }
   a, button, .card, .tool-btn, [role=button], .cat-head, .cust-region-h, .modal-bar button, .topbar button{ cursor:pointer; }
@@ -177,7 +249,7 @@
       </div>
       <div class="chinaclock" id="chinaclock">--:--:--</div>
     </div>
-    <h1>新华健康外贸客户管理系统</h1>
+    
   </header>
   <div class="wrap">
     <nav class="topbar">
@@ -196,7 +268,7 @@
       <div id="cats" class="cats"></div>
     </div>
   </div>
-  <footer>新华健康外贸客户管理系统</footer>
+  <footer>新华健康外贸业务信息查询</footer>
   <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">
     <svg class="tt-icon" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 20 V5"/>
@@ -222,70 +294,71 @@
     name: '外贸客户文件',                               // 一级
     regions: [
       { name:'亚洲', countries:[
-        { iso2:'bd', name:'孟加拉' },
-        { iso2:'th', name:'泰国' },
-        { iso2:'vn', name:'越南' },
-        { iso2:'in', name:'印度' },
-        { iso2:'la', name:'老挝' },
-        { iso2:'my', name:'马来西亚' },
-        { iso2:'id', name:'印度尼西亚' },
-        { iso2:'pk', name:'巴基斯坦' },
+        { iso2:'bd', name:'孟加拉', en:'Bangladesh', code:'+880' },
+        { iso2:'th', name:'泰国', en:'Thailand', code:'+66' },
+        { iso2:'vn', name:'越南', en:'Vietnam', code:'+84' },
+        { iso2:'in', name:'印度', en:'India', code:'+91' },
+        { iso2:'la', name:'老挝', en:'Laos', code:'+856' },
+        { iso2:'jp', name:'日本', en:'Japan', code:'+81' },
+        { iso2:'kr', name:'韩国', en:'South Korea', code:'+82' },
       ]},
       { name:'非洲', countries:[
-        { iso2:'ng', name:'尼日利亚' },
-        { iso2:'tz', name:'坦桑尼亚' },
-        { iso2:'ci', name:'科特迪瓦' },
-      ]},
-      { name:'美洲', countries:[
-        { iso2:'mx', name:'墨西哥' },
-        { iso2:'gt', name:'危地马拉' },
+        { iso2:'ng', name:'尼日利亚', en:'Nigeria', code:'+234' },
       ]},
       { name:'欧洲', countries:[
-        { iso2:'ru', name:'俄罗斯' },
+        { iso2:'ru', name:'俄罗斯', en:'Russia', code:'+7' },
       ]},
     ]
   };
   // 各国客户文件「子链接」：点击外贸客户树中对应国家后展开。
-  // 原「孟加拉客户文件」版块的 9 份文件已全部迁移至此，作为 [孟加拉] 的「客户信息」子链接。
+  // 原「孟加拉客户文件」版块的 9 份文件已全部迁移至此，作为 [孟加拉] 的「经销商总表」子链接。
   const CUST_FILES = {
     bd: [
-      { file:'existing_customers.html', title:'孟加拉客户信息表' },
-      { file:'dhaka_private_hospitals.html', title:'达卡私立医院一览' },
-      { file:'bangladesh_bone_all.html', title:'孟加拉骨组织手术设备经销商·全量汇总' },
-      { file:'bangladesh_esu.html', title:'孟加拉 ESU 电刀及外科设备经销商' },
-      { file:'bangladesh_verified.html', title:'孟加拉已核实经销商名单' },
-      { file:'expo_list.html', title:'孟加拉医疗器械展会展商总表' },
-      { file:'buyer_profile.html', title:'电刀厂家外贸客户·买方详细档案' },
-      { file:'buyer_profile_compliant.html', title:'电刀厂家外贸客户·买方详细档案（合规版）' },
-      { file:'deep_compliant.html', title:'电刀厂家外贸客户·多源交叉验证版' },
-      { file:'report_multi.html', title:'电刀主机厂家外贸客户·多源交叉验证版' },
+      { file:'existing_customers.html', title:'经销商总表' },
+      { file:'dhaka_private_hospitals.html', title:'达卡私立医院' },
+      { file:'bangladesh_bone_all.html', title:'骨组织手术设备·汇总' },
+      { file:'bangladesh_esu.html', title:'ESU 电刀及外科设备' },
+      { file:'bangladesh_verified.html', title:'已核实经销商' },
+      { file:'expo_list.html', title:'展会总表' },
+      { file:'buyer_profile.html', title:'买方档案' },
+      { file:'buyer_profile_compliant.html', title:'买方档案·合规' },
+      { file:'deep_compliant.html', title:'多源交叉验证' },
+      { file:'report_multi.html', title:'主机多源验证' },
     ],
     ng: [
-      { file:'nigeria_customers.html', title:'尼日利亚客户信息表' },
+      { file:'nigeria_customers.html', title:'经销商总表' },
     ],
     th: [
-      { file:'thailand_customers.html', title:'泰国医疗器械经销商总表' },
-      { file:'thailand_hospitals.html', title:'泰国医院信息表' },
+      { file:'thailand_customers.html', title:'经销商总表' },
+      { file:'thailand_hospitals.html', title:'医院信息表' },
     ],
     vn: [
-      { file:'vietnam_customers.html', title:'越南医疗器械经销商总表' },
-      { file:'vietnam_hospitals.html', title:'越南医院信息表' },
+      { file:'vietnam_customers.html', title:'经销商总表' },
+      { file:'vietnam_hospitals.html', title:'医院信息表' },
     ],
     in: [
-      { file:'india_customers.html', title:'印度医疗器械经销商总表' },
+      { file:'india_customers.html', title:'经销商总表' },
     ],
     la: [
-      { file:'laos_customers.html', title:'老挝医疗器械经销商总表' },
-      { file:'laos_hospitals.html', title:'老挝医院信息表' },
+      { file:'laos_customers.html', title:'经销商总表' },
+      { file:'laos_hospitals.html', title:'医院信息表' },
     ],
     ru: [
-      { file:'russia_customers.html', title:'俄罗斯医疗器械经销商名录（合并版）' },
+      { file:'russia_customers.html', title:'经销商总表' },
+    ],
+    jp: [
+      { file:'japan_customers.html', title:'经销商总表' },
+      { file:'japan_hospitals.html', title:'医院信息表' },
+    ],
+    kr: [
+      { file:'korea_customers.html', title:'经销商总表' },
+      { file:'korea_hospitals.html', title:'医院信息表' },
     ],
   };
   const CATS = [
-    { id:'cust', name:'外贸客户', color:'#2563eb', tree:CUST_TREE },
+    { id:'cust', name:'外贸客户', color:'#0d9488', tree:CUST_TREE },
     { id:'fac', name:'国产厂家文件', color:'#d97706' },
-    { id:'pop', name:'科普文件', color:'#7c3aed' },
+    { id:'pop', name:'发展史一览', color:'#7c3aed' },
   ];
   // 基础资料清单（与后端 BASE_META 一致）
   const BASE_META = [
@@ -406,78 +479,156 @@
       else if (role !== 'admin' && role !== 'vip') cats.appendChild(emptyBlock('你还没有上传文件（静态版不支持上传，请使用本地后端版本）。'));
     }
   }
+  // 扁平版块（国产厂家/发展史一览/上传）：行式——每行 = 标题 + 可单独点选的「打开↗」，视觉对齐外贸客户行式
   function catBlock(c, items, getUrl, kind, showOwner){
     const sec = document.createElement('section'); sec.className='cat';
+    if (c.color) sec.style.setProperty('--accent', c.color);
     const head = document.createElement('div'); head.className='cat-head';
     head.innerHTML = '<span class="dot" style="background:'+c.color+'"></span><h2>'+c.name+'</h2><span class="cnt">'+items.length+' 份</span>';
     sec.appendChild(head);
-    const grid = document.createElement('div'); grid.className='grid';
+    const wrap = document.createElement('div'); wrap.className='cust-rows';
     items.forEach(s => {
-      const card = document.createElement('div'); card.className='card '+(kind==='base'?c.id:'mine');
-      const sub = showOwner ? ('上传者：'+s.owner) : '';
-      card.innerHTML = '<span class="t"></span>'+(sub?'<span class="sub">'+sub+'</span>':'')+'<span class="go">打开 ↗</span>';
-      card.querySelector('.t').textContent = s.title;
-      card.addEventListener('click', () => openSection(getUrl(s)));
-      grid.appendChild(card);
+      const row = document.createElement('a'); row.className='row-item'; row.href=getUrl(s);
+      const t = document.createElement('span'); t.className='t'; t.textContent = s.title; row.appendChild(t);
+      if (showOwner){ const sub = document.createElement('span'); sub.className='sub'; sub.textContent='上传者：'+s.owner; row.appendChild(sub); }
+      const go = document.createElement('span'); go.className='go'; go.textContent='打开 ↗'; row.appendChild(go);
+      row.addEventListener('click', (e) => { e.preventDefault(); openSection(getUrl(s)); });
+      wrap.appendChild(row);
     });
-    sec.appendChild(grid);
+    sec.appendChild(wrap);
     return sec;
   }
   function emptyBlock(msg){
     const d = document.createElement('div'); d.className='empty'; d.textContent = msg; return d;
   }
   // 外贸客户分级导航：一级[外贸客户文件] → 二级大洲 → 三级国家；
-  // 有客户文件子链接的国家（如孟加拉）点击展开「客户信息」子链接面板；无文件国家点击直接打开该国主页
+  // 新版：每个国家成「行」显示——行首国家名（下方小字英文名+电话区号，点击可展开/收起），其后紧跟可单独点选的各个子链接（客户文件）。
+  // 大洲名右侧三角可一键展开/收纳该大洲全部国家；国家行始终单行，放不下的子链接隐藏（无「展开更多」按钮）。
   function catTreeBlock(c, tree){
+    // 由 ISO2 自动生成国旗图片（flagcdn CDN），覆盖所有国家，无需维护字典；
+    // 用图片而非 emoji，规避 Windows 不渲染国旗 emoji（只显示 JP/KR 字母）的问题
+    function flagImg(iso2, cnName){ const i = document.createElement('img'); i.className='flag'; i.loading='lazy'; i.alt=(cnName||iso2)+'国旗'; i.src='https://flagcdn.com/w40/'+iso2+'.png'; i.srcset='https://flagcdn.com/w80/'+iso2+'.png 2x'; return i; }
     const sec = document.createElement('section'); sec.className='cat';
     const head = document.createElement('div'); head.className='cat-head';
     head.innerHTML = '<span class="dot" style="background:'+c.color+'"></span><h2>'+c.name+'</h2>';
     sec.appendChild(head);
     const treeBox = document.createElement('div'); treeBox.className='cust-tree';
-    const g1 = document.createElement('div'); g1.className='cust-g1'; g1.textContent = tree.name;
-    treeBox.appendChild(g1);
+
+    const allRows = [];
     tree.regions.forEach(reg => {
       const rg = document.createElement('div'); rg.className='cust-region';
-      const rh = document.createElement('div'); rh.className='cust-region-h'; rh.textContent = reg.name;
+      const rh = document.createElement('div'); rh.className='cust-region-h';
+      rh.appendChild(document.createTextNode(reg.name));
+      const tri = document.createElement('span'); tri.className='tri'; tri.setAttribute('aria-hidden','true');
+      rh.appendChild(tri);
+      rh.addEventListener('click', () => rg.classList.toggle('collapsed'));
       rg.appendChild(rh);
-      const grid = document.createElement('div'); grid.className='grid cust-grid';
-      reg.countries.forEach(co => {
-        const files = (CUST_FILES && CUST_FILES[co.iso2]) || co.files || null;
-        // 重点国家标记已取消（孟加拉 / 尼日利亚不再标黄/置顶）
-        const hot = false;
-        const card = document.createElement('div'); card.className='card cust'+(hot?' hot':'');
-        card.innerHTML = '<span class="t"></span>'+(hot?'<span class="badge">★ 重点</span>':'')+'<span class="go">'+(files && files.length ? '客户信息 ▾' : '客户信息 ↗')+'</span>';
-        card.querySelector('.t').textContent = co.name;
-        grid.appendChild(card);
-
-        if (files && files.length){
-          // 展开子链接面板（子链接：逐份客户文件）
-          const sub = document.createElement('div'); sub.className='cust-sub'; sub.style.display='none';
-          const subGrid = document.createElement('div'); subGrid.className='grid cust-grid';
-          // 置顶项(pin)排序在最前，确保始终显示于子链接顶部
-          const ordered = files.slice().sort((a,b) => (b.pin?1:0) - (a.pin?1:0));
-          ordered.forEach(f => {
-            const fc = document.createElement('a'); fc.className='card cust sub-card'+(f.pin?' pin':''); fc.href='./base/'+f.file;
-            fc.innerHTML = '<span class="t"></span>'+(f.pin?'<span class="badge pin-badge">置顶</span>':'')+'<span class="go">打开 ↗</span>';
-            fc.querySelector('.t').textContent = f.title;
-            fc.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openSection('./base/'+f.file); });
-            subGrid.appendChild(fc);
-          });
-          sub.appendChild(subGrid);
-          grid.appendChild(sub);
-          card.addEventListener('click', () => {
-            sub.style.display = (sub.style.display === 'none') ? 'block' : 'none';
-            const go = card.querySelector('.go'); if (go) go.textContent = (sub.style.display === 'none') ? '客户信息 ▾' : '客户信息 ▴';
-          });
-        } else {
-          // 无客户文件：点击直接打开该国客户信息主页
-          card.addEventListener('click', () => openSection('./country.html?c='+co.iso2));
-        }
+      const rows = document.createElement('div'); rows.className='cust-rows';
+      // 只渲染「确有客户文件」的国家：无文件的国家不再出现（否则点了只是个空页面）。
+      // 该过滤同时兜底「洲内国家全无文件」的情况——整块大洲不渲染。
+      const valid = (reg.countries || []).filter(co => {
+        const f = (CUST_FILES && CUST_FILES[co.iso2]) || co.files || null;
+        return !!(f && f.length);
       });
-      rg.appendChild(grid);
+      if (!valid.length) return;   // 该洲已无有效国家 → 整块跳过
+      // 洲内国家按英文名首字母升序排列（忽略大小写与重音符号差异）
+      valid.slice().sort((a, b) => {
+        const ka = (a.en || a.name || '').toUpperCase();
+        const kb = (b.en || b.name || '').toUpperCase();
+        return ka < kb ? -1 : (ka > kb ? 1 : 0);
+      }).forEach(co => {
+        const files = (CUST_FILES && CUST_FILES[co.iso2]) || co.files || null;
+        const row = document.createElement('div'); row.className='cust-row';
+        const name = document.createElement('button'); name.type='button'; name.className='cust-name';
+        const cnRow = document.createElement('span'); cnRow.className='cn-row';
+        cnRow.appendChild(document.createTextNode(co.name));
+        cnRow.appendChild(flagImg(co.iso2, co.name));
+        name.appendChild(cnRow);
+        const enRow = document.createElement('span'); enRow.className='en-row';
+        enRow.textContent = [co.en, co.code].filter(Boolean).join(' ');
+        if (enRow.textContent) name.appendChild(enRow);
+        const links = document.createElement('div'); links.className='cust-links';
+        // 不再设「无文件」兜底按钮：无文件国家已在上面被过滤掉，避免出现点了只有空页面的按钮
+        files.forEach(f => {
+          const a = document.createElement('a'); a.className='cust-link'; a.href='./base/'+f.file; a.textContent = f.title;
+          a.addEventListener('click', (e) => { e.preventDefault(); openSection('./base/'+f.file); });
+          links.appendChild(a);
+        });
+        const nameCell = document.createElement('div'); nameCell.className='cust-name-cell';
+        nameCell.appendChild(name);
+        row.appendChild(nameCell); row.appendChild(links);
+        rows.appendChild(row);
+        allRows.push(row);
+        row.addEventListener('click', () => {
+          document.querySelectorAll('.cust-row.selected').forEach(r => { if (r !== row) r.classList.remove('selected'); });
+          row.classList.toggle('selected');
+        });
+
+        function toggle(){
+          // 仅当该行确有余量放不下（有被隐藏的子链接）时才允许展开；全部可见的行点了也不展开
+          if (!row.classList.contains('expanded') && row.dataset.hasOverflow !== '1') return;
+          row.classList.toggle('expanded');
+          layoutRow(row);
+        }
+        name.addEventListener('click', toggle);
+      });
+      rg.appendChild(rows);
       treeBox.appendChild(rg);
     });
     sec.appendChild(treeBox);
+
+    // 国家行始终单行：收起态 links 单行(nowrap+overflow:hidden，多余的链接隐藏)；点国家名 → 展开显示全部链接
+    function layoutRow(row){
+      const links = row.querySelector('.cust-links');
+      const all = Array.prototype.slice.call(links.querySelectorAll('.cust-link'));
+      if (row.classList.contains('expanded')){
+        links.style.flexWrap=''; links.style.overflow='';
+        all.forEach(a => a.style.display='');
+        row.classList.remove('no-expand'); row.dataset.hasOverflow='1';
+        return;
+      }
+      // 收起态：单行，隐藏放不下的链接，保证整行只占一行
+      all.forEach(a => a.style.display='');
+      links.style.flexWrap='nowrap'; links.style.overflow='hidden';
+      const gap = 9; let avail = links.clientWidth; let hidden = 0;
+      all.forEach(a => {
+        const w = a.offsetWidth + gap;
+        if (avail - w >= -2){ avail -= w; a.style.display=''; }
+        else { a.style.display='none'; hidden++; }
+      });
+      // 只有「确有子链接被隐藏(排不开)」的行才允许展开；全部可见的行不该有展开交互
+      row.classList.toggle('no-expand', hidden === 0);
+      row.dataset.hasOverflow = hidden > 0 ? '1' : '0';
+    }
+    // 对齐规则（与列位置无关）：
+    //  1) 国家名按钮统一宽度 → 各行子链接起点横向对齐，不受左侧国家名长短影响；
+    //  2) 子链接按钮按「字数」统一尺寸 → 相同字数 = 相同宽度（跨行、跨列一致）。
+    function alignAll(){
+      const names = allRows.map(r => r.querySelector('.cust-name'));
+      const cells = allRows.map(r => r.querySelector('.cust-name-cell'));
+      const arrs = allRows.map(r => Array.prototype.slice.call(r.querySelectorAll('.cust-link')));
+      // 1) 国家名占位区统一宽度：按钮保持自然宽，仅占位统一 → 各行子链接从同一条竖线开始
+      names.forEach(n => n.style.minWidth='');
+      cells.forEach(c => c.style.width='');
+      const cellW = cells.reduce((m,c) => {
+        const n = c.querySelector('.cust-name');
+        return Math.max(m, n ? n.offsetWidth : 0);
+      }, 0);
+      cells.forEach(c => { if (cellW) c.style.width = cellW+'px'; });
+      // 2) 子链接按字数统一尺寸
+      arrs.forEach(arr => arr.forEach(a => { a.style.minWidth=''; a.style.display=''; }));
+      const byLen = {};
+      arrs.forEach(arr => arr.forEach(a => {
+        const k = (a.textContent||'').trim().length;
+        byLen[k] = Math.max(byLen[k]||0, a.offsetWidth);
+      }));
+      arrs.forEach(arr => arr.forEach(a => {
+        const k = (a.textContent||'').trim().length;
+        if (byLen[k]) a.style.minWidth = byLen[k]+'px';
+      }));
+    }
+    requestAnimationFrame(() => { alignAll(); allRows.forEach(layoutRow); });
+    window.addEventListener('resize', () => { alignAll(); allRows.forEach(layoutRow); }, { passive:true });
     return sec;
   }
 
@@ -553,5 +704,6 @@
   })();
 
 </script>
+<!-- build-trigger -->
 </body>
 </html>
