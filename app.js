@@ -776,7 +776,7 @@ window.addEventListener("unhandledrejection", function(e){
       if ($('routeListClose')) $('routeListClose').onclick = closeRouteList;
       document.querySelectorAll('.rl-mode').forEach(b => { b.onclick = () => setRouteMode(b.dataset.mode); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && _routeListOpen) closeRouteList(); });
-      // [返回系统]：回到主系统（新华健康外贸客户管理系统）首页（仅 worldmap 等含 backSys 的页面有效；country 无此元素，空值守卫避免崩溃）
+      // [返回系统]：回到主系统（新华健康外贸业务信息查询）首页（仅 worldmap 等含 backSys 的页面有效；country 无此元素，空值守卫避免崩溃）
       if ($('backSys')) $('backSys').onclick = () => { window.location.href = 'index.html'; };
       // ADM2 默认开启时，初次渲染也禁用 ADM1 prov-fill 交互（与 adm2toggle 一致）
       if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); }
