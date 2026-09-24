@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="jDKqrA7uxzylP8XVqoAWZ">
+<head data-page-node-id="xwl46oylmtMOAJLj6SXjJ">
+    <script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8" data-page-node-id="Cwv271dAxWjWGdU08Hoe1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="vjasjfEQSlVUA4qM10Koa">
+    <title>日本医院信息表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Yu Gothic', 'Meiryo', 'Malgun Gothic', 'Leelawadee UI', 'Noto Sans CJK SC', 'Noto Sans Thai', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.55; }
+        tr:hover { background: #f8f9fb; }
+
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; color:#fff; }
+        .badge-public { background: #2ecc71; }
+        .badge-private { background: #3498db; }
+        .badge-teaching { background: #f39c12; }
+        .badge-international { background: #9b59b6; }
+        .badge-military { background: #e74c3c; }
+        .badge-ngo { background: #1abc9c; }
+        .badge-joint { background: #e67e22; }
+
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; line-height: 1.4; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; line-height: 1.5; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body data-page-node-id="ek77ibIJkzguPurKFGg8Q">
+<div class="container" data-page-node-id="CYUDPC06YfjuRpVhU5DDZ">
+    <h1 data-page-node-id="85jApnLhBU97xoTeIb99L">日本医院信息表</h1>
+    <div class="stats" data-page-node-id="SvVWLlAsrmW3V9yzyvZmW"><div class="stat-card total"><div class="num">36</div><div class="label">医院总数</div></div><div class="stat-card"><div class="num">16</div><div class="label">公立教学</div></div><div class="stat-card"><div class="num">13</div><div class="label">私立教学</div></div><div class="stat-card"><div class="num">1</div><div class="label">NGO</div></div><div class="stat-card"><div class="num">1</div><div class="label">私立</div></div><div class="stat-card"><div class="num">3</div><div class="label">公立</div></div><div class="stat-card"><div class="num">1</div><div class="label">军方</div></div><div class="stat-card"><div class="num">1</div><div class="label">国际教学</div></div></div>
+      <div class="searchbar" data-page-node-id="huJzAVqqeT2rYkTtNzgMP">
+    <input id="custSearch" type="text" placeholder="🔍 搜索医院名称 / 城市 / 电话 / 官网 / 性质…" autocomplete="off" data-page-node-id="vYx8rm6BWwz1ytEzGklKX">
+    <span class="search-count" id="custCount" data-page-node-id="d5RnI368ko8VrYRLGOyrc"></span>
+  </div>
+<table data-page-node-id="AwLUxi81XteZ4L4sVUiSj">
+        <thead data-page-node-id="pcLULa0EYK8rFP8qWwpdf">
+            <tr data-page-node-id="QEOSAOIFEIunvAkmREcZF">
+                <th style="width:30px;" data-page-node-id="crfwV3tBAQIT6ud66lWgi">#</th>
+                <th style="width:230px;" data-page-node-id="jRqBRgohvDl69kCwb0Hw1">医院名称</th>
+                <th style="width:110px;" data-page-node-id="RDMkY9OzsJPnMFxnyvjOY">城市</th>
+                <th style="width:250px;" data-page-node-id="JszBGjswUWvV0nqG29pyO">联系方式（电话/邮箱/地址/床位）</th>
+                <th style="width:170px;" data-page-node-id="yNfrDrdWvxZHNuZG9gC6k">官网</th>
+                <th style="width:120px;" data-page-node-id="n60bKpLoo27A44YRXSbE2">性质</th>
+                </tr>
+        </thead>
+        <tbody data-page-node-id="IThCvCFbHmTSN2NqKQM1S">
+<tr data-page-node-id="88M3kMbrnCGCJz39cGg9l">
+  <td data-page-node-id="CZLlWoTwtCUT8fBD8slpX">1</td>
+  <td class='company-name' data-page-node-id="dEQ9BMBQE8m3gWJ5sUU5U">Chiba University Hospital（千葉大学医学部附属病院）</td>
+  <td data-page-node-id="twdbujN5UtGGba7iMwpNu">Chiba (Chuo-ku)</td>
+  <td class='contact-info' data-page-node-id="XrsLo7owrxBMyDK8ffIzl">
+<div>🛏 床位：846</div>
+    <div class="muted" data-page-node-id="695sCt1L9Jr3igrhlMUgL">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="f8Rn6HHBacDrFiD4S402E">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="9okhu5yGI8rtHoSlLweIs"><a href="http://www.ho.chiba-u.ac.jp" target="_blank">http://www.ho.chiba-u.ac.jp</a></td>
+  <td data-page-node-id="RdVVNVOB4FBRSrmPA3NtB"><span class='badge badge-teaching' data-page-node-id="AVw1HuUCLS0xKImv3xjuK">公立教学</span></td>
+</tr>
+<tr data-page-node-id="xrEQXADqldFhkYqs3lScV">
+  <td data-page-node-id="DiBfhnO8Fhnxdfqns2an3">2</td>
+  <td class='company-name' data-page-node-id="aJY33h1Fw5CnLHuV3dSfq">Fujita Health University Hospital（藤田医科大学病院）</td>
+  <td data-page-node-id="ZufzSIpdABMo3otdM3TiC">Aichi (Toyoake-shi)</td>
+  <td class='contact-info' data-page-node-id="w2ZTJHi95XzuzxzUGieBU">
+<div>🛏 床位：1376</div>
+    <div class="muted" data-page-node-id="pfwq2bhEPGxihMouG1SVQ">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="yjb2YhxxQEmLJea2QQ8Tq">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="4ZiYwGMe8VJOeNfqUFcIk"><a href="https://hospital.fujita-hu.ac.jp/" target="_blank">https://hospital.fujita-hu.ac.jp/</a></td>
+  <td data-page-node-id="iXH5xVCHWQiDeLdaDCocr"><span class='badge badge-teaching' data-page-node-id="vJwWmgrJn4f321YLOwHcW">私立教学</span></td>
+</tr>
+<tr data-page-node-id="riIJLDhNwI12ZcFrvkHMK">
+  <td data-page-node-id="zb5iSdiSw8JSOj76sAKVi">3</td>
+  <td class='company-name' data-page-node-id="XYMiKzCxiwLhJTBddeQ25">Fukuoka University Hospital（福岡大学病院）</td>
+  <td data-page-node-id="x074VY9qmDriRpPn9PPrF">Fukuoka (Jonan-ku)</td>
+  <td class='contact-info' data-page-node-id="HnbrI94OPZWASaQapCuvF">
+<div>📍 〒814-0180 福岡県福岡市城南区七隈7丁目45番1号</div>
+    <div>🛏 床位：771</div>
+    <div class="muted" data-page-node-id="YgjodnQycCUfx0SsIXaH2">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="ZdS0mhD9Lqp090gb4f5tk">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="qkCqY1Og19knMPm8FRgIW"><a href="https://www.hop.fukuoka-u.ac.jp" target="_blank">https://www.hop.fukuoka-u.ac.jp</a></td>
+  <td data-page-node-id="KE0lNkTbHXwHFPAL5oa2K"><span class='badge badge-teaching' data-page-node-id="eN5KLgki0369CgECa8bvo">私立教学</span></td>
+</tr>
+<tr data-page-node-id="U86yHYL4TYeY40gU6bxxA">
+  <td data-page-node-id="3ncpXE5fD1IFZeaBXQOp0">4</td>
+  <td class='company-name' data-page-node-id="rQZ4ZCE6qgobru2X1Bpjz">Hokkaido University Hospital（北海道大学病院）</td>
+  <td data-page-node-id="YbM5LGXMenmzneFO8XxSG">Hokkaido (Sapporo-shi)</td>
+  <td class='contact-info' data-page-node-id="TOu8kOA5holh0wIr5QPev">
+<div>🛏 床位：938</div>
+    <div class="muted" data-page-node-id="GLMDsoBq9hwxEfaS4JgvR">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="r5asiMl0NdE1VQfkTVKxk">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="hKw69JAza08dAUkwnAngE"><a href="http://www.huhp.hokudai.ac.jp" target="_blank">http://www.huhp.hokudai.ac.jp</a></td>
+  <td data-page-node-id="0i2kXCcCSjfWyvuHXl7LT"><span class='badge badge-teaching' data-page-node-id="69VUfSDtyqJynGve5Sy6t">公立教学</span></td>
+</tr>
+<tr data-page-node-id="k7l1ttrlGSKOOrU5a6mTR">
+  <td data-page-node-id="e3V6jZWLh1mJzomELoynl">5</td>
+  <td class='company-name' data-page-node-id="l61eAwh4KaZtxUzpB8hoc">Hyogo Medical University Hospital（兵庫医科大学病院）</td>
+  <td data-page-node-id="6x3pksCrYwmEk5DWDoAC8">Hyogo (Nishinomiya-shi)</td>
+  <td class='contact-info' data-page-node-id="I4CSnYdFezHbRGCiNKsTb">
+<div>📍 〒663-8501 兵庫県西宮市武庫川町1番1号</div>
+    <div>🛏 床位：963</div>
+    <div class="muted" data-page-node-id="2Kk0jb59CFflztoO5mPFH">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="oaJswikBHJekuoV3amMJc">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="aLesmEwInsF780UplqDKz"><a href="https://www.hosp.hyo-med.ac.jp" target="_blank">https://www.hosp.hyo-med.ac.jp</a></td>
+  <td data-page-node-id="FWJPqnhmRaR95rFRwcdi8"><span class='badge badge-teaching' data-page-node-id="0nlDntK2mWF0eh3Va5rCy">私立教学</span></td>
+</tr>
+<tr data-page-node-id="j6F1I4x1RYTON8DL0s3f2">
+  <td data-page-node-id="xzTJPQZShnnCqKOXZwCCO">6</td>
+  <td class='company-name' data-page-node-id="78xFlpjE7xizXg2z8SUZw">Japanese Red Cross Medical Center（日本赤十字社医療センター）</td>
+  <td data-page-node-id="8VPb6dBhov7iQMmVBYRHF">Tokyo (Shibuya-ku)</td>
+  <td class='contact-info' data-page-node-id="p2t7oxkMVVxH0OYy2y2Hu">
+<div>🛏 床位：693</div>
+    <div class="muted" data-page-node-id="JFsJJDxeCoI10HRXZlS5Z">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="xvhA18yQhXHlZ4Kx7YLNk">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="0wg4BoNVyUz9bCo7aTsy6"><a href="https://www.med.jrc.or.jp" target="_blank">https://www.med.jrc.or.jp</a></td>
+  <td data-page-node-id="Ih02NFzmQ7pRyA2asD9us"><span class='badge badge-ngo' data-page-node-id="pFoplFLlD6YE34IdB6Mma">NGO</span></td>
+</tr>
+<tr data-page-node-id="n6uF2H2vp36ZNC4KVlFUq">
+  <td data-page-node-id="SzjZemuwWVCXzIYeoumuc">7</td>
+  <td class='company-name' data-page-node-id="hXhJz4x95JggCVLpiLKQF">Jikei University Hospital（東京慈恵会医科大学附属病院）</td>
+  <td data-page-node-id="BvUZmwFgTZAzCHHyaOvLh">Tokyo (Minato-ku)</td>
+  <td class='contact-info' data-page-node-id="gB5GmdAGzu3nOVNDQU7Bq">
+<div>🛏 床位：1075</div>
+    <div class="muted" data-page-node-id="MqANdH1j6TzhC0Qplzy3E">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="tBQYiduuVEScrewuNOuBM">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="MyDApneTpmaLsILwqGSDL"><a href="https://www.hosp.jikei.ac.jp/" target="_blank">https://www.hosp.jikei.ac.jp/</a></td>
+  <td data-page-node-id="EG1jsT94KIZLckkrU8bTn"><span class='badge badge-teaching' data-page-node-id="JyoPHAPd5ZbAxuQnKqDLU">私立教学</span></td>
+</tr>
+<tr data-page-node-id="kXHdmUXwi0ZUyLfW4Ba7Y">
+  <td data-page-node-id="3nllDQRHVTwX4X7HcKTJR">8</td>
+  <td class='company-name' data-page-node-id="8qUtz6qv3ykZsIdv6BEPy">Juntendo University Hospital（順天堂医院）</td>
+  <td data-page-node-id="SRt6jFEedQDBC1GVY6X0D">Tokyo (Bunkyo-ku)</td>
+  <td class='contact-info' data-page-node-id="99kfe045bSe73Z6LtnvQr">
+<div>🛏 床位：1051</div>
+    <div class="muted" data-page-node-id="MAFnNzcC7iUyy3s7BXeCe">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="7PYqQbMG7oryZNn5YGahf">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="MazAaSm1TROfaZmtKyqUH"><a href="https://hosp.juntendo.ac.jp/" target="_blank">https://hosp.juntendo.ac.jp/</a></td>
+  <td data-page-node-id="qEhsRDGeZPh0xv22htCV2"><span class='badge badge-teaching' data-page-node-id="SyrR3i6WZ7NUxvK1aW7K6">私立教学</span></td>
+</tr>
+<tr data-page-node-id="dNpfLJ8OEcPadw0ISoHKU">
+  <td data-page-node-id="qW1LvtVFh3jQf0rWNuEbb">9</td>
+  <td class='company-name' data-page-node-id="isOeSlP7maeZFWUZVIyFO">Kagoshima University Hospital（鹿児島大学病院）</td>
+  <td data-page-node-id="vwJByVQQsoSYjs8WNSvmy">Kagoshima (Kagoshima-shi)</td>
+  <td class='contact-info' data-page-node-id="hxFdfbh2IRcIg4iScTetH">
+<div>📍 〒890-8520 鹿児島県鹿児島市桜ケ丘8丁目35-1</div>
+    <div>🛏 床位：704</div>
+    <div class="muted" data-page-node-id="du5oHq1xozEEG99G4ZUDz">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="L5kAPs3YvOrBEWHPJcCY0">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="8emnO8ESAwCOljaWJwqmP"><a href="https://www.hosp.kagoshima-u.ac.jp/" target="_blank">https://www.hosp.kagoshima-u.ac.jp/</a></td>
+  <td data-page-node-id="1bCFCfaQd4f58jXvvv3zZ"><span class='badge badge-teaching' data-page-node-id="SbfylJPFO4yqwXA4tzG00">公立教学</span></td>
+</tr>
+<tr data-page-node-id="o5IRHqFtuICLbgCECNs4n">
+  <td data-page-node-id="LdNfoO3ysXh9hsSgtHO2y">10</td>
+  <td class='company-name' data-page-node-id="iyHFLiZEFvu7NCaUSMVZO">Kameda Medical Center（亀田総合病院）</td>
+  <td data-page-node-id="lzdQjNNw3DI7A9clQQCPa">Chiba (Kamogawa-shi)</td>
+  <td class='contact-info' data-page-node-id="IgjPQZErXVBbUAgbFgot0">
+<div>🛏 床位：917</div>
+    <div class="muted" data-page-node-id="i5IZfnJvdNnVx9hZ7whPb">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="GsAxBeLPvWNSJg63rDbIe">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="EDMOPRZweVrdWaNaW9ywR"><a href="http://www.kameda.com" target="_blank">http://www.kameda.com</a></td>
+  <td data-page-node-id="gWmz8ovy4yHpQ8GhAjTdn"><span class='badge badge-private' data-page-node-id="ZDpSIiVYg4P8b2OPglnvj">私立</span></td>
+</tr>
+<tr data-page-node-id="OhLglHdG7yAD5yb85MG0A">
+  <td data-page-node-id="2jTUP9J0uH1pzHiuB1thx">11</td>
+  <td class='company-name' data-page-node-id="gRkh4qCbcDCzxhyblZvs2">Keio University Hospital（慶應義塾大学病院）</td>
+  <td data-page-node-id="wtdgv3nIvFijpaf3f40AK">Tokyo (Shinjuku-ku)</td>
+  <td class='contact-info' data-page-node-id="00hAfF2qDles9ZbjX6OGr">
+<div>🛏 床位：950</div>
+    <div class="muted" data-page-node-id="YeIylB7zIa2BBJcAW4NDD">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="gvUa11ETiNxVWa69NENYQ">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="WCBBoVEMntk4DhY6DuMUN"><a href="https://www.hosp.keio.ac.jp/" target="_blank">https://www.hosp.keio.ac.jp/</a></td>
+  <td data-page-node-id="3CYqoIIfLegYsC6ZyVt8v"><span class='badge badge-teaching' data-page-node-id="GY20bCyPkAk9jSxIDGsWH">私立教学</span></td>
+</tr>
+<tr data-page-node-id="Uonw0VblacPo4u4qfyrU8">
+  <td data-page-node-id="XqShZT3sHntBpW6E2hHG9">12</td>
+  <td class='company-name' data-page-node-id="ATfKlHAbkZxnzrHKp04Sp">Kitasato University Hospital（北里大学病院）</td>
+  <td data-page-node-id="EJNAvaN3itMepuJAt8aRI">Kanagawa (Sagamihara-shi)</td>
+  <td class='contact-info' data-page-node-id="iuyESVXOaanr47kowmCox">
+<div>🛏 床位：1135</div>
+    <div class="muted" data-page-node-id="JZEUxHtk7H4eqMVgGoaSk">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="QpkVhvFzw8hyyQin6LDSy">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="Y5oSM99vZQ8kjRfUAjiQq"><a href="http://www.kitasato-u.ac.jp/khp/" target="_blank">http://www.kitasato-u.ac.jp/khp/</a></td>
+  <td data-page-node-id="NhHQMWtdGFNH603WBhd4E"><span class='badge badge-teaching' data-page-node-id="DPhRGM2ciPEaz2rqCc0gm">私立教学</span></td>
+</tr>
+<tr data-page-node-id="AywyrTDQSFdMbjinKdnp8">
+  <td data-page-node-id="azDgyEJPuw8t1DDCKSpVw">13</td>
+  <td class='company-name' data-page-node-id="9r71As5Y6qKYEWNnLrIq6">Kobe University Hospital（神戸大学医学部附属病院）</td>
+  <td data-page-node-id="gDDu9gvxmvR3GoURQSj8u">Hyogo (Kobe-shi)</td>
+  <td class='contact-info' data-page-node-id="gkY39x2Bk5xlHsCBk0PLN">
+<div>📍 〒650-0017 兵庫県神戸市中央区楠町7丁目5番2号</div>
+    <div>🛏 床位：934</div>
+    <div class="muted" data-page-node-id="GzfFRu5pP9XSuKODij5Ch">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="RCDl6x9TPeKpucr3uULUP">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="MwDUYa8diKuJMUkicqW6f"><a href="http://www.hosp.kobe-u.ac.jp/" target="_blank">http://www.hosp.kobe-u.ac.jp/</a></td>
+  <td data-page-node-id="7r3YN2ZesEErPEWET3caz"><span class='badge badge-teaching' data-page-node-id="sz3KU0qQy5oRHLa0mA0vv">公立教学</span></td>
+</tr>
+<tr data-page-node-id="JmqY0RQABAX86JDOiNhwl">
+  <td data-page-node-id="hfyH7miZ7bO3EbrLTBxXo">14</td>
+  <td class='company-name' data-page-node-id="i4jAUEMkPSy6OLnVNUZ8d">Kumamoto University Hospital（熊本大学病院）</td>
+  <td data-page-node-id="gcp3nzklhp4N67x83VNcg">Kumamoto (Chuo-ku)</td>
+  <td class='contact-info' data-page-node-id="k905ImjnxRglXjMppO3zZ">
+<div>📍 〒860-8556 熊本県熊本市中央区本荘1-1-1</div>
+    <div>🛏 床位：845</div>
+    <div class="muted" data-page-node-id="rxQIiXhHuPLK7q473Q7Pu">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="dbmCmdt3PzQDhSK71VCSy">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="YtHRvhz4nI5UppPfWbF15"><a href="https://www.kuh.kumamoto-u.ac.jp/" target="_blank">https://www.kuh.kumamoto-u.ac.jp/</a></td>
+  <td data-page-node-id="zIPriaVKr3QnOFZc8m6XK"><span class='badge badge-teaching' data-page-node-id="9LuclYO8Rnc36V6jFYZsY">公立教学</span></td>
+</tr>
+<tr data-page-node-id="haaTq2SQVLckQYdWiTY8c">
+  <td data-page-node-id="oIf9HMzNXkH5zH5BQQu23">15</td>
+  <td class='company-name' data-page-node-id="dglD0Qxfq8XPTlEuWCzXa">Kurume University Hospital（久留米大学病院）</td>
+  <td data-page-node-id="cb0wGNyOOqXzoE2UQKKCw">Fukuoka (Kurume-shi)</td>
+  <td class='contact-info' data-page-node-id="oy1HA3ZCw2ulOXVNAV98R">
+<div>📍 〒830-0011 福岡県久留米市旭町67番地</div>
+    <div>🛏 床位：1018</div>
+    <div class="muted" data-page-node-id="ug7dS35QQqJljOmcNCl32">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="8GN5gylx2MKTsq1cbRrUb">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="Uw3lzI4qMclNpgAlO6aoH"><a href="https://www.hosp.kurume-u.ac.jp/" target="_blank">https://www.hosp.kurume-u.ac.jp/</a></td>
+  <td data-page-node-id="ardvTetlAZql5xVbc869K"><span class='badge badge-teaching' data-page-node-id="Udsm2aKMn2tHu24e6emvB">私立教学</span></td>
+</tr>
+<tr data-page-node-id="dPzGWGYuPvYjfNeDYVOuk">
+  <td data-page-node-id="aMJOckVsFJzrsNVxf5Ur1">16</td>
+  <td class='company-name' data-page-node-id="bPPaCm4eIIk66daQFwI7T">Kyorin University Hospital（杏林大学医学部付属病院）</td>
+  <td data-page-node-id="9eneB1NKLdnhcYKj86pDn">Tokyo (Mitaka-shi)</td>
+  <td class='contact-info' data-page-node-id="Yb36a714pScDGIx9Sv6N2">
+<div>🛏 床位：1055</div>
+    <div class="muted" data-page-node-id="09H8d9jjnuscK1E0bhylq">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="nvykA4Sh2AkdWtmzYNLPV">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="rAddpFAuNwgjSIUgNbIzw"><a href="http://www.kyorin-u.ac.jp/hospital" target="_blank">http://www.kyorin-u.ac.jp/hospital</a></td>
+  <td data-page-node-id="yZfrxsOin6tWXnvJXLMmw"><span class='badge badge-teaching' data-page-node-id="fJC8hgo6BXKl1kDx72p90">私立教学</span></td>
+</tr>
+<tr data-page-node-id="EzceG4xAlt9QyzRR97SCB">
+  <td data-page-node-id="HNW26lYmt2wWjHxlyAeLy">17</td>
+  <td class='company-name' data-page-node-id="q1IC2Qkc0eUlX1n0MgR2e">Kyoto University Hospital（京都大学医学部附属病院）</td>
+  <td data-page-node-id="NtL75MDYVJ8vCxmur1fwL">Kyoto</td>
+  <td class='contact-info' data-page-node-id="WJqouiZtUcWEaYJLkKbDu">
+<div>📍 〒606-8507 京都府京都市左京区聖護院川原町54</div>
+    <div>🛏 床位：1131</div>
+    <div class="muted" data-page-node-id="YAXVGdlTssO28495Y9jaK">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="CRAuVZkTUuDekv9mNZ56z">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="GMeM3ymsSM0eWoLOIeXH2"><a href="http://www.kuhp.kyoto-u.ac.jp/" target="_blank">http://www.kuhp.kyoto-u.ac.jp/</a></td>
+  <td data-page-node-id="zbGk7RkmcFUBs4xkuH98J"><span class='badge badge-teaching' data-page-node-id="kIddgDayOPd0C50FS6Qx8">公立教学</span></td>
+</tr>
+<tr data-page-node-id="tiekLet8PdPY8xnXn28Ub">
+  <td data-page-node-id="qNmhgEjp8SziNDYMGA0gd">18</td>
+  <td class='company-name' data-page-node-id="wWCL50k7BKTg1kHdrocTn">Kyushu University Hospital（九州大学病院）</td>
+  <td data-page-node-id="wRunSgADwJYIVjowYRdvl">Fukuoka (Higashi-ku)</td>
+  <td class='contact-info' data-page-node-id="YRjNqJ7YUdipBjtIItKFJ">
+<div>📞 +81-92-641-1151</div>
+    <div>📍 〒812-8582 福岡県福岡市東区馬出3丁目1-1</div>
+    <div>🛏 床位：1252</div>
+    <div class="muted" data-page-node-id="bsfVWTldYT8gcg2fe2xhD">🔗 来源：<a href="https://www.hosp.kyushu-u.ac.jp/En/Ado/Ove/" target="_blank" data-page-node-id="6kb0A7s1xToSvu13KK7XN">https://www.hosp.kyushu-u.ac.jp/En/Ado/Ove/</a></div>
+  </td>
+  <td data-page-node-id="3dvnsoBmmzTRE8OB8q8wC"><a href="https://www.hosp.kyushu-u.ac.jp/" target="_blank">https://www.hosp.kyushu-u.ac.jp/</a></td>
+  <td data-page-node-id="7b7wtAt4IK22R5hr2VzX8"><span class='badge badge-teaching' data-page-node-id="9aqPb1jp1jW3z2djeosB3">公立教学</span></td>
+</tr>
+<tr data-page-node-id="GIJJX82XK6bI53HCpKXMD">
+  <td data-page-node-id="05kOZvte1jFHQsibsNUiV">19</td>
+  <td class='company-name' data-page-node-id="19ClK2KoiR3ZLtwle0ZOc">Nagasaki University Hospital（長崎大学病院）</td>
+  <td data-page-node-id="Gtp5GkaPLDTm5k4j3GFwC">Nagasaki (Nagasaki-shi)</td>
+  <td class='contact-info' data-page-node-id="6kBZe4nCW7Citwbj3hh0m">
+<div>📍 〒852-8501 長崎県長崎市坂本1丁目7-1</div>
+    <div>🛏 床位：874</div>
+    <div class="muted" data-page-node-id="KFkh63nF4oz0AHEicd0YF">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="KtkKKOghswLagRMB45VKS">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="euGxadpdfF6yQfTRLgv83"><a href="https://www.mh.nagasaki-u.ac.jp/" target="_blank">https://www.mh.nagasaki-u.ac.jp/</a></td>
+  <td data-page-node-id="KLKpmbhTuevZJBiWw37Gh"><span class='badge badge-teaching' data-page-node-id="VSUhtB3C0CqN7yXbS9AWX">公立教学</span></td>
+</tr>
+<tr data-page-node-id="WoFXRhDGGG5UAdRKlDWOS">
+  <td data-page-node-id="D4LBrXikspEGUKAy8MgGH">20</td>
+  <td class='company-name' data-page-node-id="BZYRTbUkl2fw7fLOBAgF4">Nagoya City University Hospital（名古屋市立大学病院）</td>
+  <td data-page-node-id="YXIw20RsyVonHZao8N3j1">Aichi (Nagoya-shi)</td>
+  <td class='contact-info' data-page-node-id="bvTFIKLQP33y1uAI9uO0y">
+<div>🛏 床位：800</div>
+    <div class="muted" data-page-node-id="EQ3MDNNwkeHVP2lXnLKnA">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="2JqQoDonkjgxNMIU6xfDW">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="VIIBZyWLs8ZlSCLXstkba"><a href="https://w3hosp.med.nagoya-cu.ac.jp/" target="_blank">https://w3hosp.med.nagoya-cu.ac.jp/</a></td>
+  <td data-page-node-id="zM7Ju21kohDyadU9E77Uc"><span class='badge badge-teaching' data-page-node-id="tecptyawrq73OEiS7f5rW">公立教学</span></td>
+</tr>
+<tr data-page-node-id="y5RZ15xbGhsv3PYbbCTww">
+  <td data-page-node-id="pG0AFh1WIkTyHhicA878V">21</td>
+  <td class='company-name' data-page-node-id="Rr8tdcadMYWkc9Qrn63ev">Nagoya University Hospital（名古屋大学医学部附属病院）</td>
+  <td data-page-node-id="gTGBwAGBErKanHsgivbje">Aichi (Nagoya-shi)</td>
+  <td class='contact-info' data-page-node-id="TH2Lxn0wTG2t1lxLkDzxF">
+<div>🛏 床位：1080</div>
+    <div class="muted" data-page-node-id="HvxtKYZBRrkcFRGW5ky5s">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="b2rYRSkFCdoTb1UYWIPJp">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="hjNdaLiXnle2fF25XY48u"><a href="https://www.med.nagoya-u.ac.jp/hospital/" target="_blank">https://www.med.nagoya-u.ac.jp/hospital/</a></td>
+  <td data-page-node-id="BFVdGdNShaFy2WyNQbTIA"><span class='badge badge-teaching' data-page-node-id="SMsT7N77DfUZ0Oe5wDq7n">公立教学</span></td>
+</tr>
+<tr data-page-node-id="GQV6NOQ6ecvM4BA5lg1Id">
+  <td data-page-node-id="IoPVhoTgG6QUaVibiMDB4">22</td>
+  <td class='company-name' data-page-node-id="7WtB0xN9rJ4YvTwLEkFDi">National Cancer Center Hospital（国立がん研究センター中央病院）</td>
+  <td data-page-node-id="RZrxBOG2Zwadb9fQrskDS">Tokyo (Chuo-ku)</td>
+  <td class='contact-info' data-page-node-id="p9VJiiSGvbWlaKKpFQ2jE">
+<div>🛏 床位：578</div>
+    <div class="muted" data-page-node-id="yDYEgJr5MLEqLdJXrTPPj">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="S1pOLTPoBth0aT5ox3hQ5">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="0vUsh8cVNBTpWvs90dSQF"><a href="https://www.ncc.go.jp/jp/ncch/d002/access/index.html" target="_blank">https://www.ncc.go.jp/jp/ncch/d002/access/index.html</a></td>
+  <td data-page-node-id="FZfo70gOD2LeNP2YU2R5q"><span class='badge badge-public' data-page-node-id="G6h8yokvxGTnmkyCifD82">公立</span></td>
+</tr>
+<tr data-page-node-id="JXiepWynPOteIH3iabIAM">
+  <td data-page-node-id="NutDT1U9K9AwdyfSje6hd">23</td>
+  <td class='company-name' data-page-node-id="6Py73obDB0Q6iWygIwpZB">National Center for Global Health and Medicine（国立国際医療研究センター病院）</td>
+  <td data-page-node-id="YKQzHKt1KMzioIQLOqi1k">Tokyo (Shinjuku-ku)</td>
+  <td class='contact-info' data-page-node-id="ooTKNRjYpgrY0obAa6XaC">
+<div>🛏 床位：749</div>
+    <div class="muted" data-page-node-id="tdhAKPJZs6PhxKSsmSUZA">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="3PQ7ary7zDydGNFu9fxsg">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="26CBITqz3Ki7pmF6xSWo8"><a href="http://www.ncgm.go.jp/" target="_blank">http://www.ncgm.go.jp/</a></td>
+  <td data-page-node-id="rjIp576qKvuynsdoj6R9J"><span class='badge badge-public' data-page-node-id="DpRaUcuUlEo1rOrDROXtH">公立</span></td>
+</tr>
+<tr data-page-node-id="QCun8BhHn0CJOcqOmvrFs">
+  <td data-page-node-id="dFGgx3BNaskdIQGt1ruQ2">24</td>
+  <td class='company-name' data-page-node-id="tITjlfxC8llfOuqGxUjzU">Nihon University Itabashi Hospital（日本大学医学部附属板橋病院）</td>
+  <td data-page-node-id="ICwGIjr5vN99wO9Gd4G93">Tokyo (Itabashi-ku)</td>
+  <td class='contact-info' data-page-node-id="MKgSb4iopbxF7qBtMjEvK">
+<div>🛏 床位：990</div>
+    <div class="muted" data-page-node-id="7whLqAx1eyHWN4aCfC40q">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="79Xz8FEUtwPk9OKYZ0oS9">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="kI5KhUHaUrex9lTE9xVUD"><a href="https://www.itabashi.med.nihon-u.ac.jp/" target="_blank">https://www.itabashi.med.nihon-u.ac.jp/</a></td>
+  <td data-page-node-id="tGtStCVu6AHyuYswL7QgG"><span class='badge badge-teaching' data-page-node-id="zJwFVxeTsAcKTHaRmT2aD">私立教学</span></td>
+</tr>
+<tr data-page-node-id="78ieaxoVsVCQESXiNOkbL">
+  <td data-page-node-id="GAcxFx21JHL2F0VuRHlB2">25</td>
+  <td class='company-name' data-page-node-id="AIC2Vr3EMWeayJarReMrS">Osaka International Cancer Center（大阪国際がんセンター）</td>
+  <td data-page-node-id="lcV0XbN3v40yVdvTJRPyG">Osaka (Chuo-ku)</td>
+  <td class='contact-info' data-page-node-id="Nym4Pgd5RSO8hJbwxzF2D">
+<div>📍 〒541-8567 大阪府大阪市中央区大手前3丁目1番69号</div>
+    <div>🛏 床位：500</div>
+    <div class="muted" data-page-node-id="RhMHsNiIOUH5oKlXZtxvk">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="wcd2oNBLAWuZbHCzsUDWL">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="pCODUD6yP9NiuYRSZUuXN"><a href="https://oici.jp" target="_blank">https://oici.jp</a></td>
+  <td data-page-node-id="YzXmHMWXze2957ni8AcKH"><span class='badge badge-public' data-page-node-id="Kh3FjevtVS4wOFYKBGl0R">公立</span></td>
+</tr>
+<tr data-page-node-id="5qAEIQiIkmvMRSnS20IKY">
+  <td data-page-node-id="0D02UhyFtN8USk0cDnsUL">26</td>
+  <td class='company-name' data-page-node-id="n6Hz78neYO6bpvgW04SWV">Osaka Metropolitan University Hospital（大阪公立大学医学部附属病院）</td>
+  <td data-page-node-id="uhMperhIFeoqmolwvau6u">Osaka (Abeno-ku)</td>
+  <td class='contact-info' data-page-node-id="SqxEMn2ewTMfaHt25AzpD">
+<div>📍 〒545-8586 大阪府大阪市阿倍野区旭町1-5-7</div>
+    <div>🛏 床位：965</div>
+    <div class="muted" data-page-node-id="vg6R9ZGEeAKoHO1w0StHV">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="j1QU9XYAA8xxd5ymMyOAU">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="F56MRmE1wkRGrmCfNmlVJ"><a href="https://www.hosp.omu.ac.jp/" target="_blank">https://www.hosp.omu.ac.jp/</a></td>
+  <td data-page-node-id="hzDxUNXjQLzUOKyXZGnNU"><span class='badge badge-teaching' data-page-node-id="7GLK97JsDnAuOO2gprk4o">公立教学</span></td>
+</tr>
+<tr data-page-node-id="3mg3djWn7qfGbcBgbiuQT">
+  <td data-page-node-id="ikeZBkfNbZx5bQDun28RZ">27</td>
+  <td class='company-name' data-page-node-id="zQCLZPV5RyLnmFpue1Nf9">Osaka University Hospital（大阪大学医学部附属病院）</td>
+  <td data-page-node-id="p4SwNF9gQj8ZFlVBwopaZ">Osaka (Suita-shi)</td>
+  <td class='contact-info' data-page-node-id="qEVIJtv8URKBaVbXJheug">
+<div>📍 〒565-0871 大阪府吹田市山田丘2-15</div>
+    <div>🛏 床位：1086</div>
+    <div class="muted" data-page-node-id="773GGGDW0FGguV5FQV5rn">🔗 来源：<a href="https://nihon-byouin.jp?p=46756/" target="_blank" data-page-node-id="xbOorZtmttc6idSl3WzE2">https://nihon-byouin.jp?p=46756/</a></div>
+  </td>
+  <td data-page-node-id="kMoAprXY5DvtHE9wRDlwE"><a href="https://www.hosp.med.osaka-u.ac.jp" target="_blank">https://www.hosp.med.osaka-u.ac.jp</a></td>
+  <td data-page-node-id="OcS7281FPQ4vvhLDV5eWQ"><span class='badge badge-teaching' data-page-node-id="MNwj4hQfdoDk9eAfDDqK6">公立教学</span></td>
+</tr>
+<tr data-page-node-id="oWOjAiHyU9bIONmmplUiQ">
+  <td data-page-node-id="MCkqCETBDGYQUcwRTAIMJ">28</td>
+  <td class='company-name' data-page-node-id="V2yppuClz3zhTWrxDQR2U">Sapporo Medical University Hospital（札幌医科大学医学部附属病院）</td>
+  <td data-page-node-id="bgE1NxdZeYtpPh52i2ayh">Hokkaido (Sapporo-shi)</td>
+  <td class='contact-info' data-page-node-id="4xJKdAqKPRbRYAdInoJhB">
+<div>🛏 床位：848</div>
+    <div class="muted" data-page-node-id="NGLhTxRUzSXjPNDsCfSyt">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="AXEw1dlp41unpCi3aRbvI">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="uc2GRoSmedpIYxvBCck5L"><a href="https://web.sapmed.ac.jp/hospital/" target="_blank">https://web.sapmed.ac.jp/hospital/</a></td>
+  <td data-page-node-id="XjTdDlQcjTcPehqhFMpLD"><span class='badge badge-teaching' data-page-node-id="iLxlcTjgMrENqJB8cYhoS">公立教学</span></td>
+</tr>
+<tr data-page-node-id="Q6qXr4MxIhYiiTBTrr4FS">
+  <td data-page-node-id="PTGaEDvf7NQHR1tSSFoUD">29</td>
+  <td class='company-name' data-page-node-id="JGDQnswPDyKTVjXL6faq3">Self-Defense Forces Central Hospital（自衛隊中央病院）</td>
+  <td data-page-node-id="otReXjqb8Oqj0Nz89ia9l">Tokyo (Setagaya-ku)</td>
+  <td class='contact-info' data-page-node-id="4MEbJheYpN7jLlgVENVmZ">
+<div>🛏 床位：500</div>
+    <div class="muted" data-page-node-id="PHJs5dmDDJf1HqekV2YKN">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="6WZbxiq98dQ62GuQDNdKl">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="ML1GnaTXczaRTqCKKzFF5"><a href="http://www.mod.go.jp/gsdf/chosp/index.html" target="_blank">http://www.mod.go.jp/gsdf/chosp/index.html</a></td>
+  <td data-page-node-id="K0tfykxE5f8X1mRNck0mV"><span class='badge badge-military' data-page-node-id="XO46SAy3Sb3jWEtuCG4ct">军方</span></td>
+</tr>
+<tr data-page-node-id="DhCNnLEwWAL10SEtZaFUG">
+  <td data-page-node-id="EukZuxmxFPnnqTe3K81wz">30</td>
+  <td class='company-name' data-page-node-id="a2xUVObFmELGmP3fGcubY">St. Luke's International Hospital（聖路加国際病院）</td>
+  <td data-page-node-id="OfRcBd9Tr4xM6IBaJ4B1L">Tokyo (Chuo-ku)</td>
+  <td class='contact-info' data-page-node-id="Kw04krGkPO7xJlguNSS3K">
+<div>🛏 床位：520</div>
+    <div class="muted" data-page-node-id="ygnBco3CQZqVimwN2jNwl">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="QvAOxZqKjZlwnMg8DNjFw">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="6TApu0zbkCMAGRmqT9ZyG"><a href="http://hospital.luke.ac.jp/" target="_blank">http://hospital.luke.ac.jp/</a></td>
+  <td data-page-node-id="N4S6FhLxiVon0T6PO0YgH"><span class='badge badge-international' data-page-node-id="J21cAkjcOx3gMQOftdeSP">国际教学</span></td>
+</tr>
+<tr data-page-node-id="BwZkK2Ijqa3BVkyqq5LpQ">
+  <td data-page-node-id="7RlJLfLKFeoDwevPnfIXs">31</td>
+  <td class='company-name' data-page-node-id="y2SGZJ5vnFitmnPLAUQGo">St. Marianna University Hospital（聖マリアンナ医科大学病院）</td>
+  <td data-page-node-id="LsnSiVYlKjCTl3KbsKsy8">Kanagawa (Kawasaki-shi)</td>
+  <td class='contact-info' data-page-node-id="3eRb8rvYbCA9ecttJ9WOV">
+<div>🛏 床位：955</div>
+    <div class="muted" data-page-node-id="5upV1c4AIBzqy7fzznGZf">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="FgOufP503uIgZJIh0OBgJ">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="3ysHnxbx7Sd1frky3OckI"><a href="http://www.marianna-u.ac.jp/hospital/index.html" target="_blank">http://www.marianna-u.ac.jp/hospital/index.html</a></td>
+  <td data-page-node-id="k4guUN5l8VkxAHpov4NBU"><span class='badge badge-teaching' data-page-node-id="8g76EGsHdnrke3JjfwP0s">私立教学</span></td>
+</tr>
+<tr data-page-node-id="gkGd37s22CbIkCWFyKbJk">
+  <td data-page-node-id="6Q1thuQAhOQkaX77Ci2lc">32</td>
+  <td class='company-name' data-page-node-id="kV6nZ2QBQDh3pUKHJM4Tn">Teikyo University Hospital（帝京大学医学部附属病院）</td>
+  <td data-page-node-id="7DsCYafYTF8bagvY3nOjF">Tokyo (Itabashi-ku)</td>
+  <td class='contact-info' data-page-node-id="gnsrWtULqpEwL7JYeZufQ">
+<div>🛏 床位：1068</div>
+    <div class="muted" data-page-node-id="BMerLR1OZobjc9EIgw8PR">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="BIQ7BUorL5GpuvLLsEEaI">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="S2eikHL61tBl3C6csn2I9"><a href="https://www.teikyo-hospital.jp/" target="_blank">https://www.teikyo-hospital.jp/</a></td>
+  <td data-page-node-id="X2QN8h2byqVIgYi1HH9m8"><span class='badge badge-teaching' data-page-node-id="mr4kcsi3qOZiBGXOgkVOv">私立教学</span></td>
+</tr>
+<tr data-page-node-id="rOtGEcTIPXRS9vjTgEc3R">
+  <td data-page-node-id="3pwoGWCUrkQUxLkcDQDXF">33</td>
+  <td class='company-name' data-page-node-id="g308tO8tJo0zDAOCeTkLA">The University of Tokyo Hospital（東京大学医学部附属病院）</td>
+  <td data-page-node-id="dBJ4aVOovQ0X2RLYJI5em">Tokyo (Bunkyo-ku)</td>
+  <td class='contact-info' data-page-node-id="MRzTFcVGTHIbHHDDzES6I">
+<div>📍 〒113-8655 東京都文京区本郷7-3-1</div>
+    <div>🛏 床位：1218</div>
+    <div class="muted" data-page-node-id="FNbtD5kUht8S3rQwtq8oS">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="FVRN827ATyWjUqNsJjeqx">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="VLR2l9umqlIdvsULe23h9"><a href="https://www.h.u-tokyo.ac.jp/" target="_blank">https://www.h.u-tokyo.ac.jp/</a></td>
+  <td data-page-node-id="l6RYJJhnfZCDyctqaOa7C"><span class='badge badge-teaching' data-page-node-id="aLKlpe09Ea7NFblCoeS0d">公立教学</span></td>
+</tr>
+<tr data-page-node-id="6EJSKn3yghft8r501uMRF">
+  <td data-page-node-id="8K3m8ryCuQMgsKaKeChUA">34</td>
+  <td class='company-name' data-page-node-id="6p0TKUYehJQU7c3f1pY4H">Tohoku University Hospital（東北大学病院）</td>
+  <td data-page-node-id="JaWX3WP7ycIxjY69YTlJ1">Miyagi (Sendai-shi)</td>
+  <td class='contact-info' data-page-node-id="tPQR78rgKKCDSYU157dB7">
+<div>🛏 床位：1160</div>
+    <div class="muted" data-page-node-id="GA9q79HO2NqV7xbIzIMv9">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="R3c1A3IkP6IwcHbSq6Oo5">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="1GfXyZqIWzXo6oB6R5ZAg"><a href="http://www.hosp.tohoku.ac.jp" target="_blank">http://www.hosp.tohoku.ac.jp</a></td>
+  <td data-page-node-id="kGd78dCuxA1YbWUbuLEVu"><span class='badge badge-teaching' data-page-node-id="Qo2pzDu9PzwsA3Nh90wvu">公立教学</span></td>
+</tr>
+<tr data-page-node-id="61Sq68D8Qs09sUBAbW7A6">
+  <td data-page-node-id="V9xRop6VcULOAWpoOxDZY">35</td>
+  <td class='company-name' data-page-node-id="7rMxcO6xL0gCUU0NkvAGD">Tokyo Women's Medical University Hospital（東京女子医科大学病院）</td>
+  <td data-page-node-id="xXhJv3HNOYlyRvFVNlfEB">Tokyo (Shinjuku-ku)</td>
+  <td class='contact-info' data-page-node-id="ozFrLyIUuJXR0S4mvHs36">
+<div>🛏 床位：1139</div>
+    <div class="muted" data-page-node-id="EbulWC4DDH2BLtgrdb3AG">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="uzuaAaxPXoTpLr6w5rEtp">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="BbR3vocINyvgWuZX6Ewxn"><a href="http://www.twmu.ac.jp/info-twmu/index.html" target="_blank">http://www.twmu.ac.jp/info-twmu/index.html</a></td>
+  <td data-page-node-id="RHOacDcDJTpzh87tCgTc0"><span class='badge badge-teaching' data-page-node-id="JJ8I0r8TIF42g8nOfKlxc">私立教学</span></td>
+</tr>
+<tr data-page-node-id="2Hn8a9mPqWK4HgsIoEW5i">
+  <td data-page-node-id="ru1WBt6aKSWlo9pYdadgN">36</td>
+  <td class='company-name' data-page-node-id="TRMfpikyksP56E0e6k5h6">Yokohama City University Medical Center（横浜市立大学附属市民総合医療センター）</td>
+  <td data-page-node-id="IiC0PmLdtWGnj2bVMUN19">Kanagawa (Yokohama-shi)</td>
+  <td class='contact-info' data-page-node-id="g8kED8MeEXHqVRKOy6FGW">
+<div>🛏 床位：696</div>
+    <div class="muted" data-page-node-id="v6MFbROLtlYEgMLnXM18p">🔗 来源：<a href="https://nihon-byouin.jp/400-beds/" target="_blank" data-page-node-id="Su8S8lfQlxeyRn2zmKZvX">https://nihon-byouin.jp/400-beds/</a></div>
+  </td>
+  <td data-page-node-id="g6C0xDAL3fazAHudJSbGc"><a href="http://www.yokohama-cu.ac.jp/urahp/" target="_blank">http://www.yokohama-cu.ac.jp/urahp/</a></td>
+  <td data-page-node-id="L2fkwmXhS9Flz8QigneRj"><span class='badge badge-teaching' data-page-node-id="nymsEatbyIdVuFMmikphF">公立教学</span></td>
+</tr>
+</tbody></table>
+        <div class="footer" data-page-node-id="paEm79ahT2113zl3L1idw"><p data-page-node-id="Cq98MxBpw3MbyiFtcHYSM">📌 日本医院信息表 · 共 36 家</p></div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">医院总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 日本医院信息表 · '+total+' 家';
+})();
+</script>
+</body>
+</html>
