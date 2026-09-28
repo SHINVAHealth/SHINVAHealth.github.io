@@ -535,7 +535,7 @@ window.addEventListener("error", function(e){
   }
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
-  const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve'];
+  const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve','th','vn','jp','kr'];
   function isHL(d){ const v = COUNTRY[(d.properties && d.properties.name)]; return v && HIGHLIGHT.indexOf(v[3]) >= 0; }
   allPaths.classed('hl', isHL);
 
