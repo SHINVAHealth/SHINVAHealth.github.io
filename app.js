@@ -41,7 +41,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202607241650';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202609281212';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -264,6 +264,9 @@ window.addEventListener("unhandledrejection", function(e){
     // 懒加载名单（方案 A）：这些大国 ADM2 体量大，进图不预载，点击"显示二级行政区域"时才拉（IndexedDB 缓存，二次秒开）
     const LAZY_ADM2 = new Set(['ru', 'au']);
     let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
+    // 仅一级行政区国家：日本只展示都道府县（1 都・1 道・2 府・43 县）；韩国只展示广域地方自治团体（17 个 시도：1 特别市・6 广域市・1 特别自治市・9 道/特别自治道）；泰国只展示府（จังหวัด changwat，76 个普通府 + 曼谷府级直辖市，合计 77 个）。均不细分二级行政区域
+    const NO_ADM2 = new Set(['jp', 'kr', 'th']);
+    let _noAdm2 = NO_ADM2.has(iso2);
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1, _curT = null;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）；_curT 同处声明，避免泄漏到 window 全局（非严格模式下静默成全局变量，一旦加 'use strict' 即崩）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
@@ -290,6 +293,19 @@ window.addEventListener("unhandledrejection", function(e){
     // 地图说明：统一使用“一级行政区域 / 二级行政区域”表述，不硬编码省/州/市/区
     function setStatus(adm2N){
       const adm1N = _adm1Total || (_features ? _features.length : 0);
+      // 仅一级行政区国家（日本 / 韩国）：不细分二级行政区域，说明栏明确提示
+      if (_noAdm2){
+        if (iso2 === 'jp'){
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（1 都・1 道・2 府・43 县），本图仅显示一级行政区（都道府县），边界数据：dataofjapan / 日本国土地理院`;
+        } else if (iso2 === 'kr'){
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（1 特别市・6 广域市・1 特别自治市・9 道/特别自治道，合计 17 个广域地方自治团体 시도），本图仅显示一级行政区，边界数据：GADM / 韩国统计厅(KOSTAT)`;
+        } else if (iso2 === 'th'){
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（府 / จังหวัด changwat：76 个普通府 + 曼谷府级直辖市，合计 77 个），本图仅显示一级行政区（府），边界数据：GADM / 泰国政府行政区划`;
+        } else {
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域，本图仅显示一级行政区`;
+        }
+        return;
+      }
       let adm2Str;
       if (typeof adm2N === 'number') adm2Str = adm2N + ' 个';
       else if (adm2N === 'loading') adm2Str = '加载中…';
@@ -853,7 +869,11 @@ window.addEventListener("unhandledrejection", function(e){
       _custEls.forEach(m => { m.lifted = false; m.liftC = null; });
       items.forEach(it => {
         const nm = it.feature.properties ? (it.feature.properties.shapeName || it.feature.properties.name) : null;
-        const list = (_adm2CustMap && nm) ? (_adm2CustMap.get(nm) || []) : _custEls;
+        // 同时查「省分组(_adm1CustMap)」与「二级分组(_adm2CustMap)」：悬停省(ADM1)或二级(ADM2)都抬升其内客户点（与医院点对称）
+        // 旧逻辑仅查 _adm2CustMap → 悬停省时 _adm2CustMap.get(省名) 为空，黄点永不抬升（即“不跟随浮雕”）
+        const list = (_adm1CustMap && _adm1CustMap.get(nm)) ? _adm1CustMap.get(nm)
+                    : (_adm2CustMap && _adm2CustMap.get(nm)) ? _adm2CustMap.get(nm)
+                    : ((_adm1CustMap || _adm2CustMap) ? [] : _custEls);
         list.forEach(m => {
           const rec = m.rec;
           if (rec && rec.lng != null && rec.lat != null && d3.geoContains(it.feature, [+rec.lng, +rec.lat])){
@@ -1047,6 +1067,7 @@ window.addEventListener("unhandledrejection", function(e){
     // 修复：① 投影按“投影签名(W×H)”失效，仅在窗口尺寸变化(投影变)时重算；② 774 个 path 分帧(rAF)批量创建，单帧 ≤16ms 不卡；
     //       ③ 首次构建后隐藏只切 display:none 保留 DOM，再次开启瞬时显示；④ 进图后在浏览器空闲(requestIdleCallback)预构建隐藏层，首次点击即开即显。
     let _adm2Fc = null, _adm2ProjKey = null, _adm2BuildGen = 0, _adm2Building = false, _adm2CustMap = null;
+    let _adm1CustMap = null;   // 一级(省)→客户点分组：renderEmboss 悬停省(ADM1)时按此抬升位点（与医院点对称，修复“黄点不随省浮雕升起”）
     // —— B 级 LOD 分级（仅大体量国，如 mx=2457 市区）：低缩放只显示省界，放大越过阈值才细化市区 ——
     // 简化轮廓在渲染期派生（Douglas-Peucker，容差 = 恒定屏幕误差 / k），绝不入库/改 _topo2，守住“数据保真”铁律。
     let _lodAdm2 = false;            // 当前国是否启用 LOD（ADM2 市区数 > 800 自动启用，按国独立，不牵连他国）
@@ -1296,6 +1317,12 @@ window.addEventListener("unhandledrejection", function(e){
         }
         if (!topo){ $('mapStatus').textContent = '该国暂无可用的 一级行政区域 边界数据'; return; }
         _topo = topo; renderProvinces(src);
+        // 仅一级行政区国家（如日本）：禁用二级行政区域加载与切换按钮，只展示都道府县
+        if (_noAdm2){
+          const tb = $('adm2toggle'); if (tb) tb.style.display = 'none';
+          setStatus();   // 仅显示一级行政区域说明（不细分二级）
+          return;
+        }
         // ADM2：默认隐藏；懒加载国（ru/au 等大体量）进图不预载，点击按钮时才拉取（IndexedDB 缓存二次秒开）
         if (_adm2Lazy){
           const b = $('adm2toggle'); b.classList.remove('active');
@@ -1374,6 +1401,7 @@ window.addEventListener("unhandledrejection", function(e){
       return _adm2Promise;
     }
     $('adm2toggle').onclick = async function(){
+      if (_noAdm2) return;   // 仅一级行政区国家（如日本）：禁用二级行政区域切换
       showAdm2 = !showAdm2;
       this.classList.toggle('active', showAdm2);
       if (!_gAdm2) return;
@@ -1747,14 +1775,7 @@ window.addEventListener("unhandledrejection", function(e){
       applyHideUnselectedHosp();   // 选中态变化后同步“隐藏未选医院”：仅保留高亮红点，隐藏其余
     }
     function loadHospitals(){
-      // 医院数据仅限孟加拉达卡市：非孟加拉国家地图不加载、不绘制、不进检索栏、不进路线规划
-      if (iso2 !== 'bd'){
-        window.__hospList = [];
-        _hospLoaded = true;
-        if ($('hospCount')) $('hospCount').textContent = '0 家';
-        if (_activeTab === 'hosp') renderHospitals([]);
-        return;
-      }
+      // 医院数据按 iso2 过滤落图：孟加拉达卡 + 泰国/越南/日本/韩国等已导入国家均可绘制红点
       fetch('hospitals.json').then(r => r.json()).then(data => {
         const all = (data && data.records) || [];
         const list = all.filter(r => (r.iso2 || '').toLowerCase() === iso2);   // 仅当前国（孟加拉达卡）医院落此国家地图
@@ -1763,8 +1784,9 @@ window.addEventListener("unhandledrejection", function(e){
         _hospLoaded = true;
         if ($('hospCount')) $('hospCount').textContent = list.length + ' 家';
         drawHospitalPointsOnMap(list);
+        assignRegions();   // 补全医院 __adm1/__adm2 归属，供一级行政区点击筛选医院检索栏（与经销商对称）
         updateCustStat();
-        if (_activeTab === 'hosp') renderHospitals(list);
+        if (_activeTab === 'hosp') applyListFilter();   // 改用 applyListFilter：若已选中区域则同步按区域过滤医院
       }).catch(() => { /* 无 hospitals.json 不影响客户功能（其它国家地图本就无医院数据） */ });
     }
     function renderHospitals(list){
@@ -1779,12 +1801,18 @@ window.addEventListener("unhandledrejection", function(e){
       body.querySelectorAll('tr').forEach(tr => { tr.onclick = () => highlightHospital(+tr.dataset.id); });
       _hlHospIds.forEach(id => { const rr = body.querySelector('tr[data-id="'+id+'"]'); if (rr) rr.classList.add('sel'); });
     }
-    // 列表筛选分发：客户 tab → 区域+搜索；医院 tab → 搜索（医院暂不做行政区筛选，因全部位于达卡）
+    // 列表筛选分发：客户 tab → 区域+搜索；医院 tab → 区域+搜索（医院同样按所属一级/二级行政区过滤，与经销商对称）
     function applyListFilter(){
       if (_activeTab === 'hosp'){
         const list = window.__hospList || [];
+        const regions = _selectedRegions();
+        let flt = list;
+        if (regions.length){
+          if (list.some(r => r.__adm1 == null)) assignRegions();   // 异步加载兜底：确保医院已按经纬度归入区域（与经销商同款缓存机制）
+          flt = list.filter(r => regions.some(rg => (rg.type === 'adm1' ? r.__adm1 : r.__adm2) === rg.name));
+        }
         const q = ($('custSearch').value || '').trim().toLowerCase();
-        const flt = q ? list.filter(r => [r.hospital, r.cn, r.area, r.address, r.phone].some(v => (v||'').toLowerCase().includes(q))) : list;
+        if (q) flt = flt.filter(r => [r.hospital, r.cn, r.area, r.address, r.phone].some(v => (v||'').toLowerCase().includes(q)));
         renderHospitals(flt);
       } else {
         applyRegionFilter();
@@ -1816,23 +1844,34 @@ window.addEventListener("unhandledrejection", function(e){
         _adm2CustMap.get(nm).push(m);
       });
     }
-    // —— 区域筛选：把每个客户关联到所属一级(ADM1)/二级(ADM2)行政区域（按经纬度 geoContains）——
+    function buildAdm1CustMap(){
+      _adm1CustMap = new Map();
+      _custEls.forEach(m => {
+        const nm = m.rec && (m.rec.__adm1); if (!nm) return;
+        if (!_adm1CustMap.has(nm)) _adm1CustMap.set(nm, []);
+        _adm1CustMap.get(nm).push(m);
+      });
+    }
+    // —— 区域筛选：把每个客户/医院关联到所属一级(ADM1)/二级(ADM2)行政区域（按经纬度 geoContains）——
     function assignRegions(){
-      const list = window.__custList || [];
-      if (!list.length) return;
+      const cl = window.__custList || [];
+      const hl = window.__hospList || [];
+      if (!cl.length && !hl.length) return;   // 客户与医院都无数据才跳过（仅医院无客户时也需给医院算区域归属）
       // 缓存 ADM2 GeoJSON 反序列化结果：只算一次（774 个多边形反序列化是重活，避免每次调用都重建）
       if (!assignRegions._fc2){
         assignRegions._fc2 = (_topo2 && _topo2.type === 'Topology') ? topojson.feature(_topo2, _topo2.objects[Object.keys(_topo2.objects)[0]]) : (_topo2 || null);
       }
       const fc2 = assignRegions._fc2;
-      list.forEach(r => {
-        if (r.__adm1 && r.__adm2) return;   // 已算过则跳过（增量）：首次全量后所有客户都有缓存，后续调用零成本
+      const geocode = (list) => list.forEach(r => {
+        if (r.__adm1 && r.__adm2) return;   // 已算过则跳过（增量）：首次全量后所有记录都有缓存，后续调用零成本
         if (r.lat != null && r.lng != null){
           const ll = [+r.lng, +r.lat];
           if (!r.__adm1 && _features){ for (const f of _features){ try { if (d3.geoContains(f, ll)){ r.__adm1 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
           if (!r.__adm2 && fc2 && fc2.features){ for (const f of fc2.features){ try { if (d3.geoContains(f, ll)){ r.__adm2 = f.properties.shapeName || f.properties.name; break; } } catch(e){} } }
         }
       });
+      geocode(cl); geocode(hl);   // 客户 + 医院 都按经纬度归入一级/二级行政区域（医院点击一级行政区时同步过滤检索栏）
+      buildAdm1CustMap();   // 省→客户分组始终构建（仅依赖已加载的 ADM1，与 ADM2 是否就绪无关）→ 悬停省时位点可抬升
       if (!_adm2Chunked) buildAdm2CustMap();   // 非分块国：全量重建预分组；分块国改为增量 ensureAdm2CustForState（避免每次 assignRegions 清空已增量补全的归属）
     }
     function applyRegionFilter(){
