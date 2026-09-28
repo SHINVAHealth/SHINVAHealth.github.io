@@ -266,8 +266,8 @@ window.addEventListener("unhandledrejection", function(e){
     // 懒加载名单（方案 A）：这些大国 ADM2 体量大，进图不预载，点击"显示二级行政区域"时才拉（IndexedDB 缓存，二次秒开）
     const LAZY_ADM2 = new Set(['ru', 'au']);
     let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
-    // 仅一级行政区国家：日本只展示都道府县（1 都・1 道・2 府・43 县）；韩国只展示广域地方自治团体（17 个 시도：1 特别市・6 广域市・1 特别自治市・9 道/特别自治道）；泰国只展示府（จังหวัด changwat，76 个普通府 + 曼谷府级直辖市，合计 77 个）。均不细分二级行政区域
-    const NO_ADM2 = new Set(['jp', 'kr', 'th']);
+    // 仅一级行政区国家：日本只展示都道府县（1 都・1 道・2 府・43 县）；韩国只展示广域地方自治团体（17 个 시도：1 特别市・6 广域市・1 特别自治市・9 道/特别自治道）；泰国只展示府（จังหวัด changwat，76 个普通府 + 曼谷府级直辖市，合计 77 个）；印度只展示一级行政区域（28 邦 + 8 联邦属地，合计 36 个），不细分二级行政区域（县/区约 750 个，体量过大）。均不细分二级行政区域
+    const NO_ADM2 = new Set(['jp', 'kr', 'th', 'in']);
     let _noAdm2 = NO_ADM2.has(iso2);
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1, _curT = null;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）；_curT 同处声明，避免泄漏到 window 全局（非严格模式下静默成全局变量，一旦加 'use strict' 即崩）
@@ -318,6 +318,13 @@ window.addEventListener("unhandledrejection", function(e){
     // 美国海外领地（偏远小岛）：从主体中分离，单独放进右下角小窗（参照中国南海诸岛做法）
     const US_INSULAR = new Set(["Puerto Rico","American Samoa","United States Virgin Islands","Guam","Commonwealth of the Northern Mariana Islands"]);
     function adm1Name(f){ return (f && f.properties && (f.properties.shapeName || f.properties.name)) || ''; }
+    // 区域标签：英文名/中文名 双语。cnName 存在 → "English/中文"；否则回退纯英文（绝不虚构中文名）
+    function regionLabel(p){
+      if (!p) return '';
+      const en = (p.shapeName || p.name || '').trim();
+      const zh = (p.cnName || '').trim();
+      return zh ? (en + ' / ' + zh) : en;
+    }
     function renderProvinces(src){
       _adm2BuildGen++;            // 取消进行中的 ADM2 分帧构建（新 svg 已重建 _gAdm2）
       _adm2ProjKey = null; _adm2Building = false; _adm2BuiltKey = null;   // 投影随尺寸可能变化 → 失效缓存，下次构建重算（含 LOD 带）
@@ -374,9 +381,9 @@ window.addEventListener("unhandledrejection", function(e){
       // 1) 省填充（底层，承载 hover 提示）
       const pf = g.selectAll('path.prov-fill').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-fill')
-        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); hoverRegion(d, 'adm1'); })
+        .on('mousemove', (e,d) => { showTip(e, regionLabel(d.properties)); hoverRegion(d, 'adm1'); })
         .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); })
-        .on('click', (e,d) => setRegionFilter('adm1', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, e.currentTarget, d));
+        .on('click', (e,d) => setRegionFilter('adm1', d.properties.shapeName || d.properties.name, regionLabel(d.properties), e.currentTarget, d));
       _provFill = pf.nodes();
       // 2) 二级行政区域（中间层，按所属一级区域单独裁剪，避免跨区域交叉）
       _gAdm2 = g.append('g');
@@ -389,7 +396,7 @@ window.addEventListener("unhandledrejection", function(e){
         if (_staticLock) return;   // 静态锁图：禁用区域点击(含二级行政区)交互
         if (!showAdm2) return;
         const el = nearestAdm2At(e.clientX, e.clientY);
-        if (el){ e.stopPropagation(); const d = el.__data__; setRegionFilter('adm2', d.properties.shapeName || d.properties.name, d.properties.shapeName || d.properties.name, el, d); }
+        if (el){ e.stopPropagation(); const d = el.__data__; setRegionFilter('adm2', d.properties.shapeName || d.properties.name, regionLabel(d.properties), el, d); }
       });
       // 悬停兜底：鼠标落在客户绿点(显示客户信息，优先保留)、海岸线/州界(pointer-events:none 不产生事件)、
       // 或相邻 LGA 几何缝隙(无直接命中的 adm2 path)时，各自 mousemove 不触发 → 这里用几何判定补上最近区域信息。
@@ -403,13 +410,13 @@ window.addEventListener("unhandledrejection", function(e){
         if (t && t.closest && t.closest('g.cust-pt-g')) return;
         // 缝隙/海洋/边界线等无直接命中的位置 → 几何兜底显示最近 adm2 区域信息
         const el = nearestAdm2At(e.clientX, e.clientY);
-        if (el){ const d = el.__data__; showTip(e, d.properties.shapeName || d.properties.name || ''); hoverRegion(d, 'adm2'); }
+        if (el){ const d = el.__data__; showTip(e, regionLabel(d.properties)); hoverRegion(d, 'adm2'); }
         else { hideTip(e); unhoverRegion(); }
       });
       // 3) 省轮廓（最上层，描边清晰，市区线不压过省界）
       const pl = g.selectAll('path.prov-line').data(features).enter().append('path')
         .attr('d', path).attr('class','prov-line')
-        .on('mousemove', (e,d) => { showTip(e, d.properties.shapeName || d.properties.name || ''); hoverRegion(d, 'adm1'); })
+        .on('mousemove', (e,d) => { showTip(e, regionLabel(d.properties)); hoverRegion(d, 'adm1'); })
         .on('mouseleave', (e,d) => { hideTip(e,d); unhoverRegion(); });
       _provLine = pl.nodes();
       // 二次构建国家轮廓：由一级行政区域(ADM1)并集溶解内部边界，得到国家外边界；
@@ -927,17 +934,18 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 选中区域浮雕：source = 'region'(手动点击区域) / 'customer'(点击客户行联动)
     // 多点追踪开启 → 同 key 再点切换(增/删)，可累积多区域；关闭 → 移除同 source 其它项，仅保留当前(单点替换)
-    function _embossAddOrToggle(type, name, feature, source){
+    function _embossAddOrToggle(type, name, feature, source, label){
       if (!feature) return;
       const key = source + '|' + type + '|' + name;
+      const entry = { feature, type, name, source, label: (label || undefined) };
       if (_multiTrack){
         if (_embossRegions.has(key)) _embossRegions.delete(key);
-        else _embossRegions.set(key, { feature, type, name, source });
+        else _embossRegions.set(key, entry);
       } else {
         const sameSelected = _embossRegions.has(key) && _embossRegions.get(key).source === source;
         for (const [k2, v] of [..._embossRegions]){ if (v.source === source && k2 !== key) _embossRegions.delete(k2); }
         if (sameSelected) _embossRegions.delete(key);
-        else _embossRegions.set(key, { feature, type, name, source });
+        else _embossRegions.set(key, entry);
       }
       renderEmboss();
     }
@@ -1167,9 +1175,9 @@ window.addEventListener("unhandledrejection", function(e){
               // 单市区归属唯一 ADM1：构建时已缓存省索引(__pi)，悬停直接读，免质心+geoContains（零精度损失）
               if (d !== _lastAdm2Feat){
                 _lastAdm2Feat = d;
-                _lastAdm2Prov = (d.__pi != null && _features[d.__pi]) ? (_features[d.__pi].properties.shapeName || _features[d.__pi].properties.name) : null;
+                _lastAdm2Prov = (d.__pi != null && _features[d.__pi]) ? regionLabel(_features[d.__pi].properties) : null;
               }
-              const city = d.properties.shapeName || d.properties.name || '未命名市区';
+              const city = regionLabel(d.properties) || '未命名市区';
               showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
               hoverRegion(d, 'adm2');
             })
@@ -1278,7 +1286,7 @@ window.addEventListener("unhandledrejection", function(e){
           .datum(feat).attr('d', _simplifyPathD(_path(feat), tol)).attr('class', 'adm2').attr('clip-path', clip)
           .on('mousemove', (e, d) => {
             if (d !== _lastAdm2Feat){ _lastAdm2Feat = d; _lastAdm2Prov = (d.__pi != null && _features[d.__pi]) ? (_features[d.__pi].properties.shapeName || _features[d.__pi].properties.name) : null; }
-            const city = d.properties.shapeName || d.properties.name || '未命名市区';
+            const city = regionLabel(d.properties) || '未命名市区';
             showTip(e, city + (_lastAdm2Prov ? ' / ' + _lastAdm2Prov : ''));
             hoverRegion(d, 'adm2');
           })
@@ -1949,7 +1957,7 @@ window.addEventListener("unhandledrejection", function(e){
       // 单点模式：区域点击前清掉客户黄点 + 客户联动浮雕，保持“选中即清空其它”的秩序；多点追踪则保留累积
       if (!_multiTrack){ clearCustomerHighlight(); _embossRemoveBySource('customer'); }
       // 该区域 3D 浮雕显示（增/删切换；单点替换、多点追踪累积）—— 客户表筛选与描边均由 _embossRegions 派生，自动同步多区域
-      if (feature) _embossAddOrToggle(type, name, feature, 'region');
+      if (feature) _embossAddOrToggle(type, name, feature, 'region', label);
       reapplyRegionSel();
       applyListFilter();
     }
