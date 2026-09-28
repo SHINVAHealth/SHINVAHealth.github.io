@@ -23,6 +23,8 @@ window.addEventListener("unhandledrejection", function(e){
     $('countryName').textContent = cn;
     $('countryMeta').textContent = (iso2.toUpperCase()) + (facts ? ' · ' + (facts.capital||'') : '');
     $('custCountry').textContent = cn;
+    if ($('hospTitlePrefix')) $('hospTitlePrefix').textContent = cn + '医院';   // 医院检索标题按当前国名动态生成（如 泰国医院 / 孟加拉医院），不再写死"达卡市医院"
+    if ($('hospHintCn')) $('hospHintCn').textContent = cn + '医院';
     document.title = cn + ' · 国家详情';
     $('overviewTitle').textContent = '国家概况';
     // 左上角国家名称后：该国实时时间（24小时制）+ 国际区号
@@ -41,7 +43,7 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202609281212';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202609281403';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -1775,10 +1777,10 @@ window.addEventListener("unhandledrejection", function(e){
       applyHideUnselectedHosp();   // 选中态变化后同步“隐藏未选医院”：仅保留高亮红点，隐藏其余
     }
     function loadHospitals(){
-      // 医院数据按 iso2 过滤落图：孟加拉达卡 + 泰国/越南/日本/韩国等已导入国家均可绘制红点
+      // 医院数据按 iso2 过滤落图：已导入国家（孟加拉 + 泰国/越南/日本/韩国等）均可绘制红点，标题按当前国名显示
       fetch('hospitals.json').then(r => r.json()).then(data => {
         const all = (data && data.records) || [];
-        const list = all.filter(r => (r.iso2 || '').toLowerCase() === iso2);   // 仅当前国（孟加拉达卡）医院落此国家地图
+        const list = all.filter(r => (r.iso2 || '').toLowerCase() === iso2);   // 仅当前国医院落此国家地图
         list.forEach((r, i) => { r.__id = i; });
         window.__hospList = list;
         _hospLoaded = true;
@@ -1793,7 +1795,7 @@ window.addEventListener("unhandledrejection", function(e){
       const head = $('custHead'); if (head) head.innerHTML = '<tr><th>医院</th><th>区域</th><th>床位</th><th>电话</th></tr>';
       const cnt = $('custCount'); if (cnt) cnt.textContent = `共 ${list.length} 家`;
       const body = $('custBody'); if (!body) return;
-      if (!list.length){ body.innerHTML = ''; const e=$('custEmpty'); if(e){ e.style.display='block'; e.textContent='该国暂无医院数据（仅孟加拉达卡市已导入）。'; } return; }
+      if (!list.length){ body.innerHTML = ''; const e=$('custEmpty'); if(e){ e.style.display='block'; e.textContent='该国暂无医院数据。'; } return; }
       const e=$('custEmpty'); if(e) e.style.display='none';
       body.innerHTML = list.map(r =>
         `<tr data-id="${r.__id}"><td>${esc(r.hospital)}</td><td>${esc(r.area)}</td><td>${esc(r.beds==null?'—':r.beds)}</td><td>${esc(r.phone)}</td></tr>`
