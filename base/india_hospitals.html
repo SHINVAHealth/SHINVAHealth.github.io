@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="ZsxW81Thj20ehvrn">
+<head data-page-node-id="X4WbROHjvRUwTYr6">
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8" data-page-node-id="NXxhH6anx-y1m8Gd">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="4c74u3yvXTPtRIca">
+    <title>印度医院信息表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Yu Gothic', 'Meiryo', 'Malgun Gothic', 'Leelawadee UI', 'Noto Sans CJK SC', 'Noto Sans Thai', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.55; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; color:#fff; }
+        .badge-public { background: #2ecc71; }
+        .badge-private { background: #3498db; }
+        .badge-teaching { background: #f39c12; }
+        .badge-international { background: #9b59b6; }
+        .badge-military { background: #e74c3c; }
+        .badge-ngo { background: #1abc9c; }
+        .badge-joint { background: #e67e22; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; line-height: 1.4; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; line-height: 1.5; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body data-page-node-id="KZ8ZLgF3gqCtPKGJ">
+<div class="container" data-page-node-id="k4Bdkvam1ATT_e8I">
+    <h1 data-page-node-id="_r8er69oTTkdd_PM">印度医院信息表</h1>
+    <div class="stats" data-page-node-id="AzTR_5KONx90iuaR">
+      <div class="stat-card total" data-page-node-id="pyq9mqMs48H_U5Gn"><div class="num" data-page-node-id="SAIjUsMCXRFz9luj">50</div><div class="label" data-page-node-id="LrCTo8Y9HnKqIn-a">医院总数</div></div>
+    </div>
+
+      <div class="searchbar" data-page-node-id="-SLtbwb3lNTRUwNP">
+    <input id="custSearch" type="text" placeholder="🔍 搜索医院名称 / 城市 / 官网 / 性质…" autocomplete="off" data-page-node-id="X4mVSuuQkjFuPJCz">
+    <span class="search-count" id="custCount" data-page-node-id="vi2DOvt9HJExb5r1"></span>
+  </div>
+<table data-page-node-id="8n4-JtjxW8QNScFn">
+        <thead data-page-node-id="u0G7fOwWJu_FqB-A">
+            <tr data-page-node-id="RciSFmgEEYwBy5ef">
+                <th style="width:30px;" data-page-node-id="vQ9DUJrLXnlOsnOe">#</th>
+                <th style="width:230px;" data-page-node-id="tjj-UFcfArLQuuSJ">医院名称</th>
+                <th style="width:110px;" data-page-node-id="se2miELWROPoA6wa">城市</th>
+                <th style="width:250px;" data-page-node-id="Zvq9DtxKY2epkW23">联系方式（地址 / 床位）</th>
+                <th style="width:190px;" data-page-node-id="xrKKBWOwNbSut0hx">官网</th>
+                <th style="width:120px;" data-page-node-id="9ofIrSIEJwEx15hk">性质</th>
+                </tr>
+        </thead>
+        <tbody data-page-node-id="afbqsf5tPMj_9Wa0">
+<tr data-page-node-id="O6TrSKe4VtN1R8G_">
+  <td data-page-node-id="-u_mDLlHvOGgBKD2">1</td>
+  <td class='company-name' data-page-node-id="ki9mIxh9-21xedlW">全印医学科学研究所（AIIMS）（All India Institute of Medical Sciences）</td>
+  <td data-page-node-id="LQHzMmB4sHEZGXWi">New Delhi</td>
+  <td class='contact-info' data-page-node-id="Atab-28EyRzbOsAl"><div data-page-node-id="3JYpRiH8FkryrLL7">📍 Ansari Nagar, New Delhi</div><div data-page-node-id="yVf-G3a5Aa-BIJFH">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="DbvIfT0HxVErX6Wg"><a href="https://www.aiims.edu" target="_blank" data-page-node-id="CFUeBKGkfdUd_7hp">https://www.aiims.edu</a></td>
+  <td data-page-node-id="CaTjlz_CZLBf8BSU"><span class='badge badge-teaching' data-page-node-id="j5Bg7FoMQWAkHCah">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="kHh9MqDnLOIreNdP">
+  <td data-page-node-id="uMiU3u6npf36lSwn">2</td>
+  <td class='company-name' data-page-node-id="uNJpZwx4uH-7ugpp">医学教育研究院（PGIMER）（Postgraduate Institute of Medical Education &amp; Research）</td>
+  <td data-page-node-id="UrERIBYxGCieAJkd">Chandigarh</td>
+  <td class='contact-info' data-page-node-id="d-EcbIBr7BUTcR94"><div data-page-node-id="gngns3QQtQJg_fuu">📍 Sector 12, Chandigarh</div><div data-page-node-id="w7pX0xkbcNuddIL2">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="NUPoiOHCw390NuqX"><a href="https://pgimer.edu.in" target="_blank" data-page-node-id="IGtwCCvSFZiBuvwE">https://pgimer.edu.in</a></td>
+  <td data-page-node-id="91V42ZSGgfzwLhKk"><span class='badge badge-teaching' data-page-node-id="AvTxdTlyTdf7poEm">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="jgE2rg5qJtIw4Q9D">
+  <td data-page-node-id="QASFb1UAV_1ccx-C">3</td>
+  <td class='company-name' data-page-node-id="GfLoci846MMDpTOs">本地治里中央医学院（JIPMER）（Jawaharlal Institute of Postgraduate Medical Education &amp; Research）</td>
+  <td data-page-node-id="DkLd72zS8y_sMyXw">Puducherry</td>
+  <td class='contact-info' data-page-node-id="ihWkwaFQ97kBR-cL"><div data-page-node-id="W7d4BwvdWt3FQCdM">📍 Dhanvantari Nagar, Puducherry</div><div data-page-node-id="F46TjFFKx1bPmism">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="IM3MOPOBy9Zlu67J"><a href="https://jipmer.edu.in" target="_blank" data-page-node-id="IZZC6fsrfDAqiZrN">https://jipmer.edu.in</a></td>
+  <td data-page-node-id="lzP_z04_y_qeOQlw"><span class='badge badge-teaching' data-page-node-id="Nzl6bxGj6BDMx-iv">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="iumO9qabhmb2CTXD">
+  <td data-page-node-id="9LMFHtGdF06EDO60">4</td>
+  <td class='company-name' data-page-node-id="UbRDrewn6lKzFJgg">桑杰·甘地研究生医学院（SGPGI）（Sanjay Gandhi Postgraduate Institute of Medical Sciences）</td>
+  <td data-page-node-id="-THo6mPhnPZR357H">Lucknow</td>
+  <td class='contact-info' data-page-node-id="dSRCYhXFe7Hj3E3U"><div data-page-node-id="7xEjjsWJ-HJ-f_Ix">📍 Raebareli Road, Lucknow, Uttar Pradesh</div><div data-page-node-id="ss49m093-7AKF4fS">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="6VwiDlcZ2G8TU7O7"><a href="https://www.sgpgi.ac.in" target="_blank" data-page-node-id="zZVNontit9VlYijO">https://www.sgpgi.ac.in</a></td>
+  <td data-page-node-id="kHqaJ4bkcq2zh6kk"><span class='badge badge-teaching' data-page-node-id="s4eNABR316FG_VsB">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="x-xuEnFANuEtVfP4">
+  <td data-page-node-id="919amlDtpnfr-d6m">5</td>
+  <td class='company-name' data-page-node-id="hiRmWaybxBfQRsfZ">尼扎姆医学科学研究所（NIMS）（Nizam's Institute of Medical Sciences）</td>
+  <td data-page-node-id="RbDQLKlExYYVceEl">Hyderabad</td>
+  <td class='contact-info' data-page-node-id="4Cl2sRxmayVrxAkW"><div data-page-node-id="Ftr5v9_wWdjlAtxj">📍 Punjagutta, Hyderabad, Telangana</div><div data-page-node-id="DxdH3lijL-bmiQ8G">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="U4IouVO3C76pZQfS"><a href="https://www.nims.edu.in" target="_blank" data-page-node-id="hHLtAS6RmAg9P4Y0">https://www.nims.edu.in</a></td>
+  <td data-page-node-id="mh8m6Qpknog9fkzy"><span class='badge badge-teaching' data-page-node-id="iB-miEP31IBB1Z4r">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="gKKFXhoN0ulHYpg-">
+  <td data-page-node-id="sJFHeJEgpNaxyjJ4">6</td>
+  <td class='company-name' data-page-node-id="7A4PpGJLb8sxFysh">国王乔治医学院（KGMU）（King George's Medical University）</td>
+  <td data-page-node-id="DuE2_quOADyChwCG">Lucknow</td>
+  <td class='contact-info' data-page-node-id="Amf2yqi3llJMnQwE"><div data-page-node-id="i-TEZ9wYmvE9-Oux">📍 Chowk, Lucknow, Uttar Pradesh</div><div data-page-node-id="jg_mk3KzQS8QBrmd">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="BqxMGfdYFQs43zmh"><a href="https://www.kgmu.org" target="_blank" data-page-node-id="2EjSkj8vgzdMd6zM">https://www.kgmu.org</a></td>
+  <td data-page-node-id="pL51mDZE8m3wlj4K"><span class='badge badge-teaching' data-page-node-id="vef63oT1yiN_7Ab-">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="nbzpIYGfF9MZ5hxx">
+  <td data-page-node-id="HwbC3XoTE0qESrqG">7</td>
+  <td class='company-name' data-page-node-id="rYZFEzoWDex8ITim">SMS 医学院附属医院（SMS Medical College &amp; Hospital）</td>
+  <td data-page-node-id="D1vl0e5lbFJTJkPL">Jaipur</td>
+  <td class='contact-info' data-page-node-id="x0lFYPMcM_z9H9xf"><div data-page-node-id="w7CCfEtgc6JqerTW">📍 JLN Marg, Jaipur, Rajasthan</div><div data-page-node-id="uzcvRJvtfQ0_v1D6">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="A0alD82sTsaa11O8"><a href="https://www.smsmedicalcollege.in" target="_blank" data-page-node-id="v7LXOYqmjjR2m-ti">https://www.smsmedicalcollege.in</a></td>
+  <td data-page-node-id="2-TKofHTsitlcb8o"><span class='badge badge-teaching' data-page-node-id="VImjRkcUMF7zgmtP">公立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="j0m-43I38KQLWJCa">
+  <td data-page-node-id="sn6af-Nz2NWtfhPg">8</td>
+  <td class='company-name' data-page-node-id="6roO7W1WKqJCYRRB">肝脏与胆道科学研究所（ILBS）（Institute of Liver and Biliary Sciences）</td>
+  <td data-page-node-id="wKlorg_VuknA67lo">New Delhi</td>
+  <td class='contact-info' data-page-node-id="49pQWws6To2zTJmR"><div data-page-node-id="NubtGZmE8exuSORM">📍 D-1, Vasant Kunj, New Delhi</div><div data-page-node-id="CCvfV4VO6ekQPXn1">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="ixajs9hFwaXHO5_m"><a href="https://www.ilbs.in" target="_blank" data-page-node-id="smTHiD7UzqV9EUXs">https://www.ilbs.in</a></td>
+  <td data-page-node-id="S1y_qxFVY907m2MO"><span class='badge badge-public' data-page-node-id="1AyIVULk009y7ZnM">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="yXIvInn3rvmG9pPx">
+  <td data-page-node-id="YdoTZXtLI9QKE4ce">9</td>
+  <td class='company-name' data-page-node-id="b0xOAnABO54EMxnJ">辛杜拉奥公立医院（Hindu Rao Hospital）</td>
+  <td data-page-node-id="L5hsYHXNdPtAfrBt">New Delhi</td>
+  <td class='contact-info' data-page-node-id="hcFDLN3fZRCPZw48"><div data-page-node-id="sCUy_xhDCS8S7aZE">📍 Malka Ganj, New Delhi</div><div data-page-node-id="2hdYKPaB9rDh_nMp">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="Ev2mRMHJcHkT3ndw"><a href="https://mcdonline.nic.in" target="_blank" data-page-node-id="xMp_Aq3K3MRDHA1p">https://mcdonline.nic.in</a></td>
+  <td data-page-node-id="B5Zilmur70BzK7di"><span class='badge badge-public' data-page-node-id="G5fr2XlH9F3sx50O">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="gfCQbTYzKWDPEXNw">
+  <td data-page-node-id="gRLPwXoUmU397HfJ">10</td>
+  <td class='company-name' data-page-node-id="ioh0nBeifgFkDrfF">塔塔纪念医院（Tata Memorial Hospital）</td>
+  <td data-page-node-id="0EUCgeMtZ8S6lFX4">Mumbai</td>
+  <td class='contact-info' data-page-node-id="JPjeAagDKrbzrMVY"><div data-page-node-id="_9XDeWrmFc5G_7VF">📍 Parel, Mumbai, Maharashtra</div><div data-page-node-id="qW8XDT5e5phTWbl8">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="1-VfxKqFXYaxzKWe"><a href="https://www.tmc.gov.in" target="_blank" data-page-node-id="qFeYGVUw0MGDvqTM">https://www.tmc.gov.in</a></td>
+  <td data-page-node-id="uV2A_ui9zePsvzi1"><span class='badge badge-public' data-page-node-id="NZKyc0X0DWYaKrjR">公立</span></td>
+  </tr>
+
+<tr data-page-node-id="vI0B7_spQlJI4qN6">
+  <td data-page-node-id="l7t4dUT4tUjPtPV_">11</td>
+  <td class='company-name' data-page-node-id="au-SjknG88bNFege">克里斯蒂安医学院（CMC Vellore）（Christian Medical College）</td>
+  <td data-page-node-id="OzUlNen6SncU18HM">Vellore</td>
+  <td class='contact-info' data-page-node-id="16RJ-l-zh0ewMHPs"><div data-page-node-id="ziNo5iUwlKrQai9y">📍 Ida Scudder Road, Vellore, Tamil Nadu</div><div data-page-node-id="POjlLO5vcACcs5Ks">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="fdKCfXHGE0DFFks7"><a href="https://www.cmch-vellore.edu" target="_blank" data-page-node-id="n44mQXoP3HLi7rSY">https://www.cmch-vellore.edu</a></td>
+  <td data-page-node-id="QRqUWswGGgFXwdLT"><span class='badge badge-teaching' data-page-node-id="tONe0Fh82-ONSovY">私立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="t5bjX73XYx1gY1aK">
+  <td data-page-node-id="fmYvxN6r7LWXdt_6">12</td>
+  <td class='company-name' data-page-node-id="sOH_NDswePLSdeay">圣约翰医学院医院（St. John's Medical College Hospital）</td>
+  <td data-page-node-id="Ywb8lwvhj1T7Ebf4">Bengaluru</td>
+  <td class='contact-info' data-page-node-id="KXbFkknspJmVCZlx"><div data-page-node-id="ZokAibOF4G997VJ4">📍 Sarjapur Road, Bengaluru, Karnataka</div><div data-page-node-id="HMLe0vc_rvo4KqhN">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="C1eYm2rNGhB4Jgkq"><a href="https://www.stjohnsindia.org" target="_blank" data-page-node-id="NDESFBg7G7axIyvh">https://www.stjohnsindia.org</a></td>
+  <td data-page-node-id="vfYLtA7nyB8be1FX"><span class='badge badge-teaching' data-page-node-id="feuy4GHGNAgrfWIH">私立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="n4HW_lzgo0pI05Cv">
+  <td data-page-node-id="vHfHTNY3o91QXbT_">13</td>
+  <td class='company-name' data-page-node-id="_RwWWxwlVyQdKtMr">阿姆里塔研究院医院（Amrita Hospital）</td>
+  <td data-page-node-id="MXSEuT8FtwAYWfQ8">Kochi</td>
+  <td class='contact-info' data-page-node-id="do05KBhGim4F2A9b"><div data-page-node-id="PmUxCBEJ7vxqP0k2">📍 Edappally, Kochi, Kerala</div><div data-page-node-id="4A3MsvwM2r9s7GYe">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="AljUTne59cD_fuO5"><a href="https://www.amritahospitals.org" target="_blank" data-page-node-id="jIUqmkVkpwYFeBmP">https://www.amritahospitals.org</a></td>
+  <td data-page-node-id="iIrHlebQ1Tz-F7u9"><span class='badge badge-teaching' data-page-node-id="05rHdKSlXqCAbz5I">私立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="GNJaLrSKRkNo4sPf">
+  <td data-page-node-id="mVsBLjQ6dJeLx7ux">14</td>
+  <td class='company-name' data-page-node-id="rSR4cTsg1HMTqqjm">拉马iah纪念医院（Ramaiah Memorial Hospital）</td>
+  <td data-page-node-id="mXTN934ySBzDhQ8i">Bengaluru</td>
+  <td class='contact-info' data-page-node-id="kRPeJPCXDnKDP2TS"><div data-page-node-id="i1G15Hc8HoFRmKIt">📍 New BEL Road, Bengaluru, Karnataka</div><div data-page-node-id="iMoaJWkzlqJ_X47g">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="iyi_6Ir0JBHanA1N"><a href="https://www.ramaiahhospitals.in" target="_blank" data-page-node-id="CZW5z50rQqkv5M4x">https://www.ramaiahhospitals.in</a></td>
+  <td data-page-node-id="Zc_1I2tVdnZhdZ5-"><span class='badge badge-teaching' data-page-node-id="JPFUvdCY3g5TFZfT">私立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="SV1MFW6ts79M22i8">
+  <td data-page-node-id="NqtDnDaN7dJTmX1j">15</td>
+  <td class='company-name' data-page-node-id="kFDi3T63THBEAKPj">切蒂纳德健康城医院（Chettinad Hospital &amp; Research Institute）</td>
+  <td data-page-node-id="C5nEceqLs-9mcqVw">Chennai</td>
+  <td class='contact-info' data-page-node-id="GSpu5tMxOsLcc5g7"><div data-page-node-id="6afNK1Vc0YeoCSGC">📍 Kelambakkam, Chennai, Tamil Nadu</div><div data-page-node-id="FNqZc0BqDQW8wqto">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="um-FC_SgqL3D6FSm"><a href="https://www.chettinadhealthcity.com" target="_blank" data-page-node-id="oXktG5tOn_a0LYG5">https://www.chettinadhealthcity.com</a></td>
+  <td data-page-node-id="upkIwA7UDokEDYTk"><span class='badge badge-teaching' data-page-node-id="MEa1iyfbRbI7_INr">私立教学</span></td>
+  </tr>
+
+<tr data-page-node-id="gSNxZpAfvluPzMnt">
+  <td data-page-node-id="fFy1kMEuw_qPm5Hk">16</td>
+  <td class='company-name' data-page-node-id="rvGhJo3vbbh3M6dY">阿波罗医院（金奈）（Apollo Hospitals, Greams Road）</td>
+  <td data-page-node-id="kdHEHO5Xsxf6Yqjc">Chennai</td>
+  <td class='contact-info' data-page-node-id="4VxvAGa6cQXjAMV0"><div data-page-node-id="xJTXis0QejoHrEK7">📍 Greams Road, Chennai, Tamil Nadu</div><div data-page-node-id="4tn8SAzU1d9E3y5I">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="m1U0ftPVn7EjTrD9"><a href="https://www.apollohospitals.com" target="_blank" data-page-node-id="DtPLJNx2T0sn5vtv">https://www.apollohospitals.com</a></td>
+  <td data-page-node-id="KuDELoDgeplDUnv4"><span class='badge badge-private' data-page-node-id="hCKVBenCGKqLHN23">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="T_3F5gTXgaDqoQmK">
+  <td data-page-node-id="pWPXpqn08o9KRMkj">17</td>
+  <td class='company-name' data-page-node-id="-V4ozX41m9yaOLUT">阿波罗医院（海得拉巴）（Apollo Hospitals, Jubilee Hills）</td>
+  <td data-page-node-id="PAoc-ti_d3V0dQv2">Hyderabad</td>
+  <td class='contact-info' data-page-node-id="_zs0KRc_XUVPHVqV"><div data-page-node-id="JOPhpq7rCmifVuGg">📍 Jubilee Hills, Hyderabad, Telangana</div><div data-page-node-id="xz8bEvd8nufnlUNQ">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="4uS6ZELE59mUoyJN"><a href="https://www.apollohospitals.com" target="_blank" data-page-node-id="aC0Wd5pveqRGx0Xw">https://www.apollohospitals.com</a></td>
+  <td data-page-node-id="sIYAIi7ktC0opGw3"><span class='badge badge-private' data-page-node-id="zWYBLt3CdwVbC1Iy">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="qsHK2d3UIwCrNhgc">
+  <td data-page-node-id="c0oEelfsGm_YKXq8">18</td>
+  <td class='company-name' data-page-node-id="bu3DLN9lCbS8KmVj">阿波罗医院（德里）（Apollo Hospitals, Sarita Vihar）</td>
+  <td data-page-node-id="DfkWWaXq_6a0U8VL">New Delhi</td>
+  <td class='contact-info' data-page-node-id="Ida4M26k6HC7gwzp"><div data-page-node-id="4JgdLOK1QxrTFpbi">📍 Sarita Vihar, New Delhi</div><div data-page-node-id="uCN0zOsbwnspAGIF">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="ErQ5y46XoX6l5HFV"><a href="https://www.apollohospitals.com" target="_blank" data-page-node-id="TusocX3b9mQgkkgk">https://www.apollohospitals.com</a></td>
+  <td data-page-node-id="f45X3RrPDaXa0-wb"><span class='badge badge-private' data-page-node-id="atS2Qw3mOvOEMNpA">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="L0wJmjs8UrbnvzI9">
+  <td data-page-node-id="tezdlklY7Ze-AJCm">19</td>
+  <td class='company-name' data-page-node-id="OJz-BrQtsf7cCEpl">阿波罗医院（加尔各答）（Apollo Gleneagles / Apollo Hospitals Kolkata）</td>
+  <td data-page-node-id="dLjyZYBFzXD4nStd">Kolkata</td>
+  <td class='contact-info' data-page-node-id="0faAlEOrUQmDe5eH"><div data-page-node-id="9p92G7RdKyCOTTAw">📍 Kolkata, West Bengal</div><div data-page-node-id="riHFMF4RpJoNRcCG">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="tm7565FvksP-9kx8"><a href="https://www.apollohospitals.com" target="_blank" data-page-node-id="VsF3Lj7pixPsdRvC">https://www.apollohospitals.com</a></td>
+  <td data-page-node-id="TgDLgCxtcX1x0fJh"><span class='badge badge-private' data-page-node-id="tofuv_5mQ621FWZe">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="E2gai2zOcZTCR326">
+  <td data-page-node-id="yknkaLmizJcOiFtD">20</td>
+  <td class='company-name' data-page-node-id="ST52IVi__0IVbn-Q">富通纪念研究所（FMRI）（Fortis Memorial Research Institute）</td>
+  <td data-page-node-id="Kp_72Rx9GN6bPU1n">Gurgaon</td>
+  <td class='contact-info' data-page-node-id="hb-B7D6-4VYD9C1I"><div data-page-node-id="vgKYQIbmIOcWUXuy">📍 Gurgaon, Haryana</div><div data-page-node-id="gOBMwD69NveHvbip">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="5aqULkwVxU_J0UCD"><a href="https://www.fortishealthcare.com" target="_blank" data-page-node-id="Nf-p9RqSq2aCfS3_">https://www.fortishealthcare.com</a></td>
+  <td data-page-node-id="o01ul-pMdcoduHGk"><span class='badge badge-private' data-page-node-id="fIwyRej8WPHOdGT4">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="fTd6wTmhE6Itvr7v">
+  <td data-page-node-id="SZb_0u3OoUUHKz34">21</td>
+  <td class='company-name' data-page-node-id="2I_V2a28YG3JgHm4">富通埃斯科茨心脏研究所（Fortis Escorts Heart Institute）</td>
+  <td data-page-node-id="LYqOq8EWY-gDUoJH">New Delhi</td>
+  <td class='contact-info' data-page-node-id="PaL8NRzOCad8SOaM"><div data-page-node-id="7VYNKlAlSC-e1p4n">📍 Okhla, New Delhi</div><div data-page-node-id="FtwxuVYEcCS4bttn">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="5sQp99rbvWpWEXHZ"><a href="https://www.fortishealthcare.com" target="_blank" data-page-node-id="VkcQHXGqqaJ6boUO">https://www.fortishealthcare.com</a></td>
+  <td data-page-node-id="BpdoXJBFGiHSB14a"><span class='badge badge-private' data-page-node-id="-3LMLmFvO_yyhjRh">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="vlPM1oJvjkwIJ8T9">
+  <td data-page-node-id="ILyfGDnDSXUDWRTz">22</td>
+  <td class='company-name' data-page-node-id="UeBbN7ZGC4zGRdRx">富通医院（班加罗尔）（Fortis Hospital, Bannerghatta）</td>
+  <td data-page-node-id="BGL58XeSx8azdYd2">Bengaluru</td>
+  <td class='contact-info' data-page-node-id="Y2R1BucX_xu99eBF"><div data-page-node-id="rHJbbFm_kClw8K3A">📍 Bannerghatta Road, Bengaluru, Karnataka</div><div data-page-node-id="KjqQj-WDeGVtuTcH">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="RB3eW2gAKlvoNOda"><a href="https://www.fortishealthcare.com" target="_blank" data-page-node-id="Md1JR4KxCLNCsQlx">https://www.fortishealthcare.com</a></td>
+  <td data-page-node-id="V-1EF4w5DHSieyYc"><span class='badge badge-private' data-page-node-id="EbiTE2MfDWPnchXi">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="bA34aVgglCrGvSX9">
+  <td data-page-node-id="pH9CnUvCW-WXfH0o">23</td>
+  <td class='company-name' data-page-node-id="XyT-pGMyoPXzR-1w">曼尼帕尔医院（老机场路）（Manipal Hospitals, Old Airport Road）</td>
+  <td data-page-node-id="euqxAf11etbPLKfE">Bengaluru</td>
+  <td class='contact-info' data-page-node-id="3BrE_DtYCXzXvNzN"><div data-page-node-id="ZtK51LsThR-xYYrC">📍 Old Airport Road, Bengaluru, Karnataka</div><div data-page-node-id="Fr9J1AmVnmf0U1AK">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="HhKSSzdLvsQr74Cz"><a href="https://www.manipalhospitals.com" target="_blank" data-page-node-id="7eHuLMeszpxBr0Uq">https://www.manipalhospitals.com</a></td>
+  <td data-page-node-id="sDZ6emAS_PMyF0VW"><span class='badge badge-private' data-page-node-id="NwcScTOvaaMQx-dy">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="5o29uvz0jECvoulb">
+  <td data-page-node-id="S4DRtDJPcVh_yNUh">24</td>
+  <td class='company-name' data-page-node-id="5aiWplIub9qIoLUv">曼尼帕尔医院（德里 Dwarka）（Manipal Hospitals, Dwarka）</td>
+  <td data-page-node-id="beQ7sH6MTjOGohi0">New Delhi</td>
+  <td class='contact-info' data-page-node-id="pOb7Z2REsVBG0X9l"><div data-page-node-id="xlXYcHpa_5sbRwIZ">📍 Dwarka, New Delhi</div><div data-page-node-id="R24ehfvPi6KNxWes">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="pTHlB6ymIx7taxWO"><a href="https://www.manipalhospitals.com" target="_blank" data-page-node-id="zxT30MkQVkUKiC9h">https://www.manipalhospitals.com</a></td>
+  <td data-page-node-id="qd-hIf5mQUd_s8X3"><span class='badge badge-private' data-page-node-id="TkyUP2it8ZxJ0q0k">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="nrlMIidx_kPgHyXO">
+  <td data-page-node-id="Q5IIqNHGJh8QUkAe">25</td>
+  <td class='company-name' data-page-node-id="4vm3y-8CrUAzXqna">MAX 超级专科医院（Saket）（Max Super Speciality Hospital, Saket）</td>
+  <td data-page-node-id="OE6NT4HueaKyCTfp">New Delhi</td>
+  <td class='contact-info' data-page-node-id="DPjqE6ZLkHGuTWPS"><div data-page-node-id="aiKnG3L38-yGxtJ6">📍 Saket, New Delhi</div><div data-page-node-id="2X3a7Ph8wKVMlyts">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="N7YuvbFdmaj4vok8"><a href="https://www.maxhealthcare.in" target="_blank" data-page-node-id="Mskow2T7g2vdcSs2">https://www.maxhealthcare.in</a></td>
+  <td data-page-node-id="H3jlgzXpgnJkns_P"><span class='badge badge-private' data-page-node-id="P3HtxVoWXGwOmu3J">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="53iOtaaIgCeJrubp">
+  <td data-page-node-id="LuGpJz0SKO1kUV9p">26</td>
+  <td class='company-name' data-page-node-id="dBP2PEfV9QDrGcdd">梅丹塔医院（The Medicity）（Medanta - The Medicity）</td>
+  <td data-page-node-id="g3StRi1AO3tBVdQ4">Gurgaon</td>
+  <td class='contact-info' data-page-node-id="jHNa3-_BMYJFbrSA"><div data-page-node-id="_zmOdGyAN-aTwtHP">📍 Gurgaon, Haryana</div><div data-page-node-id="tybZDrPz_xi7SCBG">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="vV0PmNn_4DpLaWKo"><a href="https://www.medanta.org" target="_blank" data-page-node-id="RQI7e2CxY04yGV3N">https://www.medanta.org</a></td>
+  <td data-page-node-id="rN7l6onwhklwe_nz"><span class='badge badge-private' data-page-node-id="xcJK3PWr2YW0H7Sn">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="63GKF_Q-4jReF3mn">
+  <td data-page-node-id="vmeO7kr7K_X_Azyp">27</td>
+  <td class='company-name' data-page-node-id="HYv6PMdzxw6BNNm6">甘加·拉姆爵士医院（Sir Ganga Ram Hospital）</td>
+  <td data-page-node-id="2MjI77ucQTsUGZd2">New Delhi</td>
+  <td class='contact-info' data-page-node-id="xkKYPUhGh7mAI48z"><div data-page-node-id="DfkgLLP-0rY8o61e">📍 Rajinder Nagar, New Delhi</div><div data-page-node-id="w1twK_7JBB7LyoHa">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="QvdEITJ9iqJt8U-K"><a href="https://www.sgrh.com" target="_blank" data-page-node-id="-H10rFRqgD9BYSh6">https://www.sgrh.com</a></td>
+  <td data-page-node-id="yndb-BzA2cK9eESq"><span class='badge badge-private' data-page-node-id="1FilkB5OtVh99UAo">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="YUN2fHqfniPqecI5">
+  <td data-page-node-id="hO8fz1tTtbYfFAqy">28</td>
+  <td class='company-name' data-page-node-id="eTfRKec6SwpaU0pw">科基拉本·安巴尼医院（Kokilaben Dhirubhai Ambani Hospital）</td>
+  <td data-page-node-id="nIWnr1NJQt3WkJzM">Mumbai</td>
+  <td class='contact-info' data-page-node-id="0wyH2Q0UJBtaSQMA"><div data-page-node-id="HR3JWYNBaFJjb1av">📍 Andheri West, Mumbai, Maharashtra</div><div data-page-node-id="mk4WAZnRC_0a_Ymy">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="jPnL9zogZ2F6gYxh"><a href="https://www.kokilabenhospital.com" target="_blank" data-page-node-id="9YdHr_KohcaUoYj5">https://www.kokilabenhospital.com</a></td>
+  <td data-page-node-id="R5OitC6KKx4bVrk7"><span class='badge badge-private' data-page-node-id="dnoCLNTwE-odKYz7">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="RwWIdrNpsnlH6y5T">
+  <td data-page-node-id="-9mLoFK4lXirxENl">29</td>
+  <td class='company-name' data-page-node-id="F8GVFf6E7sHm5uN6">利拉瓦蒂医院（Lilavati Hospital &amp; Research Centre）</td>
+  <td data-page-node-id="L8a_dzz4R5HN2Hkk">Mumbai</td>
+  <td class='contact-info' data-page-node-id="ctg5xpNCHBDmKpcJ"><div data-page-node-id="ZnRfmanF-djTVntY">📍 Bandra, Mumbai, Maharashtra</div><div data-page-node-id="bJTwhVW6AeQGOVsO">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="p46WMazjfa6n1Wlg"><a href="https://www.lilavatihospital.com" target="_blank" data-page-node-id="Ub1I9keDWTl79l2d">https://www.lilavatihospital.com</a></td>
+  <td data-page-node-id="uC7LoskAHX0WlLgK"><span class='badge badge-private' data-page-node-id="v5v4CYJU9kEB-GHa">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="4xMrlmnU4e9aYHTr">
+  <td data-page-node-id="THvTHsJmxCcYl_qj">30</td>
+  <td class='company-name' data-page-node-id="sE47Ric3aRJVBEwi">贾斯洛克医院（Jaslok Hospital）</td>
+  <td data-page-node-id="zXCIec--wSPJIvSH">Mumbai</td>
+  <td class='contact-info' data-page-node-id="CFmNgJCfZYMeJAvN"><div data-page-node-id="yQlfbJ0Ch84XtaqU">📍 Pedder Road, Mumbai, Maharashtra</div><div data-page-node-id="3hoWc0gR21E3yHKU">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="ls8WXoP6431A0Iq8"><a href="https://www.jaslokhospital.net" target="_blank" data-page-node-id="5y1lh8azxioBCb1s">https://www.jaslokhospital.net</a></td>
+  <td data-page-node-id="Jw713EQ_ztMCABJr"><span class='badge badge-private' data-page-node-id="qvs77Nwa6Bm5m9TV">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="M_kZ_RJ7IFwLfzIn">
+  <td data-page-node-id="RR94Ij0Tk-VTmPiT">31</td>
+  <td class='company-name' data-page-node-id="VWOxR0ZytH65Tb3-">P.D. 兴都贾医院（P. D. Hinduja Hospital）</td>
+  <td data-page-node-id="INXG9Fcn3-WsWxgp">Mumbai</td>
+  <td class='contact-info' data-page-node-id="220CkMzQZ8numuTh"><div data-page-node-id="Ia9Zdy52ahf2E3KU">📍 Mahim, Mumbai, Maharashtra</div><div data-page-node-id="1FY5s8eQyxN1if4J">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="uDygGywrFgzDiaQl"><a href="https://www.hindujahospital.com" target="_blank" data-page-node-id="1MDaxuHE6vSpx8WE">https://www.hindujahospital.com</a></td>
+  <td data-page-node-id="E8TqSI9gg4DR2zbI"><span class='badge badge-private' data-page-node-id="RHa9GkRN7tEf5EXo">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="K4-V2vVzr2kTESUZ">
+  <td data-page-node-id="qV2DsXkpd3LJjM71">32</td>
+  <td class='company-name' data-page-node-id="bSHuhT4NTPJ-WdLo">布里奇坎迪医院（Breach Candy Hospital）</td>
+  <td data-page-node-id="ESw75pySJ_Xpyzvq">Mumbai</td>
+  <td class='contact-info' data-page-node-id="0t-B8RXvFoh4-Iis"><div data-page-node-id="Gt96Ox-Qj9PM4dwg">📍 Mumbai, Maharashtra</div><div data-page-node-id="AsLm9K1MSmIg3laU">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="kXq20HQXrApi4-Pj"><a href="https://www.breachcandy.com" target="_blank" data-page-node-id="-wC9Hpwsnrq3tvfs">https://www.breachcandy.com</a></td>
+  <td data-page-node-id="JgfTNn5FwuC8MuhA"><span class='badge badge-private' data-page-node-id="fDkHZNwXgzcNtzIb">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="L1ywi2kZhq67HSwF">
+  <td data-page-node-id="6i_7AOM9l9sZvBGU">33</td>
+  <td class='company-name' data-page-node-id="PPeB_OYG7nmWuVkx">鲁比大厅诊所（Ruby Hall Clinic）</td>
+  <td data-page-node-id="aOzI0dUJwBr6Dn4B">Pune</td>
+  <td class='contact-info' data-page-node-id="ioUqccsldcGfURvJ"><div data-page-node-id="66UHsiMO-sYR9aaM">📍 Sassoon Road, Pune, Maharashtra</div><div data-page-node-id="aBT8yUh_DdByT1Hy">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="azvFVPhRVUogi7_I"><a href="https://www.rubyhall.com" target="_blank" data-page-node-id="DUvSgg4tFc0aS3pe">https://www.rubyhall.com</a></td>
+  <td data-page-node-id="mnmpXPoxI8BtwwqN"><span class='badge badge-private' data-page-node-id="GzZ8xQmErwFdnkw3">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="0XdesdKmk7q916th">
+  <td data-page-node-id="uoRNdY-7u1MoDdnV">34</td>
+  <td class='company-name' data-page-node-id="dGpxhrWVjl82P19v">CARE 医院（Banjara Hills）（Care Hospitals）</td>
+  <td data-page-node-id="aOuYjxWjiqyOOcAT">Hyderabad</td>
+  <td class='contact-info' data-page-node-id="3VQJjL0gh0ySSUni"><div data-page-node-id="jBLIJuQOE-2Sfi9o">📍 Banjara Hills, Hyderabad, Telangana</div><div data-page-node-id="Pr9SuPpWSiIB30oT">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="nVVg6Ne_gC8icKhA"><a href="https://www.carehospitals.com" target="_blank" data-page-node-id="3uHavlcvXd4ICs7t">https://www.carehospitals.com</a></td>
+  <td data-page-node-id="lRYIzMS_KAo2cmem"><span class='badge badge-private' data-page-node-id="h9aW4UY1rMT7YEPT">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="3P5I0crGCp8eI2Xb">
+  <td data-page-node-id="8oUw49K31P4U8MV0">35</td>
+  <td class='company-name' data-page-node-id="kudDwMwEc7K0csk-">KIMS 医院（KIMS Hospitals）</td>
+  <td data-page-node-id="J5v6Y1p9gGy6KRlg">Hyderabad</td>
+  <td class='contact-info' data-page-node-id="8q0vEZURilJFmZ5Y"><div data-page-node-id="NKBq2IDNfS1fcpX5">📍 Secunderabad, Hyderabad, Telangana</div><div data-page-node-id="7iDrqWI74zi-vuAZ">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="n-lTy7cRlH3Qzh6L"><a href="https://www.kimshospitals.com" target="_blank" data-page-node-id="eKx8r7cd-Gpz4Ked">https://www.kimshospitals.com</a></td>
+  <td data-page-node-id="PLEUKv_1rcJsSHfY"><span class='badge badge-private' data-page-node-id="kT9WrvhJAr-OfX61">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="bazBU-mkHpiYc-hi">
+  <td data-page-node-id="ICgnJv53brHqyN0W">36</td>
+  <td class='company-name' data-page-node-id="Hs7iXAxtk5Q8TUAX">亚洲胃肠病研究所（AIG）（Asian Institute of Gastroenterology）</td>
+  <td data-page-node-id="mum4oErMMyf2tEjn">Hyderabad</td>
+  <td class='contact-info' data-page-node-id="9A9qSOZP8ulFmnoI"><div data-page-node-id="S-xaJuhPKPSPlWoR">📍 Banjara Hills, Hyderabad, Telangana</div><div data-page-node-id="ILDN_e-ih7ubZfPu">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="Bj-ln1OySLObX7di"><a href="https://www.aigindia.net" target="_blank" data-page-node-id="jOnNsvpNNhDXCkrN">https://www.aigindia.net</a></td>
+  <td data-page-node-id="cDjiPQLzcBWrYm_p"><span class='badge badge-private' data-page-node-id="YBhtI4UNURrCmiqW">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="DH_dvsqRPnOUdzBt">
+  <td data-page-node-id="a1nFOg-s7wLLuyae">37</td>
+  <td class='company-name' data-page-node-id="zvzV6hHhH88g25Uv">阿斯特医疗城（Kochi）（Aster Medcity）</td>
+  <td data-page-node-id="bOw-aIYVm4g07QBY">Kochi</td>
+  <td class='contact-info' data-page-node-id="8tJPv3mJuR_irrQP"><div data-page-node-id="iFTu30abVypMFsCD">📍 Kochi, Kerala</div><div data-page-node-id="-heSK8oA908rgDGM">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="biLz72UJzEWpsxDF"><a href="https://www.asterhospitals.in" target="_blank" data-page-node-id="gJA4k8aNTX-ErrkG">https://www.asterhospitals.in</a></td>
+  <td data-page-node-id="u2PdCyNJsRvm2Zou"><span class='badge badge-international' data-page-node-id="Wf53GEgea-ADgWTL">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="bDeUaPMcaZS7dQUg">
+  <td data-page-node-id="38HghCsw6a2eHAjF">38</td>
+  <td class='company-name' data-page-node-id="SNXHrSedU5R2UVa0">阿斯特 CMI 医院（Aster CMI Hospital）</td>
+  <td data-page-node-id="nLUvzHXiY4RJctOd">Bengaluru</td>
+  <td class='contact-info' data-page-node-id="RW5YUrqWme45p52l"><div data-page-node-id="cfn8rRJqPC3JJzuM">📍 Hebbal, Bengaluru, Karnataka</div><div data-page-node-id="X0yo2akLEFzfy24s">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="cDC4Au0g-2aIfo_1"><a href="https://www.asterhospitals.in" target="_blank" data-page-node-id="7VEzy4k4YO_jZjjo">https://www.asterhospitals.in</a></td>
+  <td data-page-node-id="42cFGEemlRYYmTTA"><span class='badge badge-international' data-page-node-id="jNGpRh01g9u90BIE">私立国际</span></td>
+  </tr>
+
+<tr data-page-node-id="0cxm_YeUYiDE5ke2">
+  <td data-page-node-id="YJL4twDOPyPtu2G_">39</td>
+  <td class='company-name' data-page-node-id="ialFHkq7AnXSDciV">纳拉亚纳心脏科学研究所（Narayana Institute of Cardiac Sciences）</td>
+  <td data-page-node-id="MLGqdPUlrhapV9Rm">Bengaluru</td>
+  <td class='contact-info' data-page-node-id="d0v8F43Vb0sSLfI-"><div data-page-node-id="gwkVBGP3in8UFptD">📍 Bommasandra, Bengaluru, Karnataka</div><div data-page-node-id="dIRdvljl_rNH0K-f">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="tgQouX6C4CBmFZ3y"><a href="https://www.narayanahealth.org" target="_blank" data-page-node-id="-3BinDe-d_1nI9Xb">https://www.narayanahealth.org</a></td>
+  <td data-page-node-id="rnfz4IPs1Du7WAN5"><span class='badge badge-private' data-page-node-id="eEOftTfnvHO56Fmu">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="_3jLIJpBD0jSUmA9">
+  <td data-page-node-id="HefMkWN9IiikRkGo">40</td>
+  <td class='company-name' data-page-node-id="XJdXaIdkT0yMubad">纳拉亚纳多专科医院（斋普尔）（Narayana Multispeciality Hospital）</td>
+  <td data-page-node-id="-HQjyS3nfFV6df3v">Jaipur</td>
+  <td class='contact-info' data-page-node-id="cDS5_rWH2OO--CcZ"><div data-page-node-id="8wN3ejZa-lqzeA7e">📍 Jaipur, Rajasthan</div><div data-page-node-id="p9oFRdRK0YQiZgg3">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="y1xJOSKOvH8lysWG"><a href="https://www.narayanahealth.org" target="_blank" data-page-node-id="ZefknvssDuLMXTFQ">https://www.narayanahealth.org</a></td>
+  <td data-page-node-id="OdSzJHXMxya--xDA"><span class='badge badge-private' data-page-node-id="EWD5LFIUwPpUafkx">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="pbriXZ-SrfNo1A-i">
+  <td data-page-node-id="qZqxSYpdy2X9dDo_">41</td>
+  <td class='company-name' data-page-node-id="2jI4ao5qwsh3pl57">格伦伊格尔斯全球健康城（Gleneagles Global Health City）</td>
+  <td data-page-node-id="ARhjyeTdP2pEH2Hn">Chennai</td>
+  <td class='contact-info' data-page-node-id="M0hyKvHaR35CvH5l"><div data-page-node-id="2wu4UJM9Q0jQESSE">📍 Perumbakkam, Chennai, Tamil Nadu</div><div data-page-node-id="MtdsEI9C98DA6EdB">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="WqVPLrW-GRsPA5RU"><a href="https://www.gleneaglesglobalhealthcity.com" target="_blank" data-page-node-id="VSSFenAcjIKVa2_t">https://www.gleneaglesglobalhealthcity.com</a></td>
+  <td data-page-node-id="K91xKJ9eiu41zOGB"><span class='badge badge-private' data-page-node-id="AST4YS_ZvjEna6lI">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="8NNBWFVY07idsr7u">
+  <td data-page-node-id="K0T5LOtEAsWpt8pG">42</td>
+  <td class='company-name' data-page-node-id="VGx9S2Hpub66CvP3">MIOT 国际医院（MIOT International）</td>
+  <td data-page-node-id="5QYdZcR9_SCDIPFJ">Chennai</td>
+  <td class='contact-info' data-page-node-id="Je3KPtHDjnvUlerP"><div data-page-node-id="EE73Eq4fRwrTBltT">📍 Manapakkam, Chennai, Tamil Nadu</div><div data-page-node-id="n9aX8BZake8_ewl5">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="VMs8cgEQosrLNAYF"><a href="https://www.miotinternational.com" target="_blank" data-page-node-id="jzYpeSDKl_28yDAS">https://www.miotinternational.com</a></td>
+  <td data-page-node-id="zlPzLhrQgxSt2uxQ"><span class='badge badge-private' data-page-node-id="QNsF-ACzId02Yqf2">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="8bENPaXW0LgE0Alm">
+  <td data-page-node-id="D-kO9LTsqSIWBU9h">43</td>
+  <td class='company-name' data-page-node-id="-ViCBHOoXgqZkGmZ">桑卡拉内特拉亚眼科医院（Sankara Nethralaya）</td>
+  <td data-page-node-id="EuqyniOc9EU7XM1y">Chennai</td>
+  <td class='contact-info' data-page-node-id="rwPwEkcuMABivCrD"><div data-page-node-id="1ff5pRBv0NgUbkof">📍 Nungambakkam, Chennai, Tamil Nadu</div><div data-page-node-id="MzgoUBI2-ooZTt_e">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="RckWYS5RQemPTo-b"><a href="https://www.sankaranethralaya.org" target="_blank" data-page-node-id="-OgOzxbemQSPTcqT">https://www.sankaranethralaya.org</a></td>
+  <td data-page-node-id="ueRkpd0XsBxLMUcz"><span class='badge badge-ngo' data-page-node-id="cMBlJuLBOA1GMfMr">NGO</span></td>
+  </tr>
+
+<tr data-page-node-id="yJbAe0v-JqOHTe0-">
+  <td data-page-node-id="xIznzJipYHCB7xna">44</td>
+  <td class='company-name' data-page-node-id="X-fCWJY5dhrpfepZ">SRM 医学院医院（SRM Institute of Medical Sciences）</td>
+  <td data-page-node-id="XA2ON0JuWsnw1VQi">Chennai</td>
+  <td class='contact-info' data-page-node-id="4uj9O2zvl1LCGtPs"><div data-page-node-id="fmI37huDWIsYoKpS">📍 Vadapalani, Chennai, Tamil Nadu</div><div data-page-node-id="usGSXFs2a0rsjg9L">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="3nJtCiVYumUH49VL"><a href="https://www.srmhospitals.com" target="_blank" data-page-node-id="D4HJFyWvMoObuGUt">https://www.srmhospitals.com</a></td>
+  <td data-page-node-id="QULVkHB5V71E_JE6"><span class='badge badge-private' data-page-node-id="OAPIrxgMah-KAD-U">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="Im0ifLMa_q24AbFS">
+  <td data-page-node-id="derKxBAS3GPZWWmX">45</td>
+  <td class='company-name' data-page-node-id="sZKTzGwuri-Ymr4O">阿特米斯医院（Artemis Hospital）</td>
+  <td data-page-node-id="-dh2ozNVQsRX-Vhn">Gurgaon</td>
+  <td class='contact-info' data-page-node-id="SR-rm14Fck8-n1qm"><div data-page-node-id="Ur3m6JG_MPzZD9Pc">📍 Gurgaon, Haryana</div><div data-page-node-id="Xt3NzdAMGqR1I8Zk">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="TT1JCvh5qUpPD5m9"><a href="https://www.artemishospitals.com" target="_blank" data-page-node-id="9fEl3s4QS-3oCbTV">https://www.artemishospitals.com</a></td>
+  <td data-page-node-id="qBQykFinsovAoNSg"><span class='badge badge-private' data-page-node-id="EfOiHcu0XlYckTCX">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="CScaC5_YydH5wMAQ">
+  <td data-page-node-id="MtQrC-lEbGfsTakW">46</td>
+  <td class='company-name' data-page-node-id="NPR-lgjzM8xeKhqo">沃克哈特医院（Wockhardt Hospitals）</td>
+  <td data-page-node-id="CWguzCT978Mg23P_">Mumbai</td>
+  <td class='contact-info' data-page-node-id="ogqWbWO-dw-MTOYe"><div data-page-node-id="PpubIfgIheblq_Zt">📍 Mumbai, Maharashtra</div><div data-page-node-id="-DYF9PegJDxxCWVE">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="3wPwxQ-Xr5IhibMy"><a href="https://www.wockhardt.com" target="_blank" data-page-node-id="aWmgSaMZzSSqZ2eR">https://www.wockhardt.com</a></td>
+  <td data-page-node-id="QtECxpn0gLcExKCK"><span class='badge badge-private' data-page-node-id="xkdFa94FZRwlF6kq">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="1cgX9a6UdNHKiTO4">
+  <td data-page-node-id="PwtiIofbCctZik-a">47</td>
+  <td class='company-name' data-page-node-id="WhuAjpJ8v_4kuIwI">BLK 超级专科医院（BLK Super Speciality Hospital）</td>
+  <td data-page-node-id="k0DsS8jNb1meVca3">New Delhi</td>
+  <td class='contact-info' data-page-node-id="JelCJRX2NdVmhBH-"><div data-page-node-id="AV0VAAAm13E3K-TT">📍 Pusa Road, New Delhi</div><div data-page-node-id="XbcybdNvolEdDSUM">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="BHxJWFKkbC5HMF8Q"><a href="https://www.blkashospital.com" target="_blank" data-page-node-id="ORToaqvV3U5gTRqD">https://www.blkashospital.com</a></td>
+  <td data-page-node-id="dhbKUPt3QNw7IO4w"><span class='badge badge-private' data-page-node-id="-8qBKqnKE6LxC2C-">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="0Fdrot3FTTOO6I75">
+  <td data-page-node-id="P_Ern7lx2II0gDbe">48</td>
+  <td class='company-name' data-page-node-id="PNCgVZtDnjGJwGEv">拉吉夫·甘地癌症研究所（Rajiv Gandhi Cancer Institute &amp; Research Centre）</td>
+  <td data-page-node-id="HyXzzSX0wEMRDsMR">New Delhi</td>
+  <td class='contact-info' data-page-node-id="1LnecBm5txLrhEMU"><div data-page-node-id="hCpV5kKpS_dBonZ1">📍 Rohini, New Delhi</div><div data-page-node-id="MH6J1cgaZ_vcMg5I">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="J6N3oZVENmvJrJPZ"><a href="https://www.rgciindia.com" target="_blank" data-page-node-id="fzMnM-KHj3dJuFMu">https://www.rgciindia.com</a></td>
+  <td data-page-node-id="_k_9JPtWNwnhHCcQ"><span class='badge badge-ngo' data-page-node-id="5vg99OyXd8nKGqkL">NGO</span></td>
+  </tr>
+
+<tr data-page-node-id="tfo5BL13c4pXYCim">
+  <td data-page-node-id="F88_IGDhMdKxzjXr">49</td>
+  <td class='company-name' data-page-node-id="vqloqkqLmYGzJsZB">AMRI 医院（AMRI Hospitals）</td>
+  <td data-page-node-id="e5qR9zp46gJkjdlJ">Kolkata</td>
+  <td class='contact-info' data-page-node-id="G1YYP3njLpIMj889"><div data-page-node-id="LVkmirKGTaOtiNyv">📍 Dhakuria, Kolkata, West Bengal</div><div data-page-node-id="UCmcoC51J-Zb9QYw">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="w7qLn9LcnrrJ7S1u"><a href="https://www.amrihospitals.in" target="_blank" data-page-node-id="3nwxKEDkwSNPnDun">https://www.amrihospitals.in</a></td>
+  <td data-page-node-id="Q_iJw5uLJKZpJV_1"><span class='badge badge-private' data-page-node-id="1TIBtv_-aXdaU8k0">私立</span></td>
+  </tr>
+
+<tr data-page-node-id="zWH-kv1juKbcxmao">
+  <td data-page-node-id="oDvhqBI1av2FfOjQ">50</td>
+  <td class='company-name' data-page-node-id="KgORJVn4tvfRoJgK">美景诊所（Belle Vue Clinic）</td>
+  <td data-page-node-id="ai-JgeosAoa2CV8T">Kolkata</td>
+  <td class='contact-info' data-page-node-id="HE7YZJbdmiEavrnC"><div data-page-node-id="HMaq19lnym1CMgRw">📍 Minto Park, Kolkata, West Bengal</div><div data-page-node-id="EdQyjNqtrE8MQkOt">🛏 床位：未公开（来源官网）</div></td>
+  <td data-page-node-id="pq8AW0Iw2zB414dg"><a href="https://www.bellevueclinic.com" target="_blank" data-page-node-id="HWqfshXColwJP9kp">https://www.bellevueclinic.com</a></td>
+  <td data-page-node-id="LATIZxNPgxSgSnUp"><span class='badge badge-private' data-page-node-id="SCkWup2qM968S5Zz">私立</span></td>
+  </tr>
+
+        </tbody>
+    </table>
+
+    <div class="footer" data-page-node-id="VT2Nsfa3_wnTgWvY">
+        <p data-page-node-id="Dzlg6KMJYCzrw7BC">📌 印度医院信息表 · 共 50 家</p>
+        </div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">医院总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 印度医院信息表 · '+total+' 家';
+})();
+</script>
+</body>
+</html>
