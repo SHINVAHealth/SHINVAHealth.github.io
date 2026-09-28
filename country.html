@@ -431,12 +431,12 @@
           <h3>客户检索（<span id="custCountry">—</span>）</h3>
         </div>
         <div id="hospCountryWrap" style="display:none">
-          <h3>达卡市医院（<span id="hospCount">—</span>）</h3>
+          <h3><span id="hospTitlePrefix">达卡市医院</span>（<span id="hospCount">—</span>）</h3>
         </div>
         <input id="custSearch" class="search" placeholder="搜索 公司 / 电话 / 姓名 / 地址…">
         <div id="custCount" class="cust-count"></div>
         <div id="custHint" class="cust-hint">🟢 地图上绿色圆点 = 按客户实际地址落点的分布（无地址者仅列于下方表格）</div>
-        <div id="hospHint" class="cust-hint" style="display:none">🏥 医院红点（圆内红十字）= 达卡市私立医院分布；点击可在地图定位</div>
+        <div id="hospHint" class="cust-hint" style="display:none">🏥 医院红点（圆内红十字）= <span id="hospHintCn">达卡市私立医院</span>分布；点击可在地图定位</div>
         <div class="cust-table-wrap">
           <table class="cust-table">
             <thead id="custHead"><tr><th>公司</th><th>电话</th><th>联系人</th><th>地址</th></tr></thead>
@@ -453,6 +453,6 @@
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
   <script defer src="country_meta.js?v=202608061500"></script>
-  <script defer src="app.js?v=202609281212"></script>
+  <script defer src="app.js?v=202609281403"></script>
 </body>
 </html>
