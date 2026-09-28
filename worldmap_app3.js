@@ -189,7 +189,7 @@ window.addEventListener("error", function(e){
   // 跨国家客户检索 + 外贸跟踪国家名单 所需全局数据
   const ISO2CN = {};
   Object.entries(COUNTRY).forEach(([k, v]) => { ISO2CN[v[3]] = v[0]; });
-  const TRACKED = ['bd','ng','ci','tz','gt','mx','ve'];   // 外贸跟踪国家（与 HIGHLIGHT 一致）
+  const TRACKED = ['bd','ng','ci','tz','gt','mx','ve','in'];   // 外贸跟踪国家（与 HIGHLIGHT 一致）
   // 各国国际区号（ITU-T E.164，key=iso2），用于检索栏显示 “中文(+区号)” 并支持按区号反查国家
   const DIAL = {
     ae:971, af:93, al:355, am:374, ao:244, aq:672, ar:54, at:43, au:61, az:994,
@@ -535,7 +535,7 @@ window.addEventListener("error", function(e){
   }
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
-  const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve','th','vn','jp','kr'];
+  const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve','th','vn','jp','kr','in'];
   function isHL(d){ const v = COUNTRY[(d.properties && d.properties.name)]; return v && HIGHLIGHT.indexOf(v[3]) >= 0; }
   allPaths.classed('hl', isHL);
 
