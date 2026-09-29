@@ -43,7 +43,8 @@ window.addEventListener("unhandledrejection", function(e){
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
-    const APP_CACHE_VER = '202609281403';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const APP_CACHE_VER = '202609290916';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
+    const _DATA_VER = '202609290916';       // 数据文件(?v=)缓存戳：province/customers/hospitals 部署后 bump，强制 CDN/浏览器取新
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -1318,7 +1319,7 @@ window.addEventListener("unhandledrejection", function(e){
     function loadProvinces(){
       (async () => {
         let topo=null, src='';
-        try { topo = await fetchCached(`provinces/${iso2}.json`); src='本地缓存'; } catch(e){}
+        try { topo = await fetchCached(`provinces/${iso2}.json?v=${_DATA_VER}`); src='本地缓存'; } catch(e){}
         if (!topo && iso3){
           try {
             const url = `https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/${iso3}/ADM1/geoBoundaries-${iso3}-ADM1.topojson`;
@@ -1392,7 +1393,7 @@ window.addEventListener("unhandledrejection", function(e){
         }
         let fc = null;
         // 1) 优先本地精简 geojson（GRID3 同源 TopoJSON，约1.1MB），IndexedDB 缓存加速重复访问
-        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=202607241650`); } catch(e){}
+        try { fc = await fetchCached(`provinces/${iso2}_adm2.min.json?v=${_DATA_VER}`); } catch(e){}
         // 2) 本地完整 topojson 兜底
         if (!fc){ try { const r2 = await fetch(`provinces/${iso2}_adm2.json`); if (r2.ok){ const t = await r2.json(); fc = (t.type==='Topology') ? topojson.feature(t, t.objects[Object.keys(t.objects)[0]]) : t; } } catch(e){} }
         // 3) 运行时 geoBoundaries 兜底
@@ -1483,7 +1484,7 @@ window.addEventListener("unhandledrejection", function(e){
 
     // —— 5. 客户检索（customers.json）——
     function loadCustomers(){
-      fetch('customers.json').then(r => r.json()).then(data => {
+      fetch('customers.json?v='+_DATA_VER).then(r => r.json()).then(data => {
         const all = (data && data.records) || [];
         const key = (iso2 === 'tw') ? 'cn' : iso2;  // 台湾客户并入中国检索
         const list = all.filter(r => (r.iso2 || '').toLowerCase() === key);
@@ -1786,7 +1787,7 @@ window.addEventListener("unhandledrejection", function(e){
     }
     function loadHospitals(){
       // 医院数据按 iso2 过滤落图：已导入国家（孟加拉 + 泰国/越南/日本/韩国等）均可绘制红点，标题按当前国名显示
-      fetch('hospitals.json').then(r => r.json()).then(data => {
+      fetch('hospitals.json?v='+_DATA_VER).then(r => r.json()).then(data => {
         const all = (data && data.records) || [];
         const list = all.filter(r => (r.iso2 || '').toLowerCase() === iso2);   // 仅当前国医院落此国家地图
         list.forEach((r, i) => { r.__id = i; });
