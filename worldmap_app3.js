@@ -436,6 +436,8 @@ window.addEventListener("error", function(e){
   const tipEn2 = document.getElementById('tipEn2');
   const tipCont = document.getElementById('tipCont');
   const tipTime = document.getElementById('tipTime');
+  const tipCountry = document.getElementById('tipCountry');
+  const tipCust = document.getElementById('tipCust');
   const banner = document.getElementById('banner');
 
   function fmtTime(tz){
@@ -828,6 +830,7 @@ window.addEventListener("error", function(e){
     tipEn2.textContent = (d.properties&&d.properties.name)||'';
     tipCont.textContent = cont;
     tipTime.textContent = tz ? fmtTime(tz) : '—';
+    tipCountry.hidden = false; tipCust.hidden = true;
     tip.classList.add('show');
     const pad = 16, tw = (_tipW || tip.offsetWidth), th = (_tipH || tip.offsetHeight);
     let x = e.clientX + pad, y = e.clientY + pad;
@@ -983,6 +986,7 @@ window.addEventListener("error", function(e){
     tipCn.textContent = cn; tipEn.textContent = (f.properties && f.properties.name) || '';
     tipCn2.textContent = cn; tipEn2.textContent = (f.properties && f.properties.name) || '';
     tipCont.textContent = cont; tipTime.textContent = tz ? fmtTime(tz) : '—';
+    tipCountry.hidden = false; tipCust.hidden = true;
     // 目标变换下的国家屏幕包围盒（内容坐标 ×k + 目标平移）→ 叠加 globe 视口偏移转成视口坐标
     const txT = W / 2 - c0[0] * k, tyT = Hh / 2 - c0[1] * k;   // 与下方 zoom.transform 目标一致
     const sx0 = b[0][0] * k + txT, sy0 = b[0][1] * k + tyT;
@@ -1067,14 +1071,12 @@ window.addEventListener("error", function(e){
         .on('click', _go);
     }
   }
+  function escTip(s){ return (s == null ? '' : String(s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function showCustTip(e, d, cnt){
+    tipCountry.hidden = true; tipCust.hidden = false;
     tipCn.textContent = (cnt && cnt > 1) ? ((d.company || '') + ' 等 ' + cnt + ' 家') : (d.company || '');
-    const cn = (d.country || (ISO2CN[(d.iso2 || '').toLowerCase()]) || (d.iso2 || ''));
-    tipEn.textContent = cn + (cnt && cnt > 1 ? (' · ' + cnt + ' 个客户分布点') : ' · 客户分布点');
-    tipCn2.textContent = d.city || '';
-    tipEn2.textContent = d.address || '';
-    tipCont.textContent = d.phone || '';
-    tipTime.textContent = '点击查看国家客户检索';
+    tipEn.textContent = '';
+    tipCust.innerHTML = d.city ? ('<div class="row"><span class="k">城市</span><span class="v">' + escTip(d.city) + '</span></div>') : '';
     tip.classList.add('show');
     const pad = 16, tw = (_tipW || tip.offsetWidth), th = (_tipH || tip.offsetHeight);
     let x = e.clientX + pad, y = e.clientY + pad;
