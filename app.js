@@ -44,7 +44,7 @@ window.addEventListener("unhandledrejection", function(e){
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
     const APP_CACHE_VER = '202609290916';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
-    const _DATA_VER = '202609301029';       // 数据文件(?v=)缓存戳：province/customers/hospitals 部署后 bump，强制 CDN/浏览器取新
+    const _DATA_VER = '202609301305';       // 数据文件(?v=)缓存戳：province/customers/hospitals 部署后 bump，强制 CDN/浏览器取新
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -370,7 +370,21 @@ window.addEventListener("unhandledrejection", function(e){
       embossTopGrad.append('stop').attr('offset','0%').attr('stop-color','#7dd3fc');
       embossTopGrad.append('stop').attr('offset','100%').attr('stop-color','#38bdf8');
       defs.append('clipPath').attr('id','admClip');   // 兜底：省并集裁剪
-      PROJ = d3.geoMercator().fitExtent([[14,14],[W-14,H-14]], {type:'FeatureCollection', features: mainFeatures});
+      // 跨180°经线修复（如俄罗斯楚科奇/美国阿留申）：平面 path.bounds 会被跨线要素撑爆到全球，
+      // 导致国家被画到角落、地图中间空白。检测到跨线要素时，按「非跨线省的球面中心」旋转投影，
+      // 使割线（中心±180°）落在海洋上，主体满幅居中；不跨线国家不加旋转，行为与旧版完全一致。
+      const _crossing = mainFeatures.some(f => { const b = d3.geoBounds(f); return b[0][0] > b[1][0]; });
+      if (_crossing) {
+        let sum = 0, n = 0;
+        mainFeatures.forEach(f => {
+          const b = d3.geoBounds(f);
+          if (b[0][0] <= b[1][0]) { sum += (b[0][0] + b[1][0]) / 2; n++; }
+        });
+        const _cl = n > 0 ? sum / n : 0;
+        PROJ = d3.geoMercator().rotate([-_cl, 0]).fitExtent([[14,14],[W-14,H-14]], {type:'FeatureCollection', features: mainFeatures});
+      } else {
+        PROJ = d3.geoMercator().fitExtent([[14,14],[W-14,H-14]], {type:'FeatureCollection', features: mainFeatures});
+      }
       const path = d3.geoPath(PROJ);
       _path = path;
       // 兜底裁剪区：国家（省并集），供未匹配到所属省的市区回退使用
