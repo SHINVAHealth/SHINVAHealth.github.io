@@ -418,15 +418,18 @@
   <div class="tip" id="tip">
     <div class="cn" id="tipCn"></div>
     <div class="en" id="tipEn"></div>
-    <div class="row"><span class="k">中文名称</span><span class="v" id="tipCn2"></span></div>
-    <div class="row"><span class="k">英文名称</span><span class="v" id="tipEn2"></span></div>
-    <div class="row"><span class="k">所属大洲</span><span class="v" id="tipCont"></span></div>
-    <div class="row"><span class="k">当地时间</span><span class="v" id="tipTime"></span></div>
+    <div id="tipCountry">
+      <div class="row"><span class="k">中文名称</span><span class="v" id="tipCn2"></span></div>
+      <div class="row"><span class="k">英文名称</span><span class="v" id="tipEn2"></span></div>
+      <div class="row"><span class="k">所属大洲</span><span class="v" id="tipCont"></span></div>
+      <div class="row"><span class="k">当地时间</span><span class="v" id="tipTime"></span></div>
+    </div>
+    <div id="tipCust" hidden></div>
   </div>
 
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
-  <script defer src="worldmap_app3.js?v=202609290942"></script>
+  <script defer src="worldmap_app3.js?v=202609300905"></script>
   <script>
     // 实时中国时间（与索引界面完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
     (function(){
