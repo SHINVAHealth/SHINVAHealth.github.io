@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<script>
+/* 防护：拦截页面加载完成后外部脚本对文档的破坏性整体写入（CloudStudio 预览注入的统计/骨架脚本常以此冲掉已渲染的地图）
+   - document.write/open/close/writeln：加载后调用会清空整个文档
+   - document.body.innerHTML / replaceChildren：外部脚本用以“刷新/重写”页面 body
+   - document.documentElement.innerHTML：整体替换
+   本项目自身不使用这些写入方式，拦截零副作用。 */
+(function(){
+  function warn(t){ try{ console.warn('[map-guard] 拦截外部'+t+'，保护地图'); }catch(e){} }
+  var DP = Document.prototype;
+  DP.open = function(){ return this; };
+  DP.close = function(){ return this; };
+  DP.write = function(){ warn('document.write'); return this; };
+  DP.writeln = function(){ warn('document.writeln'); return this; };
+  function install(){
+    try {
+      if (document.body && !document.body.__mg){
+        var nh = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        Object.defineProperty(document.body, 'innerHTML', {
+          configurable:true,
+          get: nh ? nh.get : function(){ return ''; },
+          set: function(){ warn('body.innerHTML 写入'); }
+        });
+        document.body.replaceChildren = function(){ warn('body.replaceChildren'); };
+        document.body.__mg = true;
+      }
+      if (document.documentElement && !document.documentElement.__mg){
+        var dh = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        Object.defineProperty(document.documentElement, 'innerHTML', {
+          configurable:true,
+          get: dh ? dh.get : function(){ return ''; },
+          set: function(){ warn('documentElement.innerHTML 写入'); }
+        });
+        document.documentElement.__mg = true;
+      }
+    } catch(e){}
+  }
+  if (document.readyState !== 'loading') install();
+  else document.addEventListener('DOMContentLoaded', install);
+  var _t=0, _iv=setInterval(function(){ if(document.body){ install(); clearInterval(_iv); } else if((_t+=120)>4000){ clearInterval(_iv); } },120);
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>世界地图 | 新华健康外贸业务信息查询</title>
+<style>
+  :root{
+    --bg1:#0b1220; --bg2:#0f1c33; --brand:#0ea5e9; --brand2:#0d9488;
+    --ink:#e2e8f0; --muted:#94a3b8; --line:rgba(255,255,255,.1); --accent:#38bdf8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%; cursor:url('assets/cursors/LoLNormal.png') 3 2, auto; }
+  body{
+    font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 70% -10%, rgba(14,165,233,.18), transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, rgba(13,148,136,.16), transparent 55%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  header.top{
+    display:flex; align-items:center; gap:14px;
+    height:auto; min-height:60px; box-sizing:border-box; padding:16px;
+    position:sticky; top:0; z-index:20;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:rgba(11,18,32,.55); backdrop-filter:blur(8px);
+  }
+  header.top .brand-logo{ max-height:50px; max-width:240px; width:auto; height:auto; }
+  header.top .brand-row{ display:flex; align-items:center; gap:10px; }
+  header.top .brand-title{ font-size:28px; margin:0; letter-spacing:1px; font-weight:700; color:#e6f1ff; white-space:nowrap; }
+  header.top h1{ font-size:24px; margin:0; letter-spacing:1px; font-weight:700; }
+  header.top .sub{ color:var(--muted); font-size:12px; margin-left:6px; }
+  header.top .spacer{ flex:1; }
+  /* 返回按钮：对标产品价格页 .back 的格式/大小/位置（白字半透白底、顶栏右上角） */
+  .back{ position:fixed; top:16px; right:calc(16px - var(--sbw, 0px)); z-index:60; display:inline-flex; align-items:center; gap:6px; height:36px; color:#fff; text-decoration:none; font-size:13px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",Roboto,Helvetica,Arial,sans-serif; font-weight:600; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); padding:0 14px; border-radius:10px; transition:.18s; white-space:nowrap; box-sizing:border-box; }
+  .back:hover{ background:rgba(255,255,255,.2); transform:translateY(-1px); }
+
+  .layout{ flex:1; position:relative; }
+  /* 地图容器：桌面端占让出左侧搜索栏后的右侧区域；移动端改为纵向流的上部区块 */
+  .mapbox{
+    position:absolute; top:0; bottom:0; left:300px; right:0;
+    width:auto; height:auto;
+  }
+  /* 整体轻微透明度 + 层次感 */
+  .globe{
+    position:absolute; top:0; bottom:0; left:0; right:0;
+    width:auto; height:auto; opacity:.94;
+    /* 固定地图窗口：尺寸与位置完全由 .mapbox 决定，不受左侧搜索栏内容长短影响 */
+    contain: layout paint;
+  }
+  .globe svg{ width:100%; height:100%; display:block; cursor:none !important; touch-action:none; }
+  .globe svg *{ cursor:none !important; }
+  /* 地图浮层缩放按钮：隐藏系统指针，只显示跟随的 LOL 小手（避免小手与箭头重叠） */
+  .mapctrl button{ cursor:none !important; }
+  /* 自定义 LOL 小手：跟随鼠标的真实图片元素，彻底规避浏览器拒载 CSS url() 光标（系统手回退） */
+  .globe-cursor{ position:fixed; left:0; top:0; width:26px; height:24px; pointer-events:none; z-index:99999; display:none; will-change:transform; user-select:none; -webkit-user-drag:none; }
+  /* 进入地球区域时全局屏蔽所有系统/CSS光标，只保留 DOM 跟随的 LOL 小手（消除拖拽时 body 光标穿透叠加的"双重手"） */
+  body.over-globe, body.over-globe *{ cursor:none !important; }
+  a, button, .back{ cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; }
+  .country{
+    fill:rgba(56,189,248,.26);
+    stroke:rgba(8,15,30,.45); stroke-width:.5;
+    vector-effect:non-scaling-stroke;
+    transition:fill .15s ease, stroke .15s ease;
+    cursor:url('assets/cursors/LoLHover.png') 1 2, pointer;
+  }
+  /* 已开通板块国家：持续金色高亮，便于在世界地图上快速定位（7 国：孟加拉 + 6 新国） */
+  .country.hl{
+    fill:rgba(34,197,94,.9);
+    stroke:rgba(134,239,172,.5); stroke-width:.7;
+  }
+  .country:hover{
+    /* 取消悬停蓝色高亮：底层区域不再变蓝，由 3D 浮雕层（.emboss-layer）提供悬停反馈 */
+    fill:rgba(56,189,248,.26);
+    stroke:rgba(8,15,30,.45); stroke-width:.5;
+  }
+  .country.active{
+    /* 仅作底层描边强调；填充交给定制浮雕克隆（.emboss），避免与抬起国形重叠造成重影 */
+    fill:transparent; stroke:rgba(255,255,255,.5); stroke-width:1;
+  }
+  /* 微国（新加坡/巴林/东帝汶等，真实几何 <1px）：加粗描边 + 不透明填充，保证底图可见 */
+  .country.micro{
+    fill:rgba(56,189,248,.5);
+    stroke:rgba(8,15,30,.6); stroke-width:1.6;
+  }
+  /* 3D 浮雕突出层：悬停国家整块区域「从平面探出」的实体浮雕（地面阴影 + 侧壁厚度 + 高光顶面） */
+  .emboss-layer{ pointer-events:none; }
+  /* 地面投影：落在平面上的柔影（#embossShadow 滤镜），置于最底，不含国形副本 → 无重影 */
+  .emboss-layer path.emboss-shadow{
+    fill:#000; opacity:.4;
+    filter:url(#embossShadow);
+  }
+  /* 侧壁：JS 逐层抬升堆叠成的体积厚度（颜色由 wallColor 控制），无描边 */
+  .emboss-layer path.emboss-side{
+    stroke:none;
+  }
+  /* 顶面：清晰黄边 + 高光渐变（#embossTopGrad）的隆起表面，置于最上；
+     黄色边框 vector-effect 锁定 1:1 屏幕像素线宽 → 清晰锐利、不模糊、不加粗边界 */
+  .emboss-layer path.emboss-top{
+    fill:url(#embossTopGrad);
+    stroke:#ffd400; stroke-width:1.4;
+    vector-effect:non-scaling-stroke;
+    paint-order:stroke fill;
+  }
+  /* 地球：海洋底（固定，置于内容之下）+ 轮廓边界（固定，描边光晕，置于内容之上） */
+  .ocean-tile{ fill:rgba(0,0,0,.3); }
+  .sphere-frame{
+    fill:none; stroke:rgba(150,200,255,.32); stroke-width:1.4;
+    filter:drop-shadow(0 0 7px rgba(14,165,233,.28));
+  }
+  /* 经纬网（复刻 National Geographic / Times Atlas 实物图式：白单色，实线/虚线统一 0.6px 宽度，全部高亮，不加宽不模糊） */
+  .graticule{ pointer-events:none; }
+  /* 矢量缩放锁定：拖拽/放大/缩小时经纬线描边像素尺寸恒定不变（不经 transform 缩放） */
+  .graticule path{ vector-effect:non-scaling-stroke; }
+  /* 基础层：其余 30° 间隔经线/纬线 —— 白【虚线】，与实线同宽 0.6px，高亮（提高不透明度） */
+  .graticule .par-thin{ fill:none; stroke:rgba(255,255,255,.55); stroke-width:.6; stroke-dasharray:3 3; }
+  .graticule .mer-thin{ fill:none; stroke:rgba(255,255,255,.5); stroke-width:.6; stroke-dasharray:3 3; }
+  .graticule .par{ fill:none; stroke:rgba(255,255,255,.55); stroke-width:.6; stroke-dasharray:3 3; }
+  .graticule .mer{ fill:none; stroke:rgba(255,255,255,.5); stroke-width:.6; stroke-dasharray:3 3; }
+  /* 关键参考圈 + 主轴：南北回归线 ±23.5° / 南北极圈 ±66.5° / 赤道 / 本初子午线
+     —— 全部【实线】，统一尺寸 0.6px、统一白色高亮 rgba(255,255,255,.9)，尺寸与颜色完全一致 */
+  .graticule .par-mid{ stroke:rgba(255,255,255,.4); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .par-eq{ stroke:rgba(255,255,255,.4); stroke-width:.6; stroke-dasharray:none; }
+  .graticule .mer-eq{ stroke:rgba(255,255,255,.4); stroke-width:.6; stroke-dasharray:none; }
+  /* 经纬度仪表尺（固定层，地球轮廓外、界面内侧，不被裁切遮挡；数值随拖拽实时变化） */
+  .ruler{ pointer-events:none; }
+  .ruler .ruler-axis{ stroke:rgba(125,211,252,.45); stroke-width:1; }
+  .ruler text{ fill:rgba(226,232,240,.92); font-size:11px; font-variant-numeric:tabular-nums; user-select:none; font-weight:600; }
+  .ruler .ruler-lon{ text-anchor:middle; }
+  .ruler .ruler-lat{ text-anchor:end; }
+  .ruler .ruler-lon, .ruler .ruler-lat{ paint-order:stroke; stroke:rgba(8,15,30,.85); stroke-width:2.5px; }
+
+  /* 顶部占位提示（国家板块建设中） */
+  .banner{
+    position:absolute; left:50%; top:14px; transform:translateX(-50%);
+    background:rgba(13,148,136,.92); color:#fff; padding:10px 18px; border-radius:12px;
+    font-size:14px; box-shadow:0 10px 30px rgba(0,0,0,.35); z-index:5;
+    display:none; pointer-events:none;
+  }
+  .banner b{ font-weight:700; }
+
+  /* 信息框 tooltip */
+  .tip{
+    position:fixed; z-index:20; pointer-events:none;
+    min-width:180px; max-width:260px;
+    background:rgba(15,23,42,.86); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.16); border-radius:12px;
+    padding:12px 14px; color:var(--ink);
+    box-shadow:0 16px 40px rgba(0,0,0,.45);
+    opacity:0; transform:translateY(6px); transition:opacity .12s ease, transform .12s ease;
+    font-size:13px; line-height:1.7;
+  }
+  .tip.show{ opacity:1; transform:translateY(0); }
+  .tip .cn{ font-size:15px; font-weight:700; }
+  .tip .en{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+  .tip .row{ display:flex; justify-content:space-between; gap:12px; }
+  .tip .row .k{ color:var(--muted); }
+  .tip .row .v{ color:#fff; font-variant-numeric:tabular-nums; }
+  .legend{
+    position:absolute; left:22px; bottom:16px; z-index:4;
+    display:flex; align-items:center; gap:9px;
+    color:var(--ink); font-size:12.5px;
+    background:rgba(15,23,42,.55); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.12); border-radius:10px;
+    padding:8px 13px; pointer-events:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.3);
+  }
+  .legend .swatch{
+    width:14px; height:14px; border-radius:4px;
+    background:rgba(251,191,36,.92);
+    box-shadow:0 0 0 1px rgba(255,237,160,.55) inset;
+  }
+  .legend b{ color:#fde68a; font-weight:700; }
+  .mapctrl{
+    position:absolute; right:18px; bottom:18px; z-index:6;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .mapctrl button{
+    width:42px; height:42px; border-radius:12px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(15,23,42,.7); backdrop-filter:blur(10px);
+    color:var(--ink); font-size:20px; line-height:1; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer;
+    transition:.18s; box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  .mapctrl button:hover{ background:rgba(14,165,233,.22); border-color:var(--brand); transform:translateY(-1px); }
+  .mapctrl button:active{ transform:translateY(0); }
+
+  /* 左上角品牌块：logo + 实时时间（与索引界面 logo 区完全对齐：logo 在上、时间在正下方、左缘对齐、宽度锁定 logo 宽） */
+  header.top .brand{ display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+  header.top .chinaclock{
+    font-size:26px; color:#fff; font-weight:700; margin-top:2px;
+    font-variant-numeric:tabular-nums; letter-spacing:1px; line-height:1.1;
+    width:100%; display:flex; align-items:center; white-space:nowrap;
+  }
+  header.top .chinaclock .seg{ display:inline-block; }
+  header.top .chinaclock .colon{ font-weight:400; }
+  header.top .chinaclock .tz{ margin-left:auto; padding-left:10px; }
+
+  /* 左侧检索面板（玻璃质感），位于地球让出的左侧空白区 */
+  .sidepanel{
+    position:absolute; left:18px; top:16px; width:268px; z-index:7;
+    background:rgba(15,23,42,.66); backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px;
+    box-shadow:0 12px 34px rgba(0,0,0,.38);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .sp-search{ position:relative; }
+  .wm-input{
+    width:100%; padding:10px 34px 10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.05); color:var(--ink); font-size:13px;
+  }
+  .wm-input:focus{ outline:none; border-color:var(--brand); }
+  .wm-input::placeholder{ color:var(--muted); }
+  /* 搜索框右侧清除按钮：文本光标在框内时显示，点击/按 Esc 清空 */
+  .wm-clear{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:22px; height:22px; line-height:20px; text-align:center;
+    border:none; border-radius:50%; padding:0;
+    background:rgba(255,255,255,.10); color:var(--ink); font-size:16px; cursor:pointer;
+    transition:.15s; display:none;
+  }
+  .wm-clear:not([hidden]){ display:block; }
+  .wm-clear:hover{ background:rgba(56,189,248,.30); color:#fff; }
+  .wm-results{
+    position:absolute; top:100%; left:0; right:0; z-index:30;
+    margin-top:8px; max-height:300px; overflow:auto; border-radius:10px;
+    background:rgba(8,15,30,.94); border:1px solid rgba(255,255,255,.12); padding:6px;
+    box-shadow:0 12px 34px rgba(0,0,0,.4);
+  }
+  .wm-results .grp{ font-size:11px; color:var(--muted); padding:5px 8px 2px; letter-spacing:.5px; }
+  .wm-results .item{
+    display:flex; justify-content:space-between; gap:10px; align-items:center;
+    padding:7px 9px; border-radius:8px; font-size:13px; color:var(--ink); cursor:pointer; transition:.12s;
+  }
+  .wm-results .item:hover{ background:rgba(14,165,233,.20); }
+  .wm-results .item .tag{ font-size:11px; color:#7dd3fc; flex:none; }
+  .wm-results .item .emboss-on{ font-style:normal; font-size:10px; color:#fde047; margin-left:6px; flex:none; }
+  .wm-results .empty{ font-size:12px; color:var(--muted); padding:8px; }
+  .wm-track-btn{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.05); color:var(--ink); font-size:13px; cursor:pointer; transition:.2s;
+  }
+  .wm-track-btn:hover{ border-color:var(--brand); background:rgba(14,165,233,.16); }
+  .wm-track-btn .arrow{ transition:transform .2s; }
+  .wm-track-btn.open .arrow{ transform:rotate(180deg); }
+  .wm-track-list{ display:none; flex-direction:column; gap:2px; }
+  .wm-track-list:not([hidden]){ display:flex; }
+  .wm-track-list a{
+    display:flex; align-items:center; padding:8px 12px; border-radius:8px; text-decoration:none;
+    color:var(--ink); font-size:13px; transition:.15s; cursor:pointer;
+  }
+  .wm-track-list a:hover{ background:rgba(14,165,233,.20); }
+  .wm-track-list a .dot{
+    display:inline-block; width:7px; height:7px; border-radius:50%; background:#fbbf24;
+    margin-right:9px; box-shadow:0 0 0 1px rgba(255,237,160,.5) inset;
+  }
+  /* 非跟踪国（拼音检索命中但不在 7 跟踪国）用灰点区分 */
+  .wm-track-list a .dot.off{ background:#64748b; box-shadow:0 0 0 1px rgba(148,163,184,.4) inset; }
+  .wm-track-search{ margin:8px 0 2px; }
+  .wm-track-list .wm-track-empty{ padding:10px 12px; color:var(--muted); font-size:12px; }
+  /* 移动端：纵向流 —— 页头 → 地图(上部固定) → 检索面板(地图下方中部，内部可滚动) */
+  @media (max-width:900px){
+    body{ overflow:hidden; }
+    /* 顶部页头：压缩间距，品牌块保持「logo 在上、时间在正下方」的纵向结构 */
+    header.top{
+      height:auto; min-height:52px; padding:8px 12px; gap:10px; flex-wrap:wrap;
+    }
+    header.top .brand-logo{ max-height:40px; max-width:160px; width:auto; height:auto; flex:none; }
+    header.top .brand-title{ font-size:20px; gap:8px; }
+    header.top .brand{ gap:8px; min-width:0; }
+    header.top .chinaclock{ font-size:15px; letter-spacing:.5px; margin-top:1px; white-space:nowrap; }
+    header.top .spacer{ flex:1 1 auto; }
+    .back{ top:12px; right:calc(12px - var(--sbw, 0px)); padding:7px 11px; font-size:12px; }
+    .layout{
+      display:flex; flex-direction:column; height:100%; overflow:hidden;
+    }
+    .mapbox{
+      position:relative; left:0; right:0; top:0; bottom:auto;
+      width:100%; height:42vh; flex:0 0 42vh;
+    }
+    .globe{ position:absolute; top:0; bottom:0; left:0; right:0; }
+    .sidepanel{
+      position:relative; left:auto; right:auto; top:auto;
+      width:auto; margin:10px 10px 14px; flex:1 1 auto; overflow:auto;
+      flex-direction:column; gap:10px; padding:12px; max-height:none;
+    }
+    /* 检索栏 / 跟踪名单：内容自适应高度，不再拉伸占满整屏；跟踪名单限定最大高度、置于搜索栏下方 */
+    .sidepanel .sp-search{ flex:0 0 auto; }
+    .sidepanel .wm-track-btn{ flex:0 0 auto; }
+    .sidepanel .wm-track-list{ flex:0 0 auto; max-height:44vh; overflow:auto; }
+    /* 检索结果在面板内展开（不再绝对浮层遮挡） */
+    .wm-results{ position:static; margin-top:6px; max-height:38vh; }
+    /* 缩放按钮：落在地图右下角（mapbox 内，随地图定位，不再飘到页面底部） */
+    .mapctrl{ right:12px; bottom:12px; gap:6px; }
+    .mapctrl button{ width:38px; height:38px; font-size:18px; }
+    /* 顶部提示让出空间 */
+    .banner{ top:8px; font-size:12px; padding:8px 12px; }
+    .legend{ left:12px; bottom:12px; font-size:11px; padding:6px 10px; }
+  }
+</style>
+<link rel="preconnect" href="https://beacon.cdn.qq.com" crossorigin>
+<script>
+/* 腾讯灯塔统计：非阻塞异步加载，避免阻塞首屏渲染（遥测逻辑不变） */
+(function(){
+  function loadBeacon(){
+    try{
+      var s=document.createElement('script');
+      s.src='https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js';
+      s.async=true;
+      s.onload=function(){
+        try{
+          var beacon=new BeaconAction({
+            appkey:'0WEB06U85YBSLJNL',
+            versionCode:'1.0.0',
+            channelID:'share',
+            delay:1000,
+            sessionDuration:30*60*1000,
+            isOversea:false,
+            needReportRqdEvent:false
+          });
+          beacon.onDirectUserAction('preview_page_view',{
+            'url':location.href,
+            'referrer':document.referrer,
+            'title':document.title,
+            'sandbox_id':'eb78d6a12e694d958a1cb0dc620d4bcd'
+          });
+        }catch(e){}
+      };
+      s.onerror=function(){};
+      document.head.appendChild(s);
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadBeacon);
+  else loadBeacon();
+})();
+</script><script>;(function(){var d=document.documentElement;function u(){var w=window.innerWidth-d.clientWidth;d.style.setProperty('--sbw',(w>0?w:0)+'px');}u();window.addEventListener('resize',u);window.addEventListener('load',u);if(document.readyState!=='loading')u();})();</script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="brand-row">
+        <img src="shinva_logo.png" alt="SHINVA Health" class="brand-logo">
+        <span class="brand-title">世界地图</span>
+      </div>
+      <div class="chinaclock" id="chinaclock">--:--:--</div>
+    </div>
+    <span class="spacer"></span>
+  </header>
+  <a class="back" href="index.html">← 返回综合索引</a>
+  <div class="layout">
+    <div class="mapbox" id="mapbox">
+      <div class="banner" id="banner"></div>
+      <div class="globe" id="globe"></div>
+      <div class="mapctrl">
+        <button id="zin" title="放大">＋</button>
+        <button id="zout" title="缩小">－</button>
+        <button id="zreset" title="重置视图">⟲</button>
+      </div>
+    </div>
+    <aside class="sidepanel" id="sidepanel">
+      <div class="sp-search">
+        <input id="wmSearch" class="wm-input" placeholder="查找国家 / 客户信息" autocomplete="off">
+        <button id="wmClear" class="wm-clear" type="button" title="清除" aria-label="清除" hidden>×</button>
+        <div id="wmResults" class="wm-results" hidden></div>
+      </div>
+      <button id="wmTrackBtn" class="wm-track-btn">外贸跟踪国家名单 <span class="arrow">▾</span></button>
+      <div id="wmTrackList" class="wm-track-list" hidden></div>
+    </aside>
+  </div>
+  <div class="tip" id="tip">
+    <div class="cn" id="tipCn"></div>
+    <div class="en" id="tipEn"></div>
+    <div id="tipCountry">
+      <div class="row"><span class="k">中文名称</span><span class="v" id="tipCn2"></span></div>
+      <div class="row"><span class="k">英文名称</span><span class="v" id="tipEn2"></span></div>
+      <div class="row"><span class="k">所属大洲</span><span class="v" id="tipCont"></span></div>
+      <div class="row"><span class="k">当地时间</span><span class="v" id="tipTime"></span></div>
+    </div>
+    <div id="tipCust" hidden></div>
+  </div>
+
+  <script defer src="d3.v7.min.js"></script>
+  <script defer src="topojson-client.min.js"></script>
+  <script defer src="worldmap_app3.js?v=202609300905"></script>
+  <script>
+    // 实时中国时间（与索引界面完全一致：26px 纯白、HH:MM:SS + (UTC+8)、冒号纯白；宽度锁定 logo 宽，左右两端与 logo 对齐）
+    (function(){
+      var el = document.getElementById('chinaclock');
+      if(!el) return;
+      function fmt(){
+        try { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()); }
+        catch(e){ return '--:--:--'; }
+      }
+      function sizeToLogo(){
+        var logo = document.querySelector('header.top .brand-logo');
+        if (logo && logo.offsetWidth) el.style.width = logo.offsetWidth + 'px';
+      }
+      function tick(){
+        var p = fmt().split(':');
+        if(p.length!==3){ el.textContent = fmt(); return; }
+        el.innerHTML = '<span class="seg">'+p[0]+'</span>'
+          + '<span class="colon">:</span>'
+          + '<span class="seg">'+p[1]+'</span>'
+          + '<span class="colon">:</span>'
+          + '<span class="seg">'+p[2]+'</span>'
+          + '<span class="tz">(UTC+8)</span>';
+        sizeToLogo();
+      }
+      tick(); setInterval(tick, 1000);
+      var logo = document.querySelector('header.top .brand-logo');
+      if (logo){ if (logo.complete) sizeToLogo(); else logo.addEventListener('load', sizeToLogo); }
+      window.addEventListener('resize', sizeToLogo);
+    })();
+  </script>
+</body>
+</html>
