@@ -170,7 +170,7 @@
   .map-status{ position:absolute; left:14px; bottom:14px; z-index:5; font-size:11px; color:var(--muted);
     background:rgba(10,18,32,.7); padding:5px 10px; border-radius:8px; max-width:60%; }
   /* 右下角：信息总计 / 位置统计（用于对比计算空白地址个数） */
-  .cust-stat{ position:absolute; right:64px; bottom:14px; z-index:6; font-size:12px; font-weight:700; letter-spacing:.3px;
+  .cust-stat{ position:absolute; right:236px; bottom:14px; z-index:6; font-size:12px; font-weight:700; letter-spacing:.3px;
     color:#bbf7d0; background:rgba(10,18,32,.78); border:1px solid rgba(34,197,94,.5); padding:6px 12px; border-radius:9px;
     box-shadow:0 4px 14px rgba(0,0,0,.35); pointer-events:none; white-space:nowrap; }
   .cust-stat b{ color:#86efac; }
@@ -198,6 +198,12 @@
   .inset-shape{ fill:rgba(56,189,248,.20); stroke:#eaf2fb; stroke-width:1; pointer-events:all; cursor:url('assets/cursors/LoLHover.png') 1 2, pointer; transition:fill .15s; vector-effect:non-scaling-stroke; }
   .inset-shape:hover{ fill:rgba(56,189,248,.48); }
   .inset-label{ fill:#cfe3f5; font-size:8px; text-anchor:middle; font-weight:600; pointer-events:none; }
+  /* 中国专属：南海诸岛右下角小地图（大陆为主体，南海诸岛以小插图呈现，参照官方中国地图惯例） */
+  .map-inset-scs{ top:auto; bottom:12px; right:12px; width:214px; }
+  .scs-sea{ fill:rgba(13,38,66,.55); }
+  .scs-dash{ fill:none; stroke:#eaf2fb; stroke-width:1.4; stroke-dasharray:4 3; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+  .scs-island{ fill:#fde047; stroke:#7a5b00; stroke-width:.6; }
+  .scs-island-label{ fill:#eaf2fb; font-size:8px; font-weight:600; pointer-events:none; }
   /* 二级行政区域(ADM2)虚线：下层弱化纹理，dasharray + 更淡更细避免与省界重叠混乱 */
   /* ADM2 fill 用 rgba(0,0,0,0) 而非 none：painted but invisible → fill area 在所有浏览器中可靠拦截指针事件，
      杜绝点击 ADM2 透明内部时穿透到底层 ADM1 prov-fill 选中一级行政区域（根因：fill:none 的 fill area 不拦截事件） */
@@ -220,6 +226,7 @@
   .marker-air-label{ fill:#eafff5; font-size:11px; text-anchor:middle; paint-order:stroke; stroke:#06281c; stroke-width:3px; pointer-events:none; display:none; font-weight:600; }
   .marker-air-label .cn{ fill:#7dd3fc; }
   .marker-label{ fill:#fff; font-size:10px; text-anchor:middle; paint-order:stroke; stroke:#06121f; stroke-width:2.5px; pointer-events:none; font-weight:600; }
+  .marker-air-iata{ fill:#bae6fd; font-size:8px; text-anchor:start; paint-order:stroke; stroke:#06281c; stroke-width:2px; pointer-events:none; font-weight:700; letter-spacing:.3px; }
   .search{
     width:100%; padding:9px 12px; border-radius:10px; border:1px solid var(--line);
     background:rgba(255,255,255,.05); color:var(--txt); font-size:13px; margin-bottom:10px;
@@ -270,7 +277,7 @@
     .inset-shape{ stroke-width:1; }
     /* 客户表区高度收敛，减少无谓长滚 */
     .cust-table-wrap{ max-height:55vh; }
-    .cust-stat{ font-size:10px; padding:4px 8px; right:54px; }
+    .cust-stat{ font-size:10px; padding:4px 8px; right:160px; }
     .map-status{ font-size:10px; padding:4px 8px; max-width:55%; }
   }
   /* 路线轨迹清单弹窗（右上角浮动小窗，玻璃拟态） */
@@ -401,6 +408,7 @@
       </div>
       <div id="map"><div id="depotOverlay" style="display:none;position:absolute;inset:0;z-index:4;cursor:crosshair"></div></div>
       <div id="inset" class="map-inset" style="display:none;"></div>
+      <div id="scsInset" class="map-inset map-inset-scs" style="display:none;"></div>
       <div class="map-ctrl">
         <button id="zin" title="放大">＋</button>
         <button id="zout" title="缩小">－</button>
@@ -452,7 +460,7 @@
 
   <script defer src="d3.v7.min.js"></script>
   <script defer src="topojson-client.min.js"></script>
-  <script defer src="country_meta.js?v=202608061500"></script>
-  <script defer src="app.js?v=202609301305"></script>
+  <script defer src="country_meta.js?v=202610091615"></script>
+  <script defer src="app.js?v=202610091700"></script>
 </body>
 </html>
