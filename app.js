@@ -44,7 +44,7 @@ window.addEventListener("unhandledrejection", function(e){
 
     // —— 离线缓存层：IndexedDB 缓存地图边界 JSON，重复访问秒开（任何失败自动回退网络，功能不变）——
     const APP_CACHE_VER = '202609290916';   // 每次部署改动数据/脚本时递增，自动失效旧缓存
-    const _DATA_VER = '202609301305';       // 数据文件(?v=)缓存戳：province/customers/hospitals 部署后 bump，强制 CDN/浏览器取新
+    const _DATA_VER = '202610091615';       // 数据文件(?v=)缓存戳：province/customers/hospitals 部署后 bump，强制 CDN/浏览器取新
     const _IDB_NAME = 'mapCacheDB', _IDB_STORE = 'files';
     function _openIDB(){
       return new Promise((resolve, reject) => {
@@ -260,20 +260,93 @@ window.addEventListener("unhandledrejection", function(e){
         }).catch(() => { $('fxBody').innerHTML = '<span class="err">汇率加载失败（网络受限）</span>'; });
     }
     function fmt(n){ return (n==null || isNaN(n)) ? '—' : Number(n).toLocaleString('zh-CN', {maximumFractionDigits:4}); }
+    // 中国地图专用汇率面板：仅展示 1 美元 / 1 港币 / 1 欧元 / 1 英镑 → 元(人民币)
+    // 美元兑人民币采用 fx_rate.json（央行在岸价，与价格页同源同值）；港/欧/英镑采用欧洲央行 ECB 官方参考价（frankfurter，央行口径）。
+    function renderFX_CN(usdCny, others, date){
+      const d = date || '';
+      let html = '';
+      html += `<div class="row top"><span>1 美元 ≈</span><b>${fmt(usdCny)} 元(人民币)</b></div>`;
+      if (others.HKD != null) html += `<div class="row"><span>1 港币 ≈</span><b>${fmt(others.HKD)} 元(人民币)</b></div>`;
+      if (others.EUR != null) html += `<div class="row"><span>1 欧元 ≈</span><b>${fmt(others.EUR)} 元(人民币)</b></div>`;
+      if (others.GBP != null) html += `<div class="row"><span>1 英镑 ≈</span><b>${fmt(others.GBP)} 元(人民币)</b></div>`;
+      const srcLine = `来源：央行在岸价(美元兑人民币)${d ? ' · ' + d : ''} ｜ 港/欧/英镑：央行参考价(欧洲央行 ECB)`;
+      html += `<span class="fx-update">${srcLine}</span>`;
+      $('fxBody').innerHTML = html;
+    }
+    function loadFX_CN(){
+      fetch('fx_rate.json', { cache: 'no-store' })
+        .then(r => r.json()).then(j => {
+          const usdCny = (j && j.usdCny != null) ? j.usdCny : null;
+          if (usdCny == null){ $('fxBody').innerHTML = '<span class="err">汇率加载失败</span>'; return; }
+          const d = j.date ? j.date : new Date().toISOString().slice(0,10);
+          renderFX_CN(usdCny, {}, d);   // 先渲染美元兑人民币（立即可见）
+          // 港/欧/英镑：欧洲央行 ECB 官方参考价（frankfurter，CNY 为基准，取倒数得 1 外币 ≈ ? 元）
+          const frankUrl = `https://api.frankfurter.app/latest?from=CNY&to=HKD,EUR,GBP`;
+          fetch(frankUrl, { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(k => {
+              const rates = (k && k.rates) ? k.rates : null;
+              if (rates && (rates.HKD != null || rates.EUR != null || rates.GBP != null)){
+                const others = {};
+                ['HKD','EUR','GBP'].forEach(c => { if (rates[c] != null) others[c] = 1 / rates[c]; });
+                const ecbDate = (k && k.date) ? k.date : '';
+                renderFX_CN(usdCny, others, d + (ecbDate ? ' / ECB ' + ecbDate : ''));
+                return;
+              }
+              // ECB 未覆盖 → 回退 er-api 市场参考价（明确标注市场，不冒充央行价）
+              return fetch('https://open.er-api.com/v6/latest/CNY')
+                .then(r => r.json()).then(m => {
+                  const rates2 = (m && m.rates) ? m.rates : null;
+                  if (rates2){
+                    const others = {};
+                    ['HKD','EUR','GBP'].forEach(c => { if (rates2[c] != null) others[c] = 1 / rates2[c]; });
+                    renderFX_CN(usdCny, others, d + ' ｜ 港/欧/英镑：参考市场价(er-api)');
+                  }
+                }).catch(() => {});
+            })
+            .catch(() => {
+              fetch('https://open.er-api.com/v6/latest/CNY')
+                .then(r => r.json()).then(m => {
+                  const rates2 = (m && m.rates) ? m.rates : null;
+                  if (rates2){
+                    const others = {};
+                    ['HKD','EUR','GBP'].forEach(c => { if (rates2[c] != null) others[c] = 1 / rates2[c]; });
+                    renderFX_CN(usdCny, others, d + ' ｜ 港/欧/英镑：参考市场价(er-api)');
+                  } else { fxCrossFallback(usdCny, d); }
+                }).catch(() => { fxCrossFallback(usdCny, d); });
+            });
+        }).catch(() => { $('fxBody').innerHTML = '<span class="err">汇率加载失败（网络受限）</span>'; });
+    }
+    // 同域兜底：外部汇率 API（ECB frankfurter / er-api）均不可达时，用仓库内置近期 ECB 参考价，保证 4 行始终可显示
+    function fxCrossFallback(usdCny, d){
+      fetch('fx_cross.json', { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : null)
+        .then(x => {
+          if (!x || !x.rates) return;
+          const others = {};
+          ['HKD','EUR','GBP'].forEach(c => { if (x.rates[c] != null) others[c] = 1 / x.rates[c]; });
+          const xd = (x.date ? x.date : '');
+          renderFX_CN(usdCny, others, d + (xd ? ' ｜ 港/欧/英镑：参考值(近期 ECB ' + xd + ')' : ' ｜ 港/欧/英镑：参考值(近期 ECB)'));
+        }).catch(() => {});
+    }
 
     // —— 4. 一级/二级行政区域地图 + 首都★ + 机场✈ ——
-    let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _custEls=[], _custVisible=true, _CUST_R=2.4, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _adm2Paths=[], _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
+    let _topo=null, _topo2=null, PROJ=null, FC1=null, _svg=null, _gProv=null, _gAdm2=null, _gMark=null, _gCust=null, _gMarkTop=null, _capLabelInner=null, _custEls=[], _custVisible=true, _CUST_R=2.4, _hlIds=new Set(), _multiTrack=false, showAdm2=false, _adm2Loading=false, _adm2Promise=null, _features=null, _path=null, _markEls=[], _provFill=[], _provLine=[], _adm1Total=0, _adm2Paths=[], _pendingHl = (_urlHl != null && _urlHl !== '') ? parseInt(_urlHl, 10) : null;
     let _gHosp=null, _hospEls=[], _hospVisible=false, _hlHospIds=new Set(), _activeTab='cust', _hospLoaded=false;  // 医院位点图层状态（红点+红十字，区别于客户绿点）；默认隐藏，点「所有医院位点」才显示
-    // 懒加载名单（方案 A）：这些大国 ADM2 体量大，进图不预载，点击"显示二级行政区域"时才拉（IndexedDB 缓存，二次秒开）
-    const LAZY_ADM2 = new Set(['ru', 'au']);
+    // 懒加载名单（方案 A）：原 ru/au 等大国 ADM2 体量大，进图不预载。现 ru/au 等 9 大国已整体纳入 NO_ADM2（关闭二级），故本集合为空；保留机制供未来非 NO_ADM2 的大体量国按需启用
+    const LAZY_ADM2 = new Set([]);
     let _adm2Lazy = LAZY_ADM2.has(iso2);   // 当前国是否启用懒加载
     // 仅一级行政区国家：日本只展示都道府县（1 都・1 道・2 府・43 县）；韩国只展示广域地方自治团体（17 个 시도：1 特别市・6 广域市・1 特别自治市・9 道/特别自治道）；泰国只展示府（จังหวัด changwat，76 个普通府 + 曼谷府级直辖市，合计 77 个）；印度只展示一级行政区域（28 邦 + 8 联邦属地，合计 36 个），不细分二级行政区域（县/区约 750 个，体量过大）。均不细分二级行政区域
-    const NO_ADM2 = new Set(['jp', 'kr', 'th', 'in']);
+    // 仅一级行政区国家（渲染端彻底关闭 ADM2 加载与切换按钮，_noAdm2 在 ensureAdm2 前短路）：日/韩/泰/印/墨 + 澳/巴/美/俄/阿/哥/智/印尼/新西兰（大国，二级文件已删）；中国 cn（用户要求仅显示一级，无二级数据文件，加入本集合避免无谓 404 且明确仅一级）
+    const NO_ADM2 = new Set(['jp', 'kr', 'th', 'in', 'mx', 'au', 'br', 'us', 'ru', 'ar', 'co', 'cl', 'id', 'nz', 'cn']);
     let _noAdm2 = NO_ADM2.has(iso2);
     let _zoom = null;  // 地图 zoom 行为（renderProvinces 内赋值），供点击客户检索行时自动放大定位到一级区域
   let _gEmboss = null, _curK = 1, _curT = null;  // 3D 浮雕层引用与当前缩放比（浮雕高度随缩放反比，保持屏幕高度恒定）；_curT 同处声明，避免泄漏到 window 全局（非严格模式下静默成全局变量，一旦加 'use strict' 即崩）
   let _hoverRegion = null;        // 悬停(瞬时)区域 {feature,type,name} 或 null
   let _staticLock = false;        // 静态锁图：默认关闭。开启 → 禁用悬停高亮/3D浮雕 + 锁住地图(无滚轮缩放/拖拽)
+  // 机场飞机图标：基准尺寸已放大；随地图缩放温和放大但封顶（只作用于机场 marker，不影响首都★恒定尺寸）
+  const MARK_GROW_POW = 0.45;   // 放大幂次：k^0.45，温和增长
+  const MARK_GROW_CAP = 2.4;    // 屏幕尺寸封顶倍数（相对基准），避免无限制大
   let _hideUnselected = false;   // 隐藏未选客户：默认关闭。开启 → 仅显示已选中(绿点)客户，隐藏其余所有黄点
   let _hideUnselectedHosp = false;   // 隐藏未选医院：默认关闭。开启 → 仅显示已选中(高亮)医院，隐藏其余所有红点
   let _routeOn = false;          // 路线规划：默认关闭。开启 → 在可见客户点间以虚线连成一条「闭合最短」路线（Closed TSP）
@@ -299,13 +372,13 @@ window.addEventListener("unhandledrejection", function(e){
       // 仅一级行政区国家（日本 / 韩国）：不细分二级行政区域，说明栏明确提示
       if (_noAdm2){
         if (iso2 === 'jp'){
-          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（1 都・1 道・2 府・43 县），本图仅显示一级行政区（都道府县），边界数据：dataofjapan / 日本国土地理院`;
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（1 都・1 道・2 府・43 县），边界数据：dataofjapan / 日本国土地理院`;
         } else if (iso2 === 'kr'){
-          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（1 特别市・6 广域市・1 特别自治市・9 道/特别自治道，合计 17 个广域地方自治团体 시도），本图仅显示一级行政区，边界数据：GADM / 韩国统计厅(KOSTAT)`;
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（1 特别市・6 广域市・1 特别自治市・9 道/特别自治道，合计 17 个广域地方自治团体 시도），边界数据：GADM / 韩国统计厅(KOSTAT)`;
         } else if (iso2 === 'th'){
-          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（府 / จังหวัด changwat：76 个普通府 + 曼谷府级直辖市，合计 77 个），本图仅显示一级行政区（府），边界数据：GADM / 泰国政府行政区划`;
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域（府 / จังหวัด changwat：76 个普通府 + 曼谷府级直辖市，合计 77 个），边界数据：GADM / 泰国政府行政区划`;
         } else {
-          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域，本图仅显示一级行政区`;
+          $('mapStatus').textContent = `该国家有 ${adm1N} 个一级行政区域`;
         }
         return;
       }
@@ -341,6 +414,7 @@ window.addEventListener("unhandledrejection", function(e){
       const mainFeatures = allFeatures.filter(f => !US_INSULAR.has(adm1Name(f)));
       _features = mainFeatures;
       const ib = $('inset'); if (ib) ib.style.display = 'none';
+      const sb = $('scsInset'); if (sb) sb.style.display = 'none';   // 南海诸岛小窗默认隐藏，仅中国地图点亮
       const features = mainFeatures;
       setStatus('loading');
       const svg = d3.select('#map').append('svg').attr('width', W).attr('height', H);
@@ -449,12 +523,13 @@ window.addEventListener("unhandledrejection", function(e){
       _gEmboss = gEmboss;
       _gHosp = g.append('g').attr('class','hosp-layer');  // 医院点图层：红点+红十字，置于客户黄点之下（默认客户黄点最顶层、不被红点覆盖）；随地图同步（不漂移/不消失）
       _gMark = g.insert('g', '.hosp-layer');  // 标志层（机场/首都）置于医院层之下、省图层之上：不遮挡客户黄点、也不遮挡医院红点；随 g 变换自动跟随，尺寸由 updateMarkers 反向 scale 恒定屏幕大小
-      _gCust = g.append('g').attr('class','cust-layer');  // 客户点图层（最顶层）：黄点默认绘制于医院红点之上，永不被红点覆盖；也置于标志层之上，随地图平移/缩放自动同步，绝不会漂移/消失
+      _gCust = g.append('g').attr('class','cust-layer');  // 客户点图层：黄点默认绘制于医院红点之上，永不被红点覆盖；也置于标志层之上，随地图平移/缩放自动同步，绝不会漂移/消失
+      _gMarkTop = g.append('g').attr('class','mark-lbl-layer');  // 标志名称层（机场名/首都名文字）置于最顶层：永不被客户黄点/医院红点/路线等覆盖
       reapplyRegionSel();
       drawMarkers();
       updateMarkers(d3.zoomIdentity);
       _curT = d3.zoomIdentity;
-      const zoom = d3.zoom().scaleExtent([1, 9]).filter((event) => !_staticLock && (!event.ctrlKey || event.type === 'wheel') && !event.button)
+      const zoom = d3.zoom().scaleExtent([1, 24]).filter((event) => !_staticLock && (!event.ctrlKey || event.type === 'wheel') && !event.button)
         .on('zoom', ev => {
           g.attr('transform', ev.transform);
           updateCustZoom(ev.transform.k);  // 客户点大小/铺开随缩放动态变化；位置随 g 变换自动跟随（不漂移、不消失）
@@ -823,6 +898,7 @@ window.addEventListener("unhandledrejection", function(e){
       // ADM2 默认开启时，初次渲染也禁用 ADM1 prov-fill 交互（与 adm2toggle 一致）
       if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); }
       if (insular.length) renderInsularInset(insular);
+      if (iso2 === 'cn') renderScsInset();   // 中国专属：南海诸岛右下角小地图（大陆为主体）
       if (window.__custList) drawCustomerPointsOnMap(window.__custList);  // 省份重绘后重挂客户点
     }
 
@@ -1031,10 +1107,48 @@ window.addEventListener("unhandledrejection", function(e){
         });
       });
     }
+    // 中国专属：南海诸岛右下角小地图（参照官方中国地图惯例——大陆为主体，南海诸岛以小插图呈现）。
+    // 与“美国海外领地小窗”机制同源（renderInsularInset 注释即“参照中国南海诸岛做法”），此处为中国的对应实现。
+    function renderScsInset(){
+      const box = $('scsInset');
+      if (!box) return;
+      box.innerHTML = '';
+      box.style.display = 'block';
+      const data = window.CN_SCS_INSET;
+      if (!data) return;
+      const title = document.createElement('div');
+      title.className = 'map-inset-title';
+      title.textContent = data.title || '南海诸岛';
+      box.appendChild(title);
+      const W = 200, H = 170, pad = 6;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('width', W); svg.setAttribute('height', H);
+      svg.setAttribute('class','map-inset-svg');
+      box.appendChild(svg);
+      const s = d3.select(svg);
+      const proj = d3.geoMercator().fitExtent([[pad, pad],[W-pad, H-pad]],
+        { type:'LineString', coordinates: data.bbox });
+      const path = d3.geoPath(proj);
+      // 海域底色
+      s.append('rect').attr('x',0).attr('y',0).attr('width',W).attr('height',H).attr('class','scs-sea');
+      // 十段线（官方标准，虚线呈现）
+      data.dashes.forEach(d => {
+        s.append('path').attr('d', path({ type:'LineString', coordinates: d })).attr('class','scs-dash');
+      });
+      // 四群岛：黄点 + 中文标注（南沙群岛为最南端，用户重点提及）
+      data.islands.forEach(it => {
+        const p = proj([it.lon, it.lat]);
+        const g = s.append('g');
+        g.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',2.6).attr('class','scs-island');
+        g.append('text').attr('x',p[0]+4).attr('y',p[1]+3).attr('class','scs-island-label').text(it.name);
+      });
+    }
     function drawMarkers(){
       if (!_gMark || !PROJ) return;
       _gMark.selectAll('*').remove();
+      if (_gMarkTop) _gMarkTop.selectAll('*').remove();
       _markEls = [];
+      _capLabelInner = null;
       // 五角星（外半径9，居中原点，机头朝上）
       const STAR = "M0,-9 L2.12,-2.91 L8.56,-2.78 L3.42,1.11 L5.29,7.28 L0,3.6 L-5.29,7.28 L-3.42,1.11 L-8.56,-2.78 L-2.12,-2.91 Z";
       // 飞机（24x24 俯视，机头朝上，rotate(45)后指向东北=东偏北45°）
@@ -1043,50 +1157,116 @@ window.addEventListener("unhandledrejection", function(e){
       let pCap = null;
       if (CAP && CAP.lat != null){
         pCap = PROJ([CAP.lng, CAP.lat]);
-        // outer：定位到投影坐标（k=1）；g 的缩放变换负责平移/缩放位置；
-        // inner：反向 scale(1/k) 抵消 g 的缩放，使图标/标签保持恒定屏幕尺寸（不随放大变大）
+        // 首都★ 留在标志层(_gMark，位于客户/医院点之下 → 图标不遮挡位点)
         const outer = _gMark.append('g').attr('transform', `translate(${pCap[0]},${pCap[1]})`);
         const inner = outer.append('g');
-        inner.append('g').attr('class','marker-cap-star').attr('transform','scale(0.95)').attr('filter','url(#relief)')
+        inner.append('g').attr('class','marker-cap-star').attr('transform','scale(0.95) translate(-14,-12)').attr('filter','url(#relief)')
           .append('path').attr('d', STAR).attr('fill','url(#gradCap)').attr('stroke','#7c4a03').attr('stroke-width','0.8');
-        inner.append('text').attr('class','marker-label').attr('x',0).attr('y',-12).text(capCnName || (CAP.name||'首都'));
-        _markEls.push({ el: outer, inner, base: pCap });
+        _markEls.push({ el: outer, inner, base: pCap, grow:false });
+        // 首都名 → 最顶层(永不被客户黄点/医院红点覆盖)
+        const lblG = _gMarkTop.append('g').attr('transform', `translate(${pCap[0]},${pCap[1]})`);
+        const lblInner = lblG.append('g');
+        lblInner.append('text').attr('class','marker-label').attr('x',0).attr('y',-12).text(capCnName || (CAP.name||'首都'));
+        _capLabelInner = lblInner;
       }
       if (AIR && AIR.lat != null){
+        // 机场标志绘制在机场真实坐标（绝不外推）；若与首都★过近，把★做小偏移
         let p = PROJ([AIR.lon, AIR.lat]);
-        // 与首都标志做防重叠错位：两者过近时把机场标志沿径向外推到安全间距
-        if (pCap){
-          const dx = p[0]-pCap[0], dy = p[1]-pCap[1], dist = Math.hypot(dx,dy), SEP = 22;
-          if (dist < SEP){
-            let ux, uy;
-            if (dist < 0.01){ ux = 0.7071; uy = -0.7071; } else { ux = dx/dist; uy = dy/dist; }
-            p = [pCap[0] + ux*SEP, pCap[1] + uy*SEP];
+        const prov = provinceAt([AIR.lon, AIR.lat]) || '';
+        // 机场图标 → 标志层(不遮挡位点)
+        const outer = _gMark.append('g').attr('class','marker-plane-g').attr('data-prov', prov).attr('transform', `translate(${p[0]},${p[1]})`);
+        const inner = outer.append('g');
+        inner.append('g').attr('transform','scale(1.05) rotate(45) translate(-12,-12)').attr('filter','url(#relief)')
+          .append('path').attr('d', PLANE).attr('fill','#38bdf8').attr('stroke','#075985').attr('stroke-width','0.9');
+        // 机场名标签 → 最顶层
+        const lblG = _gMarkTop.append('g').attr('class','marker-plane-lbl-g').attr('data-prov', prov).attr('transform', `translate(${p[0]},${p[1]})`);
+        const lblInner = lblG.append('g');
+        const label = lblInner.append('text').attr('class','marker-air-label').attr('x',0).attr('y',-14).style('display','none');
+        const airName = AIR.cn || AIR.name || '机场';
+        label.append('tspan').attr('x',0).attr('dy',0).text(airName);
+        const cnName = AIR.cn || ((META.ISO2_TO_CN[iso2] || '') + (facts && facts.capital ? ' · ' + facts.capital : ''));
+        if (iso2 !== 'cn') label.append('tspan').attr('class','cn').attr('x',0).attr('dy',13).text(cnName);
+        outer.on('mouseenter', () => { outer.raise(); label.attr('y', -14).style('display','block'); })
+             .on('mouseleave', () => syncAirportLabels());
+        _markEls.push({ el: outer, inner, base: p, grow: true, lblG, lblInner, label });
+      }
+      // 省级前几机场：按省循环标注（中国地图专属；坐标经 geoContains 校验归属省份，根除“机场跑到别的省”）
+      const PA = (window.PROVINCE_AIRPORTS && PROVINCE_AIRPORTS[iso2]) || null;
+      if (PA && FC1){
+        const natIata = (AIR && AIR.iata) || null;
+        for (const f of FC1.features){
+          const sn = (f.properties && (f.properties.shapeName || f.properties.name)) || null;
+          const list = sn ? PA[sn] : null;
+          if (!list || !list.length) continue;
+          for (const ap of list){
+            if (natIata && ap.iata && ap.iata === natIata) continue;   // 与国家级机场去重（如北京 PEK）
+            const p = PROJ([ap.lon, ap.lat]);
+            const outer = _gMark.append('g').attr('class','marker-plane-prov-g').attr('data-prov', sn).attr('transform', `translate(${p[0]},${p[1]})`);
+            const inner = outer.append('g');
+            inner.append('g').attr('transform','scale(0.85) rotate(45) translate(-12,-12)').attr('filter','url(#relief)')
+              .append('path').attr('d', PLANE).attr('fill','#38bdf8').attr('stroke','#075985').attr('stroke-width','1.4');
+            inner.append('text').attr('class','marker-air-iata').attr('x',8).attr('y',3).text(ap.iata || '');   // 常驻极简三字码
+            // 机场名标签 → 最顶层
+            const lblG = _gMarkTop.append('g').attr('class','marker-plane-lbl-g').attr('data-prov', sn).attr('transform', `translate(${p[0]},${p[1]})`);
+            const lblInner = lblG.append('g');
+            const label = lblInner.append('text').attr('class','marker-air-label').attr('x',0).attr('y',-12).style('display','none');
+            label.append('tspan').attr('x',0).attr('dy',0).text(ap.cn || ap.name || '机场');
+            outer.on('mouseenter', () => { outer.raise(); label.attr('y', -14).style('display','block'); })
+                 .on('mouseleave', () => syncAirportLabels());
+            _markEls.push({ el: outer, inner, base: p, grow: true, lblG, lblInner, label });
           }
         }
-        const outer = _gMark.append('g').attr('class','marker-plane-g').attr('transform', `translate(${p[0]},${p[1]})`);
-        const inner = outer.append('g');
-        inner.append('g').attr('transform','scale(0.8) rotate(45) translate(-12,-12)').attr('filter','url(#relief)')
-          .append('path').attr('d', PLANE).attr('fill','#38bdf8').attr('stroke','#075985').attr('stroke-width','0.9');
-        const cnName = AIR.cn || ((META.ISO2_TO_CN[iso2] || '') + (facts && facts.capital ? ' · ' + facts.capital : ''));
-        const label = inner.append('text').attr('class','marker-air-label').attr('x',0).attr('y',-14);
-        label.append('tspan').attr('x',0).attr('dy',0).text((AIR.iata ? AIR.iata + ' ' : '') + (AIR.name || '机场'));
-        label.append('tspan').attr('class','cn').attr('x',0).attr('dy',13).text(cnName);
-        outer.on('mouseenter', () => label.style('display','block'))
-             .on('mouseleave', () => label.style('display','none'));
-        _markEls.push({ el: outer, inner, base: p });
       }
     }
     // 缩放时：标志图标随 g 变换自动平移（outer 已固定在地理坐标，g 负责位置），
-    // 仅用 inner 反向 scale(1/k) 抵消 g 的放大，保持图标/标签恒定屏幕尺寸（不随放大变大、且位于客户点下层不遮挡）
+    // 仅用 inner 反向 scale(1/k) 抵消 g 的放大，保持图标/标签恒定屏幕尺寸（不随放大变大）
     function updateMarkers(t){
       if (!_gMark) return;
-      const s = 1 / t.k;
-      _markEls.forEach(m => { if (m.inner) m.inner.attr('transform', `scale(${s})`); });
+      // 缩放/平移会移动标记而指针不动 → mouseleave 不触发（wheel 非 mousemove、拖拽被 pointer-capture 抑制），
+      // 残留的悬停标签在此统一清除；再次悬停（mousemove）会重新触发 mouseenter 显示。
+      if (_gMarkTop) _gMarkTop.selectAll('.marker-air-label').style('display','none');
+      const k = t.k;
+      const sConst = 1 / k;                                                          // 首都★/首都名：恒定屏幕尺寸（不随放大变大）
+      const sGrow  = Math.min(MARK_GROW_CAP, Math.pow(k, MARK_GROW_POW)) / k;          // 机场✈/机场名：随缩放温和放大，封顶 MARK_GROW_CAP 倍
+      _markEls.forEach(m => {
+        if (!m.inner) return;
+        const s = (m.grow ? sGrow : sConst);
+        m.inner.attr('transform', `scale(${s})`);
+        if (m.lblInner) m.lblInner.attr('transform', `scale(${s})`);   // 名称标签同缩放 → 恒定屏幕尺寸
+      });
+      if (_capLabelInner) _capLabelInner.attr('transform', `scale(${sConst})`);
+      syncAirportLabels();   // 缩放/平移每帧：清除残留悬停标签后，重新点亮“选中省”的全部机场名（常显）
     }
     function provinceAt(lonlat){
       if (!FC1) return null;
       for (const f of FC1.features){ try { if (d3.geoContains(f, lonlat)) return f.properties.shapeName || f.properties.name; } catch(e){} }
       return null;
+    }
+    // 点亮(选中)某个省 → 显示该省全部机场名（常显，不随缩放消失）；取消点亮 → 恢复悬停-only。
+    // 所有选中变更都会流经 renderEmboss → updateMarkers，故在 updateMarkers 末尾统一同步即可（缩放/平移同路径）。
+    function syncAirportLabels(){
+      if (!_gMarkTop) return;
+      // 先全部隐藏（已显示者由下方“点亮省”逻辑重新点亮；未点亮省仍按 mouseenter/mouseleave 控制）
+      _gMarkTop.selectAll('.marker-plane-lbl-g .marker-air-label').style('display','none');
+      // 再对当前点亮(选中)的省(可多个，多点追踪)显示其全部机场名并置于最顶层
+      const sels = _selectedRegions();
+      for (const r of sels){
+        const name = r.name || '';
+        if (!name) continue;
+        // 收集该省全部机场名标签，按文档顺序交替“上/下”，避免两个机场名在图标上方重叠
+        const marks = [];
+        _gMarkTop.selectAll('.marker-plane-lbl-g').each(function(){
+          if (this.getAttribute('data-prov') === name) marks.push(d3.select(this));
+        });
+        marks.forEach((g, i) => {
+          const label = g.select('.marker-air-label');
+          if (label.empty()) return;
+          const below = (i % 2 === 1);                 // 第1个(偶数)在图标上方，第2个(奇数)在图标下方
+          label.attr('y', below ? 22 : -14);
+          label.style('display','block');
+          g.raise();   // 已在最顶层，仅排序彼此，避免名/名重叠时后绘制者压住前者
+        });
+      }
     }
     // —— ADM2 二级行政区域：增量构建 + 分帧渲染 + 缓存（消除“开启二级区域”瞬时卡顿，零精度/细节损失）——
     // 根因：原 renderAdm2 在点击瞬间同步投影 774 个市区 + 算每个市区所属省(pi：geoCentroid/geoContains 兜底) + 创建 774 个 <path>，
@@ -1591,7 +1771,7 @@ window.addEventListener("unhandledrejection", function(e){
     const GRAIN_R = 1.9;            // 初始像素粒半径（屏幕 px）；略大于医院初始粒(1.8)，避免黄点被红环包裹
     const DOT_R   = 2.4;            // 放大后清晰圆点半径（屏幕 px）；与医院红点统一为 2.4px
     const ZOOM_FULL = 3;            // 缩放到此倍率时完全变成圆点 + 完全铺开
-    const ZOOM_MAX  = 9;            // d3.zoom scaleExtent 上限 = 最大化尺寸地图（保留常量；清单排序现直接复用 _routeOrder，不再用它做基准）
+    const ZOOM_MAX  = 24;           // d3.zoom scaleExtent 上限 = 最大化尺寸地图（中国地图高精度边界，放宽到 24 以看清省级细节）
     const CUST_HIT_PX = 10;         // 透明命中区：恒定屏幕尺寸(px)，不随缩放放大 → 放大到最大也不会出现超大盲区误触发 hover
     function zoomFactor(k){ return Math.max(0, Math.min(1, (k - 1) / (ZOOM_FULL - 1))); }
     // —— 统一位点显示坐标（客户与医院共用同一套数学，仅各自 lifted/liftC/off 字段驱动）：
@@ -2496,7 +2676,7 @@ window.addEventListener("unhandledrejection", function(e){
       const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
       const pad = 0.82;  // 省份占视口 82%，留出边距
       let scale = pad / Math.max(dx / W, dy / H);
-      scale = Math.max(1, Math.min(9, scale));   // 受 zoom.scaleExtent([1,9]) 约束
+      scale = Math.max(1, Math.min(24, scale));   // 受 zoom.scaleExtent([1,24]) 约束
       const cur = d3.zoomTransform(node);
       const hasPt = !!(rec && rec.lat != null && rec.lng != null);
       // 当前放大倍数已大于本次目标倍数 → 保持当前倍数不变，仅把选中客户真实坐标点平滑居中（不缩小）
@@ -2516,7 +2696,7 @@ window.addEventListener("unhandledrejection", function(e){
       const node = _svg.node();
       const W = node.clientWidth || ($('map') && $('map').clientWidth) || 800;
       const H = node.clientHeight || ($('map') && $('map').clientHeight) || 480;
-      const targetScale = Math.max(1, Math.min(9, 6));   // 固定放大到合适级别，便于看清落点
+      const targetScale = Math.max(1, Math.min(24, 6));   // 固定放大到合适级别，便于看清落点
       const cur = d3.zoomTransform(node);
       const effScale = cur.k > targetScale ? cur.k : targetScale;   // 当前已更放大则保持当前倍数
       const t = d3.zoomIdentity.translate(W/2 - effScale * p[0], H/2 - effScale * p[1]).scale(effScale);
@@ -2583,7 +2763,7 @@ window.addEventListener("unhandledrejection", function(e){
       tip.style.display = 'block';
     }
 
-    loadHolidays(); loadFX(); loadProvinces(); loadCustomers(); loadHospitals();
+    loadHolidays(); (iso2 === 'cn' ? loadFX_CN() : loadFX()); loadProvinces(); loadCustomers(); loadHospitals();
     // 工具栏下拉分组：点一级按钮展开子按钮，点外部/其它分组收起；点子按钮不收起（便于连续切换）
     (function bindToolbarMenus(){
       const groups = Array.prototype.slice.call(document.querySelectorAll('.tb-group'));
