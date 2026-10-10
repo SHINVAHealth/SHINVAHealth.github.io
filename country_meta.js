@@ -10,3 +10,136 @@ window.SUBREGION = window.SUBREGION || {};
 window.SUBREGION.ci = "西非";
 window.SUBREGION.tz = "东非";
 window.SUBREGION.gt = "中美洲";
+window.PROVINCE_AIRPORTS = {"cn":{"Beijing Municipality":[{"name":"Beijing Capital International Airport","lat":40.0801010132,"lon":116.5849990845,"iata":"PEK","cn":"北京首都国际机场"},{"name":"Beijing Daxing International Airport","lat":39.55,"lon":116.410556,"iata":"PKX","cn":"北京大兴国际机场"}],"Shanghai Municipality":[{"name":"Shanghai Hongqiao International Airport","lat":31.1979007721,"lon":121.3359985352,"iata":"SHA","cn":"上海虹桥国际机场"},{"name":"Shanghai Pudong International Airport","lat":31.1434001923,"lon":121.8050003052,"iata":"PVG","cn":"上海浦东国际机场"}],"Chongqing Municipality":[{"name":"Chongqing Jiangbei International Airport","lat":29.7192001343,"lon":106.641998291,"iata":"CKG","cn":"重庆江北国际机场"}],"Jiangsu Province":[{"name":"Nanjing Lukou Airport","lat":31.7420005798,"lon":118.8619995117,"iata":"NKG","cn":"南京禄口国际机场"}],"Zhejiang Province":[{"name":"Hangzhou Xiaoshan International Airport","lat":30.2294998169,"lon":120.4339981079,"iata":"HGH","cn":"杭州萧山国际机场"}],"Anhui Province":[{"name":"Hefei Xinqiao International Airport","lat":31.98898,"lon":116.9638,"iata":"HFE","cn":"合肥新桥国际机场"}],"Fujian Province":[{"name":"Fuzhou Changle International Airport","lat":25.9351005554,"lon":119.6630020142,"iata":"FOC","cn":"福州长乐国际机场"},{"name":"Xiamen Gaoqi International Airport","lat":24.5440006256,"lon":118.1279983521,"iata":"XMN","cn":"厦门高崎国际机场"}],"Jiangxi Province":[{"name":"Nanchang Changbei International Airport","lat":28.8649997711,"lon":115.9000015259,"iata":"KHN","cn":"南昌昌北国际机场"}],"Shandong Province":[{"name":"Yaoqiang Airport","lat":36.8572006226,"lon":117.216003418,"iata":"TNA","cn":"济南遥墙国际机场"},{"name":"Qingdao Jiaodong International Airport","lat":36.361944,"lon":120.088333,"iata":"TAO","cn":"青岛胶东国际机场"}],"Henan Province":[{"name":"Xinzheng Airport","lat":34.5196990967,"lon":113.841003418,"iata":"CGO","cn":"郑州新郑国际机场"}],"Hubei Province":[{"name":"Wuhan Tianhe International Airport","lat":30.7838001251,"lon":114.2080001831,"iata":"WUH","cn":"武汉天河国际机场"}],"Hunan Province":[{"name":"Changsha Huanghua Airport","lat":28.1891994476,"lon":113.2200012207,"iata":"CSX","cn":"长沙黄花国际机场"}],"Guangdong Province":[{"name":"Guangzhou Baiyun International Airport","lat":23.3924007416,"lon":113.2990036011,"iata":"CAN","cn":"广州白云国际机场"},{"name":"Shenzhen Bao'an International Airport","lat":22.6392993927,"lon":113.8109970093,"iata":"SZX","cn":"深圳宝安国际机场"}],"Guangxi Zhuang Autonomous Region":[{"name":"Nanning Wuxu Airport","lat":22.6082992554,"lon":108.1719970703,"iata":"NNG","cn":"南宁吴圩国际机场"}],"Hainan Province":[{"name":"Haikou Meilan International Airport","lat":19.9349002838,"lon":110.4589996338,"iata":"HAK","cn":"海口美兰国际机场"}],"Sichuan Province":[{"name":"Chengdu Shuangliu International Airport","lat":30.5785007477,"lon":103.9469985962,"iata":"CTU","cn":"成都双流国际机场"},{"name":"Chengdu Tianfu International Airport","lat":30.319,"lon":104.445,"iata":"TFU","cn":"成都天府国际机场"}],"Yunnan Province":[{"name":"Kunming Wujiaba International Airport","lat":24.9923992157,"lon":102.7440032959,"iata":"KMG","cn":"昆明长水国际机场"}],"Guizhou Province":[{"name":"Longdongbao Airport","lat":26.5384998322,"lon":106.8010025024,"iata":"KWE","cn":"贵阳龙洞堡国际机场"}],"Tibet Autonomous Region":[{"name":"Lhasa Gonggar Airport","lat":29.2978000641,"lon":90.9119033813,"iata":"LXA","cn":"拉萨贡嘎国际机场"}],"Shaanxi Province":[{"name":"Xi'an Xianyang International Airport","lat":34.447101593,"lon":108.7519989014,"iata":"XIY","cn":"西安咸阳国际机场"}],"Gansu Province":[{"name":"Lanzhou Zhongchuan Airport","lat":36.5152015686,"lon":103.620002747,"iata":"LHW","cn":"兰州中川国际机场"}],"Qinghai Province":[{"name":"Xining Caojiabu Airport","lat":36.5275001526,"lon":102.0429992676,"iata":"XNN","cn":"西宁曹家堡国际机场"}],"Ningxia Ningxia Hui Autonomous Region":[{"name":"Yinchuan Airport","lat":38.4818992615,"lon":106.0090026855,"iata":"INC","cn":"银川河东国际机场"}],"Xinjiang Uyghur Autonomous Region":[{"name":"Urumqi Diwopu International Airport","lat":43.9071006775,"lon":87.4741973877,"iata":"URC","cn":"乌鲁木齐天山国际机场"}],"Liaoning Province":[{"name":"Taoxian Airport","lat":41.6398010254,"lon":123.483001709,"iata":"SHE","cn":"沈阳桃仙国际机场"}],"Jilin Province":[{"name":"Longjia Airport","lat":43.9962005615,"lon":125.684997559,"iata":"CGQ","cn":"长春龙嘉国际机场"}],"Heilongjiang Province":[{"name":"Taiping Airport","lat":45.6234016418,"lon":126.25,"iata":"HRB","cn":"哈尔滨太平国际机场"}],"Hebei Province":[{"name":"Shijiazhuang Daguocun International Airport","lat":38.2807006836,"lon":114.6969985962,"iata":"SJW","cn":"石家庄正定国际机场"}],"Shanxi Province":[{"name":"Taiyuan Wusu Airport","lat":37.7468986511,"lon":112.6279983521,"iata":"TYN","cn":"太原武宿国际机场"}],"Inner Mongolia Autonomous Region":[{"name":"Baita International Airport","lat":40.851398468,"lon":111.823997498,"iata":"HET","cn":"呼和浩特白塔国际机场"}],"Taiwan Province":[{"name":"Taiwan Taoyuan International Airport","lat":25.0776996613,"lon":121.233001709,"iata":"TPE","cn":"台湾桃园国际机场"}],"Hong Kong Special Administrative Region":[{"name":"Chek Lap Kok International Airport","lat":22.3089008331,"lon":113.915000916,"iata":"HKG","cn":"香港国际机场"}],"Macau Special Administrative Region":[{"name":"Macau International Airport","lat":22.1495990753,"lon":113.5920028687,"iata":"MFM","cn":"澳门国际机场"}]}};
+
+window.CN_SCS_INSET = {
+  "title": "南海诸岛",
+  "bbox": [[104, 3], [124, 23]],
+  "dashes": [
+    [[122.0, 21.0], [122.9, 22.6]],
+    [[120.0, 18.6], [120.9, 19.9]],
+    [[117.0, 16.6], [117.9, 17.9]],
+    [[113.6, 15.0], [114.5, 16.3]],
+    [[110.6, 13.0], [111.5, 14.3]],
+    [[108.0, 11.0], [108.9, 12.3]],
+    [[112.0, 6.4], [112.9, 7.4]],
+    [[116.0, 8.4], [116.9, 9.4]],
+    [[119.4, 12.4], [120.3, 13.6]],
+    [[121.5, 16.4], [122.4, 17.6]]
+  ],
+  "islands": [
+    {"name": "东沙群岛", "lon": 116.7, "lat": 20.7},
+    {"name": "西沙群岛", "lon": 112.0, "lat": 16.8},
+    {"name": "中沙群岛", "lon": 113.9, "lat": 15.5},
+    {"name": "南沙群岛", "lon": 114.5, "lat": 9.5}
+  ]
+};
+
+// —— 补全各国中文首都（覆盖 FACTS 中英文首都但 CAPITAL_CN 缺中文的 107 国，202610091615）——
+window.CAPITAL_CN.ad = "安道尔城";
+window.CAPITAL_CN.ag = "圣约翰";
+window.CAPITAL_CN.al = "地拉那";
+window.CAPITAL_CN.as = "帕果帕果";
+window.CAPITAL_CN.aw = "奥拉涅斯塔德";
+window.CAPITAL_CN.ba = "萨拉热窝";
+window.CAPITAL_CN.bb = "布里奇敦";
+window.CAPITAL_CN.bf = "瓦加杜古";
+window.CAPITAL_CN.bi = "布琼布拉";
+window.CAPITAL_CN.bj = "波多诺伏";
+window.CAPITAL_CN.bm = "哈密尔顿";
+window.CAPITAL_CN.bo = "拉巴斯";
+window.CAPITAL_CN.bs = "拿骚";
+window.CAPITAL_CN.bw = "哈博罗内";
+window.CAPITAL_CN.by = "明斯克";
+window.CAPITAL_CN.bz = "贝尔莫潘";
+window.CAPITAL_CN.cd = "金沙萨";
+window.CAPITAL_CN.cf = "班吉";
+window.CAPITAL_CN.cg = "布拉柴维尔";
+window.CAPITAL_CN.cm = "雅温得";
+window.CAPITAL_CN.cr = "圣何塞";
+window.CAPITAL_CN.cu = "哈瓦那";
+window.CAPITAL_CN.cv = "普拉亚";
+window.CAPITAL_CN.cw = "威廉斯塔德";
+window.CAPITAL_CN.cy = "尼科西亚";
+window.CAPITAL_CN.dj = "吉布提";
+window.CAPITAL_CN.dm = "罗索";
+window.CAPITAL_CN.do = "圣多明各";
+window.CAPITAL_CN.ec = "基多";
+window.CAPITAL_CN.eh = "阿尤恩";
+window.CAPITAL_CN.er = "阿斯马拉";
+window.CAPITAL_CN.fm = "帕利基尔";
+window.CAPITAL_CN.fo = "托尔斯港";
+window.CAPITAL_CN.ga = "利伯维尔";
+window.CAPITAL_CN.gd = "圣乔治";
+window.CAPITAL_CN.gl = "努克";
+window.CAPITAL_CN.gm = "班珠尔";
+window.CAPITAL_CN.gn = "科纳克里";
+window.CAPITAL_CN.gq = "马拉博";
+window.CAPITAL_CN.gu = "阿加尼亚";
+window.CAPITAL_CN.gw = "比绍";
+window.CAPITAL_CN.gy = "乔治敦";
+window.CAPITAL_CN.hn = "特古西加尔巴";
+window.CAPITAL_CN.ht = "太子港";
+window.CAPITAL_CN.im = "道格拉斯";
+window.CAPITAL_CN.is = "雷克雅未克";
+window.CAPITAL_CN.jm = "金斯敦";
+window.CAPITAL_CN.ki = "塔拉瓦";
+window.CAPITAL_CN.km = "莫罗尼";
+window.CAPITAL_CN.kn = "巴斯特尔";
+window.CAPITAL_CN.ky = "乔治敦";
+window.CAPITAL_CN.lc = "卡斯特里";
+window.CAPITAL_CN.li = "瓦杜兹";
+window.CAPITAL_CN.lr = "蒙罗维亚";
+window.CAPITAL_CN.ls = "马塞卢";
+window.CAPITAL_CN.lu = "卢森堡";
+window.CAPITAL_CN.ly = "的黎波里";
+window.CAPITAL_CN.mc = "摩纳哥";
+window.CAPITAL_CN.md = "基希讷乌";
+window.CAPITAL_CN.me = "波德戈里察";
+window.CAPITAL_CN.mf = "马里戈";
+window.CAPITAL_CN.mg = "塔那那利佛";
+window.CAPITAL_CN.mh = "马朱罗";
+window.CAPITAL_CN.mk = "斯科普里";
+window.CAPITAL_CN.ml = "巴马科";
+window.CAPITAL_CN.mp = "塞班";
+window.CAPITAL_CN.mr = "努瓦克肖特";
+window.CAPITAL_CN.mt = "瓦莱塔";
+window.CAPITAL_CN.mu = "路易港";
+window.CAPITAL_CN.mw = "利隆圭";
+window.CAPITAL_CN.na = "温得和克";
+window.CAPITAL_CN.nc = "努美阿";
+window.CAPITAL_CN.ne = "尼亚美";
+window.CAPITAL_CN.ni = "马那瓜";
+window.CAPITAL_CN.nr = "亚伦";
+window.CAPITAL_CN.pa = "巴拿马城";
+window.CAPITAL_CN.pf = "帕皮提";
+window.CAPITAL_CN.pr = "圣胡安";
+window.CAPITAL_CN.pw = "科罗尔";
+window.CAPITAL_CN.py = "亚松森";
+window.CAPITAL_CN.rw = "基加利";
+window.CAPITAL_CN.sb = "霍尼亚拉";
+window.CAPITAL_CN.sc = "维多利亚";
+window.CAPITAL_CN.sd = "喀土穆";
+window.CAPITAL_CN.sl = "弗里敦";
+window.CAPITAL_CN.sm = "圣马力诺";
+window.CAPITAL_CN.sn = "达喀尔";
+window.CAPITAL_CN.so = "摩加迪沙";
+window.CAPITAL_CN.sr = "帕拉马里博";
+window.CAPITAL_CN.ss = "朱巴";
+window.CAPITAL_CN.st = "圣多美";
+window.CAPITAL_CN.sv = "圣萨尔瓦多";
+window.CAPITAL_CN.sx = "菲利普斯堡";
+window.CAPITAL_CN.sz = "姆巴巴内";
+window.CAPITAL_CN.tc = "大特克";
+window.CAPITAL_CN.td = "恩贾梅纳";
+window.CAPITAL_CN.tg = "洛美";
+window.CAPITAL_CN.tl = "帝力";
+window.CAPITAL_CN.to = "努库阿洛法";
+window.CAPITAL_CN.tt = "西班牙港";
+window.CAPITAL_CN.tv = "富纳富提";
+window.CAPITAL_CN.vc = "金斯敦";
+window.CAPITAL_CN.vg = "罗德城";
+window.CAPITAL_CN.vi = "夏洛特阿马利亚";
+window.CAPITAL_CN.vu = "维拉港";
+window.CAPITAL_CN.ws = "阿皮亚";
+window.CAPITAL_CN.xk = "普里什蒂纳";
