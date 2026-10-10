@@ -432,8 +432,7 @@ window.addEventListener("error", function(e){
   const tip = document.getElementById('tip');
   const tipCn = document.getElementById('tipCn');
   const tipEn = document.getElementById('tipEn');
-  const tipCn2 = document.getElementById('tipCn2');
-  const tipEn2 = document.getElementById('tipEn2');
+  const tipCap = document.getElementById('tipCap');
   const tipCont = document.getElementById('tipCont');
   const tipTime = document.getElementById('tipTime');
   const tipCountry = document.getElementById('tipCountry');
@@ -444,6 +443,16 @@ window.addEventListener("error", function(e){
     try{
       return new Intl.DateTimeFormat('zh-CN',{timeZone:tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false}).format(new Date());
     }catch(e){ return '—'; }
+  }
+  // 首都：英文 / 中文（英文取自 COUNTRY_META.FACTS[iso2].capital，中文取自 window.CAPITAL_CN[iso2]）
+  function capTextOf(iso2){
+    const F = (window.COUNTRY_META && window.COUNTRY_META.FACTS) || {};
+    const en = (iso2 && F[iso2] && F[iso2].capital) ? F[iso2].capital : '';
+    const cn = (window.CAPITAL_CN && iso2 && window.CAPITAL_CN[iso2]) ? window.CAPITAL_CN[iso2] : '';
+    if (en && cn) return en + ' / ' + cn;
+    if (en) return en;
+    if (cn) return cn;
+    return '—';
   }
   let curTz = null;
   setInterval(()=>{ if(curTz){ tipTime.textContent = fmtTime(curTz); } }, 1000);
@@ -539,7 +548,7 @@ window.addEventListener("error", function(e){
   }
 
   // 已开通板块国家（持续金色高亮，便于快速定位）：孟加拉 bd + 6 新国
-  const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve','th','vn','jp','kr','in','la'];
+  const HIGHLIGHT = ['bd','ng','ci','tz','gt','mx','ve','th','vn','jp','kr','in','la','cn'];
   function isHL(d){ const v = COUNTRY[(d.properties && d.properties.name)]; return v && HIGHLIGHT.indexOf(v[3]) >= 0; }
   allPaths.classed('hl', isHL);
 
@@ -826,8 +835,7 @@ window.addEventListener("error", function(e){
     }
     curTz = tz;
     tipCn.textContent = cn; tipEn.textContent = (d.properties&&d.properties.name)||'';
-    tipCn2.textContent = cn;
-    tipEn2.textContent = (d.properties&&d.properties.name)||'';
+    tipCap.textContent = capTextOf(iso2);
     tipCont.textContent = cont;
     tipTime.textContent = tz ? fmtTime(tz) : '—';
     tipCountry.hidden = false; tipCust.hidden = true;
@@ -982,9 +990,9 @@ window.addEventListener("error", function(e){
     // 关键修正：① 用国家真实屏幕包围盒底边下方放置（非质心+估算半径，规避狭长/不对称国形误判）；
     //          ② 把 fixed 定位从「地图容器坐标」改为「视口坐标」(叠加 globe 的 getBoundingClientRect)，
     //             消除侧栏让出 300px 左偏移导致的错位 / 压在国形左上角。
-    const [cn, cont, tz, _] = infoOf(f);
+    const [cn, cont, tz] = infoOf(f);
     tipCn.textContent = cn; tipEn.textContent = (f.properties && f.properties.name) || '';
-    tipCn2.textContent = cn; tipEn2.textContent = (f.properties && f.properties.name) || '';
+    tipCap.textContent = capTextOf(iso2);
     tipCont.textContent = cont; tipTime.textContent = tz ? fmtTime(tz) : '—';
     tipCountry.hidden = false; tipCust.hidden = true;
     // 目标变换下的国家屏幕包围盒（内容坐标 ×k + 目标平移）→ 叠加 globe 视口偏移转成视口坐标
