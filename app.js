@@ -414,7 +414,6 @@ window.addEventListener("unhandledrejection", function(e){
       const mainFeatures = allFeatures.filter(f => !US_INSULAR.has(adm1Name(f)));
       _features = mainFeatures;
       const ib = $('inset'); if (ib) ib.style.display = 'none';
-      const sb = $('scsInset'); if (sb) sb.style.display = 'none';   // 南海诸岛小窗默认隐藏，仅中国地图点亮
       const features = mainFeatures;
       setStatus('loading');
       const svg = d3.select('#map').append('svg').attr('width', W).attr('height', H);
@@ -898,7 +897,6 @@ window.addEventListener("unhandledrejection", function(e){
       // ADM2 默认开启时，初次渲染也禁用 ADM1 prov-fill 交互（与 adm2toggle 一致）
       if (showAdm2 && _topo2){ renderAdm2(); _provFill.forEach(n => n.style.pointerEvents = 'none'); }
       if (insular.length) renderInsularInset(insular);
-      if (iso2 === 'cn') renderScsInset();   // 中国专属：南海诸岛右下角小地图（大陆为主体）
       if (window.__custList) drawCustomerPointsOnMap(window.__custList);  // 省份重绘后重挂客户点
     }
 
@@ -1109,40 +1107,6 @@ window.addEventListener("unhandledrejection", function(e){
     }
     // 中国专属：南海诸岛右下角小地图（参照官方中国地图惯例——大陆为主体，南海诸岛以小插图呈现）。
     // 与“美国海外领地小窗”机制同源（renderInsularInset 注释即“参照中国南海诸岛做法”），此处为中国的对应实现。
-    function renderScsInset(){
-      const box = $('scsInset');
-      if (!box) return;
-      box.innerHTML = '';
-      box.style.display = 'block';
-      const data = window.CN_SCS_INSET;
-      if (!data) return;
-      const title = document.createElement('div');
-      title.className = 'map-inset-title';
-      title.textContent = data.title || '南海诸岛';
-      box.appendChild(title);
-      const W = 200, H = 170, pad = 6;
-      const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svg.setAttribute('width', W); svg.setAttribute('height', H);
-      svg.setAttribute('class','map-inset-svg');
-      box.appendChild(svg);
-      const s = d3.select(svg);
-      const proj = d3.geoMercator().fitExtent([[pad, pad],[W-pad, H-pad]],
-        { type:'LineString', coordinates: data.bbox });
-      const path = d3.geoPath(proj);
-      // 海域底色
-      s.append('rect').attr('x',0).attr('y',0).attr('width',W).attr('height',H).attr('class','scs-sea');
-      // 十段线（官方标准，虚线呈现）
-      data.dashes.forEach(d => {
-        s.append('path').attr('d', path({ type:'LineString', coordinates: d })).attr('class','scs-dash');
-      });
-      // 四群岛：黄点 + 中文标注（南沙群岛为最南端，用户重点提及）
-      data.islands.forEach(it => {
-        const p = proj([it.lon, it.lat]);
-        const g = s.append('g');
-        g.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',2.6).attr('class','scs-island');
-        g.append('text').attr('x',p[0]+4).attr('y',p[1]+3).attr('class','scs-island-label').text(it.name);
-      });
-    }
     function drawMarkers(){
       if (!_gMark || !PROJ) return;
       _gMark.selectAll('*').remove();
