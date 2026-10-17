@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乌兹别克斯坦医疗器械经销商名录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Yu Gothic', 'Meiryo', 'Malgun Gothic', 'Leelawadee UI', 'Noto Sans CJK SC', 'Noto Sans Thai', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.55; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+        .badge-electro { background: #f39c12; color: #fff; }
+        .badge-ortho { background: #3498db; color: #fff; }
+        .badge-surgical { background: #2ecc71; color: #fff; }
+        .badge-ot { background: #9b59b6; color: #fff; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; line-height: 1.4; }
+        .tr-hl { background: #e9faf0; }
+        .tr-hl:hover { background: #d6f5e3; }
+        .hl-note { display: inline-block; margin-top: 5px; padding: 3px 9px; border-radius: 5px; background: #22c55e; color: #fff; font-size: 11px; font-weight: 600; line-height: 1.4; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; line-height: 1.5; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>乌兹别克斯坦医疗器械经销商名录</h1>
+    <div class="stats"></div>
+      <div class="searchbar">
+    <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off">
+    <span class="search-count" id="custCount"></span>
+  </div>
+<table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:200px;">公司名称</th>
+                <th style="width:110px;">城市</th>
+                <th style="width:230px;">联系方式（电话/邮箱/地址）</th>
+                <th style="width:170px;">官网 / 店铺</th>
+                <th style="width:120px;">方向</th>
+                </tr>
+        </thead>
+        <tbody><tr>
+  <td></td>
+  <td class="company-name">AFTER MEDICAL LLC</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 235 60 48</div><div>📧 <a href="mailto:info@aftermedical.uz">info@aftermedical.uz</a></div><div>📍 Yunusabad district, Amir Temur St, 1st dead end 6, Tashkent</div></div></td>
+  <td><a href="https://aftermedical.uz/" target="_blank">https://aftermedical.uz/</a></td>
+  <td><span class="badge badge-electro">电外科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">OOO PRO MED TECH</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 253 85 48</div><div>📧 <a href="mailto:info@promedtech.uz">info@promedtech.uz</a></div><div>📍 100 Kichik Beshogoch St, Mirobod district, Tashkent</div></div></td>
+  <td><a href="https://promedtech.uz/" target="_blank">https://promedtech.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">LLC &quot;Avikon-Tex&quot; (AVIKONTEX)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📧 <a href="mailto:info@avikontex.uz">info@avikontex.uz</a></div><div>📍 Shaykhontokhur district, Zulfiyakhonim St 10A, Tashkent</div></div></td>
+  <td><a href="https://avikontex.uz/" target="_blank">https://avikontex.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MEDTEXNO TRADE LTD (ООО &quot;MEDTEXNO&quot;)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Geologicheskaya St 6, Mirzo Ulugbek district, Tashkent</div></div></td>
+  <td><a href="https://medtexno.uz/" target="_blank">https://medtexno.uz/</a></td>
+  <td><span class="badge badge-electro">电外科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MEDITECH (NAZAR Group)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Okil Ota St 15, Yunusabad district, Tashkent</div></div></td>
+  <td><a href="https://meditech.uz/" target="_blank">https://meditech.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">INTERMED INNOVATION (ООО «Интермед Инновация»)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 78 150 47 47</div><div>📧 <a href="mailto:info@imed.uz">info@imed.uz</a></div><div>📍 10A Chinabad St / Amir Temur Ave, Tashkent</div></div></td>
+  <td><a href="https://imed.uz/" target="_blank">https://imed.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TRUST MEDICAL EQUIPMENT LLC</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 93 384 9949</div><div>📧 <a href="mailto:info@trustmed.uz">info@trustmed.uz</a></div><div>📍 Yakkasaray district, Kushbegi 23/51, Tashkent</div></div></td>
+  <td><a href="https://trustmed.uz/" target="_blank">https://trustmed.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">EQUIMED LLC</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 55 502 00 01</div><div>📧 <a href="mailto:info@equimed.uz">info@equimed.uz</a></div><div>📍 Yunusabad district, Shakhristan St 79, Tashkent</div></div></td>
+  <td><a href="https://equimed.uz/" target="_blank">https://equimed.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MEDSPACE SOLUTIONS</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 99 117 70 07, +998 91 016 70 07</div><div>📍 Uzbekistan, 100187, Tashkent, Mirzo Ulugbek district, Temur Malik Street, 39A</div></div></td>
+  <td><a href="https://medspace.uz/" target="_blank">https://medspace.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MONGOOSE ENGINEERING INC</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 90 003 51 00, +998 90 924 09 00, +998 71 294 54 53</div><div>📍 Uzbekistan, 100016, Tashkent, Yashnabad district, Chigil Street, 6</div></div></td>
+  <td><a href="https://mongoose.uz/" target="_blank">https://mongoose.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">HI-TECH ORIENT MEDICAL</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Uzbekistan, 100160, Tashkent, Sergeli district, Kumarik Street, 26/2</div></div></td>
+  <td><a href="https://ht-med.uz/" target="_blank">https://ht-med.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ABONEMED Medical Equipment LLC</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><a href="https://abonemed.com/" target="_blank">https://abonemed.com/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">SUN GATE INTERNATIONAL MChJ</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📧 <a href="mailto:info@sungate.uz">info@sungate.uz</a></div><div>📍 Uzbekistan, 100000, Tashkent, Mirzo-Ulugbek district, Gazalkent Street, 102</div></div></td>
+  <td><a href="https://sungate.uz/" target="_blank">https://sungate.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Diatech S.A. (Представительство DIATECH S.A.)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 ул. Зульфияхонум, 21, Tashkent</div></div></td>
+  <td><a href="https://diatech.uz/" target="_blank">https://diatech.uz/</a></td>
+  <td><span class="badge badge-ot">影像/综合设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">angio.uz</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Katta Qa&#x27;ni, 19, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">介入/腹腔镜</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">CVS-Medical</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Чиланзар, 10 квартал, д. 3/1, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">心脏/脊柱</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">AGM Store Avantgarde Medico (AGM.STORE AVANTGARDE MEDICO JV LTD)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Юнусабад, пр. Ш.Рашидова, блок Кашгар, 20А, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">介入/血管内</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Albatros Health Care LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Юнусабад, ул. Халкабад, 17, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">IVD/体外诊断</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Alphamedica LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Мирзо-Улугбек, 7-й пр. Сайрам, 50, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">实验室设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Amico Tashkent LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Юнусабад, ул. Чингиза Айтматова, 26А, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">影像</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Ansor-Med LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Алмазар, ул. Фароби, 3Б, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">AG-Med / Avtogruz LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Шайхантахур, пр. Навои, 30, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">妇科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Ab Form Sistem LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📧 <a href="mailto:contacts@abform.uz">contacts@abform.uz</a></div><div>📍 Яшнабад, ул. Олтинтепа, 229А, Tashkent</div></div></td>
+  <td><a href="https://abform.uz/" target="_blank">https://abform.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Medical Instrument Service LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Яшнабад, блок Тузель-2, 9/28, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">实验室/综合</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Foton Medical Quality FE LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Чиланзар, пр. Бунёдкор, 4, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-electro">电外科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Distrilab (Distrilab Central Asia OOO)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📧 <a href="mailto:info@distrilab.uz">info@distrilab.uz</a></div><div>📍 Мирабад, ул. Афросиаб, 4Б, Tashkent</div></div></td>
+  <td><a href="https://distritech.kz/" target="_blank">https://distritech.kz/</a></td>
+  <td><span class="badge badge-ot">医疗/实验室</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Life Science and Technology LLC (LST / Skyseven)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📧 <a href="mailto:info@lst.uz">info@lst.uz</a></div><div>📍 Мирзо-Улугбек, ул. Буюк Ипак Йули, 160, Tashkent</div></div></td>
+  <td><a href="https://lst.uz/" target="_blank">https://lst.uz/</a></td>
+  <td><span class="badge badge-ot">医疗/实验室</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Medicover</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 1-й пр. Олмачи, 27, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Tiva Medical LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Юнусабад, пр. Рашидова, блок Кашгар C-4, 20А, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Emicro.uz</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><a href="https://emicro.uz/" target="_blank">https://emicro.uz/</a></td>
+  <td><span class="badge badge-ot">外科/牙科/实验室显微镜</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Arash Medical</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Мирабад, ул. Мирабад, 12, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">医美/外科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Fortek</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 ул. Сайрам, 6-й пр., 13А, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">医疗/实验室</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Med Shop Uz</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Мирзо-Улугбек, ул. Аккурганская, 21, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">冠脉支架/耗材</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Dentmed Technology LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Чиланзар, ул. Лутфи, блок Чиланзар-7, 33, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">牙科/医疗</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Endo-Systems LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Чиланзар, ул. Кичик Халка Йули, 45, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合/影像/复苏</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Denis Med LTD</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Алмазар, ул. Кичик Халка Йули, 16/3, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">医疗/实验室</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">SKYMED-TECHNOLOGIES MChJ</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Мирзо-Улугбек, ул. Чуст, 9/17, Tashkent</div></div></td>
+  <td><a href="https://skymed.uz/" target="_blank">https://skymed.uz/</a></td>
+  <td><span class="badge badge-ot">内镜/影像/外科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">IXORA (Ixoramed)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 90 829-28-32</div><div>📧 <a href="mailto:info@ixoramed.com">info@ixoramed.com</a></div><div>📍 Мирзо-Улугбек, ул. Равнак, 21, 21а, Tashkent</div></div></td>
+  <td><a href="https://ixoramed.uz/" target="_blank">https://ixoramed.uz/</a></td>
+  <td><span class="badge badge-ot">实验室/病理/分子诊断</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Medical Online Services (MEDOL)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><a href="http://medol.uz/" target="_blank">http://medol.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Pro-Tech</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 78 555-55-35</div><div>📧 <a href="mailto:info@pro-tech.uz">info@pro-tech.uz</a></div><div>📍 ул. Мукими, 20А, Tashkent</div></div></td>
+  <td><a href="https://pro-tech.uz/" target="_blank">https://pro-tech.uz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">GLOBALMED LLC (MEDICOM TM)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 98 3656611</div><div>📧 <a href="mailto:info@medicom.uz">info@medicom.uz</a></div><div>📍 Алмазар, ул. Ходжалик, 3, Tashkent</div></div></td>
+  <td><a href="https://medicom.uz/" target="_blank">https://medicom.uz/</a></td>
+  <td><span class="badge badge-ot">影像</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TECHNOBIOMEDIKAL LLC</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📧 <a href="mailto:info@tbm.uz">info@tbm.uz</a></div><div>📍 Шайхантахур, ул. Турккургон, 9, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">医疗/实验室</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MST</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 1-я ул. Мирабад, 43, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">医疗/医美</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">XPmed</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Шайхантахур, пр. Бунёдкор, 8В, Tashkent</div></div></td>
+  <td><a href="https://xpmed.uz/about-us" target="_blank">https://xpmed.uz/about-us</a></td>
+  <td><span class="badge badge-surgical">骨科·创伤器械</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Medical Technologies Company (Medtech)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><a href="https://medtech.uz/en/about-us" target="_blank">https://medtech.uz/en/about-us</a></td>
+  <td><span class="badge badge-ot">综合高端设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Chirana Asia (СП ООО)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Iron Tehno Med (OOO)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Medprotect Technology (ЧП)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Dentals Pharma (LLC)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">牙科/医疗</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Nozomi Medical</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><a href="https://www.nozomimedical.uz?p=14/" target="_blank">https://www.nozomimedical.uz?p=14/</a></td>
+  <td><span class="badge badge-ot">影像</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">BYORK GROUP (бывш. Orient Med LLC)</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 97 755 65 25, +998 71 208 27 72</div><div>📧 <a href="mailto:info@byork.uz">info@byork.uz</a></div><div>📍 Uzbekistan, 100207, Tashkent, Yashnabad district, 2nd passage, Chulpon Street, 14A</div></div></td>
+  <td><a href="https://byork.uz/" target="_blank">https://byork.uz/</a></td>
+  <td><span class="badge badge-ot">实验室/医疗设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">WISEMED LLC</td>
+  <td>Samarkand</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 90 111 76 44</div><div>📧 <a href="mailto:docshuhrat@gmail.com">docshuhrat@gmail.com</a></div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">高科技外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Adjama LTD</td>
+  <td>Namangan</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Наманган, ул. Ислама Каримова, 1А</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Aleks LTD</td>
+  <td>Fergana</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 Фергана обл., Коканд, блок Хуканди, 132</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr></tbody>
+</table>
+        <div class="footer"><p></p></div>
+    </div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">经销商总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 乌兹别克斯坦医疗器械经销商名录 · 共 '+total+' 家';
+})();
+</script>
+</body>
+</html>
