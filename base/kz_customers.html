@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈萨克斯坦医疗器械经销商名录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Yu Gothic', 'Meiryo', 'Malgun Gothic', 'Leelawadee UI', 'Noto Sans CJK SC', 'Noto Sans Thai', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.55; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; }
+        .badge-electro { background: #f39c12; color: #fff; }
+        .badge-ortho { background: #3498db; color: #fff; }
+        .badge-surgical { background: #2ecc71; color: #fff; }
+        .badge-ot { background: #9b59b6; color: #fff; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; line-height: 1.4; }
+        .tr-hl { background: #e9faf0; }
+        .tr-hl:hover { background: #d6f5e3; }
+        .hl-note { display: inline-block; margin-top: 5px; padding: 3px 9px; border-radius: 5px; background: #22c55e; color: #fff; font-size: 11px; font-weight: 600; line-height: 1.4; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; line-height: 1.5; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>哈萨克斯坦医疗器械经销商名录</h1>
+    <div class="stats"></div>
+      <div class="searchbar">
+    <input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 电话 / 官网 / 方向…" autocomplete="off">
+    <span class="search-count" id="custCount"></span>
+  </div>
+<table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:200px;">公司名称</th>
+                <th style="width:110px;">城市</th>
+                <th style="width:230px;">联系方式（电话/邮箱/地址）</th>
+                <th style="width:170px;">官网 / 店铺</th>
+                <th style="width:120px;">方向</th>
+                </tr>
+        </thead>
+        <tbody><tr class="tr-hl">
+  <td></td>
+  <td class="company-name">DANA ESTRELLA LLP (ТОО «Дана Эстрелла»)<div class="hl-note">新华基础手术器械</div></td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 244 63 33</div><div>📧 <a href="mailto:info@danaestrella.kz">info@danaestrella.kz</a></div><div>📍 Office 101, 89A Gogol St, Almaty 050004</div></div></td>
+  <td><a href="https://danaestrella.kz/" target="_blank">https://danaestrella.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">«DELRUS RK» LLP</td>
+  <td>Astana</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 7172 319 807</div><div>📍 Astana（分支：阿斯塔纳/阿拉木图/巴甫洛达尔/阿克托别）</div></div></td>
+  <td><a href="https://delrus-rk.kz/" target="_blank">https://delrus-rk.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">NANOPHARM LLP (ТОО «Нанофарм»)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><a href="https://nanopharm.kz/" target="_blank">https://nanopharm.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr class="tr-hl">
+  <td></td>
+  <td class="company-name">Medico-Innovative Technologies (ТОО)<div class="hl-note">爱尔博电刀、俄产骨科电钻</div></td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 347 00 03</div><div>📧 <a href="mailto:info@medico-intech.kz">info@medico-intech.kz</a></div><div>📍 Almaty, Nauryzbay Batyr St. 8</div></div></td>
+  <td><a href="https://sales.medico-intech.kz/en/" target="_blank">https://sales.medico-intech.kz/en/</a></td>
+  <td><span class="badge badge-ortho">骨科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MedioArtLab (ТОО)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 390 75 50</div><div>📧 <a href="mailto:info@medioartlab.kz">info@medioartlab.kz</a></div><div>📍 050026, Almaty, Satpaeva St. 30/1, office 100</div></div></td>
+  <td><a href="http://medioartlab.kz/main" target="_blank">http://medioartlab.kz/main</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ТОО &quot;ADICom&quot;</td>
+  <td>Astana</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 700 111 3775</div><div>📧 <a href="mailto:info@adicomltd.kz">info@adicomltd.kz</a></div><div>📍 пр. Кабанбай батыра 42, Astana</div></div></td>
+  <td><a href="https://adicomltd.kz/" target="_blank">https://adicomltd.kz/</a></td>
+  <td><span class="badge badge-electro">电外科</span></td>
+</tr>
+<tr class="tr-hl">
+  <td></td>
+  <td class="company-name">ТОО &quot;Медэкс Плюс&quot; (Medex Plus)<div class="hl-note">爱尔博电刀</div></td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 300 44 71</div></div></td>
+  <td><a href="https://medexplus.kz/" target="_blank">https://medexplus.kz/</a></td>
+  <td><span class="badge badge-electro">电外科</span></td>
+</tr>
+<tr class="tr-hl">
+  <td></td>
+  <td class="company-name">ТОО &quot;Tarlan International&quot;<div class="hl-note">鸿鹄动力系统、Bowa电刀、蛇牌手术器械</div></td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 7171 22 84 11</div><div>📧 <a href="mailto:info@tarlan-int.kz">info@tarlan-int.kz</a></div><div>📍 Astana, Kerey and Zhanibek khans str. 5, 5th floor, 010000</div></div></td>
+  <td><a href="https://tarlan-int.kz/" target="_blank">https://tarlan-int.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MC Med-Continent KZ (ТОО)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 221 85 11</div><div>📧 <a href="mailto:info-kz@med-continent.kz">info-kz@med-continent.kz</a></div><div>📍 Office 20, 39 Kommunalnaya St, Almaty 050016</div></div></td>
+  <td><a href="https://med-continent.kz/" target="_blank">https://med-continent.kz/</a></td>
+  <td><span class="badge badge-surgical">骨科·创伤器械</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ТОО &quot;Медкор&quot; (Medcor)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 334 21 21</div><div>📧 <a href="mailto:info@medcor.kz">info@medcor.kz</a></div><div>📍 050000, 46 Kargaly quarter, Baitak microdistrict, Nauryzbay district, Almaty</div></div></td>
+  <td><a href="https://www.en.medcor.kz/about/history/" target="_blank">https://www.en.medcor.kz/about/history/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">OrdaMed Corporation</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 270 70 72</div><div>📧 <a href="mailto:info@ordamed.kz">info@ordamed.kz</a></div><div>📍 25 Duisenov St, Almaty</div></div></td>
+  <td><a href="https://ordamed.com/" target="_blank">https://ordamed.com/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">OSAKO (ТОО «ОСАКО»)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 747 460 61 71</div><div>📧 <a href="mailto:info@osako.kz">info@osako.kz</a></div><div>📍 ул. Аршалы 80Б, Almaty</div></div></td>
+  <td><a href="https://osako.kz/en" target="_blank">https://osako.kz/en</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ALMATY MEDICAL PRODUCT LLP</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 8 727 271 2041</div><div>📧 <a href="mailto:amproduct.m@mail.ru">amproduct.m@mail.ru</a></div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">眼科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ASPASIA LTD LLP (АСПАСИЯ)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 394 72 12</div><div>📧 <a href="mailto:international@aspasia.kz">international@aspasia.kz</a></div><div>📍 050040, г. Алматы, ул. Тимирязева 53</div></div></td>
+  <td><a href="https://aspasia.kz/" target="_blank">https://aspasia.kz/</a></td>
+  <td><span class="badge badge-surgical">骨科·创伤器械</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MEDIAL GROUP LLP</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (727) 313-15-10</div><div>📧 <a href="mailto:info@medialgroup.kz">info@medialgroup.kz</a></div><div>📍 Satpaeva str. 30/8, office 143, Almaty</div></div></td>
+  <td><a href="https://medialgroup.kz/company-eng" target="_blank">https://medialgroup.kz/company-eng</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Global Medical</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 771 780 9543</div><div>📧 <a href="mailto:info@globalmedical.kz">info@globalmedical.kz</a></div><div>📍 ул. Талдыарал 4, Almaty</div></div></td>
+  <td><a href="https://globalmedical.kz/" target="_blank">https://globalmedical.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">KAZMEDEQUIPMENT (KAZMEDEQ.KZ)</td>
+  <td>Astana</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (7172) 222-500</div><div>📧 <a href="mailto:info@kazmedeq.kz">info@kazmedeq.kz</a></div><div>📍 г. Астана, пр. Туран 30а, БЦ Sat Tower, 3 этаж</div></div></td>
+  <td><a href="https://kazmedeq.kz/" target="_blank">https://kazmedeq.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">KAZMEDPRIBOR HOLDING LLP (КАЗМЕДПРИБОР)</td>
+  <td>Shymkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 7252 318 775</div><div>📍 г. Шымкент, ул. Курманбекова 2</div></div></td>
+  <td><a href="https://kazmedpribor.kz/" target="_blank">https://kazmedpribor.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ADAL MEDICA KAZAKHSTAN (АДАЛ МЕДИКА)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 705 798 91 76</div><div>📧 <a href="mailto:info@adalmedica.kz">info@adalmedica.kz</a></div></div></td>
+  <td><a href="https://adalmedica.kz/" target="_blank">https://adalmedica.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MED STOM KZ</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 1/1A Alimkhan Yermekov St, basement, Almaty</div></div></td>
+  <td><a href="https://medstom.kz/" target="_blank">https://medstom.kz/</a></td>
+  <td><span class="badge badge-ot">牙科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">AK Medical Enterprises</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 350 60 98</div></div></td>
+  <td><a href="https://ak-med.com/" target="_blank">https://ak-med.com/</a></td>
+  <td><span class="badge badge-ot">内镜</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MedHouse Kazakhstan (МедХаус)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 7172 645 646</div><div>📧 <a href="mailto:info@medhouse.kz">info@medhouse.kz</a></div><div>📍 010010, г. Астана, ул. Маилина 4/1, офис 208</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TOM HOLDING (ТОО)</td>
+  <td>Astana</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 775 855 27 32</div><div>📧 <a href="mailto:ceo@tomholding.kz">ceo@tomholding.kz</a></div><div>📍 г. Астана, пр. Р. Қошқарбаев 46/1</div></div></td>
+  <td><a href="https://tomholding.kz/" target="_blank">https://tomholding.kz/</a></td>
+  <td><span class="badge badge-ot">影像</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">PharmProvide</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (727) 247-11-35</div><div>📧 <a href="mailto:info-ala@pharmprovide.kz">info-ala@pharmprovide.kz</a></div></div></td>
+  <td><a href="https://pharmprovide.kz/" target="_blank">https://pharmprovide.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TOO Did Medica (Didamedica.kz)</td>
+  <td>Shymkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 778 237 71 30</div><div>📍 ул. Zerdeli 25, Shymkent</div></div></td>
+  <td><a href="http://didamedica.kz/" target="_blank">http://didamedica.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TOO Novirs (Новирс)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 г. Алматы, ул. Бекхожина 15А</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">内镜</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TOO KARL STORZ ENDOSCOPY Kazakhstan</td>
+  <td>Astana</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 7172 55 25 49</div><div>📧 <a href="mailto:info@karlstorz.kz">info@karlstorz.kz</a></div><div>📍 Mangilik el 63B, 020000, Astana</div></div></td>
+  <td><a href="https://www.karlstorz.com/de/en/kazakhstan-astana.htm" target="_blank">https://www.karlstorz.com/de/en/kazakhstan-astana.htm</a></td>
+  <td><span class="badge badge-ot">内镜</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">TOO Endostar (EndoStar)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">OPTONIC (ОПТОНИК)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (7172) 57 77 84</div><div>📧 <a href="mailto:info@optonic.kz">info@optonic.kz</a></div><div>📍 г. Астана, Есильский р-н, ул. Керея Жанибека хана 5, оф. 47</div></div></td>
+  <td><a href="https://optonic.kz/about?lang=en" target="_blank">https://optonic.kz/about?lang=en</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">ИНТЕРМЕДИКА АЛМАТЫ ТОО (Intermedica Almaty)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 352 79 70</div><div>📧 <a href="mailto:info@intermedica.kz">info@intermedica.kz</a></div><div>📍 ул. Земнухова 19а, 050026, Almaty</div></div></td>
+  <td><a href="http://intermedica.kz/" target="_blank">http://intermedica.kz/</a></td>
+  <td><span class="badge badge-ot">实验室设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">KAZ VITA-MED LTD</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 2436002</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">血液净化</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">MEDICUS EURASIA LLP (Медикус Евразия)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 2500015</div><div>📧 <a href="mailto:info@medeurasia.kz">info@medeurasia.kz</a></div><div>📍 59 Zheltoksan St, 050004, Almaty</div></div></td>
+  <td><a href="https://medeurasia.kz/" target="_blank">https://medeurasia.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">EurasiaMed (ЕвразияМед)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (706) 401 41 47</div><div>📧 <a href="mailto:office@eurasiamed.kz">office@eurasiamed.kz</a></div><div>📍 оф. 232, бл. 5 ЖК «Эстет», ул. Тажибаева 218, Almaty</div></div></td>
+  <td><a href="https://www.eurasiamed.kz/" target="_blank">https://www.eurasiamed.kz/</a></td>
+  <td><span class="badge badge-ot">牙科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">R Optics Medical (Р Оптикс)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (727) 232-15-29</div><div>📧 <a href="mailto:info@r-optics.kz">info@r-optics.kz</a></div><div>📍 г. Алматы, Алмалинский р-н, ул. Прокофьева 148</div></div></td>
+  <td><a href="https://r-optics.kz/en/" target="_blank">https://r-optics.kz/en/</a></td>
+  <td><span class="badge badge-ot">眼科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Ophthalmology Service LLP</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 (701) 720 60 07</div><div>📧 <a href="mailto:info@ophthalmology.kz">info@ophthalmology.kz</a></div><div>📍 ул. Спартака 3-15, Almaty</div></div></td>
+  <td><a href="https://ophthalmology.kz/" target="_blank">https://ophthalmology.kz/</a></td>
+  <td><span class="badge badge-ot">眼科</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">«Farmaks-2» LLP (Фармакс-2)</td>
+  <td>Kostanay</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 705 503 61 82</div></div></td>
+  <td><a href="https://farmaks2.kz/" target="_blank">https://farmaks2.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Relief HealthTech LLP</td>
+  <td>Astana</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Medilux LLP (Медилакс)</td>
+  <td>Almaty</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +7 727 2611482</div><div>📧 <a href="mailto:info@medilux.kz">info@medilux.kz</a></div><div>📍 48a Kurmangazy St, оф. 407/409, Almaty</div></div></td>
+  <td><a href="https://medilux.kz/" target="_blank">https://medilux.kz/</a></td>
+  <td><span class="badge badge-ot">综合外科设备</span></td>
+</tr></tbody>
+</table>
+        <div class="footer"><p></p></div>
+    </div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">经销商总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 哈萨克斯坦医疗器械经销商名录 · 共 '+total+' 家';
+})();
+</script>
+</body>
+</html>
