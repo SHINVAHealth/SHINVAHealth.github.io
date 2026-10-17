@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乌兹别克斯坦医院信息表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Yu Gothic', 'Meiryo', 'Malgun Gothic', 'Leelawadee UI', 'Noto Sans CJK SC', 'Noto Sans Thai', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #1a3a6b; font-size: 24px; margin-bottom: 5px; padding: 20px 0 10px; border-bottom: 3px solid #1a3a6b; }
+  .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto 18px;}
+  .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+  .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+  .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 12px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a3a6b; }
+        .stat-card .label { font-size: 12px; color: #888; }
+        .stat-card.total { border-top: 3px solid #27ae60; }
+        .stat-card.total .num { color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 13px; margin-bottom: 20px; }
+        thead { background: linear-gradient(135deg, #1a3a6b 0%, #2c5aa0 100%); color: #fff; }
+        th { padding: 12px 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 10px 10px; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.55; }
+        tr:hover { background: #f8f9fb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px; color:#fff; }
+        .badge-public { background: #2ecc71; }
+        .badge-private { background: #3498db; }
+        .badge-teaching { background: #f39c12; }
+        .badge-international { background: #9b59b6; }
+        .badge-military { background: #e74c3c; }
+        .badge-ngo { background: #1abc9c; }
+        .badge-joint { background: #e67e22; }
+        a { color: #2c5aa0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .company-name { font-weight: 600; color: #1a3a6b; line-height: 1.4; }
+        .contact-info { font-size: 12px; color: #555; }
+        .contact-info div { margin-bottom: 2px; line-height: 1.5; }
+.muted { color: #aaa; }
+        .footer { text-align: center; margin-top: 30px; padding: 20px; color: #888; font-size: 12px; }
+        .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>乌兹别克斯坦医院信息表</h1>
+    <div class="stats"></div>
+      <div class="searchbar">
+    <input id="custSearch" type="text" placeholder="🔍 搜索医院名称 / 城市 / 电话 / 官网 / 性质…" autocomplete="off">
+    <span class="search-count" id="custCount"></span>
+  </div>
+<table>
+        <thead>
+            <tr>
+                <th style="width:30px;">#</th>
+                <th style="width:230px;">医院名称</th>
+                <th style="width:110px;">城市</th>
+                <th style="width:250px;">联系方式（电话/邮箱/地址/床位）</th>
+                <th style="width:170px;">官网</th>
+                <th style="width:120px;">性质</th>
+                </tr>
+        </thead>
+        <tbody><tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific-Practical Medical Center of Surgery named after V. Vakhidov / 瓦希多夫共和国专科外科中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 55 588 80 01</div><div>📍 10 Small Ring Road St, Chilonzor district, Tashkent</div><div>🛏 床位：370</div></div></td>
+  <td><a href="https://rscs.uz/" target="_blank">https://rscs.uz/</a></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific-Practical Medical Center of Oncology and Radiology / 共和国肿瘤与放射专科科学实践中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 78 113 33 78</div><div>📍 383 Farobiy St, Shaykhontokhur district, Tashkent</div><div>🛏 床位：650</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Center of Cardiology / 共和国心脏病专科中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 237 36 88</div><div>📍 4 Asia (Osiyo) St, Mirzo Ulugbek district, Tashkent, 100052</div><div>🛏 床位：252</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Center of Urology / 共和国泌尿外科专科中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 276 6102</div><div>📍 1st lane 1, Khodzhaeva St, S. Rahimov district, Tashkent, 700109</div><div>🛏 床位：120</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Eye Microsurgery Center / 共和国眼科显微外科专科中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 95 146 48 58</div><div>📍 14 Kichik Khalka Yuli St, Uchtepa district, Tashkent, 100173</div><div>🛏 床位：90</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Research Center of Neurosurgery / 共和国神经外科科学中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 264 96 10</div><div>📍 40 Humoyun St, Mirzo Ulugbek district, Tashkent, 100142</div><div>🛏 床位：157</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Emergency Care Research Center / 共和国急诊医学科学中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 276 85 00</div><div>📍 2 Farkhad St, Chilanzar district, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">National Children&#x27;s Medical Center / 国家儿童医学中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 231 06 62</div><div>📍 294 Parkent St, Yashnabad district, Tashkent, 100016</div><div>🛏 床位：280</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Tashkent Medical Academy Hospital / 塔什干医学院医院</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 276 9070</div><div>📍 Chilanzar-2 district, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-teaching">公立教学</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Tashkent International Medical Clinic (TIMC) / 塔什干国际医疗诊所</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 291 01 42</div><div>📍 38 Sarikul St, Tashkent</div></div></td>
+  <td><a href="https://timc.uz/" target="_blank">https://timc.uz/</a></td>
+  <td><span class="badge badge-international">私立国际</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Research Institute of Traumatology and Orthopedics / 创伤与骨科研究所</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 233 80 04</div><div>📍 78 Makhtumquli Ave, Yashnabad district, Tashkent, 100047</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Center of Endocrinology / 共和国内分泌专科科学实践中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 262 25 53</div><div>📍 56 Mirzo Ulugbek St, Mirzo Ulugbek district, Tashkent, 100125</div><div>🛏 床位：288</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific-Practical Medical Center of Obstetrics and Gynecology / 共和国妇产科专科科学实践中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 263 78 18</div><div>📍 132A Mirzo Ulugbek Ave, Mirzo Ulugbek district, Tashkent, 100124</div><div>🛏 床位：178</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific-Practical Medical Center of Pediatrics / 共和国儿科专科科学实践中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 229 38 47</div><div>📍 3 Talant passage, 2nd Chimbay St, Olmazor district, Tashkent, 100179</div><div>🛏 床位：385</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific-Practical Medical Center of Therapy and Rehabilitation / 共和国治疗与康复专科科学实践中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 4 Khurshid St, Yunusobod district, Tashkent</div><div>🛏 床位：430</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific Research Medical Center of Physiology and Pulmonology / 共和国生理与肺科学研医疗中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Republican Specialized Scientific-Practical Medical Center of Dermatology and Venereology / 共和国皮肤性病专科科学实践中心</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📍 2 Farobiy St, Shaykhontokhur district, Tashkent, 100109</div><div>🛏 床位：160</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Akfa Medline Hospital / Akfa Medline医院</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 203 3003</div><div>📍 5A Kichik Khalka Yuli St, Olmazor district, Tashkent</div><div>🛏 床位：200</div></div></td>
+  <td><a href="https://akfamedline.uz/" target="_blank">https://akfamedline.uz/</a></td>
+  <td><span class="badge badge-international">私立国际</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">City Clinical Hospital No.1 (Tashkent) / 塔什干第一市临床医院</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 244 1103</div><div>📍 Shaykhontohur district, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Central Clinical Hospital of the Main Medical Department / 主医科中央临床医院</td>
+  <td>Tashkent</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 71 255 0303</div><div>📍 Yakkasaray district, Tashkent</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Samarkand Regional Clinical Hospital / 撒马尔罕州临床医院</td>
+  <td>Samarkand</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 66 233 38 52</div><div>📍 70 Mirzo Ulugbek St, Samarkand, 140100</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Bukhara State Medical Institute Hospital / 布哈拉国立医学院医院</td>
+  <td>Bukhara</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-teaching">公立教学</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Namangan Regional Hospital / 纳曼干州医院</td>
+  <td>Namangan</td>
+  <td class="contact-info"><div class="contact-info"><div>📞 +998 69 226 36 00</div><div>📍 9 Namanganiy St, Namangan</div></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="company-name">Andijan Clinical Hospital / 安集延临床医院</td>
+  <td>Andijan</td>
+  <td class="contact-info"><div class="contact-info"></div></td>
+  <td><span class="muted">未公开</span></td>
+  <td><span class="badge badge-public">公立</span></td>
+</tr></tbody>
+</table>
+        <div class="footer"><p></p></div>
+    </div>
+<script>
+(function(){
+  var input=document.getElementById('custSearch');
+  var count=document.getElementById('custCount');
+  if(!input) return;
+  function filter(){
+    var q=input.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('table tbody tr');
+    var n=0;
+    rows.forEach(function(tr){
+      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
+      tr.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
+  }
+  input.addEventListener('input', filter);
+})();
+</script>
+<script>
+(function(){
+  var tb = document.querySelector('table tbody');
+  if(!tb) return;
+  var rows = tb.querySelectorAll('tr');
+  rows.forEach(function(tr,i){ var f=tr.querySelector('td'); if(f) f.textContent=(i+1); });
+  var total = rows.length;
+  var counts = {};
+  rows.forEach(function(tr){ var b=tr.querySelector('td:last-child .badge'); if(b){ var x=b.textContent.trim(); counts[x]=(counts[x]||0)+1; } });
+  var sw = document.querySelector('.stats');
+  if(sw){ var h='<div class="stat-card total"><div class="num">'+total+'</div><div class="label">医院总数</div></div>'; for(var k in counts){ h+='<div class="stat-card"><div class="num">'+counts[k]+'</div><div class="label">'+k+'</div></div>'; } sw.innerHTML=h; }
+  var foot=document.querySelector('.footer p');
+  if(foot) foot.textContent='📌 乌兹别克斯坦医院信息表 · 共 '+total+' 家';
+})();
+</script>
+</body>
+</html>
