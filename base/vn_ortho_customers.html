@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>越南骨科植入物生产厂家名录</title>
+<style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Yu Gothic','Meiryo','Malgun Gothic','Noto Sans CJK SC',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
+        .container { max-width:1400px; margin:0 auto; padding:20px; }
+        .topbar { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+        .back { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#1a3a6b; border:1px solid #c9d4e3; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .back:hover { background:#eef3fb; text-decoration:none; }
+        h1 { text-align:center; color:#1a3a6b; font-size:24px; margin-bottom:5px; padding:14px 0 10px; border-bottom:3px solid #1a3a6b; }
+        .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:18px auto;}
+        .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+        .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+        .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display:flex; justify-content:center; gap:15px; margin-bottom:25px; flex-wrap:wrap; }
+        .stat-card { background:#fff; border-radius:8px; padding:12px 24px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; min-width:140px; }
+        .stat-card .num { font-size:28px; font-weight:700; color:#1a3a6b; }
+        .stat-card .label { font-size:12px; color:#888; }
+        .stat-card.total { border-top:3px solid #27ae60; }
+        .stat-card.total .num { color:#27ae60; }
+        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); font-size:13px; margin-bottom:20px; }
+        thead { background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%); color:#fff; }
+        th { padding:12px 10px; text-align:left; font-weight:600; font-size:12px; letter-spacing:0.5px; }
+        td { padding:10px 10px; border-bottom:1px solid #eee; vertical-align:top; line-height:1.55; }
+        tr:hover { background:#f8f9fb; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin:1px; }
+        a { color:#2c5aa0; text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .company-name { font-weight:600; color:#1a3a6b; line-height:1.4; }
+        .contact-info { font-size:12px; color:#555; }
+        .contact-info div { margin-bottom:2px; line-height:1.5; }
+        .muted { color:#aaa; }
+        .evidence { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; vertical-align:middle; }
+        .ev-A { background:#e6f7ed; color:#1a9850; }
+        .ev-B { background:#e8f0fe; color:#1f6feb; }
+        .ev-C { background:#fff4e0; color:#c77700; }
+        .footer { text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px; }
+        .footer p { margin-bottom:4px; }
+        .empty-box { max-width:760px; margin:40px auto; padding:40px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); text-align:center; }
+        .empty-box .big { font-size:44px; }
+        .empty-box h2 { color:#1a3a6b; font-size:20px; margin:12px 0; }
+        .empty-box p { color:#666; font-size:14px; margin-bottom:10px; line-height:1.8; }
+        .empty-box .note { background:#f5f7fa; border-left:4px solid #27ae60; padding:12px 16px; text-align:left; font-size:13px; color:#555; margin-top:18px; border-radius:6px; }
+        .badge-spine { background:#1f6feb; color:#fff; }
+        .badge-joint { background:#16a085; color:#fff; }
+        .badge-trauma { background:#2ecc71; color:#fff; }
+        .badge-sport { background:#f39c12; color:#fff; }
+        .badge-fix { background:#9b59b6; color:#fff; }
+        .badge-ortho2 { background:#3498db; color:#fff; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="topbar"><a class="back" href="../ortho_customers.html">← 返回国家选择</a></div>
+<h1>越南骨科植入物生产厂家名录</h1>
+<div class="stats">
+<div class="stat-card total"><div class="num">1</div><div class="label">生产厂家总数</div></div>
+<div class="stat-card"><div class="num">1</div><div class="label">外固定/神经外科</div></div>
+</div>
+<div class="searchbar"><input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 官网 / 方向…" autocomplete="off"><span class="search-count" id="custCount"></span></div>
+<table><thead><tr><th>#</th><th>公司名称</th><th>城市</th><th>联系方式 / 来源</th><th>官网</th><th>方向</th></tr></thead><tbody>
+<tr data-page-node-id="UIyeVirUttGPcNKhMCitFo">
+<td>1</td>
+<td class="company-name">Ngoc Bao Biomedical Joint Stock Company<span class="evidence ev-A">证据A</span></td>
+<td>Hanoi (河内)</td>
+<td class="contact-info"><div>📞 0989 056 868</div><div>📧 info@ngocbaobiomed.com</div><div>📍 73/117 Thái Hà, Đống Đa, TP. Hà Nội, Việt Nam</div><div class="muted">来源：官网 ngocbaobiomed.com (首页/introduction/contact); 河内市科技厅颁发的研发机构许可证 B-23/2016 DK-KH&amp;CN; 越南科技部与卫生部多个科研项目; 获ISO 13485:2016认证与VIFOTEC 2022奖项</div><div class="muted">越南本土科研型企业，越南首家以3D打印PEEK/钛粉研究制造个性化植入物与骨组织替代物的单位，用于创伤、骨科与整形。产品含3D打印颅骨修补片、颌面/眼眶修补片、距骨、椎间盘(脊柱)补片、肱骨、手指关节、人工硅关节、生物骨粉等；官网列ISO 13485:2016认证。以颅颌骨/颅骨修补(fix)为主，兼有脊柱、关节、创伤骨替代产品。证据A：官网明确制造+地址+电话+监管许可证+ISO认证。</div></td>
+<td><a href="https://ngocbaobiomed.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-fix">外固定/神经外科</span></td>
+</tr>
+</tbody></table>
+<div class="footer">
+<p>数据说明：本表仅列示本土骨科植入物 <b>生产厂家（MANUFACTURER）</b>，已严格剔除经销商、进口代理商、外资销售子公司、牙科种植体厂与纯耗材厂。每条附可核查来源，联系方式未公开项统一标注、零虚构。</p>
+<p>越南经严格核查仅1家符合条件的本土骨科植入物生产厂家：Ngoc Bao Biomedical JSC（证据A，河内，越南首家3D打印个性化骨科/颅颌面植入物制造商，持ISO13485与河内科技厅许可证）。其余搜索结果绝大多数为中国出口商针对越南市场的SEO页面或进口贸易商；越南骨科植入物市场高度依赖进口，本土制造能力极为有限。</p>
+<p>已剔除：Horaizon / Nipa / Daher / Synoviq / Bonevia / Axiora / WEX / Tonka / OMA / Cleric / MGMT / MedicalDirectRX(DTRX) 等——均为中国出口商在越南市场的SEO落地页，非越南本土厂家；Huong Son Medical Equipment Co., Ltd.——Yellow Pages明确Business Type为Trading Company(贸易公司)，从巴基斯坦/韩国/德国进口，非本土制造商，仅5-10人；Belmont Manufacturing / Omron Healthcare Manufacturing Vietnam / ITO Manufacturing Vietnam——外资(日资/台资)在越工厂，主营通用医疗/牙科/康复器械，非本土骨科植入物厂家</p>
+</div>
+</div>
+<script>
+(function(){var inp=document.getElementById('custSearch');var cnt=document.getElementById('custCount');var rows=[].slice.call(document.querySelectorAll('tbody tr'));function filter(){var q=(inp.value||'').trim().toLowerCase();var n=0;rows.forEach(function(tr){var hit=!q||tr.textContent.toLowerCase().indexOf(q)>-1;tr.style.display=hit?'':'none';if(hit)n++;});if(cnt)cnt.textContent='共 '+n+' 家';}if(inp)inp.addEventListener('input',filter);filter();})();
+</script>
+</body>
+</html>
