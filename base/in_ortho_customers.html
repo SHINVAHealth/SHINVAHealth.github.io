@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>印度骨科植入物生产厂家名录</title>
+<style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Yu Gothic','Meiryo','Malgun Gothic','Noto Sans CJK SC',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
+        .container { max-width:1400px; margin:0 auto; padding:20px; }
+        .topbar { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+        .back { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#1a3a6b; border:1px solid #c9d4e3; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .back:hover { background:#eef3fb; text-decoration:none; }
+        h1 { text-align:center; color:#1a3a6b; font-size:24px; margin-bottom:5px; padding:14px 0 10px; border-bottom:3px solid #1a3a6b; }
+        .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:18px auto;}
+        .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+        .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+        .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display:flex; justify-content:center; gap:15px; margin-bottom:25px; flex-wrap:wrap; }
+        .stat-card { background:#fff; border-radius:8px; padding:12px 24px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; min-width:140px; }
+        .stat-card .num { font-size:28px; font-weight:700; color:#1a3a6b; }
+        .stat-card .label { font-size:12px; color:#888; }
+        .stat-card.total { border-top:3px solid #27ae60; }
+        .stat-card.total .num { color:#27ae60; }
+        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); font-size:13px; margin-bottom:20px; }
+        thead { background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%); color:#fff; }
+        th { padding:12px 10px; text-align:left; font-weight:600; font-size:12px; letter-spacing:0.5px; }
+        td { padding:10px 10px; border-bottom:1px solid #eee; vertical-align:top; line-height:1.55; }
+        tr:hover { background:#f8f9fb; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin:1px; }
+        a { color:#2c5aa0; text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .company-name { font-weight:600; color:#1a3a6b; line-height:1.4; }
+        .contact-info { font-size:12px; color:#555; }
+        .contact-info div { margin-bottom:2px; line-height:1.5; }
+        .muted { color:#aaa; }
+        .evidence { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; vertical-align:middle; }
+        .ev-A { background:#e6f7ed; color:#1a9850; }
+        .ev-B { background:#e8f0fe; color:#1f6feb; }
+        .ev-C { background:#fff4e0; color:#c77700; }
+        .footer { text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px; }
+        .footer p { margin-bottom:4px; }
+        .empty-box { max-width:760px; margin:40px auto; padding:40px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); text-align:center; }
+        .empty-box .big { font-size:44px; }
+        .empty-box h2 { color:#1a3a6b; font-size:20px; margin:12px 0; }
+        .empty-box p { color:#666; font-size:14px; margin-bottom:10px; line-height:1.8; }
+        .empty-box .note { background:#f5f7fa; border-left:4px solid #27ae60; padding:12px 16px; text-align:left; font-size:13px; color:#555; margin-top:18px; border-radius:6px; }
+        .badge-spine { background:#1f6feb; color:#fff; }
+        .badge-joint { background:#16a085; color:#fff; }
+        .badge-trauma { background:#2ecc71; color:#fff; }
+        .badge-sport { background:#f39c12; color:#fff; }
+        .badge-fix { background:#9b59b6; color:#fff; }
+        .badge-ortho2 { background:#3498db; color:#fff; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="topbar"><a class="back" href="../ortho_customers.html">← 返回国家选择</a></div>
+<h1>印度骨科植入物生产厂家名录</h1>
+<div class="stats">
+<div class="stat-card total"><div class="num">30</div><div class="label">生产厂家总数</div></div>
+<div class="stat-card"><div class="num">3</div><div class="label">关节植入物</div></div>
+<div class="stat-card"><div class="num">27</div><div class="label">骨科植入物</div></div>
+</div>
+<div class="searchbar"><input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 官网 / 方向…" autocomplete="off"><span class="search-count" id="custCount"></span></div>
+<table><thead><tr><th>#</th><th>公司名称</th><th>城市</th><th>联系方式 / 来源</th><th>官网</th><th>方向</th></tr></thead><tbody>
+<tr data-page-node-id="Pu6XTauJLqF7n6h5u4hCty">
+<td>1</td>
+<td class="company-name">Auxein Medical Private Limited<span class="evidence ev-A">证据A</span></td>
+<td>Sonepat, Haryana (索内帕特)</td>
+<td class="contact-info"><div>📞 +91 99106 43638</div><div>📧 info@auxein.com</div><div>📍 Plot No. 168-169-170, Phase-4, Kundli Industrial Area, HSIIDC, Sector-57, Sonepat – 131028, Haryana, India</div><div class="muted">来源：https://www.auxein.com/about-us ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">官网明确自有工厂(ISO Class 10000洁净室、250+ CNC机台、500+员工)，产品涵盖创伤接骨板/螺钉/髓内钉、脊柱、髋关节、运动医学、可吸收螺钉；持ISO13485/CE/US FDA 510(k)/MDSAP/EU-MDR及印度FDA GMP证书。亚洲首家获EU-MDR认证创伤植入体企业，并为多家国际品牌提供OEM。</div></td>
+<td><a href="https://www.auxein.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="hwxdfgfDFTtQnw8Sq39C2x">
+<td>2</td>
+<td class="company-name">Siora Surgicals Private Limited<span class="evidence ev-A">证据A</span></td>
+<td>Sonepat, Haryana (索内帕特)</td>
+<td class="contact-info"><div>📞 +91 98100 21264 (WhatsApp)</div><div>📍 RAI District, Sonepat, Haryana, India (industrial complex ~20,000 sq.m., near Delhi)</div><div class="muted">来源：https://www.siiora.com/ ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">官网明确1987年成立、自有CNC/VMC制造工厂(约2万平米)，生产创伤、脊柱、颌面、运动医学、髓内钉、外固定、双极/桡骨头假体及兽医植入物；ISO13485:2016、CE、马来西亚MDA认证，25+自有品牌并为国际品牌做OEM。</div></td>
+<td><a href="https://www.siiora.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="bRs9kJ3M82PPoc9jmjFKcI">
+<td>3</td>
+<td class="company-name">Sharma Orthopedic (India) Limited<span class="evidence ev-A">证据A</span></td>
+<td>Waghodia, Vadodara, Gujarat (瓦戈迪亚)</td>
+<td class="contact-info"><div>📞 +91 85869 76403 (公司总机见官网)</div><div>📍 Waghodia Industrial Area, Vadodara, Gujarat 391760, India (facility ~62,391 sq.ft.)</div><div class="muted">来源：https://www.sharmaortho.com/ ; https://www.sharmaortho.in/ (IndiaMART: CIN U33110GJ2014PLC081007) ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">1992年创立，自有工厂(5轴CNC/瑞士车削/机器人涂层)，产品含关节置换(全髋/全膝)、脊柱、接骨板螺钉、髓内钉、颌面、关节镜；CDSCO/印度FDA批准、ISO13485、CE、2024 MDSAP，出口50+国家。CIN U33110GJ2014PLC081007，是有限股份公司(非经销商)。</div></td>
+<td><a href="https://www.sharmaortho.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="xIMSy7kojae1ephYf5bMHC">
+<td>4</td>
+<td class="company-name">Narang Medical Limited (NET Orthopaedics)<span class="evidence ev-A">证据A</span></td>
+<td>New Delhi (新德里)</td>
+<td class="contact-info"><div>📞 +91-11-45554000</div><div>📧 NET@narang.com</div><div>📍 46 Community Centre, Naraina Phase-I, New Delhi – 110028, India (自有工厂位于邻近邦)</div><div class="muted">来源：https://narangmedical.com/ ; http://orthopedicimplants.com/about-us.php ; https://www.ortho.in/</div><div class="muted">1989年注册，自有大型骨科植入物工厂(约250名生产员工)，NET品牌骨科植入物/器械出口80+国家；ISO9001:2015、EN ISO13485:2016、CE、WHO-GMP，印度政府Star Export House，多个产品获US FDA 510(k)。除植入物外还生产医院家具/耗材，但骨科植入物为自产。</div></td>
+<td><a href="https://narangmedical.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="roOsJdBATkXUwXkGfr0xA4">
+<td>5</td>
+<td class="company-name">Jindal Medi Surge (JMS)<span class="evidence ev-B">证据B</span></td>
+<td>New Delhi (总部)；Ghaziabad &amp; Pune (工厂)</td>
+<td class="contact-info"><div>📞 +91 11 43541982</div><div>📍 5A/5, Ansari Road, Darya Ganj, New Delhi – 110002；制造基地：Ghaziabad, Uttar Pradesh 及 Pune, Maharashtra</div><div class="muted">来源：http://www.jmshealth.com/about-us ; https://www.jmsortho.com/profile.html ; https://www.signalhire.com/companies/jindal-medi-surge</div><div class="muted">官网称在Ghaziabad与Pune设有制造工厂，产品覆盖创伤、关节、脊柱、外固定、电动工具、骨水泥、运动医学、兽医植入物，出口100+国家并做OEM。注意：IndiaMART/公司资料中将性质登记为Trader-Wholesaler，制造主张主要来自自有官网，故列B级供自行判断。</div></td>
+<td><a href="https://www.jmshealth.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="EBOTb7EvWUgKSgMyxnHlp8">
+<td>6</td>
+<td class="company-name">PLUS Orthopedics (P) Ltd.<span class="evidence ev-A">证据A</span></td>
+<td>Chennai, Tamil Nadu (金奈)</td>
+<td class="contact-info"><div>📞 +91 44 42114113</div><div>📧 info@plusorthoindia.com</div><div>📍 M-20/12, 8th Street, Anna Nagar East, Chennai – 600102, Tamil Nadu, India</div><div class="muted">来源：https://www.plusorthoindia.com/about ; https://www.plusorthoindia.com/contact ; https://medicalsdir.com/listing/plus-orthopedics</div><div class="muted">2004年从分销商转型为本土制造商，专注髋/膝/肩/肘/肿瘤/翻修关节置换，自有ISO7洁净室包装，5M+植入物售出，主打&#x27;Made in India&#x27;。官网明确self-manufacturing；联系方式已核对官网contact页。</div></td>
+<td><a href="https://www.plusorthoindia.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-joint">关节植入物</span></td>
+</tr>
+<tr data-page-node-id="xYsf0Yhbv23kcXWdNZ1DhN">
+<td>7</td>
+<td class="company-name">GPC Medical Limited<span class="evidence ev-A">证据A</span></td>
+<td>New Delhi (新德里)</td>
+<td class="contact-info"><div>📞 +91-11-43222600</div><div>📧 info@gpcmedical.com</div><div>📍 GPC Square, M Block, DDA LSC, Vikas Puri, New Delhi – 110018, India</div><div class="muted">来源：https://bharatmedxpo.com/company/gpc-medical-ltd ; https://www.orthopedicimplants.info</div><div class="muted">1987年注册(源于1930年)，印度首家获US FDA 510(k)的骨科植入物企业，1000+ FDA合规SKU(锁定板/髓内钉/脊柱/髋关节/外固定/关节镜动力工具)；ISO13485/CE/MDSAP/WHO-GMP/CDSCO，Star Export House，出口110+国家。</div></td>
+<td><a href="https://www.gpcmedical.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="kFgbxaoUOhqe092InXI6My">
+<td>8</td>
+<td class="company-name">Ortho Max Manufacturing Co. Pvt. Ltd.<span class="evidence ev-A">证据A</span></td>
+<td>Vadodara, Gujarat (瓦多达拉)</td>
+<td class="contact-info"><div>📞 +91 9428301731</div><div>📧 admin@orthomaxindia.net</div><div>📍 C-1-B/886/4, GIDC Industrial Estate, Makarpura, Vadodara – 390010, Gujarat, India</div><div class="muted">来源：https://devicerts.com/manufacturers/ortho-max-mfg-co-pvt-ltd (EUDAMED SRN IN-MF-000013331) ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">30+年骨科植入物制造经验，创伤/重建/关节(股骨、胫骨、腓骨、肱骨、髋、桡尺骨系统)；ISO13485、CE、CDSCO注册制造商(EUDAMED SRN IN-MF-000013331)。</div></td>
+<td><a href="https://www.orthomaxindia.net" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="xbYZY8aD7IsfThqMQu7Zqm">
+<td>9</td>
+<td class="company-name">Vast Ortho<span class="evidence ev-B">证据B</span></td>
+<td>India (印度，具体城市未公开)</td>
+<td class="contact-info"><div>📍 Headquarters &amp; manufacturing facility in India (详细地址未公开)</div><div class="muted">来源：https://www.vastortho.com/about-us ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">2006年成立，官网明确&#x27;manufacturing at our core&#x27;并持印度政府制造许可证及ISO13485:2016(创伤/脊柱/颌面植入物、器械、外固定)，产品含创伤、髓内钉、脊柱、髋关节、颌面、外固定。面向国际分销商/进口商供货。</div></td>
+<td><a href="https://www.vastortho.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="vRYRXORZLBnCoCyGDRmuRJ">
+<td>10</td>
+<td class="company-name">SA Orthocure<span class="evidence ev-B">证据B</span></td>
+<td>Ahmedabad, Gujarat (艾哈迈达巴德)</td>
+<td class="contact-info"><div>📍 Ahmedabad, Gujarat, India (详细地址未公开)</div><div class="muted">来源：https://www.saorthocure.com/ ; https://www.medyzen.in/blog/spine-surgery-names</div><div class="muted">官网明确&#x27;engineered and manufactured in Ahmedabad, India&#x27;，ISO13485、CDSCO持照制造，产品含创伤接骨板、股骨颈系统、脊柱/微创脊柱、颅颌面(CMF)、外固定；由Suhradam Ortho制造经验与Apex Mediequip合作，提供OEM。独立来源medyzen将Suhradam列为印度本土脊柱植入物制造商。</div></td>
+<td><a href="https://www.saorthocure.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="3vVIOneT6fJuTQ0dM6s8OW">
+<td>11</td>
+<td class="company-name">HCM Orthocare<span class="evidence ev-B">证据B</span></td>
+<td>Ahmedabad, Gujarat (艾哈迈达巴德)</td>
+<td class="contact-info"><div>📞 +91 99984 90134</div><div>📧 info@hcmortho.com</div><div>📍 A/1, Setubandh Park, Opp. Bhagwati Vidhyala School, Behind India Colony, Ahmedabad – 380001, Gujarat, India</div><div class="muted">来源：https://terangamedical.com/ ; https://www.orthopedicimplants.info ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">艾哈迈达巴德骨科植入物制造商/出口商，10+年经验，产品含创伤接骨板/螺钉/髓内钉、脊柱钉棒系统、关节重建、外固定；ISO13485、CE，出口50+国家并做OEM。</div></td>
+<td><a href="https://terangamedical.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="ZVmP41W5IPiEeJtGr6nHwy">
+<td>12</td>
+<td class="company-name">Uma Surgicals Private Limited<span class="evidence ev-B">证据B</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://umasurgicals.com/ ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">1980年起生产骨科植入物、脊柱与颌面解决方案及外科器械，自有CNC/锻造/洁净室设施，ISO13485、CE、WHO-GMP，产品销往30+国家。</div></td>
+<td><a href="https://umasurgicals.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="SYtCzGgTioFuiPfPxkDh03">
+<td>13</td>
+<td class="company-name">Vishal Surgitech Private Limited<span class="evidence ev-B">证据B</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://www.vishalsurgitech.com/orthopedic-implants.html ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">官网明确&#x27;We manufacture&#x27;骨螺钉、骨板、交锁髓内钉等骨科植入物，自有现代技术/machinery并持续扩产；列于pharmchoices印度骨科植入物制造商名录。</div></td>
+<td><a href="https://www.vishalsurgitech.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="t4b8EZurZgVbiOeBOynUe7">
+<td>14</td>
+<td class="company-name">Raj Surgitech Bone Care<span class="evidence ev-B">证据B</span></td>
+<td>New Delhi (新德里)</td>
+<td class="contact-info"><div>📍 New Delhi, Delhi, India (详细地址未公开)</div><div class="muted">来源：https://rajsurgitech.com/</div><div class="muted">官网称是印度成长中的骨科植入物与外科器械制造商，自有CNC设施，产品涵盖创伤、脊柱、CMF、髋、关节镜；ISO13485、CE、GMP。IndianMART登记为manufacturer/wholesaler(2019年起)，制造能力以官网为主，供自行判断。</div></td>
+<td><a href="https://rajsurgitech.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="zjE8BDaz4ugEeWHNKUvTdn">
+<td>15</td>
+<td class="company-name">RCH Orthopaedics<span class="evidence ev-B">证据B</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：http://rchorthopaedics.com/</div><div class="muted">2003年在骨科医生与工程师指导下成立，官网明确制造全髋/全膝/肘/肩关节置换植入物并出口；自有ISO洁净室、微生物/理化/检验实验室，采用进口医用UHMWPE/XLPE/PMMA/钛/钴铬/316L。</div></td>
+<td><a href="http://rchorthopaedics.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-joint">关节植入物</span></td>
+</tr>
+<tr data-page-node-id="Zo0taPkQwzBvZ4bnV4GJ7A">
+<td>16</td>
+<td class="company-name">Aosys Private Limited<span class="evidence ev-B">证据B</span></td>
+<td>Ahmedabad (Daskroi), Gujarat</td>
+<td class="contact-info"><div>📞 +91 98331 20979 (国内); +91 98255 28258 (国际)</div><div>📧 info@aosys.in</div><div>📍 Plot No. 66 &amp; 67, Shreeji Charan Industrial Park, Opp KP Kanta Bakrol Road, Indore Highway, Kujad Bakrol, Taluka Daskroi 382430, Gujarat, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">列于pharmchoices印度骨科植入物制造商名录，提供工业区厂址与电话，属本土骨科植入物生产厂(具体产品与认证建议官网复核)。</div></td>
+<td><a href="https://aosys.in/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="LEWaCpi4cPqUAEaSoGlztV">
+<td>17</td>
+<td class="company-name">Arthron Implants Private Limited<span class="evidence ev-B">证据B</span></td>
+<td>Rajkot, Gujarat (拉杰科特)</td>
+<td class="contact-info"><div>📞 +91 75672 22272; +91 96381 87020</div><div>📧 info@arthron.in</div><div>📍 Plot No. 2704, Lodhika GIDC, Metoda, Dist. Rajkot, Gujarat, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">位于Lodhika GIDC工业区的骨科植入物制造厂(名录收录，含GIDC厂区地址与电话)，主要做关节/创伤植入物。</div></td>
+<td><a href="https://www.arthron.in" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-joint">关节植入物</span></td>
+</tr>
+<tr data-page-node-id="UfvMdBYtUJYPH5T62vE1xW">
+<td>18</td>
+<td class="company-name">Austeofix Surgical Private Limited<span class="evidence ev-B">证据B</span></td>
+<td>Jaipur, Rajasthan (斋浦尔)</td>
+<td class="contact-info"><div>📞 0141-4010028, 0141-4010029, +91 9511348306</div><div>📧 info@austeofix.com</div><div>📍 Factory: Plot No. 81, Solitare Industrial Park, Phase 1, Dehmi Kalan, Jaipur, Rajasthan, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">名录明确列出Factory厂区地址(Solitare Industrial Park)，本土骨科植入物/外科器械生产厂。</div></td>
+<td><a href="https://www.austeofix.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="yRq6rCp2P9PmTPEpRv9C6P">
+<td>19</td>
+<td class="company-name">Ace Osteomedica<span class="evidence ev-B">证据B</span></td>
+<td>Ludhiana, Punjab (卢迪亚纳)</td>
+<td class="contact-info"><div>📞 +91 9910041361; +91 161 2991494</div><div>📧 aceosteomedica@yahoo.com</div><div>📍 Plot No. 14, Lakhowal Industrial Estate, Near Kohara, Ludhiana, Punjab, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">位于Lakhowal工业区的骨科植入物制造厂，名录收录工业厂区地址与电话，本土创伤/骨科植入物生产。</div></td>
+<td><a href="https://www.aceosteo.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="O2XMutW6JDmCtEiLfYdELM">
+<td>20</td>
+<td class="company-name">Biotech Orthomed Inc.<span class="evidence ev-B">证据B</span></td>
+<td>Mysore/Nanjangud, Karnataka (迈索尔)</td>
+<td class="contact-info"><div>📞 +91 85869 76403</div><div>📧 info@biotechorthomed.com</div><div>📍 Manufacturing Unit: 27, Unit-2, KSSIDC Industrial Area, Nanjangud, Mysore District 571302, India (Corporate: New Delhi)</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">名录明确列出位于Nanjangud KSSIDC工业区的Manufacturing Unit，本土骨科植入物生产厂。</div></td>
+<td><a href="https://biotechorthomed.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="YpSdIG4czBKJOEJ6wjfP1H">
+<td>21</td>
+<td class="company-name">Basic Healthcare Products (B-Ostin)<span class="evidence ev-B">证据B</span></td>
+<td>Baddi, Himachal Pradesh (巴迪)</td>
+<td class="contact-info"><div>📞 +91 7087804874</div><div>📧 info@basichealthcareproducts.com</div><div>📍 Plot No. 1F, EPIP Phase-1, Jharmajari, Baddi – 174103, Himachal Pradesh, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">位于EPIP工业区的骨科植入物生产厂(B-Ostin品牌)，名录收录厂区地址电话；Baddi为印度重要医疗器械制造集群。</div></td>
+<td><a href="http://www.b-ostin.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="hN5utoLHsqTGTv5GGPa6tP">
+<td>22</td>
+<td class="company-name">B. D. Surgical Industries<span class="evidence ev-B">证据B</span></td>
+<td>Alwar, Rajasthan (阿尔瓦尔)</td>
+<td class="contact-info"><div>📞 +91 9999214571; +91 9811273334</div><div>📧 bdsurgical.industries@yahoo.com</div><div>📍 G1-932(B), RIICO Industrial Area Khushkhera, District Alwar, Khushkhera, Rajasthan – 301707, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">位于RIICO工业区的骨科/外科器械生产厂，名录收录厂区地址电话。</div></td>
+<td><a href="http://bdsurgical.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="zwbouqynXpKkaolNtA740O">
+<td>23</td>
+<td class="company-name">Advin Ortho (Advanced Healthcare)<span class="evidence ev-B">证据B</span></td>
+<td>Ahmedabad, Gujarat (艾哈迈达巴德)</td>
+<td class="contact-info"><div>📧 exports@advinhealthcare.com</div><div>📍 &quot;Advin House&quot;, Aarna Fortune, Garden Residency Road, B/H Chittvan, South Bopal, Ahmedabad – 380058, Gujarat, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">阿姆达巴德骨科植入物/医疗器械企业，名录收录为制造商并给出地址与出口邮箱。</div></td>
+<td><a href="https://advinhealthcare.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="FrxUwYN0LgoX2iJUCFJDps">
+<td>24</td>
+<td class="company-name">Biomed Healthtech Private Limited<span class="evidence ev-B">证据B</span></td>
+<td>Mumbai, Maharashtra (孟买)</td>
+<td class="contact-info"><div>📞 +91-22-43339200; +91 9920432315</div><div>📧 biomedorthopedics@gmail.com</div><div>📍 207, 2nd floor, Marthanda, Dr. Annie Besant Road, Worli Naka, Mumbai – 400018, India</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">孟买骨科植入物(Biomed Orthopedics)企业，名录收录为制造商，具体工厂与认证建议官网复核。</div></td>
+<td><a href="https://www.biomedhealthtech.com" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="5ScnBVR5o7a3PSgFgFmyfV">
+<td>25</td>
+<td class="company-name">Suhradam Ortho<span class="evidence ev-C">证据C</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://www.medyzen.in/blog/spine-surgery-names ; https://www.saorthocure.com/</div><div class="muted">独立来源medyzen将Suhradam列为印度本土脊柱植入物制造商，SA Orthocure称融合其制造经验；未找到独立官网与工厂细节，标C级供自行判断。</div></td>
+<td><a href="https://www.saorthocure.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="FB7uyyqIllNTAjjZV16swe">
+<td>26</td>
+<td class="company-name">Miraclus Orthotech Private Limited<span class="evidence ev-C">证据C</span></td>
+<td>Mumbai, Maharashtra (孟买)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">列于pharmchoices印度骨科植入物制造商名录，本土创伤/脊柱植入物企业(有BSE SME上市背景)，未逐一核实工厂，标C级供自行判断。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="H0RHwRF7aPWxwh1hwfYM74">
+<td>27</td>
+<td class="company-name">Global Orthosys<span class="evidence ev-C">证据C</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://www.medyzen.in/blog/spine-surgery-names ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">独立来源medyzen将其列为印度本土脊柱植入物制造商并见于pharmchoices名录；无独立官网/工厂细节，标C级供自行判断。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="FkbMJv6kILwAzPjejXulGa">
+<td>28</td>
+<td class="company-name">Medix Orthopedic Private Limited<span class="evidence ev-C">证据C</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://www.medyzen.in/blog/spine-surgery-names ; https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">被medyzen列为CDSCO注册的本土脊柱植入物品牌并见于名录，未提供独立厂址，标C级供自行判断。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="oJEiIm8haouccDtRPQE4z3">
+<td>29</td>
+<td class="company-name">Uteshiya Medicare<span class="evidence ev-C">证据C</span></td>
+<td>India (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">pharmchoices名录指出Uteshiya Medicare有US FDA 510(k)的骨科植入物；无独立厂址核实，标C级供自行判断。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="wJxicinzoXDQizjGG9g2mE">
+<td>30</td>
+<td class="company-name">TTK Healthcare Limited (Medical Devices Division)<span class="evidence ev-C">证据C</span></td>
+<td>Chennai/Bangalore (印度)</td>
+<td class="contact-info"><div>📍 India (详细地址未公开)</div><div class="muted">来源：https://pharmchoices.com/orthopaedic-implant-manufacturers-in-india</div><div class="muted">上市集团TTK Healthcare列于骨科植入物制造商名录(其医疗器械部门生产骨科/吻合器等)；骨科植入物制造规模需自行核实，标C级。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+</tbody></table>
+<div class="footer">
+<p>数据说明：本表仅列示本土骨科植入物 <b>生产厂家（MANUFACTURER）</b>，已严格剔除经销商、进口代理商、外资销售子公司、牙科种植体厂与纯耗材厂。每条附可核查来源，联系方式未公开项统一标注、零虚构。</p>
+<p>经WebSearch与WebFetch核查官网、监管注册(EUDAMED/CDSCO/FDA 510(k))、行业名录(pharmchoices、medyzen、bharatmedxpo、devicerts)及上市/公司资料后，本文件收录印度本土骨科植入物生产厂家共30家：证据A级7家(官网明确自产+厂区+监管注册，如Auxein、Siora、Sharma、Narang、Plus、GPC、Ortho Max)、B级17家(名录/协会/独立来源列为制造商)、C级6家(单一来源或需自行核实)。印度骨科制造以创伤/脊柱为主，古吉拉特邦(艾哈迈达巴德、瓦多达拉、拉杰科特)、哈里亚纳邦索内帕特、新德里周边、金奈为主要产业集群；关节置换(髋/膝)本土代表为Plus Orthopedics、Sharma、RCH。已剔除跨国公司在印销售分支、纯分销/贴牌、支具假肢厂及无法核实工厂的SEO条目。所有未知联系方式标注&#x27;未公开&#x27;，未做虚构。</p>
+<p>已剔除：Medtronic / DePuy Synthes (Johnson &amp; Johnson) / Stryker / Zimmer Biomet / Smith &amp; Nephew / B. Braun / Wright Medical — 均为外资跨国公司在印销售分支，非本土制造商；Ottobock Healthcare India / Endolite India (Blatchford Group) / Ossur India / Episurf India — 外资假肢矫形或植入物公司的印度分支，非本土；Richberg Healthcare Pvt Ltd — 为第三方/贴牌&#x27;骨科药品与支具&#x27;生产商，非自有骨科植入物制造；Orthosys India / Kalyan Orthotics and Prosthetics — 生产支具、绷带、假肢矫形器，非骨科植入物；Assure Enterprises — 名录登记地址/性质偏向贸易，未核实自有 implant 工厂，暂不纳入；Bharat Healthcare / Medi-terranean等仅名录出现、无法独立核实工厂的贸易性质条目 — 未纳入；各类 only-distributor / 单一SEO页面(如复制catalog的&#x27;one man company&#x27;) — 依Narang官方FAQ提示剔除</p>
+</div>
+</div>
+<script>
+(function(){var inp=document.getElementById('custSearch');var cnt=document.getElementById('custCount');var rows=[].slice.call(document.querySelectorAll('tbody tr'));function filter(){var q=(inp.value||'').trim().toLowerCase();var n=0;rows.forEach(function(tr){var hit=!q||tr.textContent.toLowerCase().indexOf(q)>-1;tr.style.display=hit?'':'none';if(hit)n++;});if(cnt)cnt.textContent='共 '+n+' 家';}if(inp)inp.addEventListener('input',filter);filter();})();
+</script>
+</body>
+</html>
