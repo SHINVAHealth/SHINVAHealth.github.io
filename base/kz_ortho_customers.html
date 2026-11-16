@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈萨克斯坦骨科植入物生产厂家名录</title>
+<style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Yu Gothic','Meiryo','Malgun Gothic','Noto Sans CJK SC',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
+        .container { max-width:1400px; margin:0 auto; padding:20px; }
+        .topbar { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+        .back { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#1a3a6b; border:1px solid #c9d4e3; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .back:hover { background:#eef3fb; text-decoration:none; }
+        h1 { text-align:center; color:#1a3a6b; font-size:24px; margin-bottom:5px; padding:14px 0 10px; border-bottom:3px solid #1a3a6b; }
+        .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:18px auto;}
+        .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+        .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+        .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display:flex; justify-content:center; gap:15px; margin-bottom:25px; flex-wrap:wrap; }
+        .stat-card { background:#fff; border-radius:8px; padding:12px 24px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; min-width:140px; }
+        .stat-card .num { font-size:28px; font-weight:700; color:#1a3a6b; }
+        .stat-card .label { font-size:12px; color:#888; }
+        .stat-card.total { border-top:3px solid #27ae60; }
+        .stat-card.total .num { color:#27ae60; }
+        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); font-size:13px; margin-bottom:20px; }
+        thead { background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%); color:#fff; }
+        th { padding:12px 10px; text-align:left; font-weight:600; font-size:12px; letter-spacing:0.5px; }
+        td { padding:10px 10px; border-bottom:1px solid #eee; vertical-align:top; line-height:1.55; }
+        tr:hover { background:#f8f9fb; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin:1px; }
+        a { color:#2c5aa0; text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .company-name { font-weight:600; color:#1a3a6b; line-height:1.4; }
+        .contact-info { font-size:12px; color:#555; }
+        .contact-info div { margin-bottom:2px; line-height:1.5; }
+        .muted { color:#aaa; }
+        .evidence { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; vertical-align:middle; }
+        .ev-A { background:#e6f7ed; color:#1a9850; }
+        .ev-B { background:#e8f0fe; color:#1f6feb; }
+        .ev-C { background:#fff4e0; color:#c77700; }
+        .footer { text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px; }
+        .footer p { margin-bottom:4px; }
+        .empty-box { max-width:760px; margin:40px auto; padding:40px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); text-align:center; }
+        .empty-box .big { font-size:44px; }
+        .empty-box h2 { color:#1a3a6b; font-size:20px; margin:12px 0; }
+        .empty-box p { color:#666; font-size:14px; margin-bottom:10px; line-height:1.8; }
+        .empty-box .note { background:#f5f7fa; border-left:4px solid #27ae60; padding:12px 16px; text-align:left; font-size:13px; color:#555; margin-top:18px; border-radius:6px; }
+        .badge-spine { background:#1f6feb; color:#fff; }
+        .badge-joint { background:#16a085; color:#fff; }
+        .badge-trauma { background:#2ecc71; color:#fff; }
+        .badge-sport { background:#f39c12; color:#fff; }
+        .badge-fix { background:#9b59b6; color:#fff; }
+        .badge-ortho2 { background:#3498db; color:#fff; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="topbar"><a class="back" href="../ortho_customers.html">← 返回国家选择</a></div>
+<h1>哈萨克斯坦骨科植入物生产厂家名录</h1>
+<div class="stats">
+<div class="stat-card total"><div class="num">1</div><div class="label">生产厂家总数</div></div>
+</div>
+<div class="searchbar"><input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 官网 / 方向…" autocomplete="off"><span class="search-count" id="custCount"></span></div>
+<table><thead><tr><th>#</th><th>公司名称</th><th>城市</th><th>联系方式 / 来源</th><th>官网</th><th>方向</th></tr></thead><tbody>
+<tr data-page-node-id="h1pOjHRPkjeBDjLXkNGJ5v">
+<td>1</td>
+<td class="company-name">Marai E7 Group LLP<span class="evidence ev-A">证据A</span></td>
+<td>Shymkent (希姆肯特)；另有 Shardara(S Turkestan州) 生产基地记载</td>
+<td class="contact-info"><div>📞 +7 (7252) 390055；+7 (700) 722 33 77；8 (701) 99-44-473 (Bubesh Dinmukhamed)</div><div>📧 info@marai.kz；d.bubesh@ecopharm.kz</div><div>📍 Республика Казахстан, г. Шымкент, Каратауский район, Жилой массив Тассай, строение 212（另一来源：Turkestan region, Shardara district, city of Shardara, Kazybek bi Str., 7）</div><div class="muted">来源：官网 marai.kz（含 /implanty-dlya-osteosinteza/ 产品页与 /contact-us/）；南哈萨克斯坦医科大学 skma.edu.kz 报道；QazMade 供应商页 qazmade.kz/en/suppliers/marai-e7-group；IndexBox 企业档案 app.indexbox.io/companies/profile/191124；didarbek.kz 报道；哈萨克斯坦制药生产商名录PDF</div><div class="muted">2012年成立的哈萨克斯坦本土医疗器械制造商（ECOPHARM集团旗下，采用韩国技术），自称&#x27;отечественный производитель&#x27;(国产制造商)。官网明确列有骨内固定(osteosynthesis)植入物：高品质钛合金皮质骨螺钉/松质骨螺钉、接骨板、髓内钉(股骨/胫骨/肱骨)，及配套手术器械；另生产聚氨酯骨科夹板/绷带、石膏绷带、无菌纱布。全部生产设施通过 ISO 13485 认证，具 CT-KZ 认证（本地化率约74%）。独立来源交叉印证：南哈萨克斯坦医科大学报道其生产&#x27;1000余种骨内固定植入物&#x27;，IndexBox 载明其生产 titanium screws, plates and intramedullary rods。生产规模：年产约50万绷带、27.4万件骨科制品。</div></td>
+<td><a href="https://marai.kz" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+</tbody></table>
+<div class="footer">
+<p>数据说明：本表仅列示本土骨科植入物 <b>生产厂家（MANUFACTURER）</b>，已严格剔除经销商、进口代理商、外资销售子公司、牙科种植体厂与纯耗材厂。每条附可核查来源，联系方式未公开项统一标注、零虚构。</p>
+<p>发现1家符合条件的本土骨科植入物生产厂家（Marai E7 Group，主要从事创伤接骨板/螺钉/髓内钉及外固定夹板生产）；除该公司外，市场整体以进口经销为主。</p>
+<p>已剔除：Kazecotech R&amp;D LLP — 与德国 Ottobock 合作生产假肢与矫形器(prosthetic/orthotic devices，含残奥队定制产品)，属外部假肢矫形器具，非骨内植入物；排除；purethcmedical.com / medicalur.com(Alur) / wexmedical.com(Changsha WEX) / medispirex-ortho.com / nipamedical.com 等 — 均为中国厂家针对哈萨克斯坦的 &#x27;/local/...kazakhstan/&#x27; 出口SEO落地页，非本土厂家；排除；KIHE 2023 展会目录中的 DOS ORTOPEDIA、BELMEDPREPARATY、BAI SHENG MEDICAL 等 — 为参展的跨国/外国厂商与本地代理商，非本土植入物制造商；排除</p>
+</div>
+</div>
+<script>
+(function(){var inp=document.getElementById('custSearch');var cnt=document.getElementById('custCount');var rows=[].slice.call(document.querySelectorAll('tbody tr'));function filter(){var q=(inp.value||'').trim().toLowerCase();var n=0;rows.forEach(function(tr){var hit=!q||tr.textContent.toLowerCase().indexOf(q)>-1;tr.style.display=hit?'':'none';if(hit)n++;});if(cnt)cnt.textContent='共 '+n+' 家';}if(inp)inp.addEventListener('input',filter);filter();})();
+</script>
+</body>
+</html>
