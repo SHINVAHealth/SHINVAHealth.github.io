@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
 <head>
 <script data-xh-gate>
 (function(){
@@ -11,247 +10,182 @@
   location.replace(prefix+'login.html?next='+encodeURIComponent(next));
 })();
 </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>骨科植入物厂家 · 索引页汇总</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Yu Gothic','Meiryo','Malgun Gothic','Leelawadee UI','Noto Sans CJK SC','Noto Sans Thai',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
-        .container { max-width:1500px; margin:0 auto; padding:20px; }
-        h1 { text-align:center; color:#1a3a6b; font-size:24px; margin-bottom:4px; padding:18px 0 10px; border-bottom:3px solid #1a3a6b; }
-        .sub { text-align:center; color:#6b7a90; font-size:13px; margin-bottom:14px; }
-        .searchbar { display:flex; align-items:center; gap:12px; max-width:760px; margin:0 auto 16px; }
-        .searchbar input { flex:1; padding:10px 14px; border:1px solid #c9d4e3; border-radius:8px; font-size:14px; outline:none; }
-        .searchbar input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.12); }
-        .search-count { font-size:13px; color:#666; white-space:nowrap; }
-        .stats { display:flex; justify-content:center; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
-        .stat-card { background:#fff; border-radius:8px; padding:10px 16px; box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center; min-width:78px; }
-        .stat-card .num { font-size:24px; font-weight:700; color:#1a3a6b; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骨科植入物厂家 · 选择国家</title>
+<style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Noto Sans CJK SC',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
+        .container { max-width:1200px; margin:0 auto; padding:20px; }
+        .topbar { display:flex; align-items:center; gap:14px; margin-bottom:8px; }
+        .back { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#1a3a6b; border:1px solid #c9d4e3; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .back:hover { background:#eef3fb; text-decoration:none; }
+        h1 { text-align:center; color:#1a3a6b; font-size:26px; margin:6px 0 4px; padding:16px 0 12px; border-bottom:3px solid #1a3a6b; }
+        .subtitle { text-align:center; color:#888; font-size:13px; margin-bottom:22px; }
+        .stats { display:flex; justify-content:center; gap:15px; margin-bottom:24px; flex-wrap:wrap; }
+        .stat-card { background:#fff; border-radius:8px; padding:12px 26px; box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center; min-width:150px; }
+        .stat-card .num { font-size:28px; font-weight:700; color:#1a3a6b; }
         .stat-card .label { font-size:12px; color:#888; }
         .stat-card.total { border-top:3px solid #27ae60; }
         .stat-card.total .num { color:#27ae60; }
-        .country-sec { margin-bottom:26px; }
-        .country-sec h2 { color:#1a3a6b; font-size:18px; border-left:5px solid #1a3a6b; padding:4px 0 4px 12px; margin-bottom:10px; }
-        .country-sec h2 .en { color:#9aa7b8; font-size:13px; font-weight:400; }
-        .country-sec h2 .cnt { display:inline-block; background:#1a3a6b; color:#fff; font-size:12px; border-radius:10px; padding:1px 9px; margin-left:6px; vertical-align:middle; }
-        .note-inline { color:#c0392b; font-size:12px; font-weight:400; }
-        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.1); font-size:13px; }
-        thead { background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%); color:#fff; }
-        th { padding:11px 10px; text-align:left; font-weight:600; font-size:12px; letter-spacing:.3px; }
-        td { padding:9px 10px; border-bottom:1px solid #eee; vertical-align:top; line-height:1.5; }
-        tr:hover { background:#f8f9fb; }
-        .company-name { font-weight:600; color:#1a3a6b; line-height:1.4; }
-        td.web a, td.src a { color:#2c5aa0; text-decoration:none; word-break:break-all; font-size:12px; }
-        td.web a:hover, td.src a:hover { text-decoration:underline; }
-        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; white-space:nowrap; }
-        .badge-ortho { background:#3498db; color:#fff; }
-        .badge-ortho-implant { background:#e74c3c; color:#fff; }
-        .badge-surgical { background:#2ecc71; color:#fff; }
-        .badge-electro { background:#f39c12; color:#fff; }
-        .badge-ot { background:#9b59b6; color:#fff; }
-        .badge-all { background:#c0392b; color:#fff; }
-        .footer { text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px; }
+        .searchbar { display:flex; align-items:center; gap:12px; max-width:640px; margin:0 auto 26px; }
+        .searchbar input { flex:1; padding:11px 16px; border:1px solid #c9d4e3; border-radius:8px; font-size:14px; outline:none; }
+        .searchbar input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+        .search-count { font-size:13px; color:#666; white-space:nowrap; }
+        .region { margin-bottom:30px; }
+        .region-title { color:#1a3a6b; font-size:17px; font-weight:700; margin-bottom:14px; padding-left:12px; border-left:4px solid #1a3a6b; display:flex; align-items:center; gap:8px; }
+        .region-title .cnt { font-size:12px; font-weight:500; color:#999; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; }
+        .country { display:flex; align-items:center; gap:12px; padding:14px 16px; background:#fff; border:1px solid #e3e9f0; border-radius:10px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,.05); transition:transform .15s,box-shadow .15s,border-color .15s; }
+        .country:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(26,58,107,.15); border-color:#2c5aa0; text-decoration:none; }
+        .country .flag { width:34px; height:24px; object-fit:cover; border-radius:3px; box-shadow:0 0 0 1px rgba(0,0,0,.08); flex-shrink:0; }
+        .country .meta { flex:1; min-width:0; }
+        .country .cn { font-size:15px; font-weight:700; color:#1a3a6b; }
+        .country .en { font-size:11px; color:#999; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .country .stat { font-size:12px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+        .stat.ok { background:#e6f7ed; color:#1a9850; }
+        .stat.empty { background:#f0f2f5; color:#98a2b3; }
+        .footer { text-align:center; margin-top:24px; padding:20px; color:#888; font-size:12px; border-top:1px solid #e3e9f0; }
         .footer p { margin-bottom:4px; }
-</style>
+    </style>
 </head>
 <body>
 <div class="container">
-    <h1>骨科植入物厂家</h1>
-    <div class="sub">索引页各国骨科植入物生产厂家与经销商汇总（已剔除骨钻 / 骨科设备 / 支具 / 电外科 / 买方等非植入物相关企业，按国家排列）</div>
-    <div class='stats'><div class='stat-card total'><div class='num'>123</div><div class='label'>骨科植入物合计</div></div><div class='stat-card'><div class='num'>15</div><div class='label'>孟加拉</div></div><div class='stat-card'><div class='num'>2</div><div class='label'>泰国</div></div><div class='stat-card'><div class='num'>64</div><div class='label'>越南</div></div><div class='stat-card'><div class='num'>2</div><div class='label'>印度</div></div><div class='stat-card'><div class='num'>5</div><div class='label'>日本</div></div><div class='stat-card'><div class='num'>2</div><div class='label'>韩国</div></div><div class='stat-card'><div class='num'>2</div><div class='label'>哈萨克斯坦</div></div><div class='stat-card'><div class='num'>1</div><div class='label'>乌兹别克斯坦</div></div><div class='stat-card'><div class='num'>30</div><div class='label'>俄罗斯</div></div></div>
-    <div class="searchbar">
-        <input id="orthoSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 国家 / 角色 / 方向 / 来源…" autocomplete="off">
-        <span class="search-count" id="orthoCount"></span>
-    </div>
-<section class='country-sec' id='sec-bd'>
-<h2>孟加拉 <span class='en'>/ Bangladesh</span> <span class='cnt'>15</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="骨科植入物与器械专业商 — 有骨科外科医生客户证言">2. OrthoMedical Bangladesh (OMB) 第三轮</td><td>—</td><td>—</td><td class='web'><a href="https://orthomedicalbd.com" target="_blank" rel="noopener">https://orthomedicalbd.com</a></td><td><span class='badge badge-ortho-implant'>骨科植入物/骨钻</span></td><td class='src'><a href="base/bangladesh_bone_all.html" target="_blank" rel="noopener">骨组织手术设备·汇总</a></td></tr>
-<tr><td>2</td><td class='company-name' title="骨科植入物及手术器械供应商 — 锁定钢板、髓内钉、螺钉、双极假体、器械套装">3. Tasnia Surgical 第二轮</td><td>—</td><td>—</td><td class='web'><a href="https://tasniasurgical.com" target="_blank" rel="noopener">https://tasniasurgical.com</a></td><td><span class='badge badge-ortho-implant'>骨科植入物/骨钻</span></td><td class='src'><a href="base/bangladesh_bone_all.html" target="_blank" rel="noopener">骨组织手术设备·汇总</a></td></tr>
-<tr><td>3</td><td class='company-name' title="骨科创伤植入物进口商 — 髋/膝/脊柱/颅颌面植入物、外固定器、关节镜、电刀">4. Medico Bangladesh Ltd. 第二轮</td><td>—</td><td>进口商</td><td class='web'><a href="https://www.medicobangladesh.com" target="_blank" rel="noopener">https://www.medicobangladesh.com</a></td><td><span class='badge badge-ortho-implant'>骨科植入物/骨钻</span></td><td class='src'><a href="base/bangladesh_bone_all.html" target="_blank" rel="noopener">骨组织手术设备·汇总</a></td></tr>
-<tr><td>4</td><td class='company-name' title="骨科植入物及器械制造商 — 骨板、骨螺钉、骨刀、牵开器、持骨钳">5. Sofia Surgicals 第二轮</td><td>—</td><td>—</td><td class='web'><a href="https://www.sofiaorthopedicimplant.com/bangladesh/" target="_blank" rel="noopener">https://www.sofiaorthopedicimplant.com/bangladesh/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物/骨钻</span></td><td class='src'><a href="base/bangladesh_bone_all.html" target="_blank" rel="noopener">骨组织手术设备·汇总</a></td></tr>
-<tr><td>5</td><td class='company-name' title="医疗器械进口商 — 骨科植入物、手术器械、医院用品">6. Medolux Health Care 第二轮</td><td>—</td><td>进口商</td><td class='web'><a href="https://medoluxbd.com" target="_blank" rel="noopener">https://medoluxbd.com</a></td><td><span class='badge badge-ortho-implant'>骨科植入物/骨钻</span></td><td class='src'><a href="base/bangladesh_bone_all.html" target="_blank" rel="noopener">骨组织手术设备·汇总</a></td></tr>
-<tr><td>6</td><td class='company-name' title="">Medico Bangladesh</td><td>—</td><td>—</td><td class='web'><a href="https://medicobangladesh.com/" target="_blank" rel="noopener">https://medicobangladesh.com/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物</span></td><td class='src'><a href="base/bangladesh_verified.html" target="_blank" rel="noopener">已核实经销商</a></td></tr>
-<tr><td>7</td><td class='company-name' title="">Medolux Health Care</td><td>—</td><td>—</td><td class='web'><a href="https://medoluxbd.com/" target="_blank" rel="noopener">https://medoluxbd.com/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物</span></td><td class='src'><a href="base/bangladesh_verified.html" target="_blank" rel="noopener">已核实经销商</a></td></tr>
-<tr><td>8</td><td class='company-name' title="">Tasnia Surgical</td><td>—</td><td>—</td><td class='web'><a href="https://tasniasurgical.com/" target="_blank" rel="noopener">https://tasniasurgical.com/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物</span></td><td class='src'><a href="base/bangladesh_verified.html" target="_blank" rel="noopener">已核实经销商</a></td></tr>
-<tr><td>9</td><td class='company-name' title="">Global Meditech Limited</td><td>—</td><td>—</td><td class='web'><a href="https://gmt-bd.com/" target="_blank" rel="noopener">https://gmt-bd.com/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物</span></td><td class='src'><a href="base/bangladesh_verified.html" target="_blank" rel="noopener">已核实经销商</a></td></tr>
-<tr><td>10</td><td class='company-name' title="">Marjan International (MIPL)</td><td>—</td><td>—</td><td class='web'><a href="https://mipl.com.bd/" target="_blank" rel="noopener">https://mipl.com.bd/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物</span></td><td class='src'><a href="base/bangladesh_verified.html" target="_blank" rel="noopener">已核实经销商</a></td></tr>
-<tr><td>11</td><td class='company-name' title="">Banposac Orthopadeic Ind. Ltd</td><td>—</td><td>—</td><td class='web'><a href="https://banposac.com/" target="_blank" rel="noopener">https://banposac.com/</a></td><td><span class='badge badge-ortho-implant'>骨科植入物</span></td><td class='src'><a href="base/bangladesh_verified.html" target="_blank" rel="noopener">已核实经销商</a></td></tr>
-<tr><td>12</td><td class='company-name' title="高频电刀  国产北京金恒威外贸款、骨科植入物与无源手术器械">33. Marjan International (MIPL)</td><td>—</td><td>—</td><td class='web'><a href="https://mipl.com.bd/product-category/medical-supply/equipment/electrosurgical-unit/" target="_blank" rel="noopener">https://mipl.com.bd/product-category/medical-supply/equipment/electrosurgical-unit/</a></td><td><span class='badge badge-ortho'>骨科</span></td><td class='src'><a href="base/existing_customers.html" target="_blank" rel="noopener">经销商总表</a></td></tr>
-<tr><td>13</td><td class='company-name' title="主营印度、美国和土耳其的各类骨科植入物、器械以及电动钻头">21. OrthoMedical Bangladesh</td><td>—</td><td>—</td><td class='web'><a href="https://orthomedicalbd.com/orthopedic/" target="_blank" rel="noopener">https://orthomedicalbd.com/orthopedic/</a></td><td><span class='badge badge-ortho'>骨科</span></td><td class='src'><a href="base/existing_customers.html" target="_blank" rel="noopener">经销商总表</a></td></tr>
-<tr><td>14</td><td class='company-name' title="主营骨科植入物与无源手术器械">22. Tasnia Surgical</td><td>—</td><td>—</td><td class='web'><a href="https://tasniasurgical.com/products" target="_blank" rel="noopener">https://tasniasurgical.com/products</a></td><td><span class='badge badge-ortho'>骨科</span></td><td class='src'><a href="base/existing_customers.html" target="_blank" rel="noopener">经销商总表</a></td></tr>
-<tr><td>15</td><td class='company-name' title="骨科动力系统  印度GPC Medical BTD 系列、骨科植入物以及无源手术器械">30. Global Meditech Ltd</td><td>—</td><td>—</td><td class='web'><a href="https://gmt-bd.com/bone-drills-&amp;amp;-twist-drills.php" target="_blank" rel="noopener">https://gmt-bd.com/bone-drills-&amp;amp;-twist-drills.php</a></td><td><span class='badge badge-ortho'>骨科</span></td><td class='src'><a href="base/existing_customers.html" target="_blank" rel="noopener">经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-th'>
-<h2>泰国 <span class='en'>/ Thailand</span> <span class='cnt'>2</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">MDC (Thailand) Co., Ltd.</td><td>Bangkok</td><td>+66 2 735 3481</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/thailand_customers.html" target="_blank" rel="noopener">泰国经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="">PAMS Medical Co., Ltd.</td><td>Bangkok</td><td>+66 2 102 3640</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/thailand_customers.html" target="_blank" rel="noopener">泰国经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-vn'>
-<h2>越南 <span class='en'>/ Vietnam</span> <span class='cnt'>64</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">2A Medical Equipment Co., Ltd (2A MEDICAL EQUIPMENT COMPANY LIMITED)</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="">A &amp; I Vietnam Medical Equipment Co., Ltd</td><td>Ba Ria - Vung Tau</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>3</td><td class='company-name' title="">An Binh Medical Equipment Investment &amp; Development Co., Ltd (AN BINH MEDICAL EQUIPMENT INVESTMENT AND DEVELOPMENT COMPANY LIMITED)</td><td>Kien Giang</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>4</td><td class='company-name' title="">An Phat Medical Equipment Co., Ltd</td><td>Nam Dinh</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>5</td><td class='company-name' title="">Anh Em Investment Development Joint Stock Company</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>6</td><td class='company-name' title="">B.M.S Medical Equipment Co., Ltd (B.M.S MEDICAL EQUIPMENT COMPANY LIMITED)</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>7</td><td class='company-name' title="">Branch of Schmidt VietNam (NTNN) JSC</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>8</td><td class='company-name' title="">Cao Minh Medical Equipment Service Trading Co., Ltd (CAO MINH MEDICAL EQUIPMENT SERVICE TRADING COMPANY LIMITED)</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>9</td><td class='company-name' title="">Carnation Medical Equipment And Trading JSC</td><td>Hanoi</td><td>+84 4 3 576 3223</td><td class='web'><a href="https://www.carnation.com.vn" target="_blank" rel="noopener">https://www.carnation.com.vn</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>10</td><td class='company-name' title="">CÔNG TY CỔ PHẦN TRANG THIẾT BỊ Y TẾ ĐẠI DƯƠNG (Dai Duong Medical Equipment JSC)</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>11</td><td class='company-name' title="">DKSH Vietnam (DKSH Healthcare Vietnam)</td><td>Ho Chi Minh City</td><td>+84 28 3910 5555</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>12</td><td class='company-name' title="">DONG KUK Viet Nam Co., Ltd</td><td>Phu Tho</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>13</td><td class='company-name' title="">Dong Duong Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>14</td><td class='company-name' title="">Dong Loi Medical Equipment Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>15</td><td class='company-name' title="">Duc Hai Medical Co., Ltd</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>16</td><td class='company-name' title="">Duc Minh Long Trade Co., Ltd (Duc Minh Long Trade Company Limited)</td><td>Ho Chi Minh City</td><td>+84 28 36205008</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>17</td><td class='company-name' title="">Duong Sinh Medical Equipment JSC (DUONG SINH MEDICAL EQUIPMENT COMPANY JOINT STOCK)</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://www.donsinmed.com" target="_blank" rel="noopener">https://www.donsinmed.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>18</td><td class='company-name' title="">Duy Anh Trading Pharmacy Co., Ltd (CÔNG TY TNHH THƯƠNG MẠI DƯỢC PHẨM DUY ANH)</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>19</td><td class='company-name' title="">Forte Grow Medical (Vietnam) Co., Ltd</td><td>Binh Duong</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>20</td><td class='company-name' title="">Gia Khanh Hung Co., Ltd</td><td>Ho Chi Minh City</td><td>—</td><td class='web'><a href="https://khanhhungitc.com" target="_blank" rel="noopener">https://khanhhungitc.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>21</td><td class='company-name' title="">Greencare Technology Development JSC</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://greencare.vn" target="_blank" rel="noopener">https://greencare.vn</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>22</td><td class='company-name' title="">HAI AU MEDTECH JSC</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://haiaumedical.com/home.html" target="_blank" rel="noopener">https://haiaumedical.com/home.html</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>23</td><td class='company-name' title="">Hai Thuc Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>24</td><td class='company-name' title="">Hameco Hung Yen Co., Ltd</td><td>Hung Yen</td><td>—</td><td class='web'><a href="https://orbevn.com" target="_blank" rel="noopener">https://orbevn.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>25</td><td class='company-name' title="">Hao Nam Medical Equipment Service Trading Co., Ltd (CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ HÀO NAM)</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>26</td><td class='company-name' title="">Ho Chi Minh City Medical Technical Services JSC</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>27</td><td class='company-name' title="">Hoa Binh Medical Equipment Co., Ltd</td><td>Hung Yen</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>28</td><td class='company-name' title="">Hoang Loc M.E Medical Equipment Co., Ltd (HOANG LOC M.E MEDICAL EQUIPMENT COMPANY LIMITED)</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>29</td><td class='company-name' title="">Hong Ha Co-operative</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>30</td><td class='company-name' title="">Hong Ha Medical Equipment Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>31</td><td class='company-name' title="">IMI Medical (International Medical Commerce &amp; Investment JSC)</td><td>Hanoi</td><td>+84 24 38 26 36 46</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>32</td><td class='company-name' title="">Ka Chi Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>33</td><td class='company-name' title="">Khai Ca Co., Ltd (KHAI CA COMPANY LIMITED)</td><td>未公开</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>34</td><td class='company-name' title="">Khang Nguyen Medical Equipment JSC</td><td>Lang Son</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>35</td><td class='company-name' title="">Kien Cuong Medical Equipment Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>36</td><td class='company-name' title="">Lagi Medical Equipment Corporation</td><td>Ho Chi Minh City</td><td>—</td><td class='web'><a href="https://lagimed.com" target="_blank" rel="noopener">https://lagimed.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>37</td><td class='company-name' title="">Le Loi Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>38</td><td class='company-name' title="">Lien Nha Co., Ltd</td><td>Ho Chi Minh City</td><td>+84 28 38632570</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>39</td><td class='company-name' title="">MEDENT Medical Equipment Co., Ltd (CÔNG TY TNHH THIẾT BỊ Y TẾ MEDENT)</td><td>Ho Chi Minh City</td><td>+84 28 3849 4060</td><td class='web'><a href="https://medent.vn/?p=13634" target="_blank" rel="noopener">https://medent.vn/?p=13634</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>40</td><td class='company-name' title="">Medical Tools Co., Ltd</td><td>Long An</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>41</td><td class='company-name' title="">Medikit Vietnam Co., Ltd</td><td>Hai Phong</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>42</td><td class='company-name' title="">Mediplast Medical Plastic JSC</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>43</td><td class='company-name' title="">Nam Tien Thanh Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://tntmedical.com.vn" target="_blank" rel="noopener">https://tntmedical.com.vn</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>44</td><td class='company-name' title="">OMIGA Co., Ltd</td><td>Hung Yen</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>45</td><td class='company-name' title="">PMAS Co., Ltd</td><td>Binh Duong</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>46</td><td class='company-name' title="">PVAGROUP (PVA Group JSC)</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://pvagroup.com.vn/en/orthopedic/" target="_blank" rel="noopener">https://pvagroup.com.vn/en/orthopedic/</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>47</td><td class='company-name' title="">Pha Na Corporation</td><td>Long An</td><td>—</td><td class='web'><a href="https://phana.com.vn" target="_blank" rel="noopener">https://phana.com.vn</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>48</td><td class='company-name' title="">Phu Ngo Nguyen Co., Ltd (PHU NGO NGUYEN COMPANY LIMITED)</td><td>Da Nang</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>49</td><td class='company-name' title="">Phuc Dai Hung Co., Ltd</td><td>Quang Ninh</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>50</td><td class='company-name' title="">REMINGTON SROUFE INTERNATIONAL Co., Ltd</td><td>Binh Duong</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>51</td><td class='company-name' title="">Sun Medical Viet Nam Trading International Co., Ltd.</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>52</td><td class='company-name' title="">TRIDENTA Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>53</td><td class='company-name' title="">TVT Medical Equipment Co., Ltd (TVT MEDICAL EQUIPMENT COMPANY LIMITED)</td><td>未公开</td><td>—</td><td class='web'><a href="https://www.tvtmedical.com" target="_blank" rel="noopener">https://www.tvtmedical.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>54</td><td class='company-name' title="">Tan Son Trading And Production Co., Ltd</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>55</td><td class='company-name' title="">Thien My Technology Services And Equipment Co., Ltd</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>56</td><td class='company-name' title="">Tin Nha Co., Ltd (Viet Nha Medical Equipment Co., Ltd / Vident)</td><td>Ho Chi Minh City</td><td>+84 28 35151012</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>57</td><td class='company-name' title="">Trang Dong Duong Medical Equipment Co., Ltd</td><td>Ho Chi Minh City</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>58</td><td class='company-name' title="">Trang Thi Medical JSC</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://trangthimedical.com.vn/" target="_blank" rel="noopener">https://trangthimedical.com.vn/</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>59</td><td class='company-name' title="">Trang Thien Long Medical Equipment</td><td>Ho Chi Minh City</td><td>—</td><td class='web'><a href="https://thietbiytethienlong.com" target="_blank" rel="noopener">https://thietbiytethienlong.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>60</td><td class='company-name' title="">Tuan Viet Trading And Production Co., Ltd</td><td>Hanoi</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>61</td><td class='company-name' title="">Vat Tu Y Te Vinh Phuc (Vinh Phuc Medical)</td><td>Vinh Phuc</td><td>—</td><td class='web'><a href="https://www.thietbiytevp.com" target="_blank" rel="noopener">https://www.thietbiytevp.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>62</td><td class='company-name' title="">Viet Nam - Korea Medical Corporation</td><td>Hanoi</td><td>—</td><td class='web'><a href="https://vikomed.vn" target="_blank" rel="noopener">https://vikomed.vn</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>63</td><td class='company-name' title="">VietNam AIECO Co., Ltd</td><td>Da Nang</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-<tr><td>64</td><td class='company-name' title="">idsMED Vietnam (IDS Medical Systems Vietnam Ltd.)</td><td>Ho Chi Minh City</td><td>+84 28 3830 3072</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/vietnam_customers.html" target="_blank" rel="noopener">越南经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-in'>
-<h2>印度 <span class='en'>/ India</span> <span class='cnt'>2</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">SYS Medtech International Pvt. Ltd.</td><td>Mumbai</td><td>+91 22 24111187</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/india_customers.html" target="_blank" rel="noopener">印度经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="">Shakti Orthopaedic Industries (P) Ltd.</td><td>New Delhi</td><td>+91 9811120348</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/india_customers.html" target="_blank" rel="noopener">印度经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-jp'>
-<h2>日本 <span class='en'>/ Japan</span> <span class='cnt'>5</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">Nikkou Medical Instruments Co., Ltd.（日光医科器械株式会社）</td><td>Osaka / Nara</td><td>06-6718-5622</td><td class='web'><a href="https://www.kawanishi-md.co.jp/group_hd/group/nikkou_01.php" target="_blank" rel="noopener">https://www.kawanishi-md.co.jp/group_hd/group/nikkou_01.php</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/japan_customers.html" target="_blank" rel="noopener">日本经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="">OLBA HEALTHCARE HOLDINGS, Inc.（オルバヘルスケアホールディングス株式会社）</td><td>Tokyo</td><td>086-236-1112</td><td class='web'><a href="https://olba.co.jp" target="_blank" rel="noopener">https://olba.co.jp</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/japan_customers.html" target="_blank" rel="noopener">日本经销商总表</a></td></tr>
-<tr><td>3</td><td class='company-name' title="">Ortho Edge Japan Co., Ltd.（オルソエッジジャパン株式会社）</td><td>Tokyo (Chuo-ku)</td><td>—</td><td class='web'><a href="https://orthoedgejapan.com/" target="_blank" rel="noopener">https://orthoedgejapan.com/</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/japan_customers.html" target="_blank" rel="noopener">日本经销商总表</a></td></tr>
-<tr><td>4</td><td class='company-name' title="">Yamamura Medical Instruments Co., Ltd.（株式会社山村医科器械）</td><td>Kyoto (Sakyo-ku)</td><td>—</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/japan_customers.html" target="_blank" rel="noopener">日本经销商总表</a></td></tr>
-<tr><td>5</td><td class='company-name' title="">Yayoi Co., Ltd.（株式会社やよい）</td><td>未公开</td><td>079-224-5151</td><td class='web'><a href="http://www.kk-yayoi.co.jp" target="_blank" rel="noopener">http://www.kk-yayoi.co.jp</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/japan_customers.html" target="_blank" rel="noopener">日本经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-kr'>
-<h2>韩国 <span class='en'>/ South Korea</span> <span class='cnt'>2</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">DynaMedic Co., Ltd.（다이나메딕）</td><td>Cheongju, Chungcheongbuk-do</td><td>043-904-7531</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/korea_customers.html" target="_blank" rel="noopener">韩国经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="">IMEDICOM Co., Ltd.（아이메디컴）</td><td>Gunpo-si, Gyeonggi-do</td><td>+82 31 479 1156</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/korea_customers.html" target="_blank" rel="noopener">韩国经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-kz'>
-<h2>哈萨克斯坦 <span class='en'>/ Kazakhstan</span> <span class='cnt'>2</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">MC Med-Continent KZ (ТОО)</td><td>Almaty</td><td>+7 727 221 85 11</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/kz_customers.html" target="_blank" rel="noopener">哈萨克斯坦经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="">ASPASIA LTD LLP (АСПАСИЯ)</td><td>Almaty</td><td>+7 727 394 72 12</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/kz_customers.html" target="_blank" rel="noopener">哈萨克斯坦经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-uz'>
-<h2>乌兹别克斯坦 <span class='en'>/ Uzbekistan</span> <span class='cnt'>1</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="">XPmed</td><td>Tashkent</td><td>—</td><td class='web'><a href="https://xpmed.uz/about-us" target="_blank" rel="noopener">https://xpmed.uz/about-us</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/uz_customers.html" target="_blank" rel="noopener">乌兹别克斯坦经销商总表</a></td></tr>
-</tbody></table></section>
-<section class='country-sec' id='sec-ru'>
-<h2>俄罗斯 <span class='en'>/ Russia</span> <span class='cnt'>30</span></h2>
-<table><thead><tr><th style='width:34px'>#</th><th style='width:260px'>公司名称</th><th style='width:120px'>城市</th><th style='width:170px'>角色 / 电话</th><th style='width:210px'>官网</th><th style='width:130px'>方向</th><th style='width:150px'>来源文件</th></tr></thead>
-<tbody><tr><td>1</td><td class='company-name' title="Analitica M is an innovative medical devices distributor. Our portfolio includes robotics for arthroplasty and rehabilitation, weight-bearing CT, automated uroflowmetery devices an">ANALITICA M</td><td>Moscow</td><td>经销商·进口商</td><td class='web'><a href="http://www.analitika-m.ru" target="_blank" rel="noopener">http://www.analitika-m.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>2</td><td class='company-name' title="Novosibirsk, since 2007; official importer &amp; distributor of MicroPort Orthopedics implants for endoprosthesis &amp; reconstructive joint/bone surgery across Russia.">Current Medical Technology / GK CMT (СКТ)</td><td>Novosibirsk</td><td>经销商·进口商</td><td class='web'><a href="https://gc-cmt.ru/" target="_blank" rel="noopener">https://gc-cmt.ru/</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>3</td><td class='company-name' title="Official Russian representative of RZ-Medizintechnik (endoscopy, traumatology, orthopedics), Koenigsee Implantate (osteosynthesis implants &amp; instruments), SBM (bone biomaterials), ">ENDOMEDPROEKT, LLC (Эндомедпроект)</td><td>Moscow</td><td>经销商·进口商</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>4</td><td class='company-name' title="Supplies and comprehensive service of equipment for radiation diagnostics from any manufacturer, and rehabilitation. Exclusive distributor of SUMSUNG, DRTECH, SRI, Perfint in Russi">McBrothers</td><td>Saint Petersburg</td><td>经销商·进口商</td><td class='web'><a href="https://swissspinesolution.ru" target="_blank" rel="noopener">https://swissspinesolution.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>5</td><td class='company-name' title="Nationwide Russian distributor since 2006 of implants/materials for osteosynthesis and endoprosthesis (trauma &amp; joint replacement); European &amp; US manufacturers.">MedAlliance (МедАльянс)</td><td>Moscow</td><td>经销商·进口商</td><td class='web'><a href="http://medaliance.com/" target="_blank" rel="noopener">http://medaliance.com/</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>6</td><td class='company-name' title="手术设备与手术室整体方案（含骨科相关外科设备），圣彼得堡+莫斯科双总部，覆盖全国医院">Medical Union 医疗联盟（Медицинский Союз (Med-SZ)）</td><td>Санкт-Петербург / Москва</td><td>经销商·进口商</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>7</td><td class='company-name' title="The exclusive representative of Neurosoft LLC in Moscow and the Moscow region, the Republic of Tatarstan and the Republic of Bashkortostan, and the representative in the Republic o">MOSNEURO LLC</td><td>Moscow</td><td>经销商·进口商</td><td class='web'><a href="http://www.mosnerv.ru" target="_blank" rel="noopener">http://www.mosnerv.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>8</td><td class='company-name' title="Authorized representative of ZZYLLS (China) — manufacturer of advanced surgical instruments for trauma and orthopedic treatment — in Russia.">PRIDE MED SERVICE (ZZYLLS 俄授权)</td><td>Saint Petersburg</td><td>经销商·进口商</td><td class='web'>—</td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>9</td><td class='company-name' title="TRIOMED is the official representative of medical equipment manufacturers: — Victor Medical surgical staplers, — Chun Li endoprostheses of joints, — EON Meditech accessories for EN">TRIOMED LLC</td><td>Perm</td><td>经销商·进口商</td><td class='web'><a href="http://www.triomed.pro" target="_blank" rel="noopener">http://www.triomed.pro</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>10</td><td class='company-name' title="BTL is a global leader in the development and manufacture of medical and aesthetic equipment.">BTL</td><td>Moscow</td><td>厂商</td><td class='web'><a href="http://www.btlnet.com" target="_blank" rel="noopener">http://www.btlnet.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>11</td><td class='company-name' title="Supply of equipment for transport intensive care for emergency services and ambulances. Manufacture of the Эlmedic medical first aid cases. Video laryngoscopes. Surgical and diagno">ELMEDICA（EL MEDICAL, LLC）</td><td>Moscow</td><td>厂商</td><td class='web'><a href="http://www.elmedica.ru" target="_blank" rel="noopener">http://www.elmedica.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>12</td><td class='company-name' title="Russian manufacturer. Creating innovative compression products, listening to the opinion of doctors and patients. We&#x27;ve been taking care of public health since 1997. Join us up @tm">INTERTEKSTIL corp. LLC</td><td>Moscow</td><td>厂商</td><td class='web'><a href="http://www.bint.ru" target="_blank" rel="noopener">http://www.bint.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>13</td><td class='company-name' title="MedMos is a Russian manufacturer and leading supplier of high-tech medical equipment, a resident of the Dubna Special Economic Zone since 2025. For 19 years, we have been creating ">MEDMOS</td><td>Moscow</td><td>厂商</td><td class='web'><a href="http://www.med-mos.ru" target="_blank" rel="noopener">http://www.med-mos.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>14</td><td class='company-name' title="A Russian manufacturer of medical mattresses, medical bedding, medical clothing. The products are certified, has a conclusion from the Ministry of Industry and Trade (Minpromtorg),">SGMedical LTD</td><td>Moscow</td><td>厂商</td><td class='web'><a href="http://www.sgmedical.ru" target="_blank" rel="noopener">http://www.sgmedical.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>15</td><td class='company-name' title="Production of medical devices for traumatology and surgery, including ALFACAST orthopedic polymer bandages, ALFACAST SOFT, ALFASPLINT polymer splints, and ALFAINCISE incision film.">ALFACHEM LTD</td><td>Krasnoyarsk</td><td>参展商</td><td class='web'><a href="http://www.alfachem.su" target="_blank" rel="noopener">http://www.alfachem.su</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>16</td><td class='company-name' title="Development and production of high-tech X-ray diagnostic equipment, surgical navigation systems, robotic skeletons for rehabilitation.">ALMAZ-ANTEY CORP. JSC</td><td>Moscow</td><td>参展商</td><td class='web'><a href="http://www.almaz-antey.ru" target="_blank" rel="noopener">http://www.almaz-antey.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>17</td><td class='company-name' title="Anas Ltd has been supplying medical and dental units to the Russian market since 2000. We offer high quality certified products and services of our own service center.">ANAS MEDICAL</td><td>Moscow</td><td>参展商</td><td class='web'><a href="https://anas.ru" target="_blank" rel="noopener">https://anas.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>18</td><td class='company-name' title="The company is working on the development and production of polyvinylidene fluoride filament, which allows creating individual and serial implants used in reconstructive surgery.">BIOIMPLAST</td><td>Moscow</td><td>参展商</td><td class='web'><a href="http://www.bioimplast.com" target="_blank" rel="noopener">http://www.bioimplast.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>19</td><td class='company-name' title="Cliff Medical provides comprehensive support for medical device registration in Russia. Your reliable partner on the path to obtaining the Registration Certificate!">CLIFF MEDICAL</td><td>Moscow</td><td>参展商</td><td class='web'><a href="https://cliffmedical.com" target="_blank" rel="noopener">https://cliffmedical.com</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>20</td><td class='company-name' title="5 companies of Tatarstan are listed: — ARFEN OSNO LLC, www.arfen.ru, — NPF MEDKOM LLC, +7 (843) 537-10-46, — PO FOTON FLY LLC, www.fotonfly.ru, — VIPSON LLC +7 (843) 212-51-27, — E">EXPORT SUPPORT CENTER OF THE REPUBLIC OF TATARSTAN</td><td>Kazan</td><td>参展商</td><td class='web'><a href="https://export-rt.ru" target="_blank" rel="noopener">https://export-rt.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>21</td><td class='company-name' title="Fakel MKB JSC presents own-produced 5-axis CNC machines for the production of high-precision dental prosthetics and implants at the exhibition. Reliable solutions for modern dentis">FAKEL MKB JSC</td><td>Khimki</td><td>参展商</td><td class='web'><a href="https://www.mkbfakel.ru" target="_blank" rel="noopener">https://www.mkbfakel.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>22</td><td class='company-name' title="KARIPAIN NPK specializes in the development and production of enzyme preparations used for the restoration of the spine and joints, as well as for the elimination and reduction of ">KARIPAIN NPK</td><td>Podolsk</td><td>参展商 · 8 800 550-9900</td><td class='web'><a href="https://karipain.ru" target="_blank" rel="noopener">https://karipain.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>23</td><td class='company-name' title="Wholesale of medical equipment for the operating room and diagnostic equipment.">MEDBUSINESSERVICE LTD</td><td>Moscow</td><td>参展商</td><td class='web'><a href="http://www.rusmbs.ru" target="_blank" rel="noopener">http://www.rusmbs.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>24</td><td class='company-name' title="Medical Industrial Consortium is a system of public-private partnership that promotes the development of the domestically produced high-tech medical equipment.">MEDICAL INDUSTRIAL CONSORTIUM</td><td>Moscow</td><td>参展商 · 8 800 777-8238</td><td class='web'><a href="http://www.anokmt.ru" target="_blank" rel="noopener">http://www.anokmt.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>25</td><td class='company-name' title="Since 2003, the UMETEX Group of Companies has been providing state-of-the-art equipment and supplies to public and private medical organizations.">MEDICAL TECHNIQUE PLUS</td><td>Moscow</td><td>参展商</td><td class='web'><a href="https://umetex.com/ru/" target="_blank" rel="noopener">https://umetex.com/ru/</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>26</td><td class='company-name' title="Medin-N LLC is a Russian leading company in the production of surgical suture materials. It offers a full range of atraumatic surgical needles and threads for all types of surgery.">MEDIN-N LTD</td><td>Ekaterinburg</td><td>参展商</td><td class='web'><a href="http://www.medin-n.ru" target="_blank" rel="noopener">http://www.medin-n.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>27</td><td class='company-name' title="Licensing for medical clinics, registration of medical devices under the national and EAEU systems, registration and protection of intellectual property, legal support for clinic a">MOSREGISTRATOR</td><td>Moscow</td><td>参展商</td><td class='web'><a href="https://bigpravo.ru" target="_blank" rel="noopener">https://bigpravo.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>28</td><td class='company-name' title="Our company&#x27;s mission is to create conditions for the full integration of people with limited mobility into public and urban life. The best equipment from Europe! RehaTehnik — we m">RehaTehnik</td><td>Moscow</td><td>参展商</td><td class='web'><a href="http://www.reha-teh.ru" target="_blank" rel="noopener">http://www.reha-teh.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>29</td><td class='company-name' title="Russian manufacturer of orthopedic and trauma implants, bone fixation, surgical instruments.">ChM 创伤骨科（ChM / Конмет (ЧМ)）</td><td>Moscow</td><td>厂商（创伤骨科）</td><td class='web'><a href="https://chm.ru" target="_blank" rel="noopener">https://chm.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-<tr><td>30</td><td class='company-name' title="Russian manufacturer of orthopedic implants, trauma and osteosynthesis products, surgical instruments.">Osteomed（Остеомед (Osteomed)）</td><td>Moscow</td><td>厂商（骨科植入与动力）</td><td class='web'><a href="https://osteomed.ru" target="_blank" rel="noopener">https://osteomed.ru</a></td><td><span class='badge badge-surgical'>骨科·创伤器械</span></td><td class='src'><a href="base/russia_customers.html" target="_blank" rel="noopener">俄罗斯经销商总表</a></td></tr>
-</tbody></table></section>
-
-    <div class="footer">
-        <p>📌 骨科植入物厂家名单 · 共 123 家（跨文件已去重，仅保留骨科植入物厂家 / 经销商）</p>
-        <p>数据来源：索引页各国客户文件（经销商总表 / 已核实经销商 / 骨组织手术设备汇总）；点击「来源文件」可跳转原始页面核查。</p>
-    </div>
+<div class="topbar"><a class="back" href="index.html">← 返回索引页</a></div>
+<h1>🦴 骨科植入物厂家</h1>
+<div class="subtitle">选择国家 / 地区，查看该国本土骨科植入物<b>生产厂家</b>名录（仅生产厂家，已剔除经销商与分销商）</div>
+<div class="stats">
+<div class="stat-card total"><div class="num">19</div><div class="label">可查询国家/地区</div></div>
+<div class="stat-card"><div class="num">214</div><div class="label">已收录生产厂家</div></div>
+<div class="stat-card"><div class="num">19</div><div class="label">已建独立名录</div></div>
+</div>
+<div class="searchbar"><input id="custSearch" type="text" placeholder="🔍 搜索国家（中文 / 英文）…" autocomplete="off"><span class="search-count" id="custCount"></span></div>
+<div class="region" data-region="亚洲">
+<div class="region-title">亚洲 <span class="cnt">(11)</span></div>
+<div class="grid">
+<a class="country" href="./base/bd_ortho_customers.html" data-key="孟加拉 bangladesh">
+<img class="flag" src="https://flagcdn.com/w40/bd.png" srcset="https://flagcdn.com/w80/bd.png 2x" alt="孟加拉" loading="lazy">
+<div class="meta"><div class="cn">孟加拉</div><div class="en">Bangladesh</div></div>
+<span class="stat empty">暂无符合条件厂家</span>
+</a>
+<a class="country" href="./base/th_ortho_customers.html" data-key="泰国 thailand">
+<img class="flag" src="https://flagcdn.com/w40/th.png" srcset="https://flagcdn.com/w80/th.png 2x" alt="泰国" loading="lazy">
+<div class="meta"><div class="cn">泰国</div><div class="en">Thailand</div></div>
+<span class="stat ok">3 家生产厂家</span>
+</a>
+<a class="country" href="./base/vn_ortho_customers.html" data-key="越南 vietnam">
+<img class="flag" src="https://flagcdn.com/w40/vn.png" srcset="https://flagcdn.com/w80/vn.png 2x" alt="越南" loading="lazy">
+<div class="meta"><div class="cn">越南</div><div class="en">Vietnam</div></div>
+<span class="stat ok">1 家生产厂家</span>
+</a>
+<a class="country" href="./base/in_ortho_customers.html" data-key="印度 india">
+<img class="flag" src="https://flagcdn.com/w40/in.png" srcset="https://flagcdn.com/w80/in.png 2x" alt="印度" loading="lazy">
+<div class="meta"><div class="cn">印度</div><div class="en">India</div></div>
+<span class="stat ok">30 家生产厂家</span>
+</a>
+<a class="country" href="./base/la_ortho_customers.html" data-key="老挝 laos">
+<img class="flag" src="https://flagcdn.com/w40/la.png" srcset="https://flagcdn.com/w80/la.png 2x" alt="老挝" loading="lazy">
+<div class="meta"><div class="cn">老挝</div><div class="en">Laos</div></div>
+<span class="stat empty">暂无符合条件厂家</span>
+</a>
+<a class="country" href="./base/japan_ortho_customers.html" data-key="日本 japan">
+<img class="flag" src="https://flagcdn.com/w40/jp.png" srcset="https://flagcdn.com/w80/jp.png 2x" alt="日本" loading="lazy">
+<div class="meta"><div class="cn">日本</div><div class="en">Japan</div></div>
+<span class="stat ok">27 家生产厂家</span>
+</a>
+<a class="country" href="./base/korea_ortho_customers.html" data-key="韩国 south korea">
+<img class="flag" src="https://flagcdn.com/w40/kr.png" srcset="https://flagcdn.com/w80/kr.png 2x" alt="韩国" loading="lazy">
+<div class="meta"><div class="cn">韩国</div><div class="en">South Korea</div></div>
+<span class="stat ok">32 家生产厂家</span>
+</a>
+<a class="country" href="./base/kz_ortho_customers.html" data-key="哈萨克斯坦 kazakhstan">
+<img class="flag" src="https://flagcdn.com/w40/kz.png" srcset="https://flagcdn.com/w80/kz.png 2x" alt="哈萨克斯坦" loading="lazy">
+<div class="meta"><div class="cn">哈萨克斯坦</div><div class="en">Kazakhstan</div></div>
+<span class="stat ok">1 家生产厂家</span>
+</a>
+<a class="country" href="./base/uz_ortho_customers.html" data-key="乌兹别克斯坦 uzbekistan">
+<img class="flag" src="https://flagcdn.com/w40/uz.png" srcset="https://flagcdn.com/w80/uz.png 2x" alt="乌兹别克斯坦" loading="lazy">
+<div class="meta"><div class="cn">乌兹别克斯坦</div><div class="en">Uzbekistan</div></div>
+<span class="stat empty">暂无符合条件厂家</span>
+</a>
+<a class="country" href="./base/turkey_customers.html" data-key="土耳其 turkey">
+<img class="flag" src="https://flagcdn.com/w40/tr.png" srcset="https://flagcdn.com/w80/tr.png 2x" alt="土耳其" loading="lazy">
+<div class="meta"><div class="cn">土耳其</div><div class="en">Turkey</div></div>
+<span class="stat ok">30 家生产厂家</span>
+</a>
+<a class="country" href="./base/taiwan_customers.html" data-key="中国台湾 taiwan, china">
+<img class="flag" src="https://flagcdn.com/w40/tw.png" srcset="https://flagcdn.com/w80/tw.png 2x" alt="中国台湾" loading="lazy">
+<div class="meta"><div class="cn">中国台湾</div><div class="en">Taiwan, China</div></div>
+<span class="stat ok">26 家生产厂家</span>
+</a>
+</div></div>
+<div class="region" data-region="非洲">
+<div class="region-title">非洲 <span class="cnt">(1)</span></div>
+<div class="grid">
+<a class="country" href="./base/ng_ortho_customers.html" data-key="尼日利亚 nigeria">
+<img class="flag" src="https://flagcdn.com/w40/ng.png" srcset="https://flagcdn.com/w80/ng.png 2x" alt="尼日利亚" loading="lazy">
+<div class="meta"><div class="cn">尼日利亚</div><div class="en">Nigeria</div></div>
+<span class="stat empty">暂无符合条件厂家</span>
+</a>
+</div></div>
+<div class="region" data-region="欧洲">
+<div class="region-title">欧洲 <span class="cnt">(1)</span></div>
+<div class="grid">
+<a class="country" href="./base/ru_ortho_customers.html" data-key="俄罗斯 russia">
+<img class="flag" src="https://flagcdn.com/w40/ru.png" srcset="https://flagcdn.com/w80/ru.png 2x" alt="俄罗斯" loading="lazy">
+<div class="meta"><div class="cn">俄罗斯</div><div class="en">Russia</div></div>
+<span class="stat ok">12 家生产厂家</span>
+</a>
+</div></div>
+<div class="region" data-region="南美洲">
+<div class="region-title">南美洲 <span class="cnt">(1)</span></div>
+<div class="grid">
+<a class="country" href="./base/brazil_customers.html" data-key="巴西 brazil">
+<img class="flag" src="https://flagcdn.com/w40/br.png" srcset="https://flagcdn.com/w80/br.png 2x" alt="巴西" loading="lazy">
+<div class="meta"><div class="cn">巴西</div><div class="en">Brazil</div></div>
+<span class="stat ok">18 家生产厂家</span>
+</a>
+</div></div>
+<div class="region" data-region="北美洲">
+<div class="region-title">北美洲 <span class="cnt">(1)</span></div>
+<div class="grid">
+<a class="country" href="./base/mexico_customers.html" data-key="墨西哥 mexico">
+<img class="flag" src="https://flagcdn.com/w40/mx.png" srcset="https://flagcdn.com/w80/mx.png 2x" alt="墨西哥" loading="lazy">
+<div class="meta"><div class="cn">墨西哥</div><div class="en">Mexico</div></div>
+<span class="stat ok">18 家生产厂家</span>
+</a>
+</div></div>
+<div class="region" data-region="中东">
+<div class="region-title">中东 <span class="cnt">(4)</span></div>
+<div class="grid">
+<a class="country" href="./base/israel_customers.html" data-key="以色列 israel">
+<img class="flag" src="https://flagcdn.com/w40/il.png" srcset="https://flagcdn.com/w80/il.png 2x" alt="以色列" loading="lazy">
+<div class="meta"><div class="cn">以色列</div><div class="en">Israel</div></div>
+<span class="stat ok">4 家生产厂家</span>
+</a>
+<a class="country" href="./base/ksa_customers.html" data-key="沙特阿拉伯 saudi arabia">
+<img class="flag" src="https://flagcdn.com/w40/sa.png" srcset="https://flagcdn.com/w80/sa.png 2x" alt="沙特阿拉伯" loading="lazy">
+<div class="meta"><div class="cn">沙特阿拉伯</div><div class="en">Saudi Arabia</div></div>
+<span class="stat ok">3 家生产厂家</span>
+</a>
+<a class="country" href="./base/egypt_customers.html" data-key="埃及 egypt">
+<img class="flag" src="https://flagcdn.com/w40/eg.png" srcset="https://flagcdn.com/w80/eg.png 2x" alt="埃及" loading="lazy">
+<div class="meta"><div class="cn">埃及</div><div class="en">Egypt</div></div>
+<span class="stat ok">3 家生产厂家</span>
+</a>
+<a class="country" href="./base/iran_customers.html" data-key="伊朗 iran">
+<img class="flag" src="https://flagcdn.com/w40/ir.png" srcset="https://flagcdn.com/w80/ir.png 2x" alt="伊朗" loading="lazy">
+<div class="meta"><div class="cn">伊朗</div><div class="en">Iran</div></div>
+<span class="stat ok">6 家生产厂家</span>
+</a>
+</div></div>
+<div class="footer">
+<p>数据说明：本页仅收录各国/地区<b>本土骨科植入物生产厂家（MANUFACTURER）</b>，已严格剔除经销商、进口代理商、外资销售子公司、牙科种植体厂与纯耗材厂。</p>
+<p>「暂无符合条件厂家」表示该市场以进口经销为主，经核查未发现符合严格标准的本土骨科植入物生产厂，未用经销商凑数。每条记录均附可核查来源。</p>
+</div>
 </div>
 <script>
-(function(){
-  var input=document.getElementById('orthoSearch');
-  var count=document.getElementById('orthoCount');
-  if(!input) return;
-  function filter(){
-    var q=input.value.trim().toLowerCase();
-    var rows=document.querySelectorAll('table tbody tr');
-    var n=0;
-    rows.forEach(function(tr){
-      var hit = !q || tr.textContent.toLowerCase().indexOf(q)>=0;
-      tr.style.display = hit ? '' : 'none';
-      if(hit) n++;
-    });
-    if(count) count.textContent = q ? ('匹配 '+n+' / '+rows.length+' 家') : '';
-    // 隐藏空分区
-    document.querySelectorAll('.country-sec').forEach(function(sec){
-      var visible = sec.querySelectorAll('tbody tr').length;
-      var anyVisible = Array.prototype.some.call(sec.querySelectorAll('tbody tr'), function(tr){ return tr.style.display!=='none'; });
-      sec.style.display = (q && !anyVisible) ? 'none' : '';
-    });
-  }
-  input.addEventListener('input', filter);
-})();
+(function(){var inp=document.getElementById('custSearch');var cnt=document.getElementById('custCount');var regs=[].slice.call(document.querySelectorAll('.region'));function filter(){var q=(inp.value||'').trim().toLowerCase();var total=0;regs.forEach(function(r){var shown=0;var cards=[].slice.call(r.querySelectorAll('.country'));cards.forEach(function(c){var hit=!q||(c.getAttribute('data-key')||'').indexOf(q)>-1;c.style.display=hit?'':'none';if(hit)shown++;});r.style.display=shown?'':'none';total+=shown;});if(cnt)cnt.textContent=q?('匹配 '+total+' 个国家'):'';}if(inp)inp.addEventListener('input',filter);filter();})();
 </script>
 </body>
 </html>
