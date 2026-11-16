@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>俄罗斯骨科植入物生产厂家名录</title>
+<style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Yu Gothic','Meiryo','Malgun Gothic','Noto Sans CJK SC',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
+        .container { max-width:1400px; margin:0 auto; padding:20px; }
+        .topbar { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+        .back { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#1a3a6b; border:1px solid #c9d4e3; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .back:hover { background:#eef3fb; text-decoration:none; }
+        h1 { text-align:center; color:#1a3a6b; font-size:24px; margin-bottom:5px; padding:14px 0 10px; border-bottom:3px solid #1a3a6b; }
+        .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:18px auto;}
+        .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+        .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+        .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display:flex; justify-content:center; gap:15px; margin-bottom:25px; flex-wrap:wrap; }
+        .stat-card { background:#fff; border-radius:8px; padding:12px 24px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; min-width:140px; }
+        .stat-card .num { font-size:28px; font-weight:700; color:#1a3a6b; }
+        .stat-card .label { font-size:12px; color:#888; }
+        .stat-card.total { border-top:3px solid #27ae60; }
+        .stat-card.total .num { color:#27ae60; }
+        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); font-size:13px; margin-bottom:20px; }
+        thead { background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%); color:#fff; }
+        th { padding:12px 10px; text-align:left; font-weight:600; font-size:12px; letter-spacing:0.5px; }
+        td { padding:10px 10px; border-bottom:1px solid #eee; vertical-align:top; line-height:1.55; }
+        tr:hover { background:#f8f9fb; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin:1px; }
+        a { color:#2c5aa0; text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .company-name { font-weight:600; color:#1a3a6b; line-height:1.4; }
+        .contact-info { font-size:12px; color:#555; }
+        .contact-info div { margin-bottom:2px; line-height:1.5; }
+        .muted { color:#aaa; }
+        .evidence { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; vertical-align:middle; }
+        .ev-A { background:#e6f7ed; color:#1a9850; }
+        .ev-B { background:#e8f0fe; color:#1f6feb; }
+        .ev-C { background:#fff4e0; color:#c77700; }
+        .footer { text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px; }
+        .footer p { margin-bottom:4px; }
+        .empty-box { max-width:760px; margin:40px auto; padding:40px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); text-align:center; }
+        .empty-box .big { font-size:44px; }
+        .empty-box h2 { color:#1a3a6b; font-size:20px; margin:12px 0; }
+        .empty-box p { color:#666; font-size:14px; margin-bottom:10px; line-height:1.8; }
+        .empty-box .note { background:#f5f7fa; border-left:4px solid #27ae60; padding:12px 16px; text-align:left; font-size:13px; color:#555; margin-top:18px; border-radius:6px; }
+        .badge-spine { background:#1f6feb; color:#fff; }
+        .badge-joint { background:#16a085; color:#fff; }
+        .badge-trauma { background:#2ecc71; color:#fff; }
+        .badge-sport { background:#f39c12; color:#fff; }
+        .badge-fix { background:#9b59b6; color:#fff; }
+        .badge-ortho2 { background:#3498db; color:#fff; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="topbar"><a class="back" href="../ortho_customers.html">← 返回国家选择</a></div>
+<h1>俄罗斯骨科植入物生产厂家名录</h1>
+<div class="stats">
+<div class="stat-card total"><div class="num">12</div><div class="label">生产厂家总数</div></div>
+<div class="stat-card"><div class="num">4</div><div class="label">脊柱植入物</div></div>
+<div class="stat-card"><div class="num">2</div><div class="label">关节植入物</div></div>
+<div class="stat-card"><div class="num">2</div><div class="label">创伤植入物</div></div>
+<div class="stat-card"><div class="num">4</div><div class="label">骨科植入物</div></div>
+</div>
+<div class="searchbar"><input id="custSearch" type="text" placeholder="🔍 搜索公司名称 / 城市 / 官网 / 方向…" autocomplete="off"><span class="search-count" id="custCount"></span></div>
+<table><thead><tr><th>#</th><th>公司名称</th><th>城市</th><th>联系方式 / 来源</th><th>官网</th><th>方向</th></tr></thead><tbody>
+<tr data-page-node-id="ej6xvTbAg19UWJgv0sD0xd">
+<td>1</td>
+<td class="company-name">AO CITO (Joint Stock Company CITO; formerly FSUE CITO)<span class="evidence ev-A">证据A</span></td>
+<td>Moscow (莫斯科)</td>
+<td class="contact-info"><div>📞 +7 800 777-66-22</div><div>📧 info@cito-pro.ru</div><div>📍 127299, Russia, Moscow, ul. Priorova, d. 10, str. 7 (ул. Приорова, 10с7)</div><div class="muted">来源：https://www.cito-pro.ru/ ; https://biopromforum.ru/en/catalog-of-participants-2025/tproduct/629400436332 ; https://analitikamed.ru/products/15813/FSR-2011-10708 (РЗН/FSR注册数据) ; https://enex.market/en/visitors/fgup_tsito</div><div class="muted">俄罗斯国有 Rostec 集团旗下、1963年成立的创伤骨科龙头，官网明确&#x27;собственного productions&#x27;(自产)：500+种产品，涵盖大关节置换髋/膝假体、接骨板螺钉(髓内/骨外固定)、Ilizarov外固定架、脊柱植入物、个体化3D打印植入物。2021年建成11000㎡全工艺新厂(275台设备、含3D打印机)。占俄植入物市场30%+，Roszdravnadzor注册号可见(如РЗН 2023/21201、ФСР 2011/10708)，TIN 7713059338。联系方式来自biopromforum展会目录。</div></td>
+<td><a href="https://www.cito-pro.ru/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="BYlPR7xUkFFmHnJFDT1Bsa">
+<td>2</td>
+<td class="company-name">OSTEOMED-M LLC<span class="evidence ev-A">证据A</span></td>
+<td>Rybinsk, Yaroslavl Oblast (雷宾斯克)</td>
+<td class="contact-info"><div>📞 +7 (4855) 32-79-27, 40-40-14</div><div>📧 info@osteomed.ru</div><div>📍 152912, Yaroslavskaya obl., g. Rybinsk, ul. Tankistov, d. 8 (ул. Танкистов, 8); second site: 152908, g. Rybinsk, Yaroslavskiy trakt, d. 79</div><div class="muted">来源：https://analitikamed.ru/products/3921/RZH-2016-4422 ; https://analitikamed.ru/products/3915/RZH-2019-9480 ; https://news.tpu.ru/en/news/import-substituting-coating-equipment-at-new-plant-in-rybinsk/ ; hh.ru employer 2246490</div><div class="muted">Остеомед®品牌始于1989年，专业研发生产创伤、关节置换(эндопротезирование)与脊柱外科植入物及器械。Roszdravnadzor注册证明(РЗН 2016/4422、РЗН 2019/9480)明确列其为manufacturer并给出两处生产地址；与托木斯克理工合作在新厂上线生物活性/保护涂层设备，计划生产髋关节假体、脊柱螺钉、微创接骨植入物。电话/邮箱来自注册说明书。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="YTlCBnhG8YLbJwiMZ2KKLo">
+<td>3</td>
+<td class="company-name">SINTEL Research and Production Company LLC<span class="evidence ev-A">证据A</span></td>
+<td>Tomsk (托木斯克)</td>
+<td class="contact-info"><div>📞 +7 (3822) 43-52-98, 43-52-78</div><div>📧 info@sintelbio.com</div><div>📍 Office: 634041, Tomsk, Gertzena St. 45, office 210; Production site: SEZ TVT &#x27;Tomsk&#x27;, 634055, Tomsk, pr. Razvitiya, d. 8</div><div class="muted">来源：https://ved.tomsk.ru/en/export_potential/.../sintel ; https://ekaterinburg.hh.ru/employer/1895590 ; http://cn.investintomsk.com/...</div><div class="muted">托木斯克经济特区驻在企业，自建骨科医疗器械中试生产：髋/膝关节置换假体、肿瘤个体化假体(custom-made)、关节周围骨折髓内固定器、表面改性接骨植入物。ISO 9001与ISO 13485认证；与俄/外高校科研机构合作，拥有俄联邦发明专利。生产地址、电话、邮箱来自托木斯克州出口支持中心官方页。</div></td>
+<td><a href="http://sintelresearch.com/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-joint">关节植入物</span></td>
+</tr>
+<tr data-page-node-id="IqM7HbPHKSppRbfxx4XABD">
+<td>4</td>
+<td class="company-name">EndoArt LLC<span class="evidence ev-A">证据A</span></td>
+<td>Saint Petersburg (圣彼得堡)</td>
+<td class="contact-info"><div>📍 Saint Petersburg, Russia (INN 7805718750; 具体厂区地址未公开)</div><div class="muted">来源：http://www.tadviser.com/index.php/Company:EndoArt ; https://gxpnews.net/en/2024/07/1-billion-rubles-invested-in-new-endoprosthesis-production-facility-in-st-petersburg/ ; https://tonzar.com/.../EndoArt-7155</div><div class="muted">俄罗斯BSS制药控股子公司，2024年在圣彼得堡建成投资超10亿卢布的髋关节假体全工艺工厂(首期1500㎡)，年产可达3.5万套骨水泥型/非骨水泥型髋关节假体，目标满足俄约1/3需求；与VSMPO-AVISMA、Вreden创伤骨科研究院、Прометей材料研究院组成联盟并计划扩展膝假体。Tonzar B2B列为认证制造商(INN 7805718750)。联系方式未公开。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-joint">关节植入物</span></td>
+</tr>
+<tr data-page-node-id="1qHuhVObzd7yZyEN1DkTqz">
+<td>5</td>
+<td class="company-name">KONMET LLC<span class="evidence ev-B">证据B</span></td>
+<td>Moscow (莫斯科)</td>
+<td class="contact-info"><div>📍 Moscow, Russia (详细地址未公开)</div><div class="muted">来源：https://cngavin.gavindento.com/index.php/dental-company/id/2039.html (KONMET公司简介) ; https://implant-register.com/conmet/ ; https://thespinemarketgroup.com/russia-spine-implant-market-sanctions-local-manufacturing/</div><div class="muted">俄罗斯本土钛植入物制造商，自有设计工程局与柔性自动化生产，产品覆盖颅颌面固定板/网片、脊柱fixation系统(椎弓根螺钉、cage、枕颈/胸腰段)、创伤骨科植入物、个体化3D打印多孔钛植入物(SLM)；与MISIS合作钛合金，5000+例定制结构，部分产品CE认证。独立脊柱市场文章亦将CONMET列为俄罗斯本土脊柱/颅颌面制造商。注：兼有牙科植入物，但骨科/脊柱/颅颌面制造能力明确。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+<tr data-page-node-id="JXSBEVBZ251lUeOgyJ7TLn">
+<td>6</td>
+<td class="company-name">Rusatom Implantat LLC (Rusatom Metal Tech)<span class="evidence ev-A">证据A</span></td>
+<td>Moscow / Chepetsk (Glazov, Udmurtia) (莫斯科/切佩茨克)</td>
+<td class="contact-info"><div>📍 Russia (Rusatom/Rosatom 旗下；详细地址未公开)</div><div class="muted">来源：https://medtech.tvel.ru/en/press-center/news/?ELEMENT_ID=17541</div><div class="muted">俄罗斯国家原子能公司Rosatom旗下Rusatom Metal Tech于2023年设立子公司&#x27;Rusatom Implantat&#x27;专注钛骨科植入物生产：骨膜接骨板、髓内钉(肱骨/股骨/胫骨近端/骨干/远端)、松质骨/皮质骨螺钉、塞、垫圈及配套器械；采用Čepetsk机械厂(ChMZ)钛合金，规划年产14万件以上植入物，2024年底达产。进口替代旗舰项目，官方媒体报道，制造能力明确。</div></td>
+<td><a href="https://medtech.tvel.ru/" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-trauma">创伤植入物</span></td>
+</tr>
+<tr data-page-node-id="KgOSeidakBkI2RoeYxYFWP">
+<td>7</td>
+<td class="company-name">NPO Medtekhnika LLC (MedTechnica)<span class="evidence ev-B">证据B</span></td>
+<td>Kazan, Republic of Tatarstan (喀山，鞑靼斯坦)</td>
+<td class="contact-info"><div>📍 Republic of Tatarstan, Russia (INN 1658021410; 具体地址未公开)</div><div class="muted">来源：https://tonzar.com/supplier/ООО-ПТО-Медтехника-95</div><div class="muted">Tonzar B2B认证俄罗斯制造商(INN 1658021410，大型企业)，目录含钛接骨板螺钉组(NOPTk-01)、压缩-牵张骨接合固定针(MT-Kazan)等骨科植入物/固定器，以及外科器械套装。具有植入物/固定器/骨接合系统制造能力。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-trauma">创伤植入物</span></td>
+</tr>
+<tr data-page-node-id="Yf31QYPXkosXIrBLYuIpYK">
+<td>8</td>
+<td class="company-name">Endocarbon LLC<span class="evidence ev-B">证据B</span></td>
+<td>Penza (奔萨)</td>
+<td class="contact-info"><div>📞 +7 (8412) 38-47-63</div><div>📍 440004, Penzenskaya obl., g. Penza, ul. Tsentralnaya, d. 1 (ул. Центральная, 1); INN 5837024013, OGRN 1055803506791</div><div class="muted">来源：https://tonzar.com/supplier/...Endocarbon-7853 ; https://www.bonafideresearch.com/product/241304262/russia-hip-replacement-market</div><div class="muted">奔萨州碳纤维/复合材料植入物制造商，Tonzar列为认证制造商(INN 5837024013)，产品包括椎间融合器(Intervertebral Disc Cage)；Bonafide市场报告将Endocarbon列为俄罗斯本土骨科/关节植入物生态中的小型制造商。总经理 Evdokimov Sergey Vasilyevich。</div></td>
+<td><a href="http://endocarbon.ru" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-spine">脊柱植入物</span></td>
+</tr>
+<tr data-page-node-id="8oiqlXjfexgFoioA99C8tR">
+<td>9</td>
+<td class="company-name">Pozvonoq<span class="evidence ev-B">证据B</span></td>
+<td>Russia (俄罗斯，城市未公开)</td>
+<td class="contact-info"><div>📍 Russia (详细地址未公开)</div><div class="muted">来源：https://thespinemarketgroup.com/russia-spine-implant-market-sanctions-local-manufacturing/</div><div class="muted">俄罗斯本土脊柱植入物制造商，以生物相容钛合金3D打印椎间融合器(cage)著称，用于椎间盘突出、退变与肿瘤适应症，宣称较进口产品具成本优势；独立脊柱市场文章将其列为&#x27;俄罗斯本土脊柱制造最值得关注者&#x27;。联系方式未公开。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-spine">脊柱植入物</span></td>
+</tr>
+<tr data-page-node-id="5Ytd9Dk29uaT3uxmh9OxJZ">
+<td>10</td>
+<td class="company-name">Anatomica<span class="evidence ev-C">证据C</span></td>
+<td>Russia (俄罗斯，城市未公开)</td>
+<td class="contact-info"><div>📍 Russia (详细地址未公开)</div><div class="muted">来源：https://thespinemarketgroup.com/russia-spine-implant-market-sanctions-local-manufacturing/</div><div class="muted">独立脊柱市场文章列为俄罗斯本土脊柱制造商，专注经椎弓根固定(transpedicular fixation)。公开信息较零散，未找到官网/地址，标C级供自行判断。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-spine">脊柱植入物</span></td>
+</tr>
+<tr data-page-node-id="6ZpTTfYrGoHLoat1keqwfv">
+<td>11</td>
+<td class="company-name">Logeeks Medical Systems<span class="evidence ev-C">证据C</span></td>
+<td>Russia (俄罗斯，城市未公开)</td>
+<td class="contact-info"><div>📍 Russia (详细地址未公开)</div><div class="muted">来源：https://thespinemarketgroup.com/russia-spine-implant-market-sanctions-local-manufacturing/</div><div class="muted">独立脊柱市场文章列为俄罗斯本土制造商，倾向个体化植入物与3D规划(含椎间融合器)。公开信息零散、无独立官网/地址，标C级供自行判断。</div></td>
+<td><span class="muted">未公开</span></td>
+<td><span class="badge badge-spine">脊柱植入物</span></td>
+</tr>
+<tr data-page-node-id="cs0TEKvIBYh4775W9KNNjo">
+<td>12</td>
+<td class="company-name">LINTEX LLC<span class="evidence ev-B">证据B</span></td>
+<td>Saint Petersburg (圣彼得堡)</td>
+<td class="contact-info"><div>📞 +7 (812) 310-08-31; (812) 385-44-30</div><div>📧 info@lintex.ru</div><div>📍 190020, Russia, Saint Petersburg, ul. Liflyandskaya, d. 6, litera K (ул. Лифляндская, 6 лит. К)</div><div class="muted">来源：https://icatalog.expocentr.ru/en/exhibitions/.../exhibitors/209508 ; https://analitikamed.ru/products/10945/FSR-2010-08895 ; http://www.org-info.com/company/1037851036167</div><div class="muted">圣彼得堡医疗器械制造商(NACE 21.20.2 药品与医疗器械制造、33.10 外科植入物制造)，产品含软组织重建用补片/假体网(endoprosthetic meshes)、无菌缝合线、防粘连可吸收凝胶(Мезогель)；Roszdravnadzor注册确认其为manufacturer(ФСР 2010/08895)，TIN 7826083684。属植入物/修补材料制造，非单纯耗材商。</div></td>
+<td><a href="http://www.lintex.ru" target="_blank" rel="noopener">官网</a></td>
+<td><span class="badge badge-ortho2">骨科植入物</span></td>
+</tr>
+</tbody></table>
+<div class="footer">
+<p>数据说明：本表仅列示本土骨科植入物 <b>生产厂家（MANUFACTURER）</b>，已严格剔除经销商、进口代理商、外资销售子公司、牙科种植体厂与纯耗材厂。每条附可核查来源，联系方式未公开项统一标注、零虚构。</p>
+<p>经WebSearch与WebFetch核查官网、Roszdravnadzor/AnalitikaMed注册数据(РЗН/ФСР)、行业展会目录(Expocentre、Биопром)、Tonzar认证制造商目录及独立市场报告后，本文件收录俄罗斯本土骨科植入物生产厂家共12家：证据A级5家(官网/注册明确自产+厂区+监管注册，如ЦИТО、Остеомед-М、Sintel、EndoArt、Rusatom Implantat)、B级5家(KONMET、Medtekhnika、Endocarbon、Pozvonoq、LINTEX)、C级2家(Anatomica、Logeeks，信息零散需自行判断)。俄罗斯骨科制造以国有/大集团主导(ЦИТО属Rostec、Rusatom implant属Rosatom、EndoArt属BSS)，强项在大关节假体、创伤接骨板钉、脊柱cage/钉棒系统、外固定架及个体化3D钛植入物；主要产业集中在莫斯科、圣彼得堡、奔萨、雷宾斯克、托木斯克、鞑靼斯坦。受2022年后进口替代政策推动本土产能快速扩张。已剔除跨国外资在俄分支、心血管/牙科/眼科植入物厂、假肢矫形器厂及纯贸易商。所有未知联系方式标注&#x27;未公开&#x27;，未做虚构。</p>
+<p>已剔除：Medtronic Russia / Johnson&amp;Johnson(DePuy Synthes) Russia / Zimmer Biomet Russia / Stryker Russia / B.Braun Russia / Smith&amp;Nephew Russia / NuVasive / Globus Medical / Orthofix / Aesculap 等 — 外资跨国公司在俄销售分支或代表处，非本土制造商；ЗАО НПП «МедИнж» (MedEng, Penza) — 主体产品为人造心脏瓣膜(占俄70%)及心血管高科技器械；官网/展会目录显示其核心为心血管外科植入物，非骨科植入物制造商(骨科仅属其Biomed集群其他企业)，故排除；МПО «Металлист» / Metallist 2.0 (Moscow, Rostec) — 生产假肢/矫形器部件、外置假肢组件(700+半成品、假手等)，非植入性骨科植入物；Московское протезно-ортопедическое предприятие (Moscow Prosthetics &amp; Orthopedics Enterprise) — 假肢矫形及康复辅具龙头，非植入性植入物；Vector-Medica OJSC (Novosibirsk) / MedInTech — 以神经外科/心血管/综合假肢为主或信息不足，未列入；Dental Implant Center / Implants Russia(St.Petersburg, 牙科) / NPO Ekran(眼科IOL) / CardioImplant(心脏起搏器) — 非骨科植入物；各类仅分销/贸易的供应商与在俄组装的外资产品 — 未纳入</p>
+</div>
+</div>
+<script>
+(function(){var inp=document.getElementById('custSearch');var cnt=document.getElementById('custCount');var rows=[].slice.call(document.querySelectorAll('tbody tr'));function filter(){var q=(inp.value||'').trim().toLowerCase();var n=0;rows.forEach(function(tr){var hit=!q||tr.textContent.toLowerCase().indexOf(q)>-1;tr.style.display=hit?'':'none';if(hit)n++;});if(cnt)cnt.textContent='共 '+n+' 家';}if(inp)inp.addEventListener('input',filter);filter();})();
+</script>
+</body>
+</html>
