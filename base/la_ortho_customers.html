@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+<script data-xh-gate>
+(function(){
+  var TTL=8*60*60*1000;
+  try{var a=JSON.parse(localStorage.getItem('xh_auth')||'null');if(a&&a.u&&(Date.now()-a.ts)<TTL)return;}catch(e){}
+  var seg=location.pathname.split('/').filter(Boolean).length;
+  var prefix=seg>1?new Array(seg).join('../'):'./';
+  var next=location.pathname+(location.search||'');
+  location.replace(prefix+'login.html?next='+encodeURIComponent(next));
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老挝骨科植入物生产厂家名录</title>
+<style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Microsoft YaHei','PingFang SC','Hiragino Sans GB','Yu Gothic','Meiryo','Malgun Gothic','Noto Sans CJK SC',sans-serif; background:#f5f7fa; color:#333; line-height:1.6; }
+        .container { max-width:1400px; margin:0 auto; padding:20px; }
+        .topbar { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+        .back { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#1a3a6b; border:1px solid #c9d4e3; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .back:hover { background:#eef3fb; text-decoration:none; }
+        h1 { text-align:center; color:#1a3a6b; font-size:24px; margin-bottom:5px; padding:14px 0 10px; border-bottom:3px solid #1a3a6b; }
+        .searchbar{display:flex;align-items:center;gap:12px;max-width:720px;margin:18px auto;}
+        .searchbar input{flex:1;padding:10px 14px;border:1px solid #c9d4e3;border-radius:8px;font-size:14px;outline:none;}
+        .searchbar input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+        .search-count{font-size:13px;color:#666;white-space:nowrap;}
+        .stats { display:flex; justify-content:center; gap:15px; margin-bottom:25px; flex-wrap:wrap; }
+        .stat-card { background:#fff; border-radius:8px; padding:12px 24px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; min-width:140px; }
+        .stat-card .num { font-size:28px; font-weight:700; color:#1a3a6b; }
+        .stat-card .label { font-size:12px; color:#888; }
+        .stat-card.total { border-top:3px solid #27ae60; }
+        .stat-card.total .num { color:#27ae60; }
+        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); font-size:13px; margin-bottom:20px; }
+        thead { background:linear-gradient(135deg,#1a3a6b 0%,#2c5aa0 100%); color:#fff; }
+        th { padding:12px 10px; text-align:left; font-weight:600; font-size:12px; letter-spacing:0.5px; }
+        td { padding:10px 10px; border-bottom:1px solid #eee; vertical-align:top; line-height:1.55; }
+        tr:hover { background:#f8f9fb; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin:1px; }
+        a { color:#2c5aa0; text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .company-name { font-weight:600; color:#1a3a6b; line-height:1.4; }
+        .contact-info { font-size:12px; color:#555; }
+        .contact-info div { margin-bottom:2px; line-height:1.5; }
+        .muted { color:#aaa; }
+        .evidence { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; vertical-align:middle; }
+        .ev-A { background:#e6f7ed; color:#1a9850; }
+        .ev-B { background:#e8f0fe; color:#1f6feb; }
+        .ev-C { background:#fff4e0; color:#c77700; }
+        .footer { text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px; }
+        .footer p { margin-bottom:4px; }
+        .empty-box { max-width:760px; margin:40px auto; padding:40px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); text-align:center; }
+        .empty-box .big { font-size:44px; }
+        .empty-box h2 { color:#1a3a6b; font-size:20px; margin:12px 0; }
+        .empty-box p { color:#666; font-size:14px; margin-bottom:10px; line-height:1.8; }
+        .empty-box .note { background:#f5f7fa; border-left:4px solid #27ae60; padding:12px 16px; text-align:left; font-size:13px; color:#555; margin-top:18px; border-radius:6px; }
+        .badge-spine { background:#1f6feb; color:#fff; }
+        .badge-joint { background:#16a085; color:#fff; }
+        .badge-trauma { background:#2ecc71; color:#fff; }
+        .badge-sport { background:#f39c12; color:#fff; }
+        .badge-fix { background:#9b59b6; color:#fff; }
+        .badge-ortho2 { background:#3498db; color:#fff; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="topbar"><a class="back" href="../ortho_customers.html">← 返回国家选择</a></div>
+<h1>老挝骨科植入物生产厂家名录</h1>
+<div class="empty-box">
+<div class="big">🏭</div>
+<h2>暂无符合条件的本土骨科植入物生产厂家</h2>
+<p>经多维度检索（监管注册、行业协会、上市公司、细分品类、展会与企业数据库）与官网逐一核查，
+未在 <b>老挝</b> 发现符合「本土注册 + 自有工厂 + 实际生产骨科植入物」严格标准的生产厂家。</p>
+<p>该市场以<b>进口经销</b>为主。按名录规则，无生产能力的经销商、进口代理商与外资销售子公司一律不纳入本表，故此处不列企业，绝不以经销商凑数。</p>
+<div class="note"><b>核查结论：</b>暂无符合条件的本土骨科植入物生产厂家（该市场以进口经销为主）</div>
+<div class="note"><b>已核查并剔除（部分）：</b>Madura Orthosurge Pvt Ltd（印度）— &#x27;/laos/&#x27; 系列落地页自称 Small Fragment Plates / Bone Locking Screws &#x27;Manufacturers in Laos&#x27;，实为印度公司面向老挝的出口SEO页面，非本土厂家；排除；大博医疗 Double Medical（中国）— &#x27;Laos 微小型接骨板/螺钉系统&#x27; 为其产品页本地化SEO，非老挝本土厂家；排除；老挝本土&#x27;万象医疗设备公司&#x27;等 — 依丝路印象报道仅生产纱布、注射器等基础耗材（自给率&lt;10%），非骨科植入物；排除；&#x27;寮国骨科解决方案公司&#x27;、&#x27;老中合资医疗科技公司&#x27;、髋关节矫形器/仿生骨公司 — 均为丝路企服/注册代理的&#x27;如何注册公司&#x27;指南中举例或假设案例，非可核实的本土植入物制造实体；排除</div>
+</div>
+<div class="footer">
+<p>数据说明：本表仅列示本土骨科植入物 <b>生产厂家（MANUFACTURER）</b>，已严格剔除经销商、进口代理商、外资销售子公司、牙科种植体厂与纯耗材厂。每条附可核查来源，联系方式未公开项统一标注、零虚构。</p>
+</div>
+</div>
+</body>
+</html>
